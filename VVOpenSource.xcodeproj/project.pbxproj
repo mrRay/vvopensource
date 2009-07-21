@@ -1455,7 +1455,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator2.2;
+				SDKROOT = iphonesimulator3.0;
 			};
 			name = Debug;
 		};
@@ -1470,7 +1470,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator2.2;
+				SDKROOT = iphonesimulator3.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1485,7 +1485,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos2.2;
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -1500,7 +1500,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos2.2;
+				SDKROOT = iphoneos3.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
