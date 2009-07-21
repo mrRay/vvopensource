@@ -22,5 +22,7 @@
 	<string>0.0.1</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
+	<key>CFBundleGetInfoString</key>
+	<string>0.0.1</string>
 </dict>
 </plist>

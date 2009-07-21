@@ -1,11 +1,28 @@
 
-#if IPHONE
-#import <UIKit/UIKit.h>
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #include <sys/time.h>
 
+
+
+
+/*
+	when started, an instance of this class will spawn a thread and repeatedly 
+	execute a method on that thread.  if i was passed a target and selector on 
+	creation, the selector will be called on the target every time the thread 
+	executes.  if it's more convenient to subclass VVThreadLoop and work with 
+	your custom subclass, leave the target/selector nil and VVThreadLoop will 
+	call "threadProc" on itself- just override this method (it's empty anyway) 
+	in your subclass and do whatever you want in there.
+	
+	you can change the execution interval, and VVThreadLoop also examines how 
+	long it takes to execute your code and adjusts in an attempt to ensure that 
+	the interval is accurate.
+*/
+
+
+
+//	this macro sets the max time interval; default is 1 second (can't go slower than 1 proc/sec)
+#define MAXTIME 1.0
 
 
 

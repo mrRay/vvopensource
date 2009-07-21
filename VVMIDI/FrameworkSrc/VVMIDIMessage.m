@@ -1,10 +1,3 @@
-//
-//  MIDIMessage.m
-//  VVMIDI
-//
-//  Created by bagheera on 10/19/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "VVMIDIMessage.h"
 #import "VVMIDI.h"

@@ -1,10 +1,3 @@
-//
-//  OSCZeroConfManager.m
-//  VVOSC
-//
-//  Created by bagheera on 12/9/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCZeroConfManager.h"
 #import "OSCManager.h"
@@ -144,7 +137,7 @@
 	
 	//	this used to rename an output with the same IP address and port to match the
 	//	name of the newly-appeared service.  i commented this out because if the service
-	//	disappears it could inadvertently release an output port
+	//	disappears it could inadvertently release an output port.
 	
 	/*
 	//	if i'm here, i couldn't find an out port with the same name...try to find an out port with the same ip/port data

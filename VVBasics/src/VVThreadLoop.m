@@ -8,7 +8,6 @@
 
 
 - (id) initWithTimeInterval:(float)i target:(id)t selector:(SEL)s	{
-	//NSLog(@"%s",__func__);
 	if ((t==nil) || (s==nil) || (![t respondsToSelector:s]))
 		return nil;
 	if (self = [super init])	{
@@ -22,7 +21,6 @@
 	return nil;
 }
 - (id) initWithTimeInterval:(float)i	{
-	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		[self generalInit];
 		interval = i;
@@ -39,7 +37,6 @@
 	targetSel = nil;
 }
 - (void) dealloc	{
-	//NSLog(@"%s",__func__);
 	[self stopAndWaitUntilDone];
 	targetObj = nil;
 	targetSel = nil;
@@ -94,15 +91,13 @@
 			--stopTime.tv_sec;
 			stopTime.tv_usec = stopTime.tv_usec + 1000000;
 		}
-		//executionTime = (float)(stopTime.tv_usec-startTime.tv_usec);
-		//sleepDuration = interval - (executionTime/1000000.0);
 		executionTime = ((float)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
 		sleepDuration = interval - executionTime;
 		
 		//	only sleep if duration's > 0, sleep for a max of 1 sec
 		if (sleepDuration > 0)	{
-			if (sleepDuration > 1)
-				sleepDuration = 1;
+			if (sleepDuration > MAXTIME)
+				sleepDuration = MAXTIME;
 			[NSThread sleepForTimeInterval:sleepDuration];
 		}
 		//NSLog(@"\t\tproc looping");
@@ -127,7 +122,7 @@
 	}
 }
 - (void) setInterval:(float)i	{
-	interval = (i > 1.0) ? 1.0 : i;
+	interval = (i > MAXTIME) ? MAXTIME : i;
 }
 - (BOOL) running	{
 	return running;

@@ -1,10 +1,3 @@
-//
-//  OSCInPort.m
-//  OSC
-//
-//  Created by bagheera on 9/20/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCInPort.h"
 

@@ -16,7 +16,18 @@
 		return nil;
 	return [returnMe autorelease];
 }
+- (NSMutableArray *) createArrayCopy	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	for (ObjectHolder *objPtr in array)	{
+		[returnMe addObject:objPtr];	//	THIS RETAINS THE OBJECT! HAVE TO RETURN A MUTABLE ARRAY!
+	}
+	return returnMe;
+}
 - (void) addObject:(id)o	{
+	if ([o isKindOfClass:[ObjectHolder class]])	{
+		[super addObject:o];
+		return;
+	}
 	ObjectHolder		*holder = [ObjectHolder createWithObject:o];
 	[super addObject:holder];
 }

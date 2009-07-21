@@ -21,6 +21,11 @@
 
 
 
+/*
+	the following stuff is for doxygen
+*/
+
+
 /*!
 \mainpage
 

@@ -1,10 +1,3 @@
-//
-//  MIDIManager.m
-//  VVMIDI
-//
-//  Created by bagheera on 10/19/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "VVMIDIManager.h"
 
@@ -15,7 +8,6 @@
 
 
 - (id) init	{
-	//NSLog(@"VVMIDIManager:init:");
 	pthread_mutexattr_t		attr;
 	
 	self = [super init];
@@ -34,7 +26,7 @@
 	[self createVirtualNodes];
 	//	trigger the setup changed method
 	[self setupChanged];
-	//NSLog(@"\t\tVVMIDIManager:init: - FINISHED");
+	
 	return self;
 }
 
@@ -67,7 +59,6 @@
 }
 
 - (void) loadMIDIInputSources	{
-	//NSLog(@"VVMIDIManager:loadMIDIInputSources:");
 	int					sourceCount;
 	int					i;
 	MIDIEndpointRef		endpointRef;
@@ -96,7 +87,6 @@
 	pthread_mutex_unlock(&arrayLock);
 }
 - (void) loadMIDIOutputDestinations	{
-	//NSLog(@"VVMIDIManager:loadMIDIOutputDestionations:");
 	int					destCount;
 	int					i;
 	MIDIEndpointRef		endpointRef;
@@ -156,7 +146,6 @@
 
 //	called when a midi device is plugged in or unplugged
 - (void) setupChanged	{
-	//NSLog(@"VVMIDIManager:setupChanged:");
 	if ((virtualSource==nil) || (virtualDest==nil))
 		return;
 	[self loadMIDIInputSources];

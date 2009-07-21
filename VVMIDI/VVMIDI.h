@@ -1,14 +1,5 @@
+
 /*
- *  VVMIDI.h
- *  VVMIDI
- *
- *  Created by bagheera on 10/19/08.
- *  Copyright 2008 __MyCompanyName__. All rights reserved.
- *
- */
- 
- 
- /*
 
 	a brief intro on how midi works
 	
@@ -48,6 +39,8 @@
 */
  
  
+ 
+ 
  //	these are all STATUS MESSAGES: all status mesages have bit 7 set.  ONLY status msgs have bit 7 set to 1!
 //	these status messages go to a specific channel
 #define VVMIDINoteOffVal 0x80			//	+2 data bytes
@@ -79,10 +72,12 @@
 
 
 
+
 @protocol VVMIDIDelegateProtocol
 - (void) setupChanged;
 - (void) receivedMIDI:(NSArray *)a;
 @end
+
 
 
 

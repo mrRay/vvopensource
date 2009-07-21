@@ -27,7 +27,6 @@
 	return nil;
 }
 - (void) dealloc	{
-	//NSLog(@"%s",__func__);
 	deleted = YES;
 	object = nil;
 	[super dealloc];

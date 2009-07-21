@@ -1,10 +1,21 @@
 
-#if IPHONE
-#import <UIKit/UIKit.h>
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import <pthread.h>
+
+
+
+
+/*
+	this class exists because NSMutableArray is not thread-safe by default: if you 
+	call methods on it from two different threads at the same time, it will try to 
+	execute both, often crashing in the process.  this class has methods which 
+	allow you to work with a mutable array in a transparent and thread-safe manner.
+	
+	...and remember- when looking for stuff in an NSMutableArray, the array will 
+	use the "isEqualTo:" comparator method, which is significantly slower than 
+	comparing the address of two pointers.  if you know the pointer address hasn't 
+	changed, use the "indexOfIdenticalPtr", "removeIdenticalPtr", etc. methods.
+*/
 
 
 

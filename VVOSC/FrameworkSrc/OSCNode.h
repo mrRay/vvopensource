@@ -1,16 +1,10 @@
-//
-//  OSCNode.h
-//  VVOSC
-//
-//  Created by bagheera on 2/22/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
 
 #if IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
 #endif
+#import <VVBasics/VVBasics.h>
 #import "OSCMessage.h"
 
 
@@ -45,12 +39,12 @@ typedef enum	{
 	
 	NSString			*nodeName;	//	"local" name: name of the node at /a/b/c is "c"
 	NSString			*fullName;	//	"full" name
-	id					nodeContents;	//	type 'MutLockArray'
+	MutNRLockArray		*nodeContents;	//	type 'MutLockArray'
 	OSCNode				*parentNode;	//	NOT retained!
 	int					nodeType;	//	what 'type' of node i am
 	
 	OSCMessage			*lastReceivedMessage;	//	store the msg instead of the val because msgs can have multiple vals
-	id					delegateArray;	//	type 'MutLockArray'. contents are NOT retained! could be anything!
+	MutLockArray		*delegateArray;	//	type 'MutLockArray'. contents are NOT retained! could be anything!
 }
 
 //	only called by the address space to craft a formatted string for logging purposes

@@ -1,10 +1,3 @@
-//
-//  OSCPacket.m
-//  OSC
-//
-//  Created by bagheera on 9/20/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCPacket.h"
 
@@ -15,7 +8,7 @@
 
 
 + (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p	{
-	//	this stuff prints out the buffer- it's very, very useful.
+	//	this stuff prints out the buffer to the console log- it's very, very useful.  probably will be added to the test app at some point.
 	/*
 	printf("******************************\n");
 	int				bundleIndexCount;

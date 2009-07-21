@@ -1,10 +1,16 @@
 
-#if IPHONE
-#import <UIKit/UIKit.h>
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import <pthread.h>
+
+
+
+
+/*
+	this class exists because NSMutableDictionary is not thread-safe by default: if you 
+	call methods on it from two different threads at the same time, it will try to 
+	execute both, often crashing in the process.  this class has methods which 
+	allow you to work with a mutable dictionary in a transparent and thread-safe manner.
+*/
 
 
 

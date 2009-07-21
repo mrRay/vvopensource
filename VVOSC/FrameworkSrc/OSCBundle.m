@@ -1,12 +1,6 @@
-//
-//  OSCBundle.m
-//  OSC
-//
-//  Created by bagheera on 9/20/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCBundle.h"
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -82,9 +76,7 @@
 }
 
 - (void) dealloc	{
-	if (elementArray != nil)
-		[elementArray release];
-	elementArray = nil;
+	VVRELEASE(elementArray);
 	[super dealloc];
 }
 

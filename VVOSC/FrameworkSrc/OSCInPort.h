@@ -1,10 +1,3 @@
-//
-//  OSCInPort.h
-//  OSC
-//
-//  Created by bagheera on 9/20/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #if IPHONE
 #import <UIKit/UIKit.h>
@@ -34,9 +27,9 @@
 
 ///	OSCInPort handles everything needed to receive OSC data on a given port
 /*!
-Typically, instances of OSCInPort will be created by the OSCManager- you should never have to explicitly handle their creation or destruction.  each OSCInPort is running in its own separate thread- so make sure anything called as a result of received OSC input is thread-safe!
+Typically, instances of OSCInPort will be created by the OSCManager- you should never have to explicitly create or release an OSCInPort (or OSCOutPort).  each OSCInPort is running in its own separate thread- so make sure anything called as a result of received OSC input is thread-safe!
 
-When OSCInPort receives data, it gets parsed and passed to the in port's delegate as a series of OSCMessages consisting of an address path and an OSCValue.  By default, the the inport's delegate is the manager which created it- and by default, managers pass this data on to *their* delegates (your objects/app).
+When OSCInPort receives data, it gets parsed and passed to the in port's delegate as a series of OSCMessages consisting of an address path and an OSCValue.  By default, the inport's delegate is the manager which created it- and by default, managers pass this data on to *their* delegates (your objects/app).
 
 the documentation here only covers the basics, the header file for this class is small and heavily commented if you want to know more because you're heavily customizing OSCInPort.
 */

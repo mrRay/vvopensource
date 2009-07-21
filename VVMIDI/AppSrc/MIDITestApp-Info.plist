@@ -20,5 +20,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleGetInfoString</key>
+	<string>1.0.1</string>
 </dict>
 </plist>

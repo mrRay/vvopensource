@@ -1,10 +1,3 @@
-//
-//  VVMIDINode.m
-//  VVMIDI
-//
-//  Created by bagheera on 10/19/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "VVMIDINode.h"
 #import "VVMIDI.h"
@@ -20,7 +13,6 @@
 }
 
 - (id) initReceiverWithEndpoint:(MIDIEndpointRef)e	{
-	//NSLog(@"VVMIDINode:initReceiverWithEndpoint:");
 	if (e == NULL)	{
 		[self release];
 		return nil;
@@ -58,7 +50,6 @@
 	return self;
 }
 - (id) initReceiverWithName:(NSString *)n	{
-	//NSLog(@"VVMIDINode:initReceiverWithName: ... %@",n);
 	if (n == nil)	{
 		[self release];
 		return nil;
@@ -93,7 +84,6 @@
 	return self;
 }
 - (id) initSenderWithEndpoint:(MIDIEndpointRef)e	{
-	//NSLog(@"VVMIDINode:initSenderWithEndpoint:");
 	if (e == NULL)	{
 		[self release];
 		return NULL;
@@ -131,7 +121,6 @@
 	return self;
 }
 - (id) initSenderWithName:(NSString *)n	{
-	//NSLog(@"VVMIDINode:initSenderWithName: ... %@",n);
 	if (n == nil)	{
 		[self release];
 		return nil;
@@ -175,7 +164,6 @@
 }
 
 - (id) commonInit	{
-	//NSLog(@"VVMIDINode:commonInit:");
 	
 	pthread_mutexattr_t		attr;
 	
@@ -235,7 +223,6 @@
 }
 
 - (void) loadProperties	{
-	//NSLog(@"VVMIDINode:loadProperties:");
 	OSStatus		err = noErr;
 	CFStringRef		localName;
 	SInt32			uniqueID;
@@ -284,7 +271,6 @@
 }
 
 - (void) sendMsg:(VVMIDIMessage *)m	{
-	//NSLog(@"%s",__func__);
 	if ((enabled!=YES) || (sender!=YES) || (m==nil))
 		return;
 	//NSLog(@"\t\tsending %@ to %@",m,name);
@@ -362,40 +348,6 @@
 	BAIL:
 	
 	pthread_mutex_unlock(&sendingLock);
-	
-	/*
-	MIDIPacket		*newPacket = nil;
-	OSStatus		err = noErr;
-	
-	scratchStruct[0] = [m type] | [m channel];
-	scratchStruct[1] = [m data1];
-	scratchStruct[2] = [m data2];
-	
-	newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
-	if (newPacket == NULL)	{
-		NSLog(@"\t\terror adding new packet");
-		return;
-	}
-	currentPacket = newPacket;
-	
-	//	if this is a virtual sender, this node "owns" the source- i need to call 'MIDIReceived'
-	if (virtualSender)	{
-		err = MIDIReceived(endpointRef,packetList);
-		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDIReceived A",err);
-		}
-	}
-	//	if this isn't a virtual sender, something else is managing the source- call 'MIDISend'
-	else	{
-		err = MIDISend(portRef,endpointRef,packetList);
-		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDISend A",err);
-			return;
-		}
-	}
-	
-	currentPacket = MIDIPacketListInit(packetList);
-	*/
 }
 - (void) sendMsgs:(NSArray *)a	{
 	//NSLog(@"VVMIDINode:sendMsgs:");
@@ -484,7 +436,6 @@
 
 
 void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
-	//NSLog(@"myMIDIReadProc");
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
 	MIDIPacket				*packet = nil;
 	int						i;
@@ -620,7 +571,6 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 
 void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	//NSLog(@"VVMIDINode:myMIDINotificationProc: ... %@",[(VVMIDINode *)refCon name]);
 	
 	//	multiple messages may get sent out for a single action, so it makes sense to simply ignore everything but 'kMIDIMsgSetupChanged'
 	if (msg->messageID == kMIDIMsgSetupChanged)

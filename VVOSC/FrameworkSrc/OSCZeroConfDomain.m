@@ -1,10 +1,3 @@
-//
-//  OSCZeroConfDomain.m
-//  VVOSC
-//
-//  Created by bagheera on 12/9/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCZeroConfDomain.h"
 #import "OSCZeroConfManager.h"
@@ -28,17 +21,11 @@
 	if ((d == nil) || (m == nil))
 		goto BAIL;
 	
-	//pthread_rwlockattr_t		attr;
-	
 	if (self = [super init])	{
 		domainString = [d copy];
 		
 		servicesArray = [[MutLockArray arrayWithCapacity:0] retain];
 		domainManager = nil;
-		
-		//pthread_rwlockattr_init(&attr);
-		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-		//pthread_rwlock_init(&servicesLock, &attr);
 		
 		domainManager = m;
 		
@@ -56,20 +43,13 @@
 
 - (void) dealloc	{
 	domainManager = nil;
-	//pthread_rwlock_destroy(&servicesLock);
-	if (domainString != nil)	{
-		[domainString release];
-		domainString = nil;
-	}
+	VVRELEASE(domainString);
 	if (serviceBrowser != nil)	{
 		[serviceBrowser stop];
 		[serviceBrowser release];
 		serviceBrowser = nil;
 	}
-	if (servicesArray != nil)	{
-		[servicesArray release];
-		servicesArray = nil;
-	}
+	VVRELEASE(servicesArray);
 	[super dealloc];
 }
 

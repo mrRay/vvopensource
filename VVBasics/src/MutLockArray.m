@@ -11,7 +11,8 @@
 	- this class should work transparently with other instances of this class, so in
 		some places i have to check to see if i'm being passed an MutLockArray or
 		a normal NSMutableArray
-	- exception handlers go everywhere something's being released so i don't wind up with a loose lock
+	- exception handlers go everywhere something's being released so i don't wind up 
+		with a loose lock.  slowly comment them out.  ONLY put them in NON-locking methods.
 */
 
 
@@ -89,12 +90,11 @@
 	NSMutableArray		*returnMe = nil;
 	
 	pthread_rwlock_rdlock(&arrayLock);
-		returnMe = [array mutableCopy];
+		//returnMe = [array mutableCopy];
+		returnMe = [self createArrayCopy];
 	pthread_rwlock_unlock(&arrayLock);
 	
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 
 

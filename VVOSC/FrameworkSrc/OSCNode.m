@@ -1,10 +1,3 @@
-//
-//  OSCNode.m
-//  VVOSC
-//
-//  Created by bagheera on 2/22/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
 
 #import "OSCNode.h"
 #import "OSCStringAdditions.h"
@@ -53,7 +46,7 @@
 	return [returnMe autorelease];
 }
 - (id) initWithName:(NSString *)n	{
-	//NSLog(@"%s ... %@",__func__,n);
+	NSLog(@"%s ... %@",__func__,n);
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
@@ -75,7 +68,7 @@
 	return nil;
 }
 - (id) init	{
-	//NSLog(@"WARNING: %s",__func__);
+	NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
 		addressSpace = [OSCAddressSpace mainSpace];
 		deleted = NO;
@@ -97,7 +90,7 @@
 	if (delegateArray != nil)	{
 		[delegateArray wrlock];
 			[delegateArray makeObjectsPerformSelector:@selector(nodeDeleted)];
-			[delegateArray makeObjectsPerformSelector:@selector(retain)];
+			//[delegateArray makeObjectsPerformSelector:@selector(retain)];
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
 		[delegateArray release];
@@ -106,7 +99,7 @@
 	deleted = YES;
 }
 - (void) dealloc	{
-	//NSLog(@"%s ... %@",__func__,self);
+	NSLog(@"%s ... %@",__func__,self);
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
@@ -273,14 +266,14 @@
 		return;
 	//	if there's no delegate array, make one
 	if (delegateArray == nil)
-		delegateArray = [[MutLockArray alloc] initWithCapacity:0];
+		delegateArray = [[MutNRLockArray alloc] initWithCapacity:0];
 	//	first check to make sure that this delegate hasn't already been added
 	int			foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
 	if (foundIndex == NSNotFound)	{
 		//	if the delegate hasn't already been added, add it (this retains it)
 		[delegateArray lockAddObject:d];
 		//	release the object (so i have zero impact on its retain count)
-		[d autorelease];
+		//[d autorelease];
 	}
 }
 - (void) removeDelegate:(id)d	{
@@ -291,56 +284,26 @@
 	//	find the delegate in my delegate array
 	int			foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
 	//	if i could find it...
-	if (foundIndex != NSNotFound)	{
-		//	first, write lock
-		[delegateArray wrlock];
-			//	retain the object
-			[d retain];
-			//	remove the object from the delegate array
-			[delegateArray removeObjectAtIndex:foundIndex];
-		//	unlock
-		[delegateArray unlock];
-	}
+	if (foundIndex != NSNotFound)
+		[delegateArray lockRemoveObjectAtIndex:foundIndex];
 	else
 		NSLog(@"\terr: couldn't find delegate to remove- %s",__func__);
 }
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
-	if (fullName != nil)
-		[fullName release];
-	fullName = nil;
+	VVRELEASE(fullName);
 	if (parentNode == addressSpace)
 		fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
 	else if (parentNode != nil)
 		fullName = [[NSString stringWithFormat:@"%@/%@",[parentNode fullName],nodeName] retain];
 	
 	//	tell my delegates that there's been a name change
-	if ((delegateArray!=nil)&&([delegateArray count]>0))	{
-		[delegateArray rdlock];
-			@try	{
-				for (id delegate in [delegateArray array])	{
-					if ([delegate respondsToSelector:@selector(nodeNameChanged:)])
-						[delegate nodeNameChanged:self];
-				}
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\terr: exception %@ in part A of %s",err,__func__);
-			}
-		[delegateArray unlock];
-	}
+	if ((delegateArray!=nil)&&([delegateArray count]>0))
+		[delegateArray lockMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
 	//	tell all my sub-nodes that their name has also changed
-	if ((nodeContents!=nil)&&([nodeContents count]>0))	{
-		[nodeContents rdlock];
-			@try	{
-				for (OSCNode *nodePtr in [nodeContents array])
-					[nodePtr informDelegatesOfNameChange];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\terr: exception %@ in part B of %s",err,__func__);
-			}
-		[nodeContents unlock];
-	}
+	if ((nodeContents!=nil)&&([nodeContents count]>0))
+		[nodeContents lockMakeObjectsPerformSelector:@selector(informDelegatesOfNameChange)];
 }
 - (void) addDelegatesFromNode:(OSCNode *)n	{
 	//	put together an array of the delegates i'll be adding
@@ -381,22 +344,9 @@
 	if ((n!=nil)&&(nodeName!=nil)&&([n isEqualToString:nodeName]))
 		return;
 	
-	if (nodeName != nil)
-		[nodeName autorelease];
-	nodeName = nil;
+	VVAUTORELEASE(nodeName);
 	if (n != nil)
 		nodeName = [n retain];
-	
-	//if (fullName != nil)
-	//	[fullName autorelease];
-	//fullName = nil;
-	if (n != nil)	{
-		//if (parentNode == addressSpace)
-		//	fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
-		//else if (parentNode != nil)
-		//	fullName = [[NSString stringWithFormat:@"%@/%@",[parentNode fullName],nodeName] retain];
-		//NSLog(@"\tfullName = %@, %s",fullName,__func__);
-	}
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
 	if (parentNode != nil)	{
@@ -416,16 +366,6 @@
 - (void) setParentNode:(OSCNode *)n	{
 	//NSLog(@"%s",__func__);
 	parentNode = n;
-	
-	//if (fullName != nil)
-	//	[fullName autorelease];
-	//fullName = nil;
-	
-	//if (parentNode == addressSpace)
-	//	fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
-	//else if (parentNode != nil)
-	//	fullName = [[NSString stringWithFormat:@"%@/%@",[parentNode fullName],nodeName] retain];
-	//NSLog(@"\tfullName = %@, %s",fullName,__func__);
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
 	if (parentNode != nil)

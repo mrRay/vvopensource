@@ -1,10 +1,3 @@
-//
-//  OSCManager.h
-//  OSC
-//
-//  Created by bagheera on 9/20/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
 
 #if IPHONE
 #import <UIKit/UIKit.h>
@@ -15,11 +8,13 @@
 #import "OSCZeroConfManager.h"
 #import "OSCInPort.h"
 #import "OSCOutPort.h"
-#import <pthread.h>
 
 
 
 
+@protocol OSCDelegateProtocol
+- (void) receivedOSCMessage:(OSCMessage *)m;
+@end
 
 
 
@@ -44,19 +39,9 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 
 
-@protocol OSCDelegateProtocol
-- (void) receivedOSCMessage:(OSCMessage *)m;
-@end
-
-
-
-
 @interface OSCManager : NSObject {
-	id						inPortArray;	//	MutLockArray.  Array of OSCInPorts- do not access without using the lock!
-	id						outPortArray;	//	MutLockArray.  Array of OSCOutPorts- do not access without using the lock!
-	
-	//pthread_rwlock_t		inPortLock;		//	Used to protect inPortArray from being modified while iterated
-	//pthread_rwlock_t		outPortLock;	//	Used to protect outPortArray from being modified while iterated
+	MutLockArray			*inPortArray;	//	MutLockArray.  Array of OSCInPorts- do not access without using the lock!
+	MutLockArray			*outPortArray;	//	MutLockArray.  Array of OSCOutPorts- do not access without using the lock!
 	
 	id						delegate;		//!<If there's a delegate, it will be notified when OSC messages are received
 	
