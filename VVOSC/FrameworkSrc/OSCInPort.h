@@ -5,7 +5,8 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#import <VVBasics/VVBasics.h>
+//#import <VVBasics/VVBasics.h>
+#import <VVBasics/VVThreadLoop.h>
 //#import <sys/types.h>
 //#import <sys/socket.h>
 #import <netinet/in.h>
@@ -42,7 +43,7 @@ the documentation here only covers the basics, the header file for this class is
 	unsigned char			buf[8192];	//	the socket gets data and dumps it here immediately
 	
 	pthread_mutex_t			lock;
-	id						threadLooper;
+	VVThreadLoop			*threadLooper;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
 	NSNetService			*zeroConfDest;	//	bonjour service for publishing this input's address...only active if there's a portLabel!

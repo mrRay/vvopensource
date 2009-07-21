@@ -1,5 +1,9 @@
 
+#if IPHONE
+#import <UIKit/UIKit.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif
 #include <sys/time.h>
 
 

@@ -1,5 +1,10 @@
 
+#if IPHONE
+#import <UIKit/UIKit.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif
+
 #import "MutLockArray.h"
 #import "ObjectHolder.h"
 

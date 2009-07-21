@@ -4,7 +4,9 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import <VVBasics/VVBasics.h>
+//#import <VVBasics/VVBasics.h>
+#import <VVBasics/MutLockArray.h>
+#import <VVBasics/VVBasicMacros.h>
 #import <pthread.h>
 #import <sys/socket.h>
 #include <arpa/inet.h>

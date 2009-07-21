@@ -4,7 +4,6 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import <VVBasics/VVBasics.h>
 #import "OSCNode.h"
 
 

@@ -4,9 +4,9 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import <VVBasics/VVBasics.h>
 #import "OSCMessage.h"
-
+#import <VVBasics/MutNRLockArray.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
