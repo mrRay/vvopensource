@@ -63,12 +63,6 @@ VVOSC is an Objective-c framework for assembling, sending, and receiving OSC (Op
 </p>
 
 
-<big>Installation</big>
-<p>
-<A HREF="installation.html">How to Install and work with VVOSC</A>
-</p>
-
-
 <big>Sample code</big>
 
 <div style="width: 100%; border: 1px #000 solid; background-color: #F0F0F0; padding: 5px; margin: 5px; color: black; font-family: Courier; font-size: 10pt; font-style: normal;">
@@ -106,45 +100,4 @@ newMsg = [OSCMessage createWithAddress:@"/Address/Path/1"];<BR>
 
 
 \endhtmlonly
-*/
-
-
-
-
-
-
-/*!
-\page Installation Installing and Integrating VVOSC with your project
-
-\section INSTALL-APP If you just want the OSC test app:
--# open the VVOSC project in xcode
--# make "VVOSCTester" your active target, make sure the build mode is set to "Release"
--# build the project, the test app should be in "./build/Release".
-
-\section INSTALL-DEV If you want to use VVOSC to develop software...
-you're either going to be working with the framework or the SDK (you don't need both).  if you're only making mac applications, you only need the framework.  if you're going to be making iphone apps, you'll need the SDK.
-
-\section BUILD-FRAMEWORK Building the VVOSC framework (for OS X apps)
--# open the VVOSC project in xcode.  make "VVOSC Framework" your active target, make sure the build mode is set to "Release".
--# build the project.  "VVOSC.framework" should now exist in "./build/Release/".
-
-\section USE-FRAMEWORK Using the VVOSC framework
--# open your project file in xcode, drag the compiled "VVOSC.framework" into it.
--# from xcode's project menu, add a new "copy files" build phase to your target.
--# expand your target, drag "VVOSC.framework" (from your xcode project) into the copy files build phase you just created.
--# double-click on the copy files build phase you made.  under the "general" tab, select "Frameworks" from the destination pop-up button (you're trying to make sure "VVOSC.framework" gets copied into your application package's "Frameworks" folder).
--# use the framework in your source code with "#import <VVOSC/VVOSC.h>
-
-\section BUILD-SDK Building the VVOSC SDK (for iPhones)
--# if you haven't already, install Apple's iPhone SDK.  if you don't, this target won't compile!
--# open the VVOSC project in xcode.  select the "Compile VVOSC SDK" target, make sure the build mode is set to "Release".
--# build the project.  the SDK has now been compiled, and is in your build directory.
--# select the "Install VVOSC SDK" target and build it; this just copies the compiled SDK to "~/Library/SDKs/VVOSC/".
-
-\section USE-SDK Using the VVOSC SDK
--# open your project file in xcode.  double-click your application/target in the left-hand list of your project window (or select it and get its info).  click on the "build" tab.
--# find the "Additional SDKs" option, and add "$HOME/Library/SDKs/VVOSC/$(PLATFORM_NAME).sdk"
--# find the "Other Linker Flags" option, and add "-ObjC -lVVOSC".
--# use the SDK in your source code with "#import <VVOSC/VVOSC.h>"
-
 */

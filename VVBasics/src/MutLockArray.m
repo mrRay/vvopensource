@@ -517,6 +517,7 @@
 }
 
 
+/*
 - (void) makeCopyPerformSelector:(SEL)s	{
 	if (array != nil)	{
 		NSArray		*copy = [NSArray arrayWithArray:array];
@@ -575,6 +576,7 @@
 		}
 	}
 }
+*/
 
 
 - (void) sortUsingSelector:(SEL)s	{

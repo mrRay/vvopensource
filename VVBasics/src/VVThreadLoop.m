@@ -121,6 +121,9 @@
 	
 	}
 }
+- (float) interval	{
+	return interval;
+}
 - (void) setInterval:(float)i	{
 	interval = (i > MAXTIME) ? MAXTIME : i;
 }

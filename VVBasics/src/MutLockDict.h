@@ -4,16 +4,10 @@
 
 
 
-
-/*
-	this class exists because NSMutableDictionary is not thread-safe by default: if you 
-	call methods on it from two different threads at the same time, it will try to 
-	execute both, often crashing in the process.  this class has methods which 
-	allow you to work with a mutable dictionary in a transparent and thread-safe manner.
+///	MutLockDict is a thread-safe version of NSMutableDictionary.
+/*!
+This class exists because NSMutableDictionary is not thread-safe by default: if you call methods on it from two different threads at the same time, it will try to execute both, often crashing in the process.  This class has methods which allow you to work with a mutable dictionary in a transparent and thread-safe manner.
 */
-
-
-
 
 @interface MutLockDict : NSObject {
 	NSMutableDictionary		*dict;

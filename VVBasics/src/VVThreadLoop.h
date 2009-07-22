@@ -47,6 +47,7 @@
 - (void) threadProc;
 - (void) stop;
 - (void) stopAndWaitUntilDone;
+- (float) interval;
 - (void) setInterval:(float)i;
 - (BOOL) running;
 
