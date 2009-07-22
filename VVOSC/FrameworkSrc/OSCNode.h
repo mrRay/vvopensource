@@ -10,14 +10,6 @@
 
 
 
-@protocol OSCNodeDelegateProtocol
-- (void) receivedOSCMessage:(id)msg;
-- (void) nodeNameChanged:(id)node;
-- (void) nodeDeleted;
-@end
-
-
-
 
 typedef enum	{
 	OSCNodeTypeUnknown,

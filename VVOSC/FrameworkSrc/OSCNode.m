@@ -1,5 +1,6 @@
 
 #import "OSCNode.h"
+#import "VVOSC.h"
 #import "OSCStringAdditions.h"
 #import "OSCAddressSpace.h"
 

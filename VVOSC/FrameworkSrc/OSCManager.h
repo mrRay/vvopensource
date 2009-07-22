@@ -12,13 +12,6 @@
 
 
 
-@protocol OSCDelegateProtocol
-- (void) receivedOSCMessage:(OSCMessage *)m;
-@end
-
-
-
-
 ///	Main VVOSC class- manages in & out port creation, zero configuration networking (bonjour/zeroconf)
 /*!
 The OSCManager should be the "main" class that you're working with: it passes any received OSC data to its delegate (your app), creates/deletes inputs and outputs, automatically creates outputs for any osc destinations detected via bonjour, handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.

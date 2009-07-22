@@ -4,28 +4,7 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-
-
-
-
-typedef enum	{
-	OSCValInt = 1,
-	OSCValFloat = 2,
-	OSCValString = 3,
-	OSCValTimeTag = 4,
-	OSCValChar = 5,
-	OSCValColor = 6,
-	OSCValMIDI = 7,
-	OSCValBool = 8,
-	OSCValNil = 9,
-	OSCValInfinity = 10
-} OSCValueType;
-
-
-
-
-//	this macro just rounds a number up to the nearest multiple of 4
-#define ROUNDUP4(A) ((((A)%4)!=0) ? (4-((A)%4)+(A)) : ((A)+4))
+#import "OSCConstants.h"
 
 
 
@@ -35,8 +14,8 @@ typedef enum	{
 When you send or receive values via OSC, you'll be working with OSCValue objects in an OSCMessage.  Internaly, OSCValue isn't mutable, and it attempts to store its value in its native format (int for an int, float for a float) instead of relying on NSNumber.  The exceptions to this are NSColor/UIColor and NSString.  This object has to exist because there needs to be a place where data can be cleanly munged, and the standard NS* data types can't represent nil or infinity satisfactorily.
 */
 @interface OSCValue : NSObject <NSCopying> {
-	int			type;
-	void		*value;
+	OSCValueType	type;	//!<The type of the OSCValue
+	void			*value;
 }
 
 ///	Creates & returns an auto-released instance of OSCValue with an int
@@ -87,7 +66,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 ///	Returns a BOOL value corresponding to the instance's value
 - (BOOL) boolValue;
 
-@property (nonatomic, readonly) int type;
+@property (nonatomic, readonly) OSCValueType type;
 
 - (int) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d;

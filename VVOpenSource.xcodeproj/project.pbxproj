@@ -195,6 +195,7 @@
 		96BF10AF100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B0100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
+		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -335,14 +336,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
 		9691666A101765230078DF52 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9606B14C101761EF00CC50B7 /* VVFFGL */;
+			remoteGlobalIDString = 9606B14C101761EF00CC50B7;
 			remoteInfo = VVFFGL;
 		};
 		96A24EB8100F7E6A00F21F0F /* PBXContainerItemProxy */ = {
@@ -492,6 +493,7 @@
 		96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneDevSDK.sh; path = scripts/assembleIPhoneDevSDK.sh; sourceTree = "<group>"; };
 		96BF10C8100E98760079A2E6 /* assembleIPhoneSimSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneSimSDK.sh; path = scripts/assembleIPhoneSimSDK.sh; sourceTree = "<group>"; };
 		96BF10C9100E98930079A2E6 /* assembleMacSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleMacSDK.sh; path = scripts/assembleMacSDK.sh; sourceTree = "<group>"; };
+		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -715,6 +717,7 @@
 		9628D16F100E8A9000C3944E /* basic data types */ = {
 			isa = PBXGroup;
 			children = (
+				96C2F2131017815F004E19B0 /* OSCConstants.h */,
 				9628D103100E8A6700C3944E /* OSCStringAdditions.h */,
 				9628D108100E8A6700C3944E /* OSCStringAdditions.m */,
 				9628D110100E8A6700C3944E /* OSCValue.h */,
@@ -834,6 +837,7 @@
 				9628D127100E8A6700C3944E /* OSCValue.h in Headers */,
 				9628D129100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */,
+				96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,13 +9,6 @@
 
 
 
-@protocol OSCAddressSpaceDelegateProtocol
-	- (void) newNodeCreated:(OSCNode *)n;
-@end
-
-
-
-
 #define AddressSpaceUpdateMenus @"AddressSpaceUpdateMenus"
 
 

@@ -1,6 +1,6 @@
 
 
-
+#import "OSCConstants.h"
 
 #import "OSCValue.h"
 #import "OSCMessage.h"
@@ -17,6 +17,36 @@
 #import "OSCAddressSpace.h"
 
 #import "OSCStringAdditions.h"
+
+
+
+
+///	Delegates of OSCManager and OSCInPort should support this protocol
+/*!
+When instances of OSCInPort and OSCManager receive OSC data, they pass it to their delegate with this method.  If you want to receive OSC data, your OSCManager's delegate must respond to this method!
+*/
+@protocol OSCDelegateProtocol
+///	This method is called whenever your in port/manager receives an OSCMessage.
+- (void) receivedOSCMessage:(OSCMessage *)m;
+@end
+
+
+
+
+//	OSCAddressSpace delegate protocol
+@protocol OSCAddressSpaceDelegateProtocol
+- (void) newNodeCreated:(OSCNode *)n;
+@end
+
+
+
+
+//	OSCNodeDelegateProtocol short description
+@protocol OSCNodeDelegateProtocol
+- (void) receivedOSCMessage:(id)msg;
+- (void) nodeNameChanged:(id)node;
+- (void) nodeDeleted;
+@end
 
 
 

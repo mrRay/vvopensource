@@ -5,7 +5,6 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-//#import <VVBasics/VVBasics.h>
 #import <VVBasics/VVThreadLoop.h>
 //#import <sys/types.h>
 //#import <sys/socket.h>
@@ -15,13 +14,6 @@
 #import "OSCPacket.h"
 #import "OSCBundle.h"
 #import "OSCMessage.h"
-
-
-
-
-@protocol OSCInPortDelegateProtocol
-- (void) receivedOSCMessage:(OSCMessage *)m;
-@end
 
 
 
