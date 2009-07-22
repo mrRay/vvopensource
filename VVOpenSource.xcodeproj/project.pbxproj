@@ -611,8 +611,6 @@
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
-				9606B14E101761EF00CC50B7 /* VVFFGL-Info.plist */,
-				9606B15E1017621200CC50B7 /* FFGLTestApp-Info.plist */,
 			);
 			name = VVOpenSource;
 			sourceTree = "<group>";
@@ -641,6 +639,7 @@
 		9606B186101763A700CC50B7 /* VVFFGL framework */ = {
 			isa = PBXGroup;
 			children = (
+				9606B14E101761EF00CC50B7 /* VVFFGL-Info.plist */,
 				9606B184101763A200CC50B7 /* VVFFGL.h */,
 			);
 			name = "VVFFGL framework";
@@ -649,6 +648,7 @@
 		9606B191101763CC00CC50B7 /* VVFFGLTestApp */ = {
 			isa = PBXGroup;
 			children = (
+				9606B15E1017621200CC50B7 /* FFGLTestApp-Info.plist */,
 				9606B18D101763C900CC50B7 /* MainMenu.xib */,
 				9606B18E101763C900CC50B7 /* main.m */,
 			);
