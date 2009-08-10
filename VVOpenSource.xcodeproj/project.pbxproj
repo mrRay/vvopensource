@@ -18,6 +18,9 @@
 				96128621100F846C00C9C833 /* PBXTargetDependency */,
 				96128623100F847000C9C833 /* PBXTargetDependency */,
 				96128625100F847700C9C833 /* PBXTargetDependency */,
+				96AB37C71030503F005F2577 /* PBXTargetDependency */,
+				96AB37C910305042005F2577 /* PBXTargetDependency */,
+				96AB37CB10305046005F2577 /* PBXTargetDependency */,
 			);
 			name = "Build/Install VVOSC iPhone SDK";
 			productName = "Build/Install VVOSC iPhone SDK";
@@ -184,6 +187,57 @@
 		9656D928100F8A630064EEA6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		9656D92D100F8A780064EEA6 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		9666944410304CA100DB5FDF /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; };
+		9666944510304CA400DB5FDF /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; };
+		9666944610304CA700DB5FDF /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; };
+		9666944710304CB000DB5FDF /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA947100E8834007E6C25 /* MutLockArray.h */; };
+		9666944810304CB100DB5FDF /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94C100E8834007E6C25 /* MutLockArray.m */; };
+		9666944910304CB100DB5FDF /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA949100E8834007E6C25 /* MutLockDict.h */; };
+		9666944A10304CB200DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
+		9666944B10304CB300DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
+		9666944C10304CB300DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
+		9666944D10304CB400DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
+		9666944E10304CB400DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
+		9666944F10304CB500DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
+		9666945010304CB600DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
+		9666945110304CB600DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
+		9666945210304CB800DB5FDF /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; };
+		9666945310304CB900DB5FDF /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; };
+		9666945410304CBA00DB5FDF /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
+		9666945510304CBA00DB5FDF /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94B100E8834007E6C25 /* VVThreadLoop.h */; };
+		9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94A100E8834007E6C25 /* VVThreadLoop.m */; };
+		9666945710304CC000DB5FDF /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA947100E8834007E6C25 /* MutLockArray.h */; };
+		9666945810304CC100DB5FDF /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94C100E8834007E6C25 /* MutLockArray.m */; };
+		9666945910304CC100DB5FDF /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA949100E8834007E6C25 /* MutLockDict.h */; };
+		9666945A10304CC200DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
+		9666945B10304CC200DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
+		9666945C10304CC300DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
+		9666945D10304CC400DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
+		9666945E10304CC400DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
+		9666945F10304CC500DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
+		9666946010304CC500DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
+		9666946110304CC600DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
+		9666946210304CC700DB5FDF /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; };
+		9666946310304CC700DB5FDF /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; };
+		9666946410304CC800DB5FDF /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
+		9666946510304CC800DB5FDF /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94B100E8834007E6C25 /* VVThreadLoop.h */; };
+		9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94A100E8834007E6C25 /* VVThreadLoop.m */; };
+		9666946710304CCD00DB5FDF /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA947100E8834007E6C25 /* MutLockArray.h */; };
+		9666946810304CCD00DB5FDF /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94C100E8834007E6C25 /* MutLockArray.m */; };
+		9666946910304CCE00DB5FDF /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA949100E8834007E6C25 /* MutLockDict.h */; };
+		9666946A10304CCE00DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
+		9666946B10304CCF00DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
+		9666946C10304CD000DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
+		9666946D10304CD100DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
+		9666946E10304CD100DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
+		9666946F10304CD200DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
+		9666947010304CD200DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
+		9666947110304CD200DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
+		9666947210304CD300DB5FDF /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; };
+		9666947310304CD400DB5FDF /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; };
+		9666947410304CD500DB5FDF /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
+		9666947510304CD600DB5FDF /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94B100E8834007E6C25 /* VVThreadLoop.h */; };
+		9666947610304CD600DB5FDF /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94A100E8834007E6C25 /* VVThreadLoop.m */; };
 		96765969100F818900E02974 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9676596A100F818F00E02974 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
@@ -369,6 +423,27 @@
 			remoteGlobalIDString = 9628D0C4100E89F700C3944E;
 			remoteInfo = VVOSC;
 		};
+		96AB37C61030503F005F2577 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9666941110304C0500DB5FDF /* VVBasics-iPhone sim SDK */;
+			remoteInfo = "VVBasics-iPhone sim SDK";
+		};
+		96AB37C810305042005F2577 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9666942610304C1F00DB5FDF /* VVBasics-iPhone dev SDK */;
+			remoteInfo = "VVBasics-iPhone dev SDK";
+		};
+		96AB37CA10305046005F2577 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9666943710304C2E00DB5FDF /* VVBasics-os x SDK */;
+			remoteInfo = "VVBasics-os x SDK";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -490,6 +565,9 @@
 		9656D917100F8A0E0064EEA6 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVMIDI/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9656D918100F8A0E0064EEA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = VVMIDI/AppSrc/AppController.m; sourceTree = "<group>"; };
 		966423A3100E9CAF00630C6D /* installSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = installSDK.sh; path = scripts/installSDK.sh; sourceTree = "<group>"; };
+		9666941210304C0500DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9666942710304C1F00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9666943810304C2E00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneDevSDK.sh; path = scripts/assembleIPhoneDevSDK.sh; sourceTree = "<group>"; };
@@ -584,6 +662,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9666941010304C0500DB5FDF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666942510304C1F00DB5FDF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666943610304C2E00DB5FDF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -600,6 +699,9 @@
 				9656D900100F89BA0064EEA6 /* MIDITestApp.app */,
 				9606B14D101761EF00CC50B7 /* VVFFGL.framework */,
 				9606B15C1017621200CC50B7 /* FFGLTestApp.app */,
+				9666941210304C0500DB5FDF /* libVVBasics.a */,
+				9666942710304C1F00DB5FDF /* libVVBasics.a */,
+				9666943810304C2E00DB5FDF /* libVVBasics.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -866,6 +968,7 @@
 				9628D13E100E8A6700C3944E /* OSCValue.h in Headers */,
 				9628D140100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10AF100E95330079A2E6 /* VVOSC.h in Headers */,
+				9666944410304CA100DB5FDF /* OSCConstants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,6 +989,7 @@
 				9628D155100E8A6700C3944E /* OSCValue.h in Headers */,
 				9628D157100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10B0100E95330079A2E6 /* VVOSC.h in Headers */,
+				9666944510304CA400DB5FDF /* OSCConstants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +1010,55 @@
 				9628D16C100E8A6700C3944E /* OSCValue.h in Headers */,
 				9628D16E100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */,
+				9666944610304CA700DB5FDF /* OSCConstants.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666940E10304C0500DB5FDF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666944710304CB000DB5FDF /* MutLockArray.h in Headers */,
+				9666944910304CB100DB5FDF /* MutLockDict.h in Headers */,
+				9666944B10304CB300DB5FDF /* MutNRLockArray.h in Headers */,
+				9666944D10304CB400DB5FDF /* NamedMutLockArray.h in Headers */,
+				9666944F10304CB500DB5FDF /* ObjectHolder.h in Headers */,
+				9666945110304CB600DB5FDF /* VVBasicMacros.h in Headers */,
+				9666945210304CB800DB5FDF /* VVBasics.h in Headers */,
+				9666945310304CB900DB5FDF /* VVStopwatch.h in Headers */,
+				9666945510304CBA00DB5FDF /* VVThreadLoop.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666942310304C1F00DB5FDF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666945710304CC000DB5FDF /* MutLockArray.h in Headers */,
+				9666945910304CC100DB5FDF /* MutLockDict.h in Headers */,
+				9666945B10304CC200DB5FDF /* MutNRLockArray.h in Headers */,
+				9666945D10304CC400DB5FDF /* NamedMutLockArray.h in Headers */,
+				9666945F10304CC500DB5FDF /* ObjectHolder.h in Headers */,
+				9666946110304CC600DB5FDF /* VVBasicMacros.h in Headers */,
+				9666946210304CC700DB5FDF /* VVBasics.h in Headers */,
+				9666946310304CC700DB5FDF /* VVStopwatch.h in Headers */,
+				9666946510304CC800DB5FDF /* VVThreadLoop.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666943410304C2E00DB5FDF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666946710304CCD00DB5FDF /* MutLockArray.h in Headers */,
+				9666946910304CCE00DB5FDF /* MutLockDict.h in Headers */,
+				9666946B10304CCF00DB5FDF /* MutNRLockArray.h in Headers */,
+				9666946D10304CD100DB5FDF /* NamedMutLockArray.h in Headers */,
+				9666946F10304CD200DB5FDF /* ObjectHolder.h in Headers */,
+				9666947110304CD200DB5FDF /* VVBasicMacros.h in Headers */,
+				9666947210304CD300DB5FDF /* VVBasics.h in Headers */,
+				9666947310304CD400DB5FDF /* VVStopwatch.h in Headers */,
+				9666947510304CD600DB5FDF /* VVThreadLoop.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1104,6 +1257,60 @@
 			productReference = 9656D900100F89BA0064EEA6 /* MIDITestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9666941110304C0500DB5FDF /* VVBasics-iPhone sim SDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9666947710304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-iPhone sim SDK" */;
+			buildPhases = (
+				9666940E10304C0500DB5FDF /* Headers */,
+				9666940F10304C0500DB5FDF /* Sources */,
+				9666941010304C0500DB5FDF /* Frameworks */,
+				96AB37AC10304FAB005F2577 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "VVBasics-iPhone sim SDK";
+			productName = "VVBasics-iPhone sim SDK";
+			productReference = 9666941210304C0500DB5FDF /* libVVBasics.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9666942610304C1F00DB5FDF /* VVBasics-iPhone dev SDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9666947810304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-iPhone dev SDK" */;
+			buildPhases = (
+				9666942310304C1F00DB5FDF /* Headers */,
+				9666942410304C1F00DB5FDF /* Sources */,
+				9666942510304C1F00DB5FDF /* Frameworks */,
+				96AB37AE10304FB7005F2577 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "VVBasics-iPhone dev SDK";
+			productName = "VVBasics-iPhone dev SDK";
+			productReference = 9666942710304C1F00DB5FDF /* libVVBasics.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9666943710304C2E00DB5FDF /* VVBasics-os x SDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9666947910304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-os x SDK" */;
+			buildPhases = (
+				9666943410304C2E00DB5FDF /* Headers */,
+				9666943510304C2E00DB5FDF /* Sources */,
+				9666943610304C2E00DB5FDF /* Frameworks */,
+				96AB37B010304FBC005F2577 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "VVBasics-os x SDK";
+			productName = "VVBasics-os x SDK";
+			productReference = 9666943810304C2E00DB5FDF /* libVVBasics.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1129,6 +1336,9 @@
 				9628D0D8100E8A1600C3944E /* VVOSC-iPhone sim SDK */,
 				9628D0E1100E8A1F00C3944E /* VVOSC-iPhone dev SDK */,
 				9628D0EA100E8A2C00C3944E /* VVOSC-os x SDK */,
+				9666941110304C0500DB5FDF /* VVBasics-iPhone sim SDK */,
+				9666942610304C1F00DB5FDF /* VVBasics-iPhone dev SDK */,
+				9666943710304C2E00DB5FDF /* VVBasics-os x SDK */,
 			);
 		};
 /* End PBXProject section */
@@ -1189,6 +1399,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		96AB37AC10304FAB005F2577 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./scripts/assembleIPhoneSimSDK.sh\n./scripts/installSDK.sh";
+		};
+		96AB37AE10304FB7005F2577 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./scripts/assembleIPhoneDevSDK.sh\n./scripts/installSDK.sh";
+		};
+		96AB37B010304FBC005F2577 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./scripts/assembleMacSDK.sh\n./scripts/installSDK.sh";
+		};
 		96E027C5100EA16A006621B1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1366,6 +1615,48 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9666940F10304C0500DB5FDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666944810304CB100DB5FDF /* MutLockArray.m in Sources */,
+				9666944A10304CB200DB5FDF /* MutLockDict.m in Sources */,
+				9666944C10304CB300DB5FDF /* MutNRLockArray.m in Sources */,
+				9666944E10304CB400DB5FDF /* NamedMutLockArray.m in Sources */,
+				9666945010304CB600DB5FDF /* ObjectHolder.m in Sources */,
+				9666945410304CBA00DB5FDF /* VVStopwatch.m in Sources */,
+				9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666942410304C1F00DB5FDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666945810304CC100DB5FDF /* MutLockArray.m in Sources */,
+				9666945A10304CC200DB5FDF /* MutLockDict.m in Sources */,
+				9666945C10304CC300DB5FDF /* MutNRLockArray.m in Sources */,
+				9666945E10304CC400DB5FDF /* NamedMutLockArray.m in Sources */,
+				9666946010304CC500DB5FDF /* ObjectHolder.m in Sources */,
+				9666946410304CC800DB5FDF /* VVStopwatch.m in Sources */,
+				9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9666943510304C2E00DB5FDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9666946810304CCD00DB5FDF /* MutLockArray.m in Sources */,
+				9666946A10304CCE00DB5FDF /* MutLockDict.m in Sources */,
+				9666946C10304CD000DB5FDF /* MutNRLockArray.m in Sources */,
+				9666946E10304CD100DB5FDF /* NamedMutLockArray.m in Sources */,
+				9666947010304CD200DB5FDF /* ObjectHolder.m in Sources */,
+				9666947410304CD500DB5FDF /* VVStopwatch.m in Sources */,
+				9666947610304CD600DB5FDF /* VVThreadLoop.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1488,6 +1779,21 @@
 			isa = PBXTargetDependency;
 			target = 9628D0C4100E89F700C3944E /* VVOSC */;
 			targetProxy = 96A24ECD100F7EEE00F21F0F /* PBXContainerItemProxy */;
+		};
+		96AB37C71030503F005F2577 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9666941110304C0500DB5FDF /* VVBasics-iPhone sim SDK */;
+			targetProxy = 96AB37C61030503F005F2577 /* PBXContainerItemProxy */;
+		};
+		96AB37C910305042005F2577 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9666942610304C1F00DB5FDF /* VVBasics-iPhone dev SDK */;
+			targetProxy = 96AB37C810305042005F2577 /* PBXContainerItemProxy */;
+		};
+		96AB37CB10305046005F2577 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9666943710304C2E00DB5FDF /* VVBasics-os x SDK */;
+			targetProxy = 96AB37CA10305046005F2577 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1956,6 +2262,116 @@
 			};
 			name = Release;
 		};
+		9666941F10304C0700DB5FDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "-DIPHONE";
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+				SDKROOT = iphonesimulator3.0;
+			};
+			name = Debug;
+		};
+		9666942010304C0700DB5FDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "-DIPHONE";
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+				SDKROOT = iphonesimulator3.0;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		9666943010304C2000DB5FDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "-DIPHONE";
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+				SDKROOT = iphoneos3.0;
+			};
+			name = Debug;
+		};
+		9666943110304C2000DB5FDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "-DIPHONE";
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+				SDKROOT = iphoneos3.0;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		9666944110304C2F00DB5FDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+			};
+			name = Debug;
+		};
+		9666944210304C2F00DB5FDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = VVBasics;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		96677EDE100F7CF300163134 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2084,6 +2500,33 @@
 			buildConfigurations = (
 				9656D905100F89BA0064EEA6 /* Debug */,
 				9656D906100F89BA0064EEA6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9666947710304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-iPhone sim SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9666941F10304C0700DB5FDF /* Debug */,
+				9666942010304C0700DB5FDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9666947810304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-iPhone dev SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9666943010304C2000DB5FDF /* Debug */,
+				9666943110304C2000DB5FDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9666947910304D3300DB5FDF /* Build configuration list for PBXNativeTarget "VVBasics-os x SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9666944110304C2F00DB5FDF /* Debug */,
+				9666944210304C2F00DB5FDF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
