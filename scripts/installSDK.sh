@@ -1,3 +1,7 @@
+if (test ! -e "${HOME}/Library/SDKs/${PRODUCT_NAME}")
+then
+	mkdir -p "${HOME}/Library/SDKs/${PRODUCT_NAME}"
+fi
 
 #	remove the existing SDK (if there is one)
 rm -rf "${HOME}/Library/SDKs/${PRODUCT_NAME}"
