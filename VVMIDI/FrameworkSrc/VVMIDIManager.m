@@ -18,6 +18,7 @@
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
 	pthread_mutex_init(&arrayLock,PTHREAD_MUTEX_NORMAL);
+	pthread_mutexattr_destroy(&attr);
 	
 	delegate = nil;
 	virtualSource = nil;

@@ -35,7 +35,7 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes;
 - (NSUInteger) indexOfObject:(id)o;
 - (BOOL) containsIdenticalPtr:(id)o;
-- (int) indexOfIdenticalPtr:(id)o;
+- (long) indexOfIdenticalPtr:(id)o;
 - (void) removeIdenticalPtr:(id)o;
 
 @end

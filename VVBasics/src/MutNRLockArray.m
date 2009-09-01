@@ -83,12 +83,12 @@
 	return [objHolder object];
 }
 - (void) removeObject:(id)o	{
-	int			indexOfObject = [self indexOfObject:o];
+	long		indexOfObject = [self indexOfObject:o];
 	if ((indexOfObject!=NSNotFound) && (indexOfObject>=0))
 		[self removeObjectAtIndex:indexOfObject];
 }
 - (BOOL) containsObject:(id)o	{
-	int		foundIndex = [self indexOfObject:o];
+	long		foundIndex = [self indexOfObject:o];
 	if (foundIndex == NSNotFound)
 		return NO;
 	return YES;
@@ -117,7 +117,7 @@
 	if (o == nil)
 		return NSNotFound;
 	int				tmpIndex = 0;
-	int				foundIndex = -1;
+	long			foundIndex = -1;
 	NSEnumerator	*objIt;
 	ObjectHolder	*objPtr;
 	id				anObj;
@@ -138,16 +138,16 @@
 	return foundIndex;
 }
 - (BOOL) containsIdenticalPtr:(id)o	{
-	int		foundIndex = [self indexOfIdenticalPtr:o];
+	long		foundIndex = [self indexOfIdenticalPtr:o];
 	if (foundIndex == NSNotFound)
 		return NO;
 	return YES;
 }
-- (int) indexOfIdenticalPtr:(id)o	{
+- (long) indexOfIdenticalPtr:(id)o	{
 	if (o == nil)
 		return NSNotFound;
 	int				tmpIndex = 0;
-	int				foundIndex = -1;
+	long			foundIndex = -1;
 	NSEnumerator	*objIt;
 	ObjectHolder	*objPtr;
 	id				anObj;
@@ -168,7 +168,7 @@
 	return foundIndex;
 }
 - (void) removeIdenticalPtr:(id)o	{
-	int		foundIndex = [self indexOfIdenticalPtr:o];
+	long		foundIndex = [self indexOfIdenticalPtr:o];
 	if (foundIndex == NSNotFound)
 		return;
 	[self removeObjectAtIndex:foundIndex];

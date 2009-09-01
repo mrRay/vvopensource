@@ -36,6 +36,7 @@
 		pthread_mutexattr_init(&attr);
 		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
 		pthread_mutex_init(&lock, &attr);
+		pthread_mutexattr_destroy(&attr);
 		
 		threadLooper = [[VVThreadLoop alloc]
 			initWithTimeInterval:0.03

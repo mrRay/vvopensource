@@ -58,6 +58,8 @@
 	
 	running = YES;
 	bail = NO;
+	if (![NSThread setThreadPriority:1.0])
+		NSLog(@"\terror setting thread priority to 1.0");
 	
 	while ((running) && (!bail))	{
 		//NSLog(@"\t\tproc start");
@@ -78,6 +80,7 @@
 		//@catch (NSException *err)	{
 		//	NSLog(@"%s caught exception, %@",__func__,err);
 		//}
+		
 		++runLoopCount;
 		if (runLoopCount > 128)	{
 			[pool release];

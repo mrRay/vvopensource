@@ -13,7 +13,7 @@
 }
 
 - (id) initReceiverWithEndpoint:(MIDIEndpointRef)e	{
-	if (e == NULL)	{
+	if (!e)	{
 		[self release];
 		return nil;
 	}
@@ -84,7 +84,7 @@
 	return self;
 }
 - (id) initSenderWithEndpoint:(MIDIEndpointRef)e	{
-	if (e == NULL)	{
+	if (!e)	{
 		[self release];
 		return NULL;
 	}
@@ -171,10 +171,10 @@
 	
 	self = [super init];
 	//	load up some null values so if anything goes wrong, i can know about it
-	endpointRef = NULL;
+	endpointRef = 0;
 	properties = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
-	clientRef = NULL;
-	portRef = NULL;
+	clientRef = 0;
+	portRef = 0;
 	name = nil;
 	delegate = nil;
 	sender = NO;
@@ -186,6 +186,7 @@
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
 	pthread_mutex_init(&sendingLock,&attr);
+	pthread_mutexattr_destroy(&attr);
 	packetList = NULL;
 	currentPacket = NULL;
 	return self;
@@ -197,9 +198,9 @@
 		properties = nil;
 	}
 	
-	if (clientRef != NULL)	{
+	if (!clientRef)	{
 		MIDIClientDispose(clientRef);
-		clientRef = NULL;
+		clientRef = 0;
 	}
 	
 	if (name != nil)	{

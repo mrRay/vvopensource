@@ -164,7 +164,7 @@
 	//NSLog(@"%s ... %@",__func__,n);
 	if ((n == nil)||(deleted))
 		return;
-	int		indexOfIdenticalPtr = NSNotFound;
+	long		indexOfIdenticalPtr = NSNotFound;
 	[n retain];
 	[nodeContents wrlock];
 		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:n];
@@ -269,7 +269,7 @@
 	if (delegateArray == nil)
 		delegateArray = [[MutNRLockArray alloc] initWithCapacity:0];
 	//	first check to make sure that this delegate hasn't already been added
-	int			foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
+	long		foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
 	if (foundIndex == NSNotFound)	{
 		//	if the delegate hasn't already been added, add it (this retains it)
 		[delegateArray lockAddObject:d];
@@ -283,7 +283,7 @@
 		return;
 	
 	//	find the delegate in my delegate array
-	int			foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
+	long		foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
 	//	if i could find it...
 	if (foundIndex != NSNotFound)
 		[delegateArray lockRemoveObjectAtIndex:foundIndex];

@@ -45,6 +45,7 @@
 		pthread_rwlockattr_init(&attr);
 		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 		pthread_rwlock_init(&arrayLock, &attr);
+		pthread_rwlockattr_destroy(&attr);
 		
 		return self;
 	}
@@ -430,7 +431,7 @@
 	return returnMe;
 }
 - (int) indexOfIdenticalPtr:(id)o	{
-	int					delegateIndex = NSNotFound;
+	long		delegateIndex = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
 		NSEnumerator		*it = [array objectEnumerator];
@@ -447,7 +448,7 @@
 	return delegateIndex;
 }
 - (int) lockIndexOfIdenticalPtr:(id)o	{
-	int			returnMe = NSNotFound;
+	long		returnMe = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
 		pthread_rwlock_rdlock(&arrayLock);
@@ -459,7 +460,7 @@
 }
 - (void) removeIdenticalPtr:(id)o	{
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
-		int					delegateIndex = NSNotFound;
+		long				delegateIndex = NSNotFound;
 		NSEnumerator		*it = [array objectEnumerator];
 		id					anObj;
 		int					indexCount = 0;
@@ -517,9 +518,9 @@
 }
 
 
-/*
+
 - (void) makeCopyPerformSelector:(SEL)s	{
-	if (array != nil)	{
+	if ((array != nil) && ([array count]>0))	{
 		NSArray		*copy = [NSArray arrayWithArray:array];
 		if (copy != nil)	{
 			@try	{
@@ -532,7 +533,7 @@
 	}
 }
 - (void) lockMakeCopyPerformSelector:(SEL)s	{
-	if (array != nil)	{
+	if ((array != nil) && ([array count]>0))	{
 		pthread_rwlock_rdlock(&arrayLock);
 		NSArray		*copy = [NSArray arrayWithArray:array];
 		pthread_rwlock_unlock(&arrayLock);
@@ -548,7 +549,7 @@
 	}
 }
 - (void) makeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if (array != nil)	{
+	if ((array != nil) && ([array count]>0))	{
 		NSArray		*copy = [NSArray arrayWithArray:array];
 		if (copy != nil)	{
 			@try	{
@@ -561,7 +562,7 @@
 	}
 }
 - (void) lockMakeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if (array != nil)	{
+	if ((array != nil) && ([array count]>0))	{
 		pthread_rwlock_rdlock(&arrayLock);
 		NSArray		*copy = [NSArray arrayWithArray:array];
 		pthread_rwlock_unlock(&arrayLock);
@@ -576,7 +577,7 @@
 		}
 	}
 }
-*/
+
 
 
 - (void) sortUsingSelector:(SEL)s	{

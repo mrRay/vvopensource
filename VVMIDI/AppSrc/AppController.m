@@ -69,7 +69,7 @@
 		[midiManager sendMsg:msg];
 }
 
-- (int) numberOfRowsInTableView:(NSTableView *)tv	{
+- (NSInteger) numberOfRowsInTableView:(NSTableView *)tv	{
 	if (tv == sourcesTableView)
 		return [[midiManager sourceArray] count];
 	else if (tv == receiversTableView)
@@ -77,7 +77,7 @@
 	
 	return 0;
 }
-- (id) tableView:(NSTableView *)tv objectValueForTableColumn:(NSTableColumn *)tc row:(int)row	{
+- (id) tableView:(NSTableView *)tv objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)row	{
 	if (tv == sourcesTableView)	{
 		//NSLog(@"\t\tsources");
 		id			midiSource = [[midiManager sourceArray] objectAtIndex:row];
@@ -115,7 +115,7 @@
 	
 	return nil;
 }
-- (void) tableView:(NSTableView *)tv setObjectValue:(id)v forTableColumn:(NSTableColumn *)tc row:(int)row	{
+- (void) tableView:(NSTableView *)tv setObjectValue:(id)v forTableColumn:(NSTableColumn *)tc row:(NSInteger)row	{
 	//NSLog(@"AppController:tableView:setObjectValue:forTableColun:row:");
 	if (tv == sourcesTableView)	{
 		//NSLog(@"\t\tsources");

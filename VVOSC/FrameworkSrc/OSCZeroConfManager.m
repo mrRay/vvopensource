@@ -19,6 +19,7 @@
 		pthread_rwlockattr_init(&attr);
 		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 		pthread_rwlock_init(&domainLock, &attr);
+		pthread_rwlockattr_destroy(&attr);
 		
 		domainBrowser = [[NSNetServiceBrowser alloc] init];
 		[domainBrowser setDelegate:self];
