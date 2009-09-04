@@ -123,6 +123,10 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a write-lock, then calls "removeIdenticalPtr:" on self; threadsafe.
 - (void) lockRemoveIdenticalPtr:(id)o;
 
+//	Calls "filteredArrayUsingPredicate:" on my array; not threadsafe
+- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate;
+//	Establishes a read-lock, then calls "filteredArrayUsingPredicate:" on self; threadsafe
+- (NSArray *) lockFilteredArrayUsingPredicate:(NSPredicate *)predicate;
 
 ///	Calls "makeObjectsPerformSelector:" on my array; not threadsafe.
 - (void) makeObjectsPerformSelector:(SEL)s;
@@ -132,7 +136,6 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 - (void) makeObjectsPerformSelector:(SEL)s withObject:(id)o;
 ///	Establishes a read-lock, then calls "makeObjectsPerformSelector:withObject:" on self; threadsafe.
 - (void) lockMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
-
 
 
 - (void) makeCopyPerformSelector:(SEL)s;

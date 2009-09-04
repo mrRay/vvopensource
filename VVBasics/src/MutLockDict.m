@@ -164,6 +164,20 @@
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
-
+- (NSArray *) allValues	{
+	if ((dict!=nil)&&([dict count]>0))	{
+		id			returnMe = nil;
+		returnMe = [dict allValues];
+		return returnMe;
+	}
+	return nil;
+}
+- (NSArray *) lockAllValues	{
+	id		returnMe = nil;
+	pthread_rwlock_rdlock(&dictLock);
+		returnMe = [dict allValues];
+	pthread_rwlock_unlock(&dictLock);
+	return returnMe;
+}
 
 @end

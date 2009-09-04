@@ -482,6 +482,26 @@
 	}
 }
 
+- (NSArray *)filteredArrayUsingPredicate:(NSPredicate *)predicate	{
+	if ((array!=nil) && (predicate!=nil) && ([array count]>0))	{
+		return [array filteredArrayUsingPredicate: predicate];
+	}
+	
+	return nil;
+}
+
+- (NSArray *) lockFilteredArrayUsingPredicate:(NSPredicate *)predicate	{
+	NSArray	*returnMe = nil;
+	
+	if ((array!=nil) && (predicate!=nil) && ([array count]>0))	{
+		pthread_rwlock_rdlock(&arrayLock);
+			returnMe = [self filteredArrayUsingPredicate:predicate];
+		pthread_rwlock_unlock(&arrayLock);
+	}	
+	
+	return returnMe;
+}
+
 - (void) makeObjectsPerformSelector:(SEL)s	{
 	if (array != nil)	{
 		@try	{
