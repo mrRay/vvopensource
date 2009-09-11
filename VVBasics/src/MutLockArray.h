@@ -138,10 +138,13 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 - (void) lockMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
 
 
+
+/*
 - (void) makeCopyPerformSelector:(SEL)s;
 - (void) lockMakeCopyPerformSelector:(SEL)s;
 - (void) makeCopyPerformSelector:(SEL)s withObject:(id)o;
 - (void) lockMakeCopyPerformSelector:(SEL)s withObject:(id)o;
+*/
 
 
 

@@ -8,27 +8,32 @@
 
 
 - (id) init	{
-	pthread_mutexattr_t		attr;
-	
-	self = [super init];
+	if (self = [super init])	{
+		[self generalInit];
+		return self;
+	}
+	[self release];
+	return nil;
+}
+- (void) generalInit	{
+	pthread_mutexattr_t		attr1;
 	
 	sourceArray = [[NSMutableArray arrayWithCapacity:0] retain];
 	destArray = [[NSMutableArray arrayWithCapacity:0] retain];
 	
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
-	pthread_mutex_init(&arrayLock,PTHREAD_MUTEX_NORMAL);
-	pthread_mutexattr_destroy(&attr);
+	pthread_mutexattr_init(&attr1);
+	pthread_mutexattr_settype(&attr1,PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&arrayLock,&attr1);
+	//pthread_mutexattr_destroy(&attr);
 	
 	delegate = nil;
 	virtualSource = nil;
 	virtualDest = nil;
+	
 	//	create a virtual destination other apps can send to
 	[self createVirtualNodes];
 	//	trigger the setup changed method
 	[self setupChanged];
-	
-	return self;
 }
 
 - (void) dealloc	{

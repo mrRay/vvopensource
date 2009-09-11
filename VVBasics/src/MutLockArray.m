@@ -538,6 +538,9 @@
 }
 
 
+/*
+
+these are commented out because the code in these methods is sloppy
 
 - (void) makeCopyPerformSelector:(SEL)s	{
 	if ((array != nil) && ([array count]>0))	{
@@ -597,6 +600,7 @@
 		}
 	}
 }
+*/
 
 
 

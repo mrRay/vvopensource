@@ -17,6 +17,8 @@
 	id					delegate;
 }
 
+- (void) generalInit;
+
 - (void) loadMIDIInputSources;
 - (void) loadMIDIOutputDestinations;
 - (void) createVirtualNodes;	//	subclass around this to create a virtual destination with a different name
