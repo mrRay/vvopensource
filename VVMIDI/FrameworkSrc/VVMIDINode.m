@@ -198,7 +198,7 @@
 		properties = nil;
 	}
 	
-	if (!clientRef)	{
+	if (clientRef)	{
 		MIDIClientDispose(clientRef);
 		clientRef = 0;
 	}
