@@ -47,7 +47,7 @@
 	return [returnMe autorelease];
 }
 - (id) initWithName:(NSString *)n	{
-	NSLog(@"%s ... %@",__func__,n);
+	//NSLog(@"%s ... %@",__func__,n);
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
@@ -100,7 +100,7 @@
 	deleted = YES;
 }
 - (void) dealloc	{
-	NSLog(@"%s ... %@",__func__,self);
+	//NSLog(@"%s ... %@",__func__,self);
 	if (!deleted)
 		[self prepareToBeDeleted];
 	

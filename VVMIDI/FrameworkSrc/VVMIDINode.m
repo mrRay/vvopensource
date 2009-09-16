@@ -494,16 +494,20 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIUndefinedCommon2Val:
 							case VVMIDITuneRequestVal:
 								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
-								[msgs addObject:newMsg];
-								msgElementCount = 0;
+								if (newMsg != nil)	{
+									[msgs addObject:newMsg];
+									msgElementCount = 0;
+								}
 								break;
 							case VVMIDIEndSysexDumpVal:
+								newMsg = [VVMIDIMessage createWithSysexArray:sysex];
+								if (newMsg != nil)	{
+									//[sysex addObject:[NSNumber numberWithInt:currByte]];
+									[msgs addObject:newMsg];
+								}
 								//NSLog(@"\t\tVVMIDIEndSysexDumpVal - %X",currByte);
 								processingSysex = NO;
 								processingSysexIterationCount = 0;
-								//[sysex addObject:[NSNumber numberWithInt:currByte]];
-								newMsg = [VVMIDIMessage createWithSysexArray:sysex];
-								[msgs addObject:newMsg];
 								break;
 							case VVMIDIBeginSysexDumpVal:
 								//NSLog(@"\t\tVVMIDIBeginSysexDumpVal - %X",currByte);
@@ -521,7 +525,10 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIUndefinedRealtime1Val:
 							case VVMIDIActiveSenseVal:
 							case VVMIDIResetVal:
-								[msgs addObject:[VVMIDIMessage createWithType:currByte channel:0x00]];
+								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
+								if (newMsg != nil)	{
+									[msgs addObject:newMsg];
+								}
 								break;
 							default:	//	no idea what the default would be...
 								break;

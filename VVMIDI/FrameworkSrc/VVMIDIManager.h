@@ -1,8 +1,18 @@
 
 #import <Cocoa/Cocoa.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "VVMIDI.h"
+//#import "VVMIDI.h"
 #import <pthread.h>
+#import "VVMIDINode.h"
+
+
+
+
+@protocol VVMIDIDelegateProtocol
+- (void) setupChanged;
+- (void) receivedMIDI:(NSArray *)a;
+@end
+
 
 
 

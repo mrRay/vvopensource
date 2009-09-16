@@ -73,14 +73,6 @@
 
 
 
-@protocol VVMIDIDelegateProtocol
-- (void) setupChanged;
-- (void) receivedMIDI:(NSArray *)a;
-@end
-
-
-
-
 #import "VVMIDIMessage.h"
 #import "VVMIDINode.h"
 #import "VVMIDIManager.h"
