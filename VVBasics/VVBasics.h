@@ -8,6 +8,7 @@
 #import "MutLockDict.h"
 #import "MutNRLockArray.h"
 #import "NamedMutLockArray.h"
+#import "VVCURLDL.h"
 
 /*
 	the following stuff is for doxygen
