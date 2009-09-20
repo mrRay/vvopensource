@@ -37,6 +37,7 @@
 	targetSel = nil;
 }
 - (void) dealloc	{
+	//NSLog(@"%s",__func__);
 	[self stopAndWaitUntilDone];
 	targetObj = nil;
 	targetSel = nil;
@@ -119,9 +120,11 @@
 	bail = YES;
 }
 - (void) stopAndWaitUntilDone	{
+	//NSLog(@"%s",__func__);
 	[self stop];
 	while (running)	{
-	
+		//NSLog(@"\twaiting");
+		//pthread_yield_np();
 	}
 }
 - (float) interval	{

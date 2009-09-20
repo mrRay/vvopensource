@@ -578,13 +578,13 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 }
 
 void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
-	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
+	//NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
 	
 	//	multiple messages may get sent out for a single action, so it makes sense to simply ignore everything but 'kMIDIMsgSetupChanged'
 	if (msg->messageID == kMIDIMsgSetupChanged)
 		[(VVMIDINode *)refCon setupChanged];
 	
-	[pool release];
+	//[pool release];
 }
 
 void senderReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{

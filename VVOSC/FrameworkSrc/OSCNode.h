@@ -36,7 +36,7 @@ typedef enum	{
 	int					nodeType;	//	what 'type' of node i am
 	
 	OSCMessage			*lastReceivedMessage;	//	store the msg instead of the val because msgs can have multiple vals
-	MutLockArray		*delegateArray;	//	type 'MutLockArray'. contents are NOT retained! could be anything!
+	MutNRLockArray		*delegateArray;	//	type 'MutLockArray'. contents are NOT retained! could be anything!
 }
 
 //	only called by the address space to craft a formatted string for logging purposes
@@ -63,6 +63,7 @@ typedef enum	{
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
 
 //	a node's delegate is informed of received osc messages or name changes (OSCNodeDelegateProtocol)
+//	NODE DELEGATES ARE __NOT__ RETAINED!
 - (void) addDelegate:(id)d;
 - (void) removeDelegate:(id)d;
 - (void) informDelegatesOfNameChange;

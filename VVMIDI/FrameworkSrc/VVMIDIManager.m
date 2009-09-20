@@ -65,6 +65,19 @@
 }
 
 - (void) loadMIDIInputSources	{
+	/*
+	this method MUST get called on the main thread- midi notification callbacks for midi
+	setup changes always occur on the thread on which the client was created, so i need
+	to make sure that they always get created on the main thread because the callback method
+	doesn't have an autorelease pool.  (it used to have a pool, but the pool was potentially
+	causing a bug as it was replacing the "main" autorelease pool because the callback was
+	occurring on the main thread)
+	*/
+	if (![NSThread isMainThread])	{
+		[self performSelectorOnMainThread:@selector(loadMIDIInputSources) withObject:nil waitUntilDone:YES];
+		return;
+	}
+	
 	int					sourceCount;
 	int					i;
 	MIDIEndpointRef		endpointRef;
@@ -93,6 +106,19 @@
 	pthread_mutex_unlock(&arrayLock);
 }
 - (void) loadMIDIOutputDestinations	{
+	/*
+	this method MUST get called on the main thread- midi notification callbacks for midi
+	setup changes always occur on the thread on which the client was created, so i need
+	to make sure that they always get created on the main thread because the callback method
+	doesn't have an autorelease pool.  (it used to have a pool, but the pool was potentially
+	causing a bug as it was replacing the "main" autorelease pool because the callback was
+	occurring on the main thread)
+	*/
+	if (![NSThread isMainThread])	{
+		[self performSelectorOnMainThread:@selector(loadMIDIInputSources) withObject:nil waitUntilDone:YES];
+		return;
+	}
+	
 	int					destCount;
 	int					i;
 	MIDIEndpointRef		endpointRef;

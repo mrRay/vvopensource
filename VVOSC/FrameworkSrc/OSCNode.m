@@ -91,7 +91,6 @@
 	if (delegateArray != nil)	{
 		[delegateArray wrlock];
 			[delegateArray makeObjectsPerformSelector:@selector(nodeDeleted)];
-			//[delegateArray makeObjectsPerformSelector:@selector(retain)];
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
 		[delegateArray release];
@@ -273,8 +272,6 @@
 	if (foundIndex == NSNotFound)	{
 		//	if the delegate hasn't already been added, add it (this retains it)
 		[delegateArray lockAddObject:d];
-		//	release the object (so i have zero impact on its retain count)
-		//[d autorelease];
 	}
 }
 - (void) removeDelegate:(id)d	{

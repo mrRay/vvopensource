@@ -43,12 +43,18 @@
 		[inPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[inPortArray removeAllObjects];
 	[inPortArray unlock];
+	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+		[delegate setupChanged];
 }
 - (void) deleteAllOutputs	{
 	[outPortArray wrlock];
 		[outPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[outPortArray removeAllObjects];
 	[outPortArray unlock];
+	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+		[delegate setupChanged];
 }
 /*===================================================================================*/
 #pragma mark --------------------- creating input ports
@@ -98,7 +104,12 @@
 			}
 		}
 	[inPortArray unlock];
-	
+	//	if i made an in port, i should let the delegate know that stuff changed
+	if (returnMe != nil)	{
+		//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+		if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+			[delegate setupChanged];
+	}
 	return returnMe;
 }
 - (OSCInPort *) createNewInputForPort:(int)p	{
@@ -178,6 +189,12 @@
 			}
 		}
 	[outPortArray unlock];
+	//	if i made an output, i need to tell the delegate that stuff changed
+	if (returnMe != nil)	{
+		//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+		if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+			[delegate setupChanged];
+	}
 	
 	return returnMe;
 }
@@ -374,6 +391,9 @@
 	[inPortArray wrlock];
 		[inPortArray removeObject:p];
 	[inPortArray unlock];
+	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+		[delegate setupChanged];
 }
 - (void) removeOutput:(id)p	{
 	if (p == nil)
@@ -381,6 +401,9 @@
 	[outPortArray wrlock];
 		[outPortArray removeObject:p];
 	[outPortArray unlock];
+	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
+	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
+		[delegate setupChanged];
 }
 - (NSArray *) outPortLabelArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
@@ -408,6 +431,8 @@
 	return [OSCInPort class];
 }
 - (NSString *) inPortLabelBase	{
+	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(inPortLabelBase)]))
+		return [delegate inPortLabelBase];
 	return [NSString stringWithString:@"VVOSC"];
 }
 /*!
