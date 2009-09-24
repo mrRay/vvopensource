@@ -13,6 +13,7 @@
 @interface MVOOSCManager : OSCManager {
 	MutLockArray				*receivedMIDIStringArray;
 	IBOutlet NSTextField		*receivedMIDIField;
+	IBOutlet NSButton			*receivedMIDIPreviewToggle;
 	
 	MutLockArray				*outgoingBuffer;
 	VVThreadLoop				*oscSendingThread;

@@ -65,6 +65,7 @@
 @property (assign,readonly) BOOL returnOnMain;
 @property (readonly) NSMutableData *responseData;
 @property (readonly) NSString *responseString;
+@property (readonly) CURLcode err;
 
 @end
 

@@ -90,7 +90,8 @@
 			for (NSString *midiString in it)
 				[tmpString appendString:[NSString stringWithFormat:@"%@\n",midiString]];
 		[receivedOSCStringArray unlock];
-		[receivedOSCField setStringValue:tmpString];
+		if ([receivedOSCPreviewToggle intValue] == NSOnState)
+			[receivedOSCField setStringValue:tmpString];
 	}
 }
 

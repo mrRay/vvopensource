@@ -109,7 +109,8 @@
 						for (NSString *midiString in it)
 							[tmpString appendString:[NSString stringWithFormat:@"%@\n",midiString]];
 					[receivedMIDIStringArray unlock];
-					[receivedMIDIField setStringValue:tmpString];
+					if ([receivedMIDIPreviewToggle intValue] == NSOnState)
+						[receivedMIDIField setStringValue:tmpString];
 				}
 			}
 		}

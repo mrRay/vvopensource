@@ -255,6 +255,7 @@
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
+		96E26B35106C319700C5B418 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96E26B34106C319700C5B418 /* Credits.rtf */; };
 		96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		96E7ECC5106B161100B90822 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
@@ -635,6 +636,7 @@
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
 		96C9DAF6106B0335006DD331 /* MVOOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOOSCManager.m; path = MIDIviaOSC/MVOOSCManager.m; sourceTree = "<group>"; };
+		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
 		BD9F6A0A10191358004D8CD9 /* FreeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeFrame.h; path = VVFFGL/FrameworkSrc/FreeFrame.h; sourceTree = "<group>"; };
@@ -970,6 +972,7 @@
 		96B4931F106AEB8A008FB26E /* MIDI via OSC app */ = {
 			isa = PBXGroup;
 			children = (
+				96E26B34106C319700C5B418 /* Credits.rtf */,
 				96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */,
 				96B49322106AEC32008FB26E /* main.m */,
 				96B49323106AEC32008FB26E /* MainMenu.xib */,
@@ -1515,6 +1518,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96B49325106AEC32008FB26E /* MainMenu.xib in Resources */,
+				96E26B35106C319700C5B418 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

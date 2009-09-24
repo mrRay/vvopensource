@@ -7,6 +7,7 @@
 @interface MVOMIDIManager : VVMIDIManager {
 	MutLockArray				*receivedOSCStringArray;
 	IBOutlet NSTextField		*receivedOSCField;
+	IBOutlet NSButton			*receivedOSCPreviewToggle;
 	
 	IBOutlet NSTableView		*sourcesTableView;
 	IBOutlet NSTableColumn		*sourcesNameColumn;
