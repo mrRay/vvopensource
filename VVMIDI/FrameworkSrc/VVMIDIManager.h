@@ -1,6 +1,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <CoreMIDI/CoreMIDI.h>
+#import <VVBasics/VVBasics.h>
 //#import "VVMIDI.h"
 #import <pthread.h>
 #import "VVMIDINode.h"
@@ -17,9 +18,9 @@
 
 
 @interface VVMIDIManager : NSObject <VVMIDIDelegateProtocol> {
-	NSMutableArray		*sourceArray;		//	array of VVMIDINode objects (sources i can receive from)
-	NSMutableArray		*destArray;			//	array of VVMIDINode objects (destinations i can send to)
-	pthread_mutex_t		arrayLock;			//	used to lock BOTH arrays
+	MutLockArray		*sourceArray;		//	array of VVMIDINode objects (sources i can receive from)
+	MutLockArray		*destArray;			//	array of VVMIDINode objects (destinations i can send to)
+	//pthread_mutex_t		arrayLock;			//	used to lock BOTH arrays
 	
 	VVMIDINode			*virtualSource;	//	a dedicated receiver other apps can send to
 	VVMIDINode			*virtualDest;		//	a dedicated source other apps can receive from
@@ -28,6 +29,9 @@
 }
 
 - (void) generalInit;
+
+- (NSMutableDictionary *) createSnapshot;
+- (void) loadSnapshot:(NSDictionary *)d;
 
 - (void) loadMIDIInputSources;
 - (void) loadMIDIOutputDestinations;
@@ -52,8 +56,8 @@
 - (NSString *) receivingNodeName;
 - (NSString *) sendingNodeName;
 
-- (NSArray *) sourceArray;
-- (NSArray *) destArray;
+- (MutLockArray *) sourceArray;
+- (MutLockArray *) destArray;
 - (VVMIDINode *) virtualSource;
 - (VVMIDINode *) virtualDest;
 - (id) delegate;

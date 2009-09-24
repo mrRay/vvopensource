@@ -36,6 +36,7 @@
 				9656D920100F8A370064EEA6 /* PBXTargetDependency */,
 				96677EE3100F7CFA00163134 /* PBXTargetDependency */,
 				96A24ECC100F7EE300F21F0F /* PBXTargetDependency */,
+				96E7ED85106C03D200B90822 /* PBXTargetDependency */,
 				9606B1701017628400CC50B7 /* PBXTargetDependency */,
 				9606B1721017628700CC50B7 /* PBXTargetDependency */,
 			);
@@ -244,12 +245,22 @@
 		969166421017650A0078DF52 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		969166531017650F0078DF52 /* VVFFGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9606B14D101761EF00CC50B7 /* VVFFGL.framework */; };
 		96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
+		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF10AF100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B0100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
+		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
+		96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
+		96E7ECC5106B161100B90822 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96E7ECF1106B163900B90822 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96E7ECF2106B163900B90822 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		96ED419910628A5500D8373F /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
 		BD9F6A0C10191358004D8CD9 /* FreeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BD9F6A0A10191358004D8CD9 /* FreeFrame.h */; };
@@ -446,6 +457,34 @@
 			remoteGlobalIDString = 9666943710304C2E00DB5FDF;
 			remoteInfo = "VVBasics-os x SDK";
 		};
+		96E7ED68106BF7F400B90822 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
+			remoteInfo = VVBasics;
+		};
+		96E7ED6A106BF7F700B90822 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961745F3100F86B400FB60E6;
+			remoteInfo = VVMIDI;
+		};
+		96E7ED72106BF7FA00B90822 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9628D0C4100E89F700C3944E;
+			remoteInfo = VVOSC;
+		};
+		96E7ED84106C03D200B90822 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96B49301106AEB4C008FB26E;
+			remoteInfo = MIDIviaOSC;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -479,6 +518,18 @@
 			files = (
 				969166421017650A0078DF52 /* VVBasics.framework in CopyFiles */,
 				969166531017650F0078DF52 /* VVFFGL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96C9DB21106B1336006DD331 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				96E7ECF1106B163900B90822 /* VVBasics.framework in CopyFiles */,
+				96E7ECF2106B163900B90822 /* VVOSC.framework in CopyFiles */,
+				96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -570,12 +621,20 @@
 		9666941210304C0500DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9666942710304C1F00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9666943810304C2E00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		96B49302106AEB4C008FB26E /* MIDIviaOSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDIviaOSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
+		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
+		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneDevSDK.sh; path = scripts/assembleIPhoneDevSDK.sh; sourceTree = "<group>"; };
 		96BF10C8100E98760079A2E6 /* assembleIPhoneSimSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneSimSDK.sh; path = scripts/assembleIPhoneSimSDK.sh; sourceTree = "<group>"; };
 		96BF10C9100E98930079A2E6 /* assembleMacSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleMacSDK.sh; path = scripts/assembleMacSDK.sh; sourceTree = "<group>"; };
 		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
+		96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOMIDIManager.h; path = MIDIviaOSC/MVOMIDIManager.h; sourceTree = "<group>"; };
+		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
+		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
+		96C9DAF6106B0335006DD331 /* MVOOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOOSCManager.m; path = MIDIviaOSC/MVOOSCManager.m; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
 		BD9F6A0A10191358004D8CD9 /* FreeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeFrame.h; path = VVFFGL/FrameworkSrc/FreeFrame.h; sourceTree = "<group>"; };
@@ -687,6 +746,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96B49300106AEB4C008FB26E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */,
+				96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */,
+				96E7ECC5106B161100B90822 /* VVOSC.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -706,6 +775,7 @@
 				9666941210304C0500DB5FDF /* libVVBasics.a */,
 				9666942710304C1F00DB5FDF /* libVVBasics.a */,
 				9666943810304C2E00DB5FDF /* libVVBasics.a */,
+				96B49302106AEB4C008FB26E /* MIDIviaOSC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -718,6 +788,7 @@
 				9656D910100F89F70064EEA6 /* MIDITestApp */,
 				9628D0CA100E8A0100C3944E /* VVOSC framework */,
 				9628D17F100E8B5B00C3944E /* OSCTestApp */,
+				96B4931F106AEB8A008FB26E /* MIDI via OSC app */,
 				9606B186101763A700CC50B7 /* VVFFGL framework */,
 				9606B191101763CC00CC50B7 /* VVFFGLTestApp */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
@@ -894,6 +965,20 @@
 				9656D918100F8A0E0064EEA6 /* AppController.m */,
 			);
 			name = MIDITestApp;
+			sourceTree = "<group>";
+		};
+		96B4931F106AEB8A008FB26E /* MIDI via OSC app */ = {
+			isa = PBXGroup;
+			children = (
+				96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */,
+				96B49322106AEC32008FB26E /* main.m */,
+				96B49323106AEC32008FB26E /* MainMenu.xib */,
+				96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */,
+				96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */,
+				96C9DAF5106B0335006DD331 /* MVOOSCManager.h */,
+				96C9DAF6106B0335006DD331 /* MVOOSCManager.m */,
+			);
+			name = "MIDI via OSC app";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1318,6 +1403,27 @@
 			productReference = 9666943810304C2E00DB5FDF /* libVVBasics.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		96B49301106AEB4C008FB26E /* MIDIviaOSC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */;
+			buildPhases = (
+				96C9DB21106B1336006DD331 /* CopyFiles */,
+				96B492FE106AEB4C008FB26E /* Resources */,
+				96B492FF106AEB4C008FB26E /* Sources */,
+				96B49300106AEB4C008FB26E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96E7ED69106BF7F400B90822 /* PBXTargetDependency */,
+				96E7ED6B106BF7F700B90822 /* PBXTargetDependency */,
+				96E7ED73106BF7FA00B90822 /* PBXTargetDependency */,
+			);
+			name = MIDIviaOSC;
+			productName = MIDIviaOSC;
+			productReference = 96B49302106AEB4C008FB26E /* MIDIviaOSC.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1337,6 +1443,7 @@
 				9656D8FF100F89BA0064EEA6 /* MIDITestApp */,
 				9628D0C4100E89F700C3944E /* VVOSC */,
 				9628D178100E8B4D00C3944E /* OSCTestApp */,
+				96B49301106AEB4C008FB26E /* MIDIviaOSC */,
 				9606B14C101761EF00CC50B7 /* VVFFGL */,
 				9606B15B1017621200CC50B7 /* FFGLTestApp */,
 				9612861D100F845400C9C833 /* Build/Install VVOSC iPhone SDK */,
@@ -1400,6 +1507,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				9656D91A100F8A0E0064EEA6 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96B492FE106AEB4C008FB26E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B49325106AEC32008FB26E /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1665,6 +1780,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96B492FF106AEB4C008FB26E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B49324106AEC32008FB26E /* main.m in Sources */,
+				96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */,
+				96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1802,6 +1927,26 @@
 			isa = PBXTargetDependency;
 			target = 9666943710304C2E00DB5FDF /* VVBasics-os x SDK */;
 			targetProxy = 96AB37CA10305046005F2577 /* PBXContainerItemProxy */;
+		};
+		96E7ED69106BF7F400B90822 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 96E7ED68106BF7F400B90822 /* PBXContainerItemProxy */;
+		};
+		96E7ED6B106BF7F700B90822 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
+			targetProxy = 96E7ED6A106BF7F700B90822 /* PBXContainerItemProxy */;
+		};
+		96E7ED73106BF7FA00B90822 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9628D0C4100E89F700C3944E /* VVOSC */;
+			targetProxy = 96E7ED72106BF7FA00B90822 /* PBXContainerItemProxy */;
+		};
+		96E7ED85106C03D200B90822 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96B49301106AEB4C008FB26E /* MIDIviaOSC */;
+			targetProxy = 96E7ED84106C03D200B90822 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2190,7 +2335,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -2419,6 +2564,57 @@
 			};
 			name = Release;
 		};
+		96B49305106AEB4E008FB26E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "MIDIviaOSC/MIDIviaOSC-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = MIDIviaOSC;
+			};
+			name = Debug;
+		};
+		96B49306106AEB4E008FB26E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "MIDIviaOSC/MIDIviaOSC-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = MIDIviaOSC;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2562,6 +2758,15 @@
 			buildConfigurations = (
 				96677EDE100F7CF300163134 /* Debug */,
 				96677EDF100F7CF300163134 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96B49305106AEB4E008FB26E /* Debug */,
+				96B49306106AEB4E008FB26E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -9,7 +9,7 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %ld : %ld : %ld>",type,channel,data1,data2];
+	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d>",type,channel,data1,data2];
 }
 - (NSString *) lengthyDescription	{
 	switch (type)	{

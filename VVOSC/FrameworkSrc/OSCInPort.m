@@ -348,6 +348,10 @@
 - (void) setDelegate:(id)n	{
 	delegate = n;
 }
+- (void) setInterval:(float)n	{
+	if (threadLooper != nil)
+		[threadLooper setInterval:n];
+}
 
 
 @end

@@ -80,7 +80,7 @@
 - (id) tableView:(NSTableView *)tv objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)row	{
 	if (tv == sourcesTableView)	{
 		//NSLog(@"\t\tsources");
-		id			midiSource = [[midiManager sourceArray] objectAtIndex:row];
+		id			midiSource = [[midiManager sourceArray] lockObjectAtIndex:row];
 		
 		if (midiSource == nil)
 			return nil;
@@ -97,7 +97,7 @@
 	}
 	else if (tv == receiversTableView)	{
 		//NSLog(@"\t\treceivers");
-		id			midiSource = [[midiManager destArray] objectAtIndex:row];
+		id			midiSource = [[midiManager destArray] lockObjectAtIndex:row];
 		
 		if (midiSource == nil)
 			return nil;
@@ -119,7 +119,7 @@
 	//NSLog(@"AppController:tableView:setObjectValue:forTableColun:row:");
 	if (tv == sourcesTableView)	{
 		//NSLog(@"\t\tsources");
-		id			midiSource = [[midiManager sourceArray] objectAtIndex:row];
+		id			midiSource = [[midiManager sourceArray] lockObjectAtIndex:row];
 		
 		if (midiSource == nil)
 			return;
@@ -133,7 +133,7 @@
 	}
 	else if (tv == receiversTableView)	{
 		//NSLog(@"\t\treceivers");
-		id			midiSource = [[midiManager destArray] objectAtIndex:row];
+		id			midiSource = [[midiManager destArray] lockObjectAtIndex:row];
 		
 		if (midiSource == nil)
 			return;

@@ -16,14 +16,14 @@
 	return nil;
 }
 - (void) generalInit	{
-	pthread_mutexattr_t		attr1;
+	//pthread_mutexattr_t		attr1;
 	
-	sourceArray = [[NSMutableArray arrayWithCapacity:0] retain];
-	destArray = [[NSMutableArray arrayWithCapacity:0] retain];
+	sourceArray = [[MutLockArray alloc] init];
+	destArray = [[MutLockArray alloc] init];
 	
-	pthread_mutexattr_init(&attr1);
-	pthread_mutexattr_settype(&attr1,PTHREAD_MUTEX_NORMAL);
-	pthread_mutex_init(&arrayLock,&attr1);
+	//pthread_mutexattr_init(&attr1);
+	//pthread_mutexattr_settype(&attr1,PTHREAD_MUTEX_NORMAL);
+	//pthread_mutex_init(&arrayLock,&attr1);
 	//pthread_mutexattr_destroy(&attr);
 	
 	delegate = nil;
@@ -36,9 +36,64 @@
 	[self setupChanged];
 }
 
+- (NSMutableDictionary *) createSnapshot	{
+	//NSLog(@"%s",__func__);
+	NSMutableDictionary		*returnMe = [NSMutableDictionary dictionaryWithCapacity:0];
+	NSMutableDictionary		*tmpDict = nil;
+	
+	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
+	[sourceArray rdlock];
+	for (VVMIDINode *nodePtr in [sourceArray array])
+		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr name]];
+	[sourceArray unlock];
+	[returnMe setObject:tmpDict forKey:@"src"];
+	
+	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
+	[destArray rdlock];
+	for (VVMIDINode *nodePtr in [destArray array])
+		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr name]];
+	[destArray unlock];
+	[returnMe setObject:tmpDict forKey:@"dst"];
+	
+	return returnMe;
+}
+- (void) loadSnapshot:(NSDictionary *)d	{
+	//NSLog(@"%s",__func__);
+	if (d == nil)
+		return;
+	
+	NSDictionary		*tmpDict = nil;
+	NSNumber			*tmpNum = nil;
+	
+	tmpDict = [d objectForKey:@"src"];
+	if (tmpDict != nil)	{
+		[sourceArray rdlock];
+		for (VVMIDINode *nodePtr in [sourceArray array])	{
+			tmpNum = [tmpDict objectForKey:[nodePtr name]];
+			if (tmpNum != nil)
+				[nodePtr setEnabled:[tmpNum boolValue]];
+		}
+		[sourceArray unlock];
+	}
+	
+	tmpDict = [d objectForKey:@"dst"];
+	if (tmpDict != nil)	{
+		[destArray rdlock];
+		for (VVMIDINode *nodePtr in [destArray array])	{
+			tmpNum = [tmpDict objectForKey:[nodePtr name]];
+			if (tmpNum != nil)
+				[nodePtr setEnabled:[tmpNum boolValue]];
+		}
+		[destArray unlock];
+	}
+}
+
 - (void) dealloc	{
 	delegate = nil;
 	
+	VVRELEASE(sourceArray);
+	VVRELEASE(destArray);
+	/*
 	pthread_mutex_lock(&arrayLock);
 		if (sourceArray != nil)	{
 			[sourceArray removeAllObjects];
@@ -51,7 +106,7 @@
 			destArray = nil;
 		}
 	pthread_mutex_unlock(&arrayLock);
-	
+	*/
 	if (virtualSource != nil)
 		[virtualSource release];
 	virtualSource = nil;
@@ -60,7 +115,7 @@
 		[virtualDest release];
 	virtualDest = nil;
 	
-	pthread_mutex_destroy(&arrayLock);
+	//pthread_mutex_destroy(&arrayLock);
 	[super dealloc];
 }
 
@@ -83,12 +138,12 @@
 	MIDIEndpointRef		endpointRef;
 	VVMIDINode			*newSource;
 	
-	pthread_mutex_lock(&arrayLock);
+	//pthread_mutex_lock(&arrayLock);
 	
 		if (sourceArray != nil)
-			[sourceArray removeAllObjects];
+			[sourceArray lockRemoveAllObjects];
 		else
-			sourceArray = [[NSMutableArray arrayWithCapacity:0] retain];
+			sourceArray = [[MutLockArray alloc] init];
 		
 		sourceCount = MIDIGetNumberOfSources();
 		for (i=0; i<sourceCount; ++i)	{
@@ -97,13 +152,13 @@
 			if (newSource != nil)	{
 				if (![[newSource name] isEqualToString:[self sendingNodeName]])	{
 					[newSource setDelegate:self];
-					[sourceArray addObject:newSource];
+					[sourceArray lockAddObject:newSource];
 				}
 				[newSource release];
 			}
 		}
 	
-	pthread_mutex_unlock(&arrayLock);
+	//pthread_mutex_unlock(&arrayLock);
 }
 - (void) loadMIDIOutputDestinations	{
 	/*
@@ -124,12 +179,12 @@
 	MIDIEndpointRef		endpointRef;
 	VVMIDINode			*newDest;
 	
-	pthread_mutex_lock(&arrayLock);
+	//pthread_mutex_lock(&arrayLock);
 	
 		if (destArray != nil)
-			[destArray removeAllObjects];
+			[destArray lockRemoveAllObjects];
 		else
-			destArray = [[NSMutableArray arrayWithCapacity:0] retain];
+			destArray = [[MutLockArray alloc] init];
 		
 		destCount = MIDIGetNumberOfDestinations();
 		for (i=0; i<destCount; ++i)	{
@@ -138,13 +193,13 @@
 			if (newDest != nil)	{
 				if (![[newDest name] isEqualToString:[self receivingNodeName]])	{
 					[newDest setDelegate:self];
-					[destArray addObject:newDest];
+					[destArray lockAddObject:newDest];
 				}
 				[newDest release];
 			}
 		}
 	
-	pthread_mutex_unlock(&arrayLock);
+	//pthread_mutex_unlock(&arrayLock);
 }
 /*
 	subclasses can override this method to create a destination with a custom name
@@ -197,9 +252,9 @@
 		return;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
-	pthread_mutex_lock(&arrayLock);
-		[destArray makeObjectsPerformSelector:@selector(sendMsg:) withObject:m];
-	pthread_mutex_unlock(&arrayLock);
+	//pthread_mutex_lock(&arrayLock);
+		[destArray lockMakeObjectsPerformSelector:@selector(sendMsg:) withObject:m];
+	//pthread_mutex_unlock(&arrayLock);
 	
 	//	now send the msg to the virtual output destination
 	if (virtualDest != nil)
@@ -213,11 +268,11 @@
 	VVMIDIMessage		*msgPtr = nil;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
-	pthread_mutex_lock(&arrayLock);
+	//pthread_mutex_lock(&arrayLock);
 		msgIt = [a objectEnumerator];
 		while (msgPtr = [msgIt nextObject])
-			[destArray makeObjectsPerformSelector:@selector(sendMsgs:) withObject:a];
-	pthread_mutex_unlock(&arrayLock);
+			[destArray lockMakeObjectsPerformSelector:@selector(sendMsgs:) withObject:a];
+	//pthread_mutex_unlock(&arrayLock);
 	
 	//	now send the msg to the virtual output destination
 	if (virtualDest != nil)
@@ -233,14 +288,15 @@
 	NSEnumerator		*nodeIt = nil;
 	VVMIDINode			*nodePtr = nil;
 	
-	pthread_mutex_lock(&arrayLock);
-		nodeIt = [destArray objectEnumerator];
+	//pthread_mutex_lock(&arrayLock);
+	[destArray rdlock];
+		nodeIt = [[destArray array] objectEnumerator];
 		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
-	pthread_mutex_unlock(&arrayLock);
-	
+	//pthread_mutex_unlock(&arrayLock);
+	[destArray unlock];
 	return returnMe;
 }
 //	finds a source node with a given name
@@ -252,14 +308,15 @@
 	NSEnumerator		*nodeIt = nil;
 	VVMIDINode			*nodePtr = nil;
 	
-	pthread_mutex_lock(&arrayLock);
-		nodeIt = [sourceArray objectEnumerator];
+	//pthread_mutex_lock(&arrayLock);
+	[sourceArray rdlock];
+		nodeIt = [[sourceArray array] objectEnumerator];
 		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
-	pthread_mutex_unlock(&arrayLock);
-	
+	//pthread_mutex_unlock(&arrayLock);
+	[sourceArray unlock];
 	return returnMe;
 }
 
@@ -267,11 +324,13 @@
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	NSString			*nodeName = nil;
 	
-	for (VVMIDINode *nodePtr in destArray)	{
+	[destArray rdlock];
+	for (VVMIDINode *nodePtr in [destArray array])	{
 		nodeName = [nodePtr name];
 		if (nodeName != nil)
 			[returnMe addObject:nodeName];
 	}
+	[destArray unlock];
 	return returnMe;
 }
 
@@ -290,10 +349,10 @@
 	return [NSString stringWithString:@"From VVMIDI"];
 }
 
-- (NSArray *) sourceArray	{
+- (MutLockArray *) sourceArray	{
 	return sourceArray;
 }
-- (NSArray *) destArray	{
+- (MutLockArray *) destArray	{
 	return destArray;
 }
 - (VVMIDINode *) virtualSource	{
