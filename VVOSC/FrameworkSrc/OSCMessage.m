@@ -163,7 +163,7 @@
 #else
 				oscValue = [OSCValue
 					createWithColor:[NSColor
-						colorWithCalibratedRed:b[tmpIndex]/255.0
+						colorWithDeviceRed:b[tmpIndex]/255.0
 						green:b[tmpIndex+1]/255.0
 						blue:b[tmpIndex+2]/255.0
 						alpha:b[tmpIndex+3]/255.0]];

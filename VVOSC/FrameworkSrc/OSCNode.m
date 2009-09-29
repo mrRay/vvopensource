@@ -69,7 +69,7 @@
 	return nil;
 }
 - (id) init	{
-	NSLog(@"WARNING: %s",__func__);
+	//NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
 		addressSpace = [OSCAddressSpace mainSpace];
 		deleted = NO;

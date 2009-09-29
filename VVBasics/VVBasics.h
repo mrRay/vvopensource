@@ -9,6 +9,10 @@
 #import "MutNRLockArray.h"
 #import "NamedMutLockArray.h"
 #import "VVCURLDL.h"
+#import "VVSprite.h"
+#import "VVSpriteManager.h"
+#import "VVSpriteView.h"
+#import "VVSpriteGLView.h"
 
 /*
 	the following stuff is for doxygen

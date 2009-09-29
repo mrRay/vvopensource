@@ -16,15 +16,8 @@
 	return nil;
 }
 - (void) generalInit	{
-	//pthread_mutexattr_t		attr1;
-	
 	sourceArray = [[MutLockArray alloc] init];
 	destArray = [[MutLockArray alloc] init];
-	
-	//pthread_mutexattr_init(&attr1);
-	//pthread_mutexattr_settype(&attr1,PTHREAD_MUTEX_NORMAL);
-	//pthread_mutex_init(&arrayLock,&attr1);
-	//pthread_mutexattr_destroy(&attr);
 	
 	delegate = nil;
 	virtualSource = nil;
@@ -93,20 +86,7 @@
 	
 	VVRELEASE(sourceArray);
 	VVRELEASE(destArray);
-	/*
-	pthread_mutex_lock(&arrayLock);
-		if (sourceArray != nil)	{
-			[sourceArray removeAllObjects];
-			[sourceArray release];
-			sourceArray = nil;
-		}
-		if (destArray != nil)	{
-			[destArray removeAllObjects];
-			[destArray release];
-			destArray = nil;
-		}
-	pthread_mutex_unlock(&arrayLock);
-	*/
+	
 	if (virtualSource != nil)
 		[virtualSource release];
 	virtualSource = nil;
@@ -115,7 +95,6 @@
 		[virtualDest release];
 	virtualDest = nil;
 	
-	//pthread_mutex_destroy(&arrayLock);
 	[super dealloc];
 }
 
@@ -138,27 +117,23 @@
 	MIDIEndpointRef		endpointRef;
 	VVMIDINode			*newSource;
 	
-	//pthread_mutex_lock(&arrayLock);
+	if (sourceArray != nil)
+		[sourceArray lockRemoveAllObjects];
+	else
+		sourceArray = [[MutLockArray alloc] init];
 	
-		if (sourceArray != nil)
-			[sourceArray lockRemoveAllObjects];
-		else
-			sourceArray = [[MutLockArray alloc] init];
-		
-		sourceCount = MIDIGetNumberOfSources();
-		for (i=0; i<sourceCount; ++i)	{
-			endpointRef = MIDIGetSource(i);
-			newSource = [[[self receivingNodeClass] alloc] initReceiverWithEndpoint:endpointRef];
-			if (newSource != nil)	{
-				if (![[newSource name] isEqualToString:[self sendingNodeName]])	{
-					[newSource setDelegate:self];
-					[sourceArray lockAddObject:newSource];
-				}
-				[newSource release];
+	sourceCount = MIDIGetNumberOfSources();
+	for (i=0; i<sourceCount; ++i)	{
+		endpointRef = MIDIGetSource(i);
+		newSource = [[[self receivingNodeClass] alloc] initReceiverWithEndpoint:endpointRef];
+		if (newSource != nil)	{
+			if (![[newSource name] isEqualToString:[self sendingNodeName]])	{
+				[newSource setDelegate:self];
+				[sourceArray lockAddObject:newSource];
 			}
+			[newSource release];
 		}
-	
-	//pthread_mutex_unlock(&arrayLock);
+	}
 }
 - (void) loadMIDIOutputDestinations	{
 	/*
@@ -179,27 +154,23 @@
 	MIDIEndpointRef		endpointRef;
 	VVMIDINode			*newDest;
 	
-	//pthread_mutex_lock(&arrayLock);
+	if (destArray != nil)
+		[destArray lockRemoveAllObjects];
+	else
+		destArray = [[MutLockArray alloc] init];
 	
-		if (destArray != nil)
-			[destArray lockRemoveAllObjects];
-		else
-			destArray = [[MutLockArray alloc] init];
-		
-		destCount = MIDIGetNumberOfDestinations();
-		for (i=0; i<destCount; ++i)	{
-			endpointRef = MIDIGetDestination(i);
-			newDest = [[[self sendingNodeClass] alloc] initSenderWithEndpoint:endpointRef];
-			if (newDest != nil)	{
-				if (![[newDest name] isEqualToString:[self receivingNodeName]])	{
-					[newDest setDelegate:self];
-					[destArray lockAddObject:newDest];
-				}
-				[newDest release];
+	destCount = MIDIGetNumberOfDestinations();
+	for (i=0; i<destCount; ++i)	{
+		endpointRef = MIDIGetDestination(i);
+		newDest = [[[self sendingNodeClass] alloc] initSenderWithEndpoint:endpointRef];
+		if (newDest != nil)	{
+			if (![[newDest name] isEqualToString:[self receivingNodeName]])	{
+				[newDest setDelegate:self];
+				[destArray lockAddObject:newDest];
 			}
+			[newDest release];
 		}
-	
-	//pthread_mutex_unlock(&arrayLock);
+	}
 }
 /*
 	subclasses can override this method to create a destination with a custom name
@@ -252,9 +223,7 @@
 		return;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
-	//pthread_mutex_lock(&arrayLock);
-		[destArray lockMakeObjectsPerformSelector:@selector(sendMsg:) withObject:m];
-	//pthread_mutex_unlock(&arrayLock);
+	[destArray lockMakeObjectsPerformSelector:@selector(sendMsg:) withObject:m];
 	
 	//	now send the msg to the virtual output destination
 	if (virtualDest != nil)
@@ -268,11 +237,9 @@
 	VVMIDIMessage		*msgPtr = nil;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
-	//pthread_mutex_lock(&arrayLock);
-		msgIt = [a objectEnumerator];
-		while (msgPtr = [msgIt nextObject])
-			[destArray lockMakeObjectsPerformSelector:@selector(sendMsgs:) withObject:a];
-	//pthread_mutex_unlock(&arrayLock);
+	msgIt = [a objectEnumerator];
+	while (msgPtr = [msgIt nextObject])
+		[destArray lockMakeObjectsPerformSelector:@selector(sendMsgs:) withObject:a];
 	
 	//	now send the msg to the virtual output destination
 	if (virtualDest != nil)
@@ -288,14 +255,12 @@
 	NSEnumerator		*nodeIt = nil;
 	VVMIDINode			*nodePtr = nil;
 	
-	//pthread_mutex_lock(&arrayLock);
 	[destArray rdlock];
 		nodeIt = [[destArray array] objectEnumerator];
 		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
-	//pthread_mutex_unlock(&arrayLock);
 	[destArray unlock];
 	return returnMe;
 }
@@ -308,14 +273,12 @@
 	NSEnumerator		*nodeIt = nil;
 	VVMIDINode			*nodePtr = nil;
 	
-	//pthread_mutex_lock(&arrayLock);
 	[sourceArray rdlock];
 		nodeIt = [[sourceArray array] objectEnumerator];
 		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
-	//pthread_mutex_unlock(&arrayLock);
 	[sourceArray unlock];
 	return returnMe;
 }

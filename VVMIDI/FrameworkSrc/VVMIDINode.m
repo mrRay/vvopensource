@@ -578,13 +578,14 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 }
 
 void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
-	//NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	
+	/*
+		NOTE: this method will be called on whatever thread this node's clientRef was created on!
+		the VVMIDIManager class attempts to ensure that this always happens on the main thread, 
+		so there's no need to have an autorelease pool here...
+	*/
 	//	multiple messages may get sent out for a single action, so it makes sense to simply ignore everything but 'kMIDIMsgSetupChanged'
 	if (msg->messageID == kMIDIMsgSetupChanged)
 		[(VVMIDINode *)refCon setupChanged];
-	
-	//[pool release];
 }
 
 void senderReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{

@@ -264,6 +264,14 @@
 		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		96ED419910628A5500D8373F /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
+		96F07F361072A1B7007C66E2 /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96F07F371072A1B7007C66E2 /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
+		96F07F381072A1B7007C66E2 /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96F07F391072A1B7007C66E2 /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
+		96F07F3A1072A1B7007C66E2 /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
+		96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
 		BD9F6A0C10191358004D8CD9 /* FreeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BD9F6A0A10191358004D8CD9 /* FreeFrame.h */; };
 		BD9F6A88101921FD004D8CD9 /* FFGL.h in Headers */ = {isa = PBXBuildFile; fileRef = BD9F6A87101921FD004D8CD9 /* FFGL.h */; };
 /* End PBXBuildFile section */
@@ -639,6 +647,14 @@
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
+		96F07F2E1072A1B7007C66E2 /* VVSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSprite.h; path = VVBasics/src/VVSprite.h; sourceTree = "<group>"; };
+		96F07F2F1072A1B7007C66E2 /* VVSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSprite.m; path = VVBasics/src/VVSprite.m; sourceTree = "<group>"; };
+		96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteGLView.h; path = VVBasics/src/VVSpriteGLView.h; sourceTree = "<group>"; };
+		96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteGLView.m; path = VVBasics/src/VVSpriteGLView.m; sourceTree = "<group>"; };
+		96F07F321072A1B7007C66E2 /* VVSpriteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteManager.h; path = VVBasics/src/VVSpriteManager.h; sourceTree = "<group>"; };
+		96F07F331072A1B7007C66E2 /* VVSpriteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteManager.m; path = VVBasics/src/VVSpriteManager.m; sourceTree = "<group>"; };
+		96F07F341072A1B7007C66E2 /* VVSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteView.h; path = VVBasics/src/VVSpriteView.h; sourceTree = "<group>"; };
+		96F07F351072A1B7007C66E2 /* VVSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteView.m; path = VVBasics/src/VVSpriteView.m; sourceTree = "<group>"; };
 		BD9F6A0A10191358004D8CD9 /* FreeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeFrame.h; path = VVFFGL/FrameworkSrc/FreeFrame.h; sourceTree = "<group>"; };
 		BD9F6A87101921FD004D8CD9 /* FFGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FFGL.h; path = VVFFGL/FrameworkSrc/FFGL.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -863,22 +879,12 @@
 				961EA8EE100E8565007E6C25 /* VVBasics-Info.plist */,
 				96BF10A8100E95200079A2E6 /* VVBasics.h */,
 				961EA950100E8834007E6C25 /* VVBasicMacros.h */,
-				961EA94B100E8834007E6C25 /* VVThreadLoop.h */,
-				961EA94A100E8834007E6C25 /* VVThreadLoop.m */,
+				968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */,
 				961EA94E100E8834007E6C25 /* VVStopwatch.h */,
 				961EA94D100E8834007E6C25 /* VVStopwatch.m */,
-				961EA952100E8834007E6C25 /* ObjectHolder.h */,
-				961EA951100E8834007E6C25 /* ObjectHolder.m */,
-				961EA949100E8834007E6C25 /* MutLockDict.h */,
-				961EA948100E8834007E6C25 /* MutLockDict.m */,
-				961EA947100E8834007E6C25 /* MutLockArray.h */,
-				961EA94C100E8834007E6C25 /* MutLockArray.m */,
-				961EA954100E8834007E6C25 /* NamedMutLockArray.h */,
-				961EA953100E8834007E6C25 /* NamedMutLockArray.m */,
-				961EA956100E8834007E6C25 /* MutNRLockArray.h */,
-				961EA955100E8834007E6C25 /* MutNRLockArray.m */,
 				96ED419710628A5500D8373F /* VVCURLDL.h */,
 				96ED419810628A5500D8373F /* VVCURLDL.m */,
+				968D939D1072A4EA00FE7527 /* Sprites */,
 			);
 			name = "VVBasics framework";
 			sourceTree = "<group>";
@@ -969,6 +975,40 @@
 			name = MIDITestApp;
 			sourceTree = "<group>";
 		};
+		968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */ = {
+			isa = PBXGroup;
+			children = (
+				961EA94B100E8834007E6C25 /* VVThreadLoop.h */,
+				961EA94A100E8834007E6C25 /* VVThreadLoop.m */,
+				961EA949100E8834007E6C25 /* MutLockDict.h */,
+				961EA948100E8834007E6C25 /* MutLockDict.m */,
+				961EA947100E8834007E6C25 /* MutLockArray.h */,
+				961EA94C100E8834007E6C25 /* MutLockArray.m */,
+				961EA954100E8834007E6C25 /* NamedMutLockArray.h */,
+				961EA953100E8834007E6C25 /* NamedMutLockArray.m */,
+				961EA952100E8834007E6C25 /* ObjectHolder.h */,
+				961EA951100E8834007E6C25 /* ObjectHolder.m */,
+				961EA956100E8834007E6C25 /* MutNRLockArray.h */,
+				961EA955100E8834007E6C25 /* MutNRLockArray.m */,
+			);
+			name = "Threads & Thread-safe classes";
+			sourceTree = "<group>";
+		};
+		968D939D1072A4EA00FE7527 /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				96F07F321072A1B7007C66E2 /* VVSpriteManager.h */,
+				96F07F331072A1B7007C66E2 /* VVSpriteManager.m */,
+				96F07F2E1072A1B7007C66E2 /* VVSprite.h */,
+				96F07F2F1072A1B7007C66E2 /* VVSprite.m */,
+				96F07F341072A1B7007C66E2 /* VVSpriteView.h */,
+				96F07F351072A1B7007C66E2 /* VVSpriteView.m */,
+				96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */,
+				96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */,
+			);
+			name = Sprites;
+			sourceTree = "<group>";
+		};
 		96B4931F106AEB8A008FB26E /* MIDI via OSC app */ = {
 			isa = PBXGroup;
 			children = (
@@ -1022,6 +1062,10 @@
 				961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */,
 				96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */,
 				96ED419910628A5500D8373F /* VVCURLDL.h in Headers */,
+				96F07F361072A1B7007C66E2 /* VVSprite.h in Headers */,
+				96F07F381072A1B7007C66E2 /* VVSpriteGLView.h in Headers */,
+				96F07F3A1072A1B7007C66E2 /* VVSpriteManager.h in Headers */,
+				96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1643,6 +1687,10 @@
 				961EA963100E8834007E6C25 /* NamedMutLockArray.m in Sources */,
 				961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */,
 				96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */,
+				96F07F371072A1B7007C66E2 /* VVSprite.m in Sources */,
+				96F07F391072A1B7007C66E2 /* VVSpriteGLView.m in Sources */,
+				96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */,
+				96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -168,20 +168,15 @@
 	return lastFormPtr;
 }
 - (void) appendDataToPOST:(NSData *)d	{
-	NSLog(@"%s",__func__);
 	if (d == nil)
 		return;
 	if (postData == nil)
 		postData = [[NSMutableData dataWithCapacity:0] retain];
-	NSLog(@"\t\tappending %ld bytes",[d length]);
-	//[postData appendData:d];
-	[postData appendBytes:[postData bytes] length:[postData length]];
+	[postData appendData:d];
 }
 - (void) appendStringToPOST:(NSString *)s	{
 	if (s == nil)
 		return;
-	NSLog(@"%s",__func__);
-	NSLog(@"\t\tappending %ld, %@",[s length],s);
 	[self appendDataToPOST:[s dataUsingEncoding:NSUTF8StringEncoding]];
 }
 /*
