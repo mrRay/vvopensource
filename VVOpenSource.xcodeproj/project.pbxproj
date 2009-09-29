@@ -272,6 +272,22 @@
 		96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
 		96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
+		96F98FF01072C635004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; };
+		96F98FF11072C635004D5EDE /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
+		96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; };
+		96F98FF31072C636004D5EDE /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
+		96F98FF41072C637004D5EDE /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; };
+		96F98FF51072C637004D5EDE /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
+		96F98FF61072C638004D5EDE /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; };
+		96F98FF71072C638004D5EDE /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
+		96F98FF81072C63D004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; };
+		96F98FF91072C63D004D5EDE /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
+		96F98FFA1072C63E004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; };
+		96F98FFB1072C63E004D5EDE /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
+		96F98FFC1072C63F004D5EDE /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; };
+		96F98FFD1072C63F004D5EDE /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
+		96F98FFE1072C640004D5EDE /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; };
+		96F98FFF1072C640004D5EDE /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
 		BD9F6A0C10191358004D8CD9 /* FreeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BD9F6A0A10191358004D8CD9 /* FreeFrame.h */; };
 		BD9F6A88101921FD004D8CD9 /* FFGL.h in Headers */ = {isa = PBXBuildFile; fileRef = BD9F6A87101921FD004D8CD9 /* FFGL.h */; };
 /* End PBXBuildFile section */
@@ -1150,6 +1166,10 @@
 				9628D16E100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */,
 				9666944610304CA700DB5FDF /* OSCConstants.h in Headers */,
+				96F98FF81072C63D004D5EDE /* VVSprite.h in Headers */,
+				96F98FFA1072C63E004D5EDE /* VVSpriteGLView.h in Headers */,
+				96F98FFC1072C63F004D5EDE /* VVSpriteManager.h in Headers */,
+				96F98FFE1072C640004D5EDE /* VVSpriteView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1198,6 +1218,10 @@
 				9666947210304CD300DB5FDF /* VVBasics.h in Headers */,
 				9666947310304CD400DB5FDF /* VVStopwatch.h in Headers */,
 				9666947510304CD600DB5FDF /* VVThreadLoop.h in Headers */,
+				96F98FF01072C635004D5EDE /* VVSprite.h in Headers */,
+				96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */,
+				96F98FF41072C637004D5EDE /* VVSpriteManager.h in Headers */,
+				96F98FF61072C638004D5EDE /* VVSpriteView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1767,6 +1791,10 @@
 				9628D168100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D169100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D16D100E8A6700C3944E /* OSCInPort.m in Sources */,
+				96F98FF91072C63D004D5EDE /* VVSprite.m in Sources */,
+				96F98FFB1072C63E004D5EDE /* VVSpriteGLView.m in Sources */,
+				96F98FFD1072C63F004D5EDE /* VVSpriteManager.m in Sources */,
+				96F98FFF1072C640004D5EDE /* VVSpriteView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1829,6 +1857,10 @@
 				9666947010304CD200DB5FDF /* ObjectHolder.m in Sources */,
 				9666947410304CD500DB5FDF /* VVStopwatch.m in Sources */,
 				9666947610304CD600DB5FDF /* VVThreadLoop.m in Sources */,
+				96F98FF11072C635004D5EDE /* VVSprite.m in Sources */,
+				96F98FF31072C636004D5EDE /* VVSpriteGLView.m in Sources */,
+				96F98FF51072C637004D5EDE /* VVSpriteManager.m in Sources */,
+				96F98FF71072C638004D5EDE /* VVSpriteView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2286,7 +2318,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.0;
+				SDKROOT = iphonesimulator3.1;
 			};
 			name = Debug;
 		};
@@ -2301,7 +2333,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.0;
+				SDKROOT = iphonesimulator3.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2316,7 +2348,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.1;
 			};
 			name = Debug;
 		};
@@ -2331,7 +2363,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2496,7 +2528,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.0;
+				SDKROOT = iphonesimulator3.1;
 			};
 			name = Debug;
 		};
@@ -2511,7 +2543,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.0;
+				SDKROOT = iphonesimulator3.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2528,7 +2560,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.1;
 			};
 			name = Debug;
 		};
@@ -2543,7 +2575,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.0;
+				SDKROOT = iphoneos3.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
