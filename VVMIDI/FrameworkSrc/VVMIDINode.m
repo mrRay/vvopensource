@@ -540,7 +540,9 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 			if ((currByte >= 0x00) && (currByte <= 0x7F))	{
 				//	i'm only going to process this data if i'm not in the midst of a sysex dump and i'm assembling a message
 				if (processingSysex)	{
-					[sysex addObject:[NSNumber numberWithInt:currByte]];
+					NSNumber		*tmpNum = [NSNumber numberWithInt:currByte];
+					if (tmpNum != nil)
+						[sysex addObject:tmpNum];
 				}
 				else	{
 					if (newMsg != nil)	{

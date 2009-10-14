@@ -145,7 +145,7 @@
 	occurring on the main thread)
 	*/
 	if (![NSThread isMainThread])	{
-		[self performSelectorOnMainThread:@selector(loadMIDIInputSources) withObject:nil waitUntilDone:YES];
+		[self performSelectorOnMainThread:@selector(loadMIDIOutputDestinations) withObject:nil waitUntilDone:YES];
 		return;
 	}
 	
