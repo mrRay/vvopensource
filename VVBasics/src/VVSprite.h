@@ -18,13 +18,13 @@ typedef enum _VVSpriteEventType	{
 @interface VVSprite : NSObject {
 	BOOL			deleted;
 	BOOL			locked;				//	whether or not i should respond to mouse input
-	long			zoneIndex;
+	long			spriteIndex;
 	id				manager;			//	the VVSpriteManager i exist within- NOT retained!
 	id				delegate;			//	NOT retained!
-	SEL				drawCallback;		//	delegate method; passed a ptr to this zone!
-	SEL				actionCallback;		//	delegate method; passed a ptr to this zone!
+	SEL				drawCallback;		//	delegate method; passed a ptr to this sprite!
+	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
 	
-	NSRect			rect;				//	the zone i'm tracking
+	NSRect			rect;				//	the sprite i'm tracking
 	int				lastActionType;		//	updated whenever an action is received
 	NSPoint			lastActionCoords;	//	coords at which last action took place
 	BOOL			lastActionInBounds;	//	whether or not the last action was within my bounds
@@ -34,7 +34,7 @@ typedef enum _VVSpriteEventType	{
 	NSPoint			mouseDownDelta;		//	change between mousedown loc and most-recently received coords
 	
 	id				userInfo;		//	RETAINED!  for storing a random thing...
-	id				safeString;	//	nil on init- many zones need formatted text, this is a convenience variable...
+	id				safeString;	//	nil on init- many sprites need formatted text, this is a convenience variable...
 }
 
 + (id) createWithRect:(NSRect)r inManager:(id)m;
@@ -50,7 +50,7 @@ typedef enum _VVSpriteEventType	{
 - (void) draw;
 
 @property (assign, readwrite) BOOL locked;
-@property (readonly) long zoneIndex;
+@property (readonly) long spriteIndex;
 @property (readonly) id manager;
 @property (assign, readwrite) id delegate;
 @property (assign, readwrite) SEL drawCallback;

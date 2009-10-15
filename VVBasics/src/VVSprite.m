@@ -26,9 +26,9 @@
 	if (self = [super init])	{
 		deleted = NO;
 		locked = NO;
-		zoneIndex = -1;
+		spriteIndex = -1;
 		manager = m;
-		zoneIndex = [manager getUniqueZoneIndex];
+		spriteIndex = [manager getUniqueSpriteIndex];
 		delegate = nil;
 		drawCallback = nil;
 		actionCallback = nil;
@@ -160,8 +160,8 @@
 - (BOOL) locked	{
 	return locked;
 }
-- (long) zoneIndex	{
-	return zoneIndex;
+- (long) spriteIndex	{
+	return spriteIndex;
 }
 - (id) manager	{
 	return manager;
@@ -187,7 +187,7 @@
 
 
 - (void) setRect:(NSRect)n	{
-	//NSLog(@"%s ... %ld",__func__,zoneIndex);
+	//NSLog(@"%s ... %ld",__func__,spriteIndex);
 	//NSRectLog(@"\trect",n);
 	NSRect		oldRect = rect;
 	NSPoint		delta = NSMakePoint(n.origin.x-oldRect.origin.x, n.origin.y-oldRect.origin.y);

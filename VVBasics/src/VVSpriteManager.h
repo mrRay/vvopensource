@@ -8,9 +8,9 @@
 
 @interface VVSpriteManager : NSObject {
 	BOOL					deleted;
-	MutLockArray			*zoneArray;	//	searched from beginning to end, so order is like z-index!
-	VVSprite					*zoneInUse;	//	array of VVSprite objects currently tracking drag info
-	long					zoneIndexCount;
+	MutLockArray			*spriteArray;	//	searched from beginning to end, so order is like z-index!
+	VVSprite				*spriteInUse;	//	array of VVSprite objects currently tracking drag info
+	long					spriteIndexCount;
 }
 
 - (void) prepareToBeDeleted;
@@ -19,22 +19,22 @@
 - (void) localMouseDragged:(NSPoint)p;
 - (void) localMouseUp:(NSPoint)p;
 
-- (id) newZoneAtBottomForRect:(NSRect)r;
-- (id) newZoneAtTopForRect:(NSRect)r;
-- (long) getUniqueZoneIndex;
+- (id) newSpriteAtBottomForRect:(NSRect)r;
+- (id) newSpriteAtTopForRect:(NSRect)r;
+- (long) getUniqueSpriteIndex;
 
-- (VVSprite *) zoneAtPoint:(NSPoint)p;
-- (VVSprite *) zoneForIndex:(long)i;
-- (void) removeZoneForIndex:(long)i;
-- (void) removeZone:(id)z;
-- (void) removeAllZones;
+- (VVSprite *) spriteAtPoint:(NSPoint)p;
+- (VVSprite *) spriteForIndex:(long)i;
+- (void) removeSpriteForIndex:(long)i;
+- (void) removeSprite:(id)z;
+- (void) removeAllSprites;
 
 - (void) draw;
 - (void) drawRect:(NSRect)r;
 
-- (VVSprite *) zoneInUse;
-- (void) setZoneInUse:(VVSprite *)z;
+- (VVSprite *) spriteInUse;
+- (void) setSpriteInUse:(VVSprite *)z;
 
-@property (readonly) MutLockArray *zoneArray;
+@property (readonly) MutLockArray *spriteArray;
 
 @end

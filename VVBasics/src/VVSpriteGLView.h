@@ -10,10 +10,10 @@
 	BOOL					deleted;
 	
 	BOOL					initialized;
-	BOOL					needsReshape;
+	//BOOL					needsReshape;
 	
 	VVSpriteManager			*spriteManager;
-	BOOL					pathsAndZonesNeedUpdate;
+	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 }
 
@@ -21,10 +21,10 @@
 - (void) prepareToBeDeleted;
 
 - (void) initializeGL;
-- (void) reshapeGL;
-- (void) updatePathsAndZones;
+//- (void) reshapeGL;
+- (void) updateSprites;
 
-@property (assign, readwrite) BOOL pathsAndZonesNeedUpdate;
+@property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 
 @end

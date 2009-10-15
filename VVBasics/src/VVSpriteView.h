@@ -8,14 +8,14 @@
 @interface VVSpriteView : NSView {
 	BOOL					deleted;
 	VVSpriteManager			*spriteManager;
-	BOOL					pathsAndZonesNeedUpdate;
+	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 }
 
 - (void) prepareToBeDeleted;
-- (void) updatePathsAndZones;
+- (void) updateSprites;
 
-@property (assign, readwrite) BOOL pathsAndZonesNeedUpdate;
+@property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 
 @end

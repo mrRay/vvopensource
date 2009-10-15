@@ -14,9 +14,9 @@
 - (id) init	{
 	if (self = [super init])	{
 		deleted = NO;
-		zoneArray = [[MutLockArray alloc] initWithCapacity:0];
-		zoneInUse = nil;
-		zoneIndexCount = 1;
+		spriteArray = [[MutLockArray alloc] initWithCapacity:0];
+		spriteInUse = nil;
+		spriteIndexCount = 1;
 		return self;
 	}
 	[self release];
@@ -24,15 +24,15 @@
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
-	[self removeAllZones];
+	[self removeAllSprites];
 	deleted = YES;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
-	VVRELEASE(zoneArray);
-	zoneInUse = nil;
+	VVRELEASE(spriteArray);
+	spriteInUse = nil;
 	[super dealloc];
 }
 
@@ -42,173 +42,173 @@
 /*------------------------------------*/
 
 
-//	returns YES if the mousedown was on a zone
+//	returns YES if the mousedown was on a sprite
 - (BOOL) localMouseDown:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
-	if ((deleted)||(zoneArray==nil)||([zoneArray count]<1))
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
-	//	determine if there's a zone which intersects the mousedown coords
+	//	determine if there's a sprite which intersects the mousedown coords
 	NSEnumerator		*it;
-	VVSprite		*zonePtr;
-	VVSprite		*foundZone = nil;
-	[zoneArray rdlock];
-		it = [zoneArray objectEnumerator];
-		while ((zonePtr = [it nextObject]) && (foundZone==nil))	{
-			if ((![zonePtr locked]) && ([zonePtr checkPoint:p]))
-				foundZone = zonePtr;
+	VVSprite		*spritePtr;
+	VVSprite		*foundSprite = nil;
+	[spriteArray rdlock];
+		it = [spriteArray objectEnumerator];
+		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
+				foundSprite = spritePtr;
 		}
-	[zoneArray unlock];
-	//	if i found a zone which contains the mousedown loc
-	if (foundZone!=nil)	{
-		zoneInUse = foundZone;
-		[foundZone mouseDown:p];
+	[spriteArray unlock];
+	//	if i found a sprite which contains the mousedown loc
+	if (foundSprite!=nil)	{
+		spriteInUse = foundSprite;
+		[foundSprite mouseDown:p];
 		return YES;
 	}
-	//	if i'm here, i didn't find a zone- return NO
+	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
 }
 - (void) localMouseDragged:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
-	if ((deleted)||(zoneInUse==nil))
+	if ((deleted)||(spriteInUse==nil))
 		return;
-	[zoneInUse mouseDragged:p];
+	[spriteInUse mouseDragged:p];
 }
 - (void) localMouseUp:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
-	if ((deleted)||(zoneInUse==nil))
+	if ((deleted)||(spriteInUse==nil))
 		return;
-	[zoneInUse mouseUp:p];
-	zoneInUse = nil;
+	[spriteInUse mouseUp:p];
+	spriteInUse = nil;
 }
 
 /*===================================================================================*/
 #pragma mark --------------------- management
 /*------------------------------------*/
 
-- (VVSprite *) zoneAtPoint:(NSPoint)p	{
+- (VVSprite *) spriteAtPoint:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted)
 		return nil;
 		
 	id	returnMe = nil;
 	
-	[zoneArray rdlock];
+	[spriteArray rdlock];
 	
-		for (VVSprite *tmpZone in [zoneArray objectEnumerator])	{
-			if ((![tmpZone locked]) && ([tmpZone checkPoint:p]))	{
-				returnMe = tmpZone;		
+		for (VVSprite *tmpSprite in [spriteArray objectEnumerator])	{
+			if ((![tmpSprite locked]) && ([tmpSprite checkPoint:p]))	{
+				returnMe = tmpSprite;		
 				break;
 			}
 		}
 	
-	[zoneArray unlock];
+	[spriteArray unlock];
 	
 	return returnMe;
 }
-- (id) newZoneAtBottomForRect:(NSRect)r	{
+- (id) newSpriteAtBottomForRect:(NSRect)r	{
 	id			returnMe = nil;
 	returnMe = [VVSprite createWithRect:r inManager:self];
-	[zoneArray lockAddObject:returnMe];
+	[spriteArray lockAddObject:returnMe];
 	return returnMe;
 }
-- (id) newZoneAtTopForRect:(NSRect)r	{
+- (id) newSpriteAtTopForRect:(NSRect)r	{
 	id			returnMe = nil;
 	returnMe = [VVSprite createWithRect:r inManager:self];
-	[zoneArray lockInsertObject:returnMe atIndex:0];
+	[spriteArray lockInsertObject:returnMe atIndex:0];
 	return returnMe;
 }
-- (long) getUniqueZoneIndex	{
-	long		returnMe = zoneIndexCount;
-	++zoneIndexCount;
-	if (zoneIndexCount >= 0x7FFFFFFF)
-		zoneIndexCount = 1;
+- (long) getUniqueSpriteIndex	{
+	long		returnMe = spriteIndexCount;
+	++spriteIndexCount;
+	if (spriteIndexCount >= 0x7FFFFFFF)
+		spriteIndexCount = 1;
 	return returnMe;
 }
 
-- (VVSprite *) zoneForIndex:(long)i	{
+- (VVSprite *) spriteForIndex:(long)i	{
 	NSEnumerator		*it;
-	VVSprite		*zonePtr = nil;
+	VVSprite		*spritePtr = nil;
 	VVSprite		*returnMe = nil;
 	
-	[zoneArray rdlock];
-	it = [zoneArray objectEnumerator];
-	while ((zonePtr = [it nextObject]) && (returnMe == nil))	{
-		if ([zonePtr zoneIndex] == i)
-			returnMe = zonePtr;
+	[spriteArray rdlock];
+	it = [spriteArray objectEnumerator];
+	while ((spritePtr = [it nextObject]) && (returnMe == nil))	{
+		if ([spritePtr spriteIndex] == i)
+			returnMe = spritePtr;
 	}
-	[zoneArray unlock];
+	[spriteArray unlock];
 	return returnMe;
 }
-- (void) removeZoneForIndex:(long)i	{
+- (void) removeSpriteForIndex:(long)i	{
 	NSEnumerator		*it;
-	VVSprite		*zonePtr;
-	VVSprite		*foundZone = nil;
+	VVSprite		*spritePtr;
+	VVSprite		*foundSprite = nil;
 	
-	//	find & remove zone in zones array
-	[zoneArray wrlock];
-	it = [zoneArray objectEnumerator];
-	while ((zonePtr=[it nextObject])&&(foundZone==nil))	{
-		if ([zonePtr zoneIndex]==i)
-			foundZone = zonePtr;
+	//	find & remove sprite in sprites array
+	[spriteArray wrlock];
+	it = [spriteArray objectEnumerator];
+	while ((spritePtr=[it nextObject])&&(foundSprite==nil))	{
+		if ([spritePtr spriteIndex]==i)
+			foundSprite = spritePtr;
 	}
-	if (foundZone!=nil)
-		[zoneArray removeObject:foundZone];
-	[zoneArray unlock];
-	//	find & remove zone in zones in use array
-	if (zoneInUse == foundZone)
-		zoneInUse = nil;
+	if (foundSprite!=nil)
+		[spriteArray removeObject:foundSprite];
+	[spriteArray unlock];
+	//	find & remove sprite in sprites in use array
+	if (spriteInUse == foundSprite)
+		spriteInUse = nil;
 }
-- (void) removeZone:(id)z	{
+- (void) removeSprite:(id)z	{
 	if (z == nil)
 		return;
-	if ((zoneArray!=nil)&&([zoneArray count]>0))	{
-		//[zoneArray lockRemoveObject:z];
-		[zoneArray lockRemoveIdenticalPtr:z];
+	if ((spriteArray!=nil)&&([spriteArray count]>0))	{
+		//[spriteArray lockRemoveObject:z];
+		[spriteArray lockRemoveIdenticalPtr:z];
 	}
-	if (zoneInUse == z)
-		zoneInUse = nil;
+	if (spriteInUse == z)
+		spriteInUse = nil;
 }
-- (void) removeAllZones	{
+- (void) removeAllSprites	{
 	//	remove everything from the tracker array
-	zoneInUse = nil;
-	//	remove everything from the zones in use array
-	if (zoneArray != nil)
-		[zoneArray lockRemoveAllObjects];
+	spriteInUse = nil;
+	//	remove everything from the sprites in use array
+	if (spriteArray != nil)
+		[spriteArray lockRemoveAllObjects];
 }
 
 - (void) draw	{
 	//NSLog(@"%s",__func__);
-	if ((deleted)||(zoneArray==nil)||([zoneArray count]<1))
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
-	[zoneArray rdlock];
-		NSEnumerator	*it = [zoneArray reverseObjectEnumerator];
-		VVSprite	*zonePtr;
-		while (zonePtr = [it nextObject])	{
-			[zonePtr draw];
+	[spriteArray rdlock];
+		NSEnumerator	*it = [spriteArray reverseObjectEnumerator];
+		VVSprite	*spritePtr;
+		while (spritePtr = [it nextObject])	{
+			[spritePtr draw];
 		}
-	[zoneArray unlock];
+	[spriteArray unlock];
 }
 - (void) drawRect:(NSRect)r	{
-	if ((deleted)||(zoneArray==nil)||([zoneArray count]<1))
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
-	[zoneArray rdlock];
-		NSEnumerator	*it = [zoneArray reverseObjectEnumerator];
-		VVSprite	*zonePtr;
-		while (zonePtr = [it nextObject])	{
-			if (NSIntersectsRect([zonePtr rect],r))
-				[zonePtr draw];
+	[spriteArray rdlock];
+		NSEnumerator	*it = [spriteArray reverseObjectEnumerator];
+		VVSprite	*spritePtr;
+		while (spritePtr = [it nextObject])	{
+			if (NSIntersectsRect([spritePtr rect],r))
+				[spritePtr draw];
 		}
-	[zoneArray unlock];
+	[spriteArray unlock];
 }
 
-- (VVSprite *) zoneInUse	{
-	return zoneInUse;
+- (VVSprite *) spriteInUse	{
+	return spriteInUse;
 }
-- (void) setZoneInUse:(VVSprite *)z	{
-	zoneInUse = z;
+- (void) setSpriteInUse:(VVSprite *)z	{
+	spriteInUse = z;
 }
-- (MutLockArray *) zoneArray	{
-	return zoneArray;
+- (MutLockArray *) spriteArray	{
+	return spriteArray;
 }
 
 

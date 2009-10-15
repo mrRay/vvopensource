@@ -29,19 +29,19 @@
 - (void) generalInit	{
 	deleted = NO;
 	initialized = NO;
-	needsReshape = YES;
+	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
-	pathsAndZonesNeedUpdate = YES;
+	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
-	pathsAndZonesNeedUpdate = YES;
+	spritesNeedUpdate = YES;
 }
 - (void) prepareToBeDeleted	{
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
-	pathsAndZonesNeedUpdate = NO;
+	spritesNeedUpdate = NO;
 	deleted = YES;
 }
 - (void) dealloc	{
@@ -61,8 +61,9 @@
 - (void) setOpenGLContext:(NSOpenGLContext *)c	{
 	//NSLog(@"%s",__func__);
 	[super setOpenGLContext:c];
+	[c setView:self];
 	initialized = NO;
-	needsReshape = YES;
+	//needsReshape = YES;
 }
 
 - (BOOL) acceptsFirstMouse:(NSEvent *)theEvent	{
@@ -98,13 +99,13 @@
 - (void) setFrame:(NSRect)f	{
 	//NSLog(@"%s",__func__);
 	[super setFrame:f];
-	//[self updatePathsAndZones];
-	pathsAndZonesNeedUpdate = YES;
-	needsReshape = YES;
+	//[self updateSprites];
+	spritesNeedUpdate = YES;
+	//needsReshape = YES;
 	initialized = NO;
 }
-- (void) updatePathsAndZones	{
-	pathsAndZonesNeedUpdate = NO;
+- (void) updateSprites	{
+	spritesNeedUpdate = NO;
 }
 
 
@@ -152,19 +153,23 @@
 	if (!initialized)	{
 		[self initializeGL];
 		initialized = YES;
-		needsReshape = YES;
 	}
-	if (needsReshape)	{
-		[self reshapeGL];
-		needsReshape = NO;
-	}
+	//	set up the view to draw
+	NSRect				bounds = [self bounds];
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
+	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
+	//	clear the view
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	if (pathsAndZonesNeedUpdate)
-		[self updatePathsAndZones];
+	//	if the sprites need to be updated, do so now
+	if (spritesNeedUpdate)
+		[self updateSprites];
+	//	tell the sprite manager to start drawing the sprites
 	if (spriteManager != nil)
 		[spriteManager drawRect:r];
-	
 }
 - (void) initializeGL	{
 	//NSLog(@"%s",__func__);
@@ -175,41 +180,21 @@
 	[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 }
-- (void) reshapeGL	{
-	//NSLog(@"%s",__func__);
-	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	NSRect				bounds = [self bounds];
-	//	set up the view to draw
-	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//NSRectLog(@"\t\tbounds",bounds);
-	//glOrtho(bounds.origin.x, NSMaxX(bounds), NSMaxY(bounds), bounds.origin.y, -1.0, 1.0);
-	glOrtho(bounds.origin.x, NSMaxX(bounds), bounds.origin.y, NSMaxY(bounds), -1.0, 1.0);
-	
-}
 
 
-- (void) setPathsAndZonesNeedUpdate:(BOOL)n	{
-	pathsAndZonesNeedUpdate = n;
+- (void) setSpritesNeedUpdate:(BOOL)n	{
+	spritesNeedUpdate = n;
 }
-- (BOOL) pathsAndZonesNeedUpdate	{
-	return pathsAndZonesNeedUpdate;
+- (BOOL) spritesNeedUpdate	{
+	return spritesNeedUpdate;
 }
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;

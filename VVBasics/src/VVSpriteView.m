@@ -18,7 +18,7 @@
 	if (self = [super initWithFrame:f])	{
 		deleted = NO;
 		spriteManager = [[VVSpriteManager alloc] init];
-		pathsAndZonesNeedUpdate = YES;
+		spritesNeedUpdate = YES;
 		lastMouseEvent = nil;
 		return self;
 	}
@@ -30,7 +30,7 @@
 	if (self = [super initWithCoder:c])	{
 		deleted = NO;
 		spriteManager = [[VVSpriteManager alloc] init];
-		pathsAndZonesNeedUpdate = YES;
+		spritesNeedUpdate = YES;
 		lastMouseEvent = nil;
 		return self;
 	}
@@ -41,7 +41,7 @@
 	//NSLog(@"%s",__func__);
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
-	pathsAndZonesNeedUpdate = NO;
+	spritesNeedUpdate = NO;
 	deleted = YES;
 }
 - (void) dealloc	{
@@ -54,7 +54,7 @@
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
-	pathsAndZonesNeedUpdate = YES;
+	spritesNeedUpdate = YES;
 }
 
 
@@ -97,11 +97,11 @@
 
 - (void) setFrame:(NSRect)f	{
 	[super setFrame:f];
-	//[self updatePathsAndZones];
-	pathsAndZonesNeedUpdate = YES;
+	//[self updateSprites];
+	spritesNeedUpdate = YES;
 }
-- (void) updatePathsAndZones	{
-	pathsAndZonesNeedUpdate = NO;
+- (void) updateSprites	{
+	spritesNeedUpdate = NO;
 }
 
 
@@ -146,17 +146,17 @@
 
 - (void) drawRect:(NSRect)f	{
 	//NSLog(@"%s",__func__);
-	if (pathsAndZonesNeedUpdate)
-		[self updatePathsAndZones];
+	if (spritesNeedUpdate)
+		[self updateSprites];
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 }
 
-- (void) setPathsAndZonesNeedUpdate:(BOOL)n	{
-	pathsAndZonesNeedUpdate = n;
+- (void) setSpritesNeedUpdate:(BOOL)n	{
+	spritesNeedUpdate = n;
 }
-- (BOOL) pathsAndZonesNeedUpdate	{
-	return pathsAndZonesNeedUpdate;
+- (BOOL) spritesNeedUpdate	{
+	return spritesNeedUpdate;
 }
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;
