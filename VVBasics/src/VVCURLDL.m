@@ -1,11 +1,3 @@
-//
-//  VVCURLDL.m
-//  VVOpenSource
-//
-//  Created by bagheera on 9/17/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
-
 #import "VVCURLDL.h"
 #import "VVBasicMacros.h"
 
@@ -22,6 +14,7 @@
 	return [returnMe autorelease];
 }
 - (id) initWithAddress:(NSString *)a	{
+	//NSLog(@"%s",__func__);
 	if (a==nil)
 		goto BAIL;
 	if (self = [super init])	{
@@ -43,6 +36,7 @@
 	return nil;
 }
 - (void) dealloc	{
+	//NSLog(@"%s",__func__);
 	VVRELEASE(urlString);
 	VVRELEASE(postData);
 	//VVRELEASE(headerArray);

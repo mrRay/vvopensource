@@ -62,6 +62,14 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 - (void) removeAllObjects;
 ///	Establishes a write-lock, then calls "removeAllObjects" on self; threadsafe.
 - (void) lockRemoveAllObjects;
+///	Calls "objectAtIndex:0" on my array; not threadsafe.
+- (id) firstObject;
+///	Establishes a read-lock, then calls "firstObject" on self; threadsafe
+- (id) lockFirstObject;
+///	Calls "removeObjectAtIndex:0" on my array; not threadsafe
+- (void) removeFirstObject;
+///	Establishes a write-lock, then calls "removeFirstObject" on self; threadsafe.
+- (void) lockRemoveFirstObject;
 ///	Calls "lastObject" on my array; not threadsafe.
 - (id) lastObject;
 ///	Establishes a read-lock, then calls "lastObject" on self; threadsafe.

@@ -200,6 +200,34 @@
 	}
 }
 
+- (id) firstObject	{
+	if ((array==nil)||([array count]<1))
+		return nil;
+	return [array objectAtIndex:0];
+}
+- (id) lockFirstObject	{
+	if ((array==nil)||([array count]<1))
+		return nil;
+	id			returnMe = nil;
+	pthread_rwlock_rdlock(&arrayLock);
+		returnMe = [array objectAtIndex:0];
+	pthread_rwlock_unlock(&arrayLock);
+	return returnMe;
+}
+- (void) removeFirstObject	{
+	if ((array==nil)||([array count]<1))
+		return;
+	[array removeObjectAtIndex:0];
+}
+- (void) lockRemoveFirstObject	{
+	if ((array==nil)||([array count]<1))
+		return;
+	
+	pthread_rwlock_wrlock(&arrayLock);
+		[array removeObjectAtIndex:0];
+	pthread_rwlock_unlock(&arrayLock);
+}
+
 - (id) lastObject	{
 	if ((array == nil)||([array count]<1))	{
 		return nil;

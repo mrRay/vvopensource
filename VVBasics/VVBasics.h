@@ -15,6 +15,7 @@
 	#import "VVSpriteManager.h"
 	#import "VVSpriteView.h"
 	#import "VVSpriteGLView.h"
+	#import "VVCrashReporter.h"
 #endif
 
 /*

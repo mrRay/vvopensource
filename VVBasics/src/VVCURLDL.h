@@ -62,7 +62,7 @@
 @property (assign,readwrite) struct curl_slist *headerList;
 @property (assign,readwrite) struct curl_httppost *firstFormPtr;
 @property (assign,readwrite) struct curl_httppost *lastFormPtr;
-@property (assign,readonly) BOOL returnOnMain;
+@property (assign,readwrite) BOOL returnOnMain;
 @property (readonly) NSMutableData *responseData;
 @property (readonly) NSString *responseString;
 @property (readonly) CURLcode err;
