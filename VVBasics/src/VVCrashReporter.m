@@ -141,8 +141,8 @@
 	if (tmp != nil)
 		[emailField setStringValue:tmp];
 	//	actually open the window
-	//[window makeKeyAndOrderFront:nil];
-	[[NSApplication sharedApplication] runModalForWindow:window];
+	[window makeKeyAndOrderFront:nil];
+	//[[NSApplication sharedApplication] runModalForWindow:crashReporterWindow];
 }
 - (IBAction) doneClicked:(id)sender	{
 	//NSLog(@"%s",__func__);
