@@ -45,6 +45,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */ = {isa = PBXBuildFile; fileRef = 96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9601770A108D71D6008F90CA /* VVCrashReporterEmailField.m in Sources */ = {isa = PBXBuildFile; fileRef = 96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */; };
+		9601770D108D71EA008F90CA /* VVCrashReporterDescriptionField.h in Headers */ = {isa = PBXBuildFile; fileRef = 9601770B108D71EA008F90CA /* VVCrashReporterDescriptionField.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9601770E108D71EA008F90CA /* VVCrashReporterDescriptionField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */; };
 		96128609100F830600C9C833 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		961745FF100F879000FB60E6 /* VVMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 961745FE100F879000FB60E6 /* VVMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9617460A100F87B300FB60E6 /* VVMIDIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96174604100F87B300FB60E6 /* VVMIDIManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -437,7 +441,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 968FAA85108B6141000E470D /* CrashReporterTestApp */;
+			remoteGlobalIDString = 968FAA85108B6141000E470D;
 			remoteInfo = CrashReporterTestApp;
 		};
 		96AB37C61030503F005F2577 /* PBXContainerItemProxy */ = {
@@ -541,6 +545,10 @@
 /* Begin PBXFileReference section */
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
+		96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCrashReporterEmailField.h; path = VVBasics/src/VVCrashReporterEmailField.h; sourceTree = "<group>"; };
+		96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCrashReporterEmailField.m; path = VVBasics/src/VVCrashReporterEmailField.m; sourceTree = "<group>"; };
+		9601770B108D71EA008F90CA /* VVCrashReporterDescriptionField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCrashReporterDescriptionField.h; path = VVBasics/src/VVCrashReporterDescriptionField.h; sourceTree = "<group>"; };
+		9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCrashReporterDescriptionField.m; path = VVBasics/src/VVCrashReporterDescriptionField.m; sourceTree = "<group>"; };
 		961745F4100F86B400FB60E6 /* VVMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		961745F5100F86B400FB60E6 /* VVMIDI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "VVMIDI-Info.plist"; path = "VVMIDI/FrameworkSrc/VVMIDI-Info.plist"; sourceTree = "<group>"; };
 		961745FE100F879000FB60E6 /* VVMIDI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVMIDI.h; path = VVMIDI/VVMIDI.h; sourceTree = "<group>"; };
@@ -1001,6 +1009,10 @@
 				96A99119108D668700895DC1 /* VVCrashReporter.m */,
 				96A9911A108D668700895DC1 /* VVCrashReporter.h */,
 				96A9911B108D668700895DC1 /* VVCrashReporter.xib */,
+				96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */,
+				96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */,
+				9601770B108D71EA008F90CA /* VVCrashReporterDescriptionField.h */,
+				9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */,
 			);
 			name = VVCrashReporter;
 			sourceTree = "<group>";
@@ -1053,6 +1065,8 @@
 				96F07F3A1072A1B7007C66E2 /* VVSpriteManager.h in Headers */,
 				96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */,
 				96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */,
+				96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */,
+				9601770D108D71EA008F90CA /* VVCrashReporterDescriptionField.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1645,6 +1659,8 @@
 				96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */,
 				96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */,
 				96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */,
+				9601770A108D71D6008F90CA /* VVCrashReporterEmailField.m in Sources */,
+				9601770E108D71EA008F90CA /* VVCrashReporterDescriptionField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
