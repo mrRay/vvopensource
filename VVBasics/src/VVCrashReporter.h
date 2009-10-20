@@ -16,8 +16,11 @@
 	data to a file on disk (and optionally emails someone) with this project.
 	
 	HOW TO USE THIS CLASS:
+	
 		1)- create an instance of this class
+		
 		2)- set the instance's delegate and uploadURL.  these are necessary!
+		
 		3)- call "check" on the instance.  when it's done, it calls "crashReporterCheckDone" on the 
 			delegate.
 */

@@ -51,6 +51,7 @@
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
+	[window setLevel:NSModalPanelWindowLevel];
 }
 
 

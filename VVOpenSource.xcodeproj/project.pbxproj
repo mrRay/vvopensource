@@ -1006,8 +1006,8 @@
 		96A9911F108D668C00895DC1 /* VVCrashReporter */ = {
 			isa = PBXGroup;
 			children = (
-				96A99119108D668700895DC1 /* VVCrashReporter.m */,
 				96A9911A108D668700895DC1 /* VVCrashReporter.h */,
+				96A99119108D668700895DC1 /* VVCrashReporter.m */,
 				96A9911B108D668700895DC1 /* VVCrashReporter.xib */,
 				96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */,
 				96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */,
