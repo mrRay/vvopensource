@@ -17,7 +17,8 @@ typedef enum _VVSpriteEventType	{
 
 @interface VVSprite : NSObject {
 	BOOL			deleted;
-	BOOL			locked;				//	whether or not i should respond to mouse input
+	BOOL			locked;				//	whether or not i should respond to mouse input.  DOESN'T AFFECT ANYTHING IN THIS CLASS!  variable exists for the user's convenience, and is otherwise superfluous!
+	BOOL			hidden;				//	whether or not the sprite should draw.  DOESN'T AFFECT ANYTHING IN THIS CLASS!  variable exists for the user's convenience, and is otherwise superfluous!
 	long			spriteIndex;
 	id				manager;			//	the VVSpriteManager i exist within- NOT retained!
 	id				delegate;			//	NOT retained!
@@ -50,6 +51,7 @@ typedef enum _VVSpriteEventType	{
 - (void) draw;
 
 @property (assign, readwrite) BOOL locked;
+@property (assign, readwrite) BOOL hidden;
 @property (readonly) long spriteIndex;
 @property (readonly) id manager;
 @property (assign, readwrite) id delegate;

@@ -160,6 +160,12 @@
 - (BOOL) locked	{
 	return locked;
 }
+- (void) setHidden:(BOOL)n	{
+	hidden = n;
+}
+- (BOOL) hidden	{
+	return hidden;
+}
 - (long) spriteIndex	{
 	return spriteIndex;
 }
