@@ -43,6 +43,7 @@
 		mouseDownDelta = NSMakePoint(NSNotFound,NSNotFound);
 		
 		userInfo = nil;
+		NRUserInfo = nil;
 		safeString = nil;
 		return self;
 	}
@@ -145,9 +146,52 @@
 		[delegate performSelector:actionCallback withObject:self];
 }
 - (void) draw	{
+	//NSLog(@"%s",__func__);
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
 	[delegate performSelector:drawCallback withObject:self];
+}
+- (void) bringToFront	{
+	//NSLog(@"%s",__func__);
+	if ((deleted) || (manager==nil))
+		return;
+	//	get my manager's sprite array- if it's nil or has < 2 items, bail (nothing to do)
+	MutLockArray		*managerSpriteArray = [manager spriteArray];
+	if ((managerSpriteArray==nil) || ([managerSpriteArray count]<2))
+		return;
+	//	get a write-lock on the array, i'll be changing its order
+	[managerSpriteArray wrlock];
+		//	retain me so i don't get released during any of this silliness
+		[self retain];
+		//	remove me from my manager's sprite array
+		[managerSpriteArray removeIdenticalPtr:self];
+		//	add me to my manager's sprite array at the "top"
+		[managerSpriteArray insertObject:self atIndex:0];
+		//	autorelease me, so the impact on my retain count has been a net 0
+		[self autorelease];
+	//	unlock the array
+	[managerSpriteArray unlock];
+}
+- (void) sendToBack	{
+	//NSLog(@"%s",__func__);
+	if ((deleted) || (manager==nil))
+		return;
+	//	get my manager's sprite array- if it's nil or has < 2 items, bail (nothing to do)
+	MutLockArray		*managerSpriteArray = [manager spriteArray];
+	if ((managerSpriteArray==nil) || ([managerSpriteArray count]<2))
+		return;
+	//	get a write-lock on the array, i'll be changing its order
+	[managerSpriteArray wrlock];
+		//	retain me so i don't get released during any of this silliness
+		[self retain];
+		//	remove me from my manager's sprite array
+		[managerSpriteArray removeIdenticalPtr:self];
+		//	add me to my manager's sprite array at the "bottom"
+		[managerSpriteArray addObject:self];
+		//	autorelease me, so the impact on my retain count has been a net 0
+		[self autorelease];
+	//	unlock the array
+	[managerSpriteArray unlock];
 }
 
 /*===================================================================================*/
@@ -234,6 +278,7 @@
 - (id) userInfo	{
 	return userInfo;
 }
+@synthesize NRUserInfo;
 - (void) setSafeString:(id)n	{
 	VVRELEASE(safeString);
 	if (n != nil)

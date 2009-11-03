@@ -152,6 +152,7 @@
 		[spriteManager drawRect:f];
 }
 
+@synthesize spriteManager;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
 }

@@ -35,6 +35,7 @@ typedef enum _VVSpriteEventType	{
 	NSPoint			mouseDownDelta;		//	change between mousedown loc and most-recently received coords
 	
 	id				userInfo;		//	RETAINED!  for storing a random thing...
+	id				NRUserInfo;		//	NOT RETAINED!  for storing something that *shouldn't* be retained...
 	id				safeString;	//	nil on init- many sprites need formatted text, this is a convenience variable...
 }
 
@@ -49,6 +50,9 @@ typedef enum _VVSpriteEventType	{
 - (void) mouseDragged:(NSPoint)p;
 - (void) mouseUp:(NSPoint)p;
 - (void) draw;
+
+- (void) bringToFront;
+- (void) sendToBack;
 
 @property (assign, readwrite) BOOL locked;
 @property (assign, readwrite) BOOL hidden;
@@ -67,6 +71,7 @@ typedef enum _VVSpriteEventType	{
 @property (readonly) NSPoint lastActionDelta;
 @property (readonly) NSPoint mouseDownDelta;
 @property (assign,readwrite) id userInfo;
+@property (assign,readwrite) id NRUserInfo;
 @property (assign,readwrite) id safeString;
 
 @end

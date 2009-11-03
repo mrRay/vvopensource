@@ -15,6 +15,7 @@
 - (void) prepareToBeDeleted;
 - (void) updateSprites;
 
+@property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 
