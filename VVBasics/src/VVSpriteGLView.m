@@ -33,6 +33,13 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
+	
+	pthread_mutexattr_t		attr;
+	
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&glLock,&attr);
+	pthread_mutexattr_destroy(&attr);
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -49,6 +56,7 @@
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	VVRELEASE(lastMouseEvent);
+	pthread_mutex_destroy(&glLock);
 	[super dealloc];
 }
 
@@ -60,9 +68,11 @@
 
 - (void) setOpenGLContext:(NSOpenGLContext *)c	{
 	//NSLog(@"%s",__func__);
-	[super setOpenGLContext:c];
-	[c setView:self];
-	initialized = NO;
+	pthread_mutex_lock(&glLock);
+		[super setOpenGLContext:c];
+		[c setView:self];
+		initialized = NO;
+	pthread_mutex_unlock(&glLock);
 	//needsReshape = YES;
 }
 
@@ -149,27 +159,29 @@
 
 
 - (void) drawRect:(NSRect)r	{
-	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	if (!initialized)	{
-		[self initializeGL];
-		initialized = YES;
-	}
-	//	set up the view to draw
-	NSRect				bounds = [self bounds];
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
-	//	clear the view
-	glClear(GL_COLOR_BUFFER_BIT);
-	//	if the sprites need to be updated, do so now
-	if (spritesNeedUpdate)
-		[self updateSprites];
-	//	tell the sprite manager to start drawing the sprites
-	if (spriteManager != nil)
-		[spriteManager drawRect:r];
+	pthread_mutex_lock(&glLock);
+		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+		if (!initialized)	{
+			[self initializeGL];
+			initialized = YES;
+		}
+		//	set up the view to draw
+		NSRect				bounds = [self bounds];
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
+		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
+		//	clear the view
+		glClear(GL_COLOR_BUFFER_BIT);
+		//	if the sprites need to be updated, do so now
+		if (spritesNeedUpdate)
+			[self updateSprites];
+		//	tell the sprite manager to start drawing the sprites
+		if (spriteManager != nil)
+			[spriteManager drawRect:r];
+	pthread_mutex_unlock(&glLock);
 }
 - (void) initializeGL	{
 	//NSLog(@"%s",__func__);

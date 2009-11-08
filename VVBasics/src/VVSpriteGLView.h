@@ -11,6 +11,7 @@
 	
 	BOOL					initialized;
 	//BOOL					needsReshape;
+	pthread_mutex_t			glLock;
 	
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
