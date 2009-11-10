@@ -504,10 +504,14 @@
 		//	release the VVCURLDL
 		[h autorelease];
 		
+		//	retain the path to the crash log, just in case
+		[finishedPath retain];
 		//	take the log i just sent out of the array
 		[crashLogArray lockRemoveFirstObject];
 		//	delete the actual crash log
 		[[NSFileManager defaultManager] removeFileAtPath:finishedPath handler:nil];
+		//	release the path to the crash log
+		[finishedPath release];
 		//	if there aren't any crash logs left in the array, i'm done!
 		if ([crashLogArray count]==0)	{
 			//	close the window

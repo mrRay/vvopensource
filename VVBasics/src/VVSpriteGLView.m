@@ -85,6 +85,12 @@
 - (BOOL) acceptsFirstResponder	{
 	return YES;
 }
+- (BOOL) becomeFirstResponder	{
+	return YES;
+}
+- (BOOL) resignFirstResponder	{
+	return YES;
+}
 - (BOOL) needsPanelToBecomeKey	{
 	return YES;
 }

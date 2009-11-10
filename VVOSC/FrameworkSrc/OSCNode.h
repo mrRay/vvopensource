@@ -26,17 +26,17 @@ typedef enum	{
 
 
 @interface OSCNode : NSObject {
-	id					addressSpace;
+	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;
 	
 	NSString			*nodeName;	//	"local" name: name of the node at /a/b/c is "c"
-	NSString			*fullName;	//	"full" name
-	MutNRLockArray		*nodeContents;	//	type 'MutLockArray'
+	NSString			*fullName;	//	"full" name: name of the node at /a/b/c is "/a/b/c"
+	MutLockArray		*nodeContents;	//	type 'MutLockArray'
 	OSCNode				*parentNode;	//	NOT retained!
 	int					nodeType;	//	what 'type' of node i am
 	
 	OSCMessage			*lastReceivedMessage;	//	store the msg instead of the val because msgs can have multiple vals
-	MutNRLockArray		*delegateArray;	//	type 'MutLockArray'. contents are NOT retained! could be anything!
+	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
 }
 
 //	only called by the address space to craft a formatted string for logging purposes
