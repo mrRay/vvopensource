@@ -43,9 +43,10 @@
 			return nil;
 		}
 		pthread_rwlockattr_init(&attr);
-		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_PRIVATE);
 		pthread_rwlock_init(&arrayLock, &attr);
-		pthread_rwlockattr_destroy(&attr);
+		//pthread_rwlockattr_destroy(&attr);
 		
 		return self;
 	}

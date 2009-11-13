@@ -17,7 +17,8 @@
 	
 	if (self = [super init])	{
 		pthread_rwlockattr_init(&attr);
-		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_PRIVATE);
 		pthread_rwlock_init(&domainLock, &attr);
 		pthread_rwlockattr_destroy(&attr);
 		
