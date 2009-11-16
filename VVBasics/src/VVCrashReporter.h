@@ -44,6 +44,7 @@
 
 @interface VVCrashReporter : NSObject <VVCURLDLDelegate> {
 	NSString						*uploadURL;	//	does NOT includes http://
+	NSString						*developerEmail;
 	id								delegate;	//	must respond to VVCrashReporterDelegate protocol
 	MutLockArray					*crashLogArray;
 	NSMutableDictionary				*systemProfilerDict;
@@ -80,6 +81,8 @@
 //	VVCURLDLDelegate method- this class will be the delegate of multiple VVCURLDL instances
 - (void) dlFinished:(id)h;
 
+- (void) setDeveloperEmail:(NSString *)n;
+- (NSString *) developerEmail;
 - (void) setUploadURL:(NSString *)n;
 - (NSString *) uploadURL;
 

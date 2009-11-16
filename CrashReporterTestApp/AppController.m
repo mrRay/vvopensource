@@ -10,6 +10,7 @@
 	self = [super init];
 	crashReporter = [[VVCrashReporter alloc] init];
 	[crashReporter setUploadURL:[NSString stringWithString:@"http://127.0.0.1/~yourUserName/serverSideCrashReporter.php"]];
+	[crashReporter setDeveloperEmail:[NSString stringWithString:@"support@vidvox.net"]];
 	[crashReporter setDelegate:self];
 	return self;
 }

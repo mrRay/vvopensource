@@ -11,6 +11,7 @@
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		uploadURL = nil;
+		developerEmail = nil;
 		delegate = nil;
 		crashLogArray = [[MutLockArray alloc] init];
 		systemProfilerDict = nil;
@@ -36,6 +37,7 @@
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
 	VVRELEASE(uploadURL);
+	VVRELEASE(developerEmail);
 	VVRELEASE(crashLogArray);
 	VVRELEASE(systemProfilerDict);
 	VVRELEASE(consoleLog);
@@ -489,7 +491,12 @@
 		[def setObject:newLastCrashDate forKey:@"lastCrashDate"];
 		[def synchronize];
 		//	 throw up an alert that describes the error
-		NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.",@"OK",nil,nil,networkErr);
+		if (developerEmail == nil)
+			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.",@"OK",nil,nil,networkErr);
+		else	{
+			NSLog(@"\t\tfound dev email!");
+			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.\n\n%@",@"OK",nil,nil,networkErr,developerEmail);
+		}
 		//	close the window
 		[self closeCrashReporter];
 		//	release system profiler dict
@@ -538,6 +545,14 @@
 
 
 
+- (void) setDeveloperEmail:(NSString *)n	{
+	VVRELEASE(developerEmail);
+	if (n != nil)
+		developerEmail = [n retain];
+}
+- (NSString *) developerEmail	{
+	return developerEmail;
+}
 - (void) setUploadURL:(NSString *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	VVRELEASE(uploadURL);
