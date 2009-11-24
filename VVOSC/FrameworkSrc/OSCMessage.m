@@ -226,6 +226,7 @@
 	}
 	
 	BAIL:
+	NSLog(@"\t\terr: %s - BAIL, %@",__func__,a);
 	[self release];
 	return nil;
 }

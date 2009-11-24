@@ -19,6 +19,10 @@
 		4)- if you un-comment out the email bit below, make sure you change the email addresses!
 		5)- change line 12 of AppController.m in the "CrashReporterTestApp" target of the 
 			VVOpenSource project so the "uploadURL" points to this file on your server/local machine
+		6)- the first line of php below so the file being opened for writing is in a valid location 
+			instead of in the non-existent "yourUserName" directory
+		7)- build & run the CrashReporterTestApp- force a crash, then run a check (which will 
+			automatically post the information to this page and write it to disk)
 -->
 
 <?php
