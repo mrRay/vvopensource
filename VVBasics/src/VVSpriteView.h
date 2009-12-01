@@ -12,6 +12,8 @@
 	NSEvent					*lastMouseEvent;
 }
 
+- (void) generalInit;
+
 - (void) prepareToBeDeleted;
 - (void) updateSprites;
 

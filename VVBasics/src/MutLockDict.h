@@ -25,6 +25,10 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 - (void) wrlock;
 - (void) unlock;
 
+- (NSMutableDictionary *) dict;
+- (NSMutableDictionary *) createDictCopy;
+- (NSMutableDictionary *) lockCreateDictCopy;
+
 - (void) setObject:(id)o forKey:(NSString *)s;
 - (void) lockSetObject:(id)o forKey:(NSString *)s;
 - (void) setValue:(id)v forKey:(NSString *)s;

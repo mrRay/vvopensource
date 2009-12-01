@@ -65,6 +65,24 @@
 }
 
 
+- (NSMutableDictionary *) dict	{
+	return dict;
+}
+- (NSMutableDictionary *) createDictCopy	{
+	NSMutableDictionary		*returnMe = [dict mutableCopy];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
+- (NSMutableDictionary *) lockCreateDictCopy	{
+	NSMutableDictionary		*returnMe = nil;
+	pthread_rwlock_rdlock(&dictLock);
+		returnMe = [self createDictCopy];
+	pthread_rwlock_unlock(&dictLock);
+	return returnMe;
+}
+
+
 - (void) setObject:(id)o forKey:(NSString *)s	{
 	if ((dict != nil) && (o != nil) && (s != nil))	{
 		//@try	{

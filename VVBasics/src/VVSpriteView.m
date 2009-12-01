@@ -16,10 +16,7 @@
 - (id) initWithFrame:(NSRect)f	{
 	//NSLog(@"%s",__func__);
 	if (self = [super initWithFrame:f])	{
-		deleted = NO;
-		spriteManager = [[VVSpriteManager alloc] init];
-		spritesNeedUpdate = YES;
-		lastMouseEvent = nil;
+		[self generalInit];
 		return self;
 	}
 	[self release];
@@ -28,14 +25,17 @@
 - (id) initWithCoder:(NSCoder *)c	{
 	//NSLog(@"%s",__func__);
 	if (self = [super initWithCoder:c])	{
-		deleted = NO;
-		spriteManager = [[VVSpriteManager alloc] init];
-		spritesNeedUpdate = YES;
-		lastMouseEvent = nil;
+		[self generalInit];
 		return self;
 	}
 	[self release];
 	return nil;
+}
+- (void) generalInit	{
+	deleted = NO;
+	spriteManager = [[VVSpriteManager alloc] init];
+	spritesNeedUpdate = YES;
+	lastMouseEvent = nil;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
