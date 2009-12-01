@@ -44,4 +44,7 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 - (NSArray *) allValues;
 - (NSArray *) lockAllValues;
 
+- (NSUInteger) count;
+- (NSUInteger) lockCount;
+
 @end

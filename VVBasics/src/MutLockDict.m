@@ -199,4 +199,17 @@
 	return returnMe;
 }
 
+- (NSUInteger) count	{
+	if (dict!=nil)
+		return [dict count];
+	return 0;
+}
+- (NSUInteger) lockCount	{
+	NSUInteger	returnMe = 0;
+	pthread_rwlock_rdlock(&dictLock);
+		returnMe = [self count];
+	pthread_rwlock_unlock(&dictLock);
+	return returnMe;
+}
+
 @end
