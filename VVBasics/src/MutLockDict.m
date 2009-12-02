@@ -198,7 +198,18 @@
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
-
+- (void) addEntriesFromDictionary:(NSDictionary *)otherDictionary	{
+	if ((dict!=nil)&&(otherDictionary!=nil)&&([otherDictionary count]))	{
+		[dict addEntriesFromDictionary:otherDictionary];
+	}
+}
+- (void) lockAddEntriesFromDictionary:(NSDictionary *)otherDictionary	{
+	if ((dict==nil)||(otherDictionary==nil)||([otherDictionary count]==0))
+		return;
+	pthread_rwlock_wrlock(&dictLock);
+		[dict addEntriesFromDictionary:otherDictionary];
+	pthread_rwlock_unlock(&dictLock);	
+}
 - (NSUInteger) count	{
 	if (dict!=nil)
 		return [dict count];

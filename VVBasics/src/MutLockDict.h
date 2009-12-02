@@ -39,6 +39,8 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 - (id) lockObjectForKey:(NSString *)k;
 - (void) removeObjectForKey:(NSString *)k;
 - (void) lockRemoveObjectForKey:(NSString *)k;
+- (void) addEntriesFromDictionary:(NSDictionary *)otherDictionary;
+- (void) lockAddEntriesFromDictionary:(NSDictionary *)otherDictionary;
 - (NSArray *) allKeys;
 - (NSArray *) lockAllKeys;
 - (NSArray *) allValues;
