@@ -10,6 +10,7 @@
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
+	NSColor					*clearColor;
 }
 
 - (void) generalInit;
@@ -20,5 +21,6 @@
 @property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
+@property (retain,readwrite) NSColor *clearColor;
 
 @end

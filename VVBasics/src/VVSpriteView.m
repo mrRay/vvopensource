@@ -36,6 +36,7 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
+	clearColor = nil;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
@@ -148,6 +149,10 @@
 	//NSLog(@"%s",__func__);
 	if (spritesNeedUpdate)
 		[self updateSprites];
+	if (clearColor != nil)	{
+		[clearColor set];
+		NSRectFill(f);
+	}
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 }
@@ -162,6 +167,9 @@
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;
 }
+
+
+@synthesize clearColor;
 
 
 @end
