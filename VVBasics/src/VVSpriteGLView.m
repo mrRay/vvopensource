@@ -114,11 +114,13 @@
 
 - (void) setFrame:(NSRect)f	{
 	//NSLog(@"%s",__func__);
-	[super setFrame:f];
-	//[self updateSprites];
-	spritesNeedUpdate = YES;
-	//needsReshape = YES;
-	initialized = NO;
+	pthread_mutex_lock(&glLock);
+		[super setFrame:f];
+		//[self updateSprites];
+		spritesNeedUpdate = YES;
+		//needsReshape = YES;
+		initialized = NO;
+	pthread_mutex_unlock(&glLock);
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) updateSprites	{
