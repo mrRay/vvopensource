@@ -119,9 +119,15 @@
 	spritesNeedUpdate = YES;
 	//needsReshape = YES;
 	initialized = NO;
+	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
+}
+- (void) reshape	{
+	//NSLog(@"%s",__func__);
+	spritesNeedUpdate = YES;
+	initialized = NO;
 }
 
 
@@ -165,6 +171,7 @@
 
 
 - (void) drawRect:(NSRect)r	{
+	NSLog(@"%s",__func__);
 	pthread_mutex_lock(&glLock);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 		if (!initialized)	{
