@@ -58,6 +58,7 @@
 - (IBAction) colorTest:(id)sender;
 - (IBAction) stringTest:(id)sender;
 - (IBAction) lengthTest:(id)sender;
+- (IBAction) blobTest:(id)sender;
 
 - (NSArray *) ipAddressArray;
 

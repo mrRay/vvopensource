@@ -38,6 +38,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 + (id) createWithNil;
 ///	Creates & returns an auto-released instance of OSCValue representing infinity
 + (id) createWithInfinity;
+///	Creates & returns an auto-released instance of OSCValue with an NSData blob
++ (id) createWithNSDataBlob:(NSData *)d;
 
 - (id) initWithInt:(int)n;
 - (id) initWithFloat:(float)n;
@@ -49,6 +51,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (id) initWithBool:(BOOL)n;
 - (id) initWithNil;
 - (id) initWithInfinity;
+- (id) initWithNSDataBlob:(NSData *)d;
 
 ///	Returns an int value corresponding to the instance's value
 - (int) intValue;
@@ -65,6 +68,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (Byte) midiData2;
 ///	Returns a BOOL value corresponding to the instance's value
 - (BOOL) boolValue;
+- (NSData *) blobNSData;
 
 @property (nonatomic, readonly) OSCValueType type;
 

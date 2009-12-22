@@ -122,7 +122,7 @@
 }
 
 - (void) oscOutputsChangedNotification:(NSNotification *)note	{
-	//NSLog(@"AppController:oscOutputsChangedNotification:");
+	//NSLog(@"%s",__func__);
 	NSArray			*portLabelArray = nil;
 	
 	//	remove the items in the pop-up button
@@ -150,7 +150,7 @@
 }
 
 - (IBAction) setupFieldUsed:(id)sender	{
-	//NSLog(@"AppController:setupFieldUsed:");
+	//NSLog(@"%s",__func__);
 	//	first take care of the port (there's only one) which is receiving data
 	//	push the settings in the port field to the in port
 	[inPort setPort:[receivingPortField intValue]];
@@ -174,7 +174,7 @@
 	[outputDestinationButton selectItemWithTitle:@"Manual Output"];
 }
 - (IBAction) valueFieldUsed:(id)sender	{
-	//NSLog(@"AppController:valueFieldUsd:");
+	//NSLog(@"%s",__func__);
 	OSCMessage		*msg = nil;
 	OSCBundle		*bundle = nil;
 	OSCPacket		*packet = nil;
@@ -240,7 +240,7 @@
 
 
 - (IBAction) intTest:(id)sender	{
-	//NSLog(@"AppController:intTest:");
+	//NSLog(@"%s",__func__);
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -286,7 +286,7 @@
 	[manualOutPort sendThisPacket:pack];
 }
 - (IBAction) floatTest:(id)sender	{
-	//NSLog(@"AppController:floatTest:");
+	//NSLog(@"%s",__func__);
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -332,7 +332,7 @@
 	[manualOutPort sendThisPacket:pack];
 }
 - (IBAction) colorTest:(id)sender	{
-	//NSLog(@"AppController:colorTest:");
+	//NSLog(@"%s",__func__);
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -378,7 +378,7 @@
 	[manualOutPort sendThisPacket:pack];
 }
 - (IBAction) stringTest:(id)sender	{
-	//NSLog(@"AppController:stringTest:");
+	//NSLog(@"%s",__func__);
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -426,7 +426,7 @@
 	[manualOutPort sendThisPacket:pack];
 }
 - (IBAction) lengthTest:(id)sender	{
-	//NSLog(@"AppController:lengthTest:");
+	//NSLog(@"%s",__func__);
 	OSCBundle		*mainBundle = [OSCBundle create];
 	NSString		*addressPath = [NSString stringWithString:@"/aSingleButFairlyLongAddressPath"];
 	OSCMessage		*msgPtr;
@@ -444,9 +444,21 @@
 	[manualOutPort sendThisPacket:pack];
 	//NSLog(@"\t\tdone sending packet");
 }
+- (IBAction) blobTest:(id)sender	{
+	NSLog(@"%s",__func__);
+	//NSString		*tmpString = [NSString stringWithString:@"This is my sample string"];
+	//NSData			*tmpData = [NSData dataWithBytes:[tmpString UTF8String] length:[tmpString length]];
+	NSArray			*tmpArray = [NSArray arrayWithObjects:@"first object",@"second object",nil];
+	NSData			*tmpData = [NSKeyedArchiver archivedDataWithRootObject:tmpArray];
+	OSCValue		*valuePtr = [OSCValue createWithNSDataBlob:tmpData];
+	NSLog(@"\t\tabout to send %@",valuePtr);
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:@"/thePathForBlobs"];
+	[tmpMsg addValue:valuePtr];
+	[manualOutPort sendThisMessage:tmpMsg];
+}
 
 - (NSArray *) ipAddressArray	{
-	//NSLog(@"AppController:ipAddressArray:");
+	//NSLog(@"%s",__func__);
 	NSArray				*addressArray = [[NSHost currentHost] addresses];
 	NSCharacterSet		*charSet;
 	NSRange				charSetRange;

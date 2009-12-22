@@ -18,7 +18,8 @@ typedef enum	{
 	OSCValMIDI = 7,	//!<MIDI
 	OSCValBool = 8,	//!<BOOL
 	OSCValNil = 9,	//!<nil/NULL
-	OSCValInfinity = 10	//!<Infinity
+	OSCValInfinity = 10,	//!<Infinity
+	OSCValBlob = 11	//!<Blob- random binary data
 } OSCValueType;
 
 

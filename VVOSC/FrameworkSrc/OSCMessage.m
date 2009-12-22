@@ -27,6 +27,7 @@
 	long			tmpLong;
 	int				msgTypeStartIndex = -1;
 	int				msgTypeEndIndex = -1;
+	NSData			*tmpData = nil;
 	
 	
 	
@@ -98,6 +99,7 @@
 	}
 	//	run through the type arguments (,ffis etc.)- for each type arg, pull data from the buffer
 	for (i=msgTypeStartIndex; i<msgTypeEndIndex; ++i)	{
+		//	"tmpIndex" is the offset in "b" i'm currently reading data for this type from!
 		switch(b[i])	{
 			case 'i':			//	int32
 				tmpLong = 0;
@@ -132,10 +134,28 @@
 				
 				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSASCIIStringEncoding]];
 				[msg addValue:oscValue];
-				tmpIndex = tmpInt+1;
-				tmpIndex = 4 - (tmpIndex % 4) + tmpIndex;
+				//tmpIndex = tmpInt+1;
+				//tmpIndex = 4 - (tmpIndex % 4) + tmpIndex;
+				tmpIndex = tmpIndex + tmpInt + 1;
+				tmpIndex = ROUNDUP4(tmpIndex);
 				break;
 			case 'b':			//	OSC-blob
+				//	first, determine the size of the blob.  the size is prepended to the blob as a 32-bit int.
+				tmpLong = 0;
+				for (j=0; j<4; ++j)	{
+					tmpInt = b[tmpIndex+j];
+					tmpLong = tmpLong | (tmpInt << (j*8));
+				}
+				tmpInt = ntohl(tmpLong);
+				//	don't forget to update tmpIndex- i've moved forward in the buffer!
+				tmpIndex += 4;
+				//	now that i know how big the blob is, create an NSData from the buffer
+				tmpData = [NSData dataWithBytes:(void *)(b+tmpIndex) length:tmpInt];
+				oscValue = [OSCValue createWithNSDataBlob:tmpData];
+				[msg addValue:oscValue];
+				//	update tmpIndex, make sure it's an even multiple of 4
+				tmpIndex = tmpIndex + tmpInt;
+				tmpIndex = ROUNDUP4(tmpIndex);
 				break;
 			case 'h':			//	64 bit big-endian two's complement integer
 				tmpIndex = tmpIndex + 8;

@@ -28,6 +28,8 @@
 			return [NSString stringWithFormat:@"<OSCVal nil>"];
 		case OSCValInfinity:
 			return [NSString stringWithFormat:@"<OSCVal infinity>"];
+		case OSCValBlob:
+			return [NSString stringWithFormat:@"<OSCVal blob: %@>",value];
 	}
 	return [NSString stringWithFormat:@"<OSCValue ?>"];
 }
@@ -77,6 +79,12 @@
 }
 + (id) createWithInfinity	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithInfinity];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithNSDataBlob:(NSData *)d	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithNSDataBlob:d];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
@@ -170,6 +178,19 @@
 	[self release];
 	return nil;
 }
+- (id) initWithNSDataBlob:(NSData *)d	{
+	if (d == nil)	{
+		[self release];
+		return nil;
+	}
+	if (self = [super init])	{
+		value = [d retain];
+		type = OSCValBlob;
+		return self;
+	}
+	[self release];
+	return nil;
+}
 - (id) copyWithZone:(NSZone *)z	{
 	OSCValue		*returnMe = nil;
 	switch (type)	{
@@ -207,6 +228,9 @@
 		OSCValInfinity:
 			returnMe = [[OSCValue allocWithZone:z] initWithInfinity];
 			break;
+		OSCValBlob:
+			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:value];
+			break;
 	}
 	return returnMe;
 }
@@ -234,6 +258,11 @@
 			break;
 		case OSCValNil:
 		case OSCValInfinity:
+			break;
+		case OSCValBlob:
+			if (value != nil)
+				[(NSData *)value release];
+			value = nil;
 			break;
 	}
 	value = nil;
@@ -268,6 +297,9 @@
 - (BOOL) boolValue	{
 	return *(BOOL *)value;
 }
+- (NSData *) blobNSData	{
+	return (NSData *)value;
+}
 
 
 @synthesize type;
@@ -290,6 +322,11 @@
 		case OSCValInfinity:
 			return 0;
 			break;
+		case OSCValBlob:
+			if (value == nil)
+				return 0;
+			return ROUNDUP4(4 + [(NSData *)value length]);
+			break;
 	}
 	return 0;
 }
@@ -300,7 +337,7 @@
 	long				tmpLong = 0;
 	float				tmpFloat = 0.0;
 	unsigned char		*charPtr = NULL;
-	
+	void				*voidPtr = NULL;
 	unsigned char		tmpChar = 0;
 #if IPHONE
 	CGColorRef			tmpColor;
@@ -378,6 +415,22 @@
 		case OSCValNil:
 			break;
 		case OSCValInfinity:
+			break;
+		case OSCValBlob:
+			//	calculate the size of the blob, write it to the buffer
+			tmpLong = [(NSData *)value length];
+			tmpLong = htonl(tmpLong);
+			for (i=0;i<4;++i)
+				b[*d+i] = 255 & (tmpLong >> (i*8));
+			*d += 4;
+			//	now write the actual contents of the blob to the buffer
+			tmpLong = [(NSData *)value length];
+			voidPtr = (void *)[(NSData *)value bytes];
+			memcpy((void *)(b+*d),(void *)voidPtr,tmpLong);
+			*d += tmpLong;
+			*d = ROUNDUP4(*d);
+			b[*t] = 'b';
+			++*t;
 			break;
 	}
 	
