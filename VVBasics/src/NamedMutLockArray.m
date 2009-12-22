@@ -25,6 +25,18 @@
 	VVRELEASE(name);
 	[super dealloc];
 }
+
+
+- (NSComparisonResult) nameCompare:(NamedMutLockArray *)comp	{
+	if (name==nil)
+		return NSOrderedDescending;
+	NSString		*compName = [comp name];
+	if (compName==nil)
+		return NSOrderedAscending;
+	return [name caseInsensitiveCompare:compName];
+}
+
+
 - (void) setName:(NSString *)n	{
 	VVRELEASE(name);
 	if (n != nil)

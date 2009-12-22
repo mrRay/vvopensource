@@ -245,6 +245,7 @@
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
 		968FAAAD108B6A62000E470D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAA108B6A62000E470D /* main.m */; };
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
+		9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
 		96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A99119108D668700895DC1 /* VVCrashReporter.m */; };
 		96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A9911A108D668700895DC1 /* VVCrashReporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -632,6 +633,7 @@
 		968FAAAA108B6A62000E470D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CrashReporterTestApp/main.m; sourceTree = "<group>"; };
 		968FAAAB108B6A62000E470D /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = CrashReporterTestApp/AppController.h; sourceTree = "<group>"; };
 		968FAAAC108B6A62000E470D /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = CrashReporterTestApp/AppController.m; sourceTree = "<group>"; };
+		9691B04F10CDA6B9008A0D35 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		96A99011108CEA2600895DC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		96A99119108D668700895DC1 /* VVCrashReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCrashReporter.m; path = VVBasics/src/VVCrashReporter.m; sourceTree = "<group>"; };
 		96A9911A108D668700895DC1 /* VVCrashReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCrashReporter.h; path = VVBasics/src/VVCrashReporter.h; sourceTree = "<group>"; };
@@ -682,6 +684,7 @@
 			files = (
 				961EA925100E876F007E6C25 /* Cocoa.framework in Frameworks */,
 				96A99138108D674400895DC1 /* SystemConfiguration.framework in Frameworks */,
+				9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +820,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
 				96A99011108CEA2600895DC1 /* Foundation.framework */,
 				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
 				9617463E100F88EC00FB60E6 /* CoreMIDI.framework */,

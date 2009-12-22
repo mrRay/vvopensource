@@ -21,6 +21,8 @@
 	NSString		*name;
 }
 
+- (NSComparisonResult) nameCompare:(NamedMutLockArray *)comp;
+
 @property (assign, readwrite) NSString *name;
 
 @end

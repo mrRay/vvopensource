@@ -19,6 +19,14 @@ id _mainAddressSpace;
 
 
 
+//	OSCAddressSpace delegate protocol
+@protocol OSCAddressSpaceDelegateProtocol
+- (void) newNodeCreated:(OSCNode *)n;
+@end
+
+
+
+
 @interface OSCAddressSpace : OSCNode {
 	id			delegate;
 }

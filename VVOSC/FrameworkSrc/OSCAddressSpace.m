@@ -259,7 +259,7 @@
 	
 	OSCNode			*foundNode = [self findNodeForAddress:p createIfMissing:NO];
 	if (foundNode != nil)
-		[foundNode addDelegate:d];
+		[foundNode removeDelegate:d];
 }
 
 - (void) setDelegate:(id)n	{

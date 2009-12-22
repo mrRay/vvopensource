@@ -33,24 +33,6 @@ When instances of OSCInPort and OSCManager receive OSC data, they pass it to the
 
 
 
-//	OSCAddressSpace delegate protocol
-@protocol OSCAddressSpaceDelegateProtocol
-- (void) newNodeCreated:(OSCNode *)n;
-@end
-
-
-
-
-//	OSCNodeDelegateProtocol short description
-@protocol OSCNodeDelegateProtocol
-- (void) receivedOSCMessage:(id)msg;
-- (void) nodeNameChanged:(id)node;
-- (void) nodeDeleted;
-@end
-
-
-
-
 //	OSCManager delegate protocol
 @protocol OSCManagerDelegate
 - (void) setupChanged;

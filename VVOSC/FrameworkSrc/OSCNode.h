@@ -25,6 +25,15 @@ typedef enum	{
 
 
 
+@protocol OSCNodeDelegateProtocol
+- (void) receivedOSCMessage:(id)msg;
+- (void) nodeNameChanged:(id)node;
+- (void) nodeDeleted;
+@end
+
+
+
+
 @interface OSCNode : NSObject {
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;
@@ -64,6 +73,7 @@ typedef enum	{
 
 //	a node's delegate is informed of received osc messages or name changes (OSCNodeDelegateProtocol)
 //	NODE DELEGATES ARE __NOT__ RETAINED!
+//	NODE DELEGATES __MUST__ REMOVE THEMSELVES FROM THE DELEGATE ARRAY!
 - (void) addDelegate:(id)d;
 - (void) removeDelegate:(id)d;
 - (void) informDelegatesOfNameChange;
