@@ -95,7 +95,7 @@
 }
 - (void) lockSetObject:(id)o forKey:(NSString *)s	{
 	pthread_rwlock_wrlock(&dictLock);
-		[dict setObject:o forKey:s];
+		[self setObject:o forKey:s];
 	pthread_rwlock_unlock(&dictLock);
 }
 
@@ -112,7 +112,7 @@
 }
 - (void) lockSetValue:(id)v forKey:(NSString *)s	{
 	pthread_rwlock_wrlock(&dictLock);
-		[dict setValue:v forKey:s];
+		[self setValue:v forKey:s];
 	pthread_rwlock_unlock(&dictLock);
 }
 
@@ -129,7 +129,7 @@
 }
 - (void) lockRemoveAllObjects	{
 	pthread_rwlock_wrlock(&dictLock);
-		[dict removeAllObjects];
+		[self removeAllObjects];
 	pthread_rwlock_unlock(&dictLock);
 }
 
@@ -150,7 +150,7 @@
 - (id) lockObjectForKey:(NSString *)k	{
 	id		returnMe = nil;
 	pthread_rwlock_rdlock(&dictLock);
-		returnMe = [dict objectForKey:k];
+		returnMe = [self objectForKey:k];
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
@@ -165,7 +165,7 @@
 		return;
 	}
 	pthread_rwlock_wrlock(&dictLock);
-		[dict removeObjectForKey:k];
+		[self removeObjectForKey:k];
 	pthread_rwlock_unlock(&dictLock);
 }
 - (NSArray *) allKeys	{
@@ -179,7 +179,7 @@
 - (NSArray *) lockAllKeys	{
 	id		returnMe = nil;
 	pthread_rwlock_rdlock(&dictLock);
-		returnMe = [dict allKeys];
+		returnMe = [self allKeys];
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
@@ -207,7 +207,7 @@
 	if ((dict==nil)||(otherDictionary==nil)||([otherDictionary count]==0))
 		return;
 	pthread_rwlock_wrlock(&dictLock);
-		[dict addEntriesFromDictionary:otherDictionary];
+		[self addEntriesFromDictionary:otherDictionary];
 	pthread_rwlock_unlock(&dictLock);	
 }
 - (NSUInteger) count	{
