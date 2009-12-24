@@ -15,14 +15,14 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutNRLockDict: %@>",dict];
 }
-+ (id) arrayWithCapacity:(NSUInteger)c	{
++ (id) dictionaryWithCapacity:(NSUInteger)c	{
 	MutNRLockDict	*returnMe = [[MutNRLockDict alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
 - (NSMutableDictionary *) createDictCopy	{
-	NSMutableDictionary		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSMutableDictionary		*returnMe = [NSMutableDictionary dictionaryWithCapacity:0];
 	for (NSString *keyPtr in [dict allKeys])	{
 		ObjectHolder *objPtr = [dict objectForKey:keyPtr];
 		[returnMe setObject:objPtr forKey:keyPtr];	//	THIS RETAINS THE OBJECT! HAVE TO RETURN A MUTABLE DICTIONARY!
