@@ -78,6 +78,13 @@
 		[anInvocation invokeWithTarget:object];
 	}
 }
+- (NSString *)description	{	
+	if (object != nil)
+		return [NSString stringWithFormat:@"ObjectHolder: %ld : %@",self,object];
+	else 
+		return [NSString stringWithFormat:@"ObjectHolder: %ld",self];
+	
 
+}
 
 @end

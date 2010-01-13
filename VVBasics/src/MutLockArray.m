@@ -163,7 +163,18 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}
 }
-
+- (void) replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects	{
+	if ((array != nil) && (indexes != nil) && (objects != nil))	{
+		[array replaceObjectsAtIndexes:indexes withObjects:objects];
+	}
+}
+- (void) lockReplaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects	{
+	if ((array != nil) && (indexes != nil) && (objects != nil))	{
+		pthread_rwlock_wrlock(&arrayLock);
+			[self replaceObjectsAtIndexes:indexes withObjects:objects];
+		pthread_rwlock_unlock(&arrayLock);
+	}	
+}
 - (void) insertObject:(id)o atIndex:(NSUInteger)i	{
 	if ((array != nil) && (o != nil) && (i<=[array count]))	{
 		//@try	{
