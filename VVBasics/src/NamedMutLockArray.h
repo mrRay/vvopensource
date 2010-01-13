@@ -21,6 +21,9 @@
 	NSString		*name;
 }
 
++ (id) arrayWithCapacity:(int)c;
++ (id) create;
+
 - (NSComparisonResult) nameCompare:(NamedMutLockArray *)comp;
 
 @property (assign, readwrite) NSString *name;

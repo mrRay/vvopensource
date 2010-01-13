@@ -4,7 +4,7 @@
 	basic http transfer ops
 	
 	basically, this class exists because at this time NSURLConnection is problematic and 
-	top-heavy, and i wanted a small, quick, and effective interface for handling the extremely 
+	top-heavy, and i wanted an easy, effective, and reliable interface for handling the extremely 
 	limited set of http data transfer operations required by my frameworks/apps.
 	
 	this class was meant to be used as a one-shot throwaway; that is, you're meant to create an 

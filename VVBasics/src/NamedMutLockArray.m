@@ -7,6 +7,20 @@
 @implementation NamedMutLockArray
 
 
++ (id) arrayWithCapacity:(int)c	{
+	NamedMutLockArray		*returnMe = [[NamedMutLockArray alloc] initWithCapacity:c];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) create	{
+	NamedMutLockArray		*returnMe = [[NamedMutLockArray alloc] initWithCapacity:0];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
+
+
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<NamedMutLockArray: %@, %@>",name,array];
 }
