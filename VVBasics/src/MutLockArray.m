@@ -152,7 +152,7 @@
 			}
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -200,7 +200,7 @@
 			[array removeAllObjects];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -264,7 +264,7 @@
 			[array removeLastObject];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -279,7 +279,7 @@
 			[array removeObject:o];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -294,7 +294,7 @@
 			[array removeObjectAtIndex:i];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -311,7 +311,7 @@
 			[array removeObjectsAtIndexes:i];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -328,7 +328,7 @@
 			[array removeObjectsInArray:otherArray];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}	
 }
@@ -340,7 +340,7 @@
 			pthread_rwlock_unlock(&arrayLock);
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -548,7 +548,7 @@
 			[array makeObjectsPerformSelector:s];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }
@@ -565,7 +565,7 @@
 			[array makeObjectsPerformSelector:s withObject:o];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
+			NSLog(@"\t\tERR: %s - %@",__func__,err);
 		}
 	}
 }

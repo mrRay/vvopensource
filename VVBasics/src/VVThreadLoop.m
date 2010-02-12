@@ -83,7 +83,7 @@
 		//}
 		
 		++runLoopCount;
-		if (runLoopCount > 128)	{
+		if (runLoopCount > 4)	{
 			[pool release];
 			pool = [[NSAutoreleasePool alloc] init];
 			runLoopCount = 0;

@@ -12,6 +12,7 @@
 #pragma mark --------------------- create/destroy
 /*------------------------------------*/
 - (id) init	{
+	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		deleted = NO;
 		spriteArray = [[MutLockArray alloc] initWithCapacity:0];

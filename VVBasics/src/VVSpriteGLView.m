@@ -11,6 +11,7 @@
 
 
 - (id) initWithFrame:(NSRect)f pixelFormat:(NSOpenGLPixelFormat *)p	{
+	//NSLog(@"%s",__func__);
 	if (self = [super initWithFrame:f pixelFormat:p])	{
 		[self generalInit];
 		return self;
@@ -19,6 +20,7 @@
 	return nil;
 }
 - (id) initWithCoder:(NSCoder *)c	{
+	//NSLog(@"%s",__func__);
 	if (self = [super initWithCoder:c])	{
 		[self generalInit];
 		return self;
@@ -52,6 +54,7 @@
 	deleted = YES;
 }
 - (void) dealloc	{
+	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);

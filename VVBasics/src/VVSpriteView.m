@@ -14,7 +14,7 @@
 /*------------------------------------*/
 
 - (id) initWithFrame:(NSRect)f	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	if (self = [super initWithFrame:f])	{
 		[self generalInit];
 		return self;
@@ -23,7 +23,7 @@
 	return nil;
 }
 - (id) initWithCoder:(NSCoder *)c	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	if (self = [super initWithCoder:c])	{
 		[self generalInit];
 		return self;
@@ -32,6 +32,7 @@
 	return nil;
 }
 - (void) generalInit	{
+	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
@@ -46,7 +47,7 @@
 	deleted = YES;
 }
 - (void) dealloc	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
