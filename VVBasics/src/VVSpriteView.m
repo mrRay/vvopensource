@@ -118,6 +118,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseDownModifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	[spriteManager localMouseDown:localPoint];
 }

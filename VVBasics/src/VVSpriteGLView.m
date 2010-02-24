@@ -176,7 +176,7 @@
 
 
 - (void) drawRect:(NSRect)r	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	pthread_mutex_lock(&glLock);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 		if (!initialized)	{
@@ -199,6 +199,8 @@
 		//	tell the sprite manager to start drawing the sprites
 		if (spriteManager != nil)
 			[spriteManager drawRect:r];
+		//	flush!
+		glFlush();
 	pthread_mutex_unlock(&glLock);
 }
 - (void) initializeGL	{
@@ -228,6 +230,9 @@
 }
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;
+}
+- (VVSpriteManager *) spriteManager	{
+	return spriteManager;
 }
 
 

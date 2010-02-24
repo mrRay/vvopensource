@@ -11,6 +11,7 @@
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 	NSColor					*clearColor;
+	int						mouseDownModifierFlags;
 }
 
 - (void) generalInit;

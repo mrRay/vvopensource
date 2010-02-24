@@ -27,5 +27,6 @@
 
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
+@property (readonly) VVSpriteManager *spriteManager;
 
 @end
