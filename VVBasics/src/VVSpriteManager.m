@@ -169,6 +169,13 @@
 	if (spriteInUse == z)
 		spriteInUse = nil;
 }
+- (void) removeSpritesFromArray:(NSArray *)array	{
+	if (array == nil)
+		return;
+	for (id sprite in array)	{
+		[self removeSprite:sprite];
+	}
+}
 - (void) removeAllSprites	{
 	//	remove everything from the tracker array
 	spriteInUse = nil;
@@ -176,7 +183,6 @@
 	if (spriteArray != nil)
 		[spriteArray lockRemoveAllObjects];
 }
-
 - (void) draw	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))

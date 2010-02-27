@@ -27,6 +27,7 @@
 - (VVSprite *) spriteForIndex:(long)i;
 - (void) removeSpriteForIndex:(long)i;
 - (void) removeSprite:(id)z;
+- (void) removeSpritesFromArray:(NSArray *)array;
 - (void) removeAllSprites;
 
 - (void) draw;
