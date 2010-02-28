@@ -685,6 +685,21 @@ these are commented out because the code in these methods is sloppy
 	pthread_rwlock_unlock(&arrayLock);
 	return returnMe;
 }
-
+- (void) sortUsingDescriptors:(NSArray *)descriptors	{
+	if (array == nil)
+		return;
+	if (descriptors == nil)
+		return;
+	[array sortUsingDescriptors:descriptors];
+}
+- (void) lockSortUsingDescriptors:(NSArray *)descriptors	{
+	if (array == nil)
+		return;
+	if (descriptors == nil)
+		return;
+	pthread_rwlock_rdlock(&arrayLock);
+		[self sortUsingDescriptors:descriptors];
+	pthread_rwlock_unlock(&arrayLock);
+}
 
 @end

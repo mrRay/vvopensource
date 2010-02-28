@@ -167,6 +167,10 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a write-lock, then calls "sortUsingSelector:" on self; threadsafe.
 - (void) lockSortUsingSelector:(SEL)s;
 
+///	Calls "sortUsingDescriptors:" on my array; not threadsafe.
+- (void) sortUsingDescriptors:(NSArray *)descriptors;
+///	Establishes a write-lock, then calls "sortUsingDescriptors:" on self; threadsafe.
+- (void) lockSortUsingDescriptors:(NSArray *)descriptors;
 
 - (NSEnumerator *) objectEnumerator;
 - (NSEnumerator *) reverseObjectEnumerator;
