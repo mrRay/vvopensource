@@ -23,6 +23,21 @@
 	}
 	return returnMe;
 }
+- (NSMutableArray *) createArrayCopyFromObjects	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	for (id objPtr in array)	{
+		if ([objPtr isKindOfClass:[ObjectHolder class]])	{
+			id addMe = [objPtr object];
+			if (addMe!=nil)
+				[returnMe addObject:addMe];
+		}
+		else {
+			[returnMe addObject:objPtr];
+		}
+
+	}
+	return returnMe;	
+}
 - (void) addObject:(id)o	{
 	if ([o isKindOfClass:[ObjectHolder class]])	{
 		[super addObject:o];
