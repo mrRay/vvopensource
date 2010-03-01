@@ -35,6 +35,7 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
+	mouseDownModifierFlags = 0;
 	
 	pthread_mutexattr_t		attr;
 	
@@ -147,6 +148,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseDownModifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	[spriteManager localMouseDown:localPoint];
 }

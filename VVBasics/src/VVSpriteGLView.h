@@ -16,6 +16,7 @@
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
+	int						mouseDownModifierFlags;
 }
 
 - (void) generalInit;

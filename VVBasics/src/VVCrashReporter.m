@@ -495,7 +495,7 @@
 		if (developerEmail == nil)
 			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.",@"OK",nil,nil,networkErr);
 		else	{
-			NSLog(@"\t\tfound dev email!");
+			//NSLog(@"\t\tfound dev email!");
 			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.\n\n%@",@"OK",nil,nil,networkErr,developerEmail);
 		}
 		//	close the window

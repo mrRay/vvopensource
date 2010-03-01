@@ -22,7 +22,7 @@
 /*!
 it's been my experience that most apps crash much more frequently on end-users than the app's developers would guess.  the simplest and easiest way to improve the end-user's experience is to have the application check their machine for crash logs- which are generated automatically by os x whenever an application crashes- and send them to the developer.
 
-this class exists so i have a really easy way to make my apps send their crash logs to me; the goal here is to make it as easy as possible to get all the information i need to troubleshoot a problem with as little work on the user's part as possible.  it also sends a basic system profile, anything the app recently printed to the console log, and optional description/email fields to facilitate communication directly with the user.  this data is then uploaded to a given URL using an HTTP POST.
+this class exists so i have a really easy way to make my apps send their crash logs to me; the goal here is to make it as easy as possible to get all the information i need to troubleshoot a problem with as little work on the user's part as possible.  it also sends a basic system profile, anything the app- and ONLY the app, not other apps- recently printed to the console log, and optional description/email fields to facilitate communication directly with the user.  this data is then uploaded to a given URL using an HTTP POST.
 
 on the server side, i use a PHP page which sanitizes the POST data (i can't stress how important this step is) and works with it.  i've included a sample PHP page that simply dumps the received data to a file on disk (and optionally emails someone) with this project.
 
