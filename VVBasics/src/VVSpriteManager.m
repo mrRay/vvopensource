@@ -183,6 +183,17 @@
 	if (spriteArray != nil)
 		[spriteArray lockRemoveAllObjects];
 }
+- (void) moveSpriteToFront:(VVSprite *)z	{
+	//NSLog(@"%s",__func__);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return;
+	[spriteArray wrlock];
+		
+		[spriteArray removeObject:z];
+		[spriteArray insertObject:z atIndex:0];
+		
+	[spriteArray unlock];
+}
 - (void) draw	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))

@@ -29,6 +29,7 @@
 - (void) removeSprite:(id)z;
 - (void) removeSpritesFromArray:(NSArray *)array;
 - (void) removeAllSprites;
+- (void) moveSpriteToFront:(VVSprite *)z;
 
 - (void) draw;
 - (void) drawRect:(NSRect)r;
