@@ -147,6 +147,16 @@
 	[window makeKeyAndOrderFront:nil];
 	//[[NSApplication sharedApplication] runModalForWindow:crashReporterWindow];
 }
+- (IBAction) replyButtonClicked:(id)sender	{
+	if ([replyButton intValue] == NSOnState)	{
+		[emailFieldHolder setHidden:NO];
+		if ((window!=nil) && (emailField!=nil))
+			[window makeFirstResponder:emailField];
+	}
+	else	{
+		[emailFieldHolder setHidden:YES];
+	}
+}
 - (IBAction) doneClicked:(id)sender	{
 	//NSLog(@"%s",__func__);
 	//	if the user entered an email address, store it in the prefs
@@ -225,13 +235,21 @@
 		[transmitString appendFormat:@"%@VVAMPERSANDVV",tmpString];
 	else
 		[transmitString appendString:@"COULDNTLOADVVAMPERSANDVV"];
-	//	if this is the last log, add the console log
+	//	if this is the last log...
 	if ([crashLogArray count]==1)	{
+		//	add the console log
 		[transmitString appendFormat:@"console=%@VVAMPERSANDVV",consoleLog];
+		//	add the state of the reply button
+		if ([replyButton intValue] == NSOnState)
+			[transmitString appendFormat:@"reply=YESVVAMPERSANDVV"];
+		else
+			[transmitString appendFormat:@"reply=NOVVAMPERSANDVV"];
 	}
-	//	else this isn't the last console log- add OLDERLOG
-	else
+	//	else this isn't the last crash log....
+	else	{
+		//	add 'OLDERLOG' for the console log
 		[transmitString appendString:@"console=OLDERLOGVVAMPERSANDVV"];
+	}
 	//	on with the rest!
 	tmpString = [systemProfilerDict objectForKey:@"hardware"];
 	if (tmpString != nil)
@@ -520,6 +538,7 @@
 		[[NSFileManager defaultManager] removeFileAtPath:finishedPath handler:nil];
 		//	release the path to the crash log
 		[finishedPath release];
+		
 		//	if there aren't any crash logs left in the array, i'm done!
 		if ([crashLogArray count]==0)	{
 			//	close the window

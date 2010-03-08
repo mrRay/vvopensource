@@ -49,6 +49,8 @@ HOW TO USE THIS CLASS:
 	NSTimer							*currentCrashLogTimer;
 	
 	IBOutlet NSWindow				*window;
+	IBOutlet NSButton				*replyButton;
+	IBOutlet NSView					*emailFieldHolder;
 	IBOutlet NSTextField			*emailField;
 	IBOutlet NSTextView				*descriptionField;
 	IBOutlet NSTextField			*submittingLabel;	//	non-editable. 'submitting', 'getting machine profile', etc.
@@ -62,6 +64,7 @@ HOW TO USE THIS CLASS:
 ///	This is the main method- when you call 'check', the crash reporter looks for crash logs, gets a basic system profile, and collects anything your applications has dumped to the console log.
 - (void) check;
 - (void) openCrashReporter;
+- (IBAction) replyButtonClicked:(id)sender;
 - (IBAction) doneClicked:(id)sender;
 - (void) sendACrashLog;
 - (void) closeCrashReporter;

@@ -38,6 +38,7 @@
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
 	clearColor = nil;
+	mouseDownModifierFlags = 0;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
