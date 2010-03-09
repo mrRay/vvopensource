@@ -146,6 +146,12 @@
 	//	actually open the window
 	[window makeKeyAndOrderFront:nil];
 	//[[NSApplication sharedApplication] runModalForWindow:crashReporterWindow];
+	
+	//	if there's currently a modal window...
+	NSWindow		*modalWindow = nil;
+	modalWindow = [[NSApplication sharedApplication] modalWindow];
+	if (modalWindow != nil)
+		[modalWindow makeKeyAndOrderFront:nil];
 }
 - (IBAction) replyButtonClicked:(id)sender	{
 	if ([replyButton intValue] == NSOnState)	{

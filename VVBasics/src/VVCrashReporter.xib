@@ -352,7 +352,7 @@
 							<object class="NSButtonCell" key="NSCell" id="251117921">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Would you us to reply to this crash log?</string>
+								<string key="NSContents">Would you like us to reply to this crash log?</string>
 								<reference key="NSSupport" ref="56143471"/>
 								<reference key="NSControlView" ref="869099325"/>
 								<int key="NSButtonFlags">1211912703</int>
