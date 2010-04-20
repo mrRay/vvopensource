@@ -37,27 +37,30 @@
 		NSMenuItem			*newItem = nil;
 		[nodeArray rdlock];
 			for (OSCNode *nodePtr in [nodeArray array])	{
-				newItem = [[NSMenuItem alloc]
-					initWithTitle:[nodePtr nodeName]
-					action:nil
-					keyEquivalent:@""];
-				if (newItem != nil)	{
-					//	store the item's full path as its tooltip
-					[newItem setToolTip:[nodePtr fullName]];
-					//	set up the new item so it triggers the appropriate target/action
-					if ((t!=nil)&&(a!=nil))	{
-						[newItem setTarget:t];
-						[newItem setAction:a];
-					}
-					//	add the item to the menu i'll be returning, free it
-					[returnMe addItem:newItem];
-					[newItem autorelease];
-					//	if the node has sub-nodes, generate a menu for them and apply it to the new item
-					if (([nodePtr nodeContents]!=nil)&&([[nodePtr nodeContents] count]>0))	{
-						NSMenu		*subMenu = nil;
-						subMenu = [self makeMenuForNode:nodePtr withTarget:t action:a];
-						if (subMenu != nil)
-							[newItem setSubmenu:subMenu];
+				if (![[nodePtr fullName] isEqualToString:@"/Key"])	{
+					//NSLog(@"\t\t%@",[nodePtr fullName]);
+					newItem = [[NSMenuItem alloc]
+						initWithTitle:[nodePtr nodeName]
+						action:nil
+						keyEquivalent:@""];
+					if (newItem != nil)	{
+						//	store the item's full path as its tooltip
+						[newItem setToolTip:[nodePtr fullName]];
+						//	set up the new item so it triggers the appropriate target/action
+						if ((t!=nil)&&(a!=nil))	{
+							[newItem setTarget:t];
+							[newItem setAction:a];
+						}
+						//	add the item to the menu i'll be returning, free it
+						[returnMe addItem:newItem];
+						[newItem autorelease];
+						//	if the node has sub-nodes, generate a menu for them and apply it to the new item
+						if (([nodePtr nodeContents]!=nil)&&([[nodePtr nodeContents] count]>0))	{
+							NSMenu		*subMenu = nil;
+							subMenu = [self makeMenuForNode:nodePtr withTarget:t action:a];
+							if (subMenu != nil)
+								[newItem setSubmenu:subMenu];
+						}
 					}
 				}
 			}

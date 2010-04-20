@@ -282,6 +282,7 @@
 	//	lock so threads sending midi data don't collide
 	pthread_mutex_lock(&sendingLock);
 	
+	//	if the message is a 'begin sysex dump', add the sysex vals to the packet list
 	if ([m type] == VVMIDIBeginSysexDumpVal)	{
 		NSArray			*msgSysexArray = [m sysexArray];
 		NSEnumerator	*it = [msgSysexArray objectEnumerator];
@@ -314,14 +315,41 @@
 			goto BAIL;
 		}
 	}
+	//	else it's not a sysex val
 	else	{
 		scratchStruct[0] = [m type] | [m channel];
-		scratchStruct[1] = [m data1];
-		scratchStruct[2] = [m data2];
-		
-		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+		//	not all midi messages have two data bytes- some have none, or one
+		switch ([m type])	{
+			case VVMIDINoteOffVal:			//	+2 data bytes
+			case VVMIDINoteOnVal:			//	+2 data bytes
+			case VVMIDIAfterTouchVal:		//	+2 data bytes
+			case VVMIDIControlChangeVal:	//	+2 data bytes
+			case VVMIDIPitchWheelVal:		//	+2 data bytes
+			case VVMIDISongPosPointerVal:	//	+2 data bytes
+				scratchStruct[1] = [m data1];
+				scratchStruct[2] = [m data2];
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+				break;
+			case VVMIDIMTCQuarterFrameVal:	//	+1 data byte
+			case VVMIDISongSelectVal:		//	+1 data byte
+			case VVMIDIProgramChangeVal:	//	+1 data byte
+			case VVMIDIChannelPressureVal:	//	+1 data type
+				scratchStruct[1] = [m data1];
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,2,scratchStruct);
+				break;
+			case VVMIDITuneRequestVal:		//	no data bytes
+			case VVMIDIClockVal:			//	no data bytes
+			case VVMIDITickVal:				//	no data bytes
+			case VVMIDIStartVal:			//	no data bytes
+			case VVMIDIContinueVal:			//	no data bytes
+			case VVMIDIStopVal:				//	no data bytes
+			case VVMIDIActiveSenseVal:		//	no data bytes
+			case VVMIDIResetVal:			//	no data bytes
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,1,scratchStruct);
+				break;
+		}
 		if (newPacket == NULL)	{
-			NSLog(@"\t\terror adding new packet");
+			NSLog(@"\t\terror adding new packet %s",__func__);
 			goto BAIL;
 		}
 	}
