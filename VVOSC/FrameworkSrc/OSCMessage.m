@@ -121,12 +121,14 @@
 				break;
 			case 's':			//	OSC-string
 			case 'S':			//	alternate type represented as an OSC-string
-				tmpInt = -1;
-				for (j=tmpIndex; (j<l) && (tmpInt == -1); ++j)	{
+				//	determine where the string ends by looking for the next 'null' character
+				tmpInt = tmpIndex;
+				for (j=tmpIndex; (j<l) && (tmpInt == tmpIndex); ++j)	{
 					if (*((char *)b+j) == '\0')	{
-						tmpInt = j-1;
+						tmpInt = j;
 					}
 				}
+				
 				//	according to the spec, if the contents of the OSC-string occupy the
 				//	full "width" of the 4-byte-aligned struct that *is* OSC, then there's an entire
 				//	4-byte-struct of '\0' to ensure that you know where that shit ends.
@@ -134,10 +136,11 @@
 				
 				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSASCIIStringEncoding]];
 				[msg addValue:oscValue];
-				//tmpIndex = tmpInt+1;
-				//tmpIndex = 4 - (tmpIndex % 4) + tmpIndex;
-				tmpIndex = tmpIndex + tmpInt + 1;
-				tmpIndex = ROUNDUP4(tmpIndex);
+				
+				//	beginning of this string (tmpIndex), plus the length of this string (tmpInt - tmpIndex), plus 1 (the null), then round that up to the nearest 4 bytes
+				//	this condenses down to....
+				tmpIndex = ROUNDUP4((tmpInt + 1));
+				
 				break;
 			case 'b':			//	OSC-blob
 				//	first, determine the size of the blob.  the size is prepended to the blob as a 32-bit int.
@@ -153,6 +156,7 @@
 				tmpData = [NSData dataWithBytes:(void *)(b+tmpIndex) length:tmpInt];
 				oscValue = [OSCValue createWithNSDataBlob:tmpData];
 				[msg addValue:oscValue];
+				
 				//	update tmpIndex, make sure it's an even multiple of 4
 				tmpIndex = tmpIndex + tmpInt;
 				tmpIndex = ROUNDUP4(tmpIndex);
@@ -370,10 +374,9 @@
 	
 	//	determine the length of the address (round up to the nearest 4 bytes)
 	addressLength = [address length];
-	addressLength = ROUNDUP4(addressLength);
-	//	determine the length of the type args (# of type + 1 [for the comma], round up to nearest 4 bytes)
-	typeLength = valueCount + 1;
-	typeLength = ROUNDUP4(typeLength);
+	addressLength = ROUNDUP4((addressLength+1));
+	//	determine the length of the type args (1 [comma] + # of types + 1 [for the null], round up to nearest 4 bytes)
+	typeLength = ROUNDUP4((1 + valueCount + 1));
 	//	determine the length of the various arguments- each rounded up to the nearest 4 bytes
 	//	now write all the data from the vals to the buffer
 	if ((valueCount < 2) && (value != nil))
@@ -397,13 +400,13 @@
 	int					typeWriteOffset = 0;
 	
 	
-	//	write the address, rounded up to the nearest 4 bytes
+	//	write the address, rounded up to the nearest 4 bytes (the +1 is for the null after the address)
 	strncpy((char *)b, [address cStringUsingEncoding:NSASCIIStringEncoding], [address length]);
-	typeWriteOffset += [address length];
-	//	the actual type data location is rounded up to the nearest 4
+	typeWriteOffset += ([address length] + 1);
+	//	the actual type data location is rounded up to the nearest 4-byte segment
 	typeWriteOffset = ROUNDUP4(typeWriteOffset);
-	//	figure out where i'll be starting to write the data (the +1 is the comma)
-	dataWriteOffset = typeWriteOffset + 1 + valueCount;
+	//	figure out where i'll be starting to write the data (the first +1 is the comma, the second +1 is the null after the types)
+	dataWriteOffset = typeWriteOffset + 1 + valueCount + 1;
 	dataWriteOffset = ROUNDUP4(dataWriteOffset);
 	
 	//	write the comma at the beginning of the list of types

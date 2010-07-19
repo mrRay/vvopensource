@@ -315,7 +315,8 @@
 			return 4;
 		break;
 		case OSCValString:
-			return ROUNDUP4([(NSString *)value length]);
+			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
+			return ROUNDUP4(([(NSString *)value length] + 1));
 			break;
 		case OSCValBool:
 		case OSCValNil:
@@ -325,7 +326,8 @@
 		case OSCValBlob:
 			if (value == nil)
 				return 0;
-			return ROUNDUP4(4 + [(NSData *)value length]);
+			//	BLOBS DON'T REQUIRE A NULL CHARACTER AFTER THEM!
+			return ROUNDUP4((4 + [(NSData *)value length]));
 			break;
 	}
 	return 0;
@@ -369,7 +371,7 @@
 			tmpLong = [(NSString *)value length];
 			charPtr = (unsigned char *)[(NSString *)value cStringUsingEncoding:NSASCIIStringEncoding];
 			strncpy((char *)(b+*d),(char *)charPtr,tmpLong);
-			*d += tmpLong;
+			*d = *d + tmpLong + 1;
 			*d = ROUNDUP4(*d);
 			
 			b[*t] = 's';
@@ -427,7 +429,7 @@
 			tmpLong = [(NSData *)value length];
 			voidPtr = (void *)[(NSData *)value bytes];
 			memcpy((void *)(b+*d),(void *)voidPtr,tmpLong);
-			*d += tmpLong;
+			*d = *d + tmpLong;
 			*d = ROUNDUP4(*d);
 			b[*t] = 'b';
 			++*t;

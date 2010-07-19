@@ -379,6 +379,26 @@
 }
 - (IBAction) stringTest:(id)sender	{
 	//NSLog(@"%s",__func__);
+	/*
+	OSCBundle		*bundle = nil;
+	OSCMessage		*msg = nil;
+	
+	bundle = [OSCBundle create];
+	msg = [OSCMessage createWithAddress:@"/path"];
+	[msg addInt:1];
+	[msg addInt:2];
+	[msg addString:@"three"];
+	[msg addString:@"four"];
+	[msg addInt:5];
+	[msg addString:@"six"];
+	[msg addInt:7];
+	[msg addInt:8];
+	[bundle addElement:msg];
+	
+	OSCPacket		*pack = [OSCPacket createWithContent:bundle];
+	[manualOutPort sendThisPacket:pack];
+	*/
+	
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -424,6 +444,7 @@
 	pack = [OSCPacket createWithContent:mainBundle];
 	//	tell the out port to send the packet
 	[manualOutPort sendThisPacket:pack];
+	
 }
 - (IBAction) lengthTest:(id)sender	{
 	//NSLog(@"%s",__func__);
@@ -446,6 +467,22 @@
 }
 - (IBAction) blobTest:(id)sender	{
 	NSLog(@"%s",__func__);
+	/*
+	int				rawBufferSize = 5;
+	void			*rawBuffer = malloc(rawBufferSize);
+	memset(rawBuffer,9,rawBufferSize);
+	NSData			*tmpData = [NSData dataWithBytes:rawBuffer length:rawBufferSize];
+	OSCValue		*valuePtr = [OSCValue createWithNSDataBlob:tmpData];
+	NSLog(@"\t\tabout to send %@",valuePtr);
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:@"/thePathForBlobs"];
+	[tmpMsg addInt:1];
+	[tmpMsg addInt:2];
+	[tmpMsg addValue:valuePtr];
+	[tmpMsg addInt:4];
+	[tmpMsg addInt:5];
+	[manualOutPort sendThisMessage:tmpMsg];
+	*/
+	
 	//NSString		*tmpString = [NSString stringWithString:@"This is my sample string"];
 	//NSData			*tmpData = [NSData dataWithBytes:[tmpString UTF8String] length:[tmpString length]];
 	NSArray			*tmpArray = [NSArray arrayWithObjects:@"first object",@"second object",nil];
@@ -453,8 +490,13 @@
 	OSCValue		*valuePtr = [OSCValue createWithNSDataBlob:tmpData];
 	NSLog(@"\t\tabout to send %@",valuePtr);
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:@"/thePathForBlobs"];
+	[tmpMsg addInt:1];
+	[tmpMsg addInt:2];
 	[tmpMsg addValue:valuePtr];
+	[tmpMsg addInt:4];
+	[tmpMsg addInt:5];
 	[manualOutPort sendThisMessage:tmpMsg];
+	
 }
 
 - (NSArray *) ipAddressArray	{

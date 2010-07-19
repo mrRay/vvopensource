@@ -26,4 +26,4 @@ typedef enum	{
 
 
 //	this macro just rounds a number up to the nearest multiple of 4
-#define ROUNDUP4(A) ((((A)%4)!=0) ? (4-((A)%4)+(A)) : ((A)+4))
+#define ROUNDUP4(A) ((((A)%4)!=0) ? (4-((A)%4)+(A)) : (A))
