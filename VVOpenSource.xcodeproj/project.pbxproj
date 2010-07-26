@@ -248,6 +248,20 @@
 		968FAAAD108B6A62000E470D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAA108B6A62000E470D /* main.m */; };
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
 		9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
+		969E5A3311FD95F0006391BD /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; };
+		969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
+		969E5A3511FD95F5006391BD /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; };
+		969E5A3611FD95F5006391BD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
+		969E5A3711FD95FA006391BD /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; };
+		969E5A3811FD95FB006391BD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
+		969E5A3911FD9601006391BD /* VVCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A9911A108D668700895DC1 /* VVCrashReporter.h */; };
+		969E5A3A11FD9601006391BD /* VVCrashReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A99119108D668700895DC1 /* VVCrashReporter.m */; };
+		969E5A3B11FD9602006391BD /* VVCrashReporterDescriptionField.h in Headers */ = {isa = PBXBuildFile; fileRef = 9601770B108D71EA008F90CA /* VVCrashReporterDescriptionField.h */; };
+		969E5A3C11FD9604006391BD /* VVCrashReporterDescriptionField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */; };
+		969E5A3D11FD9605006391BD /* VVCrashReporterEmailField.h in Headers */ = {isa = PBXBuildFile; fileRef = 96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */; };
+		969E5A3F11FD9607006391BD /* VVCrashReporterEmailField.m in Sources */ = {isa = PBXBuildFile; fileRef = 96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */; };
+		969E5A4011FD9608006391BD /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; };
+		969E5A4111FD9608006391BD /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
 		96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A99119108D668700895DC1 /* VVCrashReporter.m */; };
 		96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A9911A108D668700895DC1 /* VVCrashReporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1182,6 +1196,7 @@
 				9666945210304CB800DB5FDF /* VVBasics.h in Headers */,
 				9666945310304CB900DB5FDF /* VVStopwatch.h in Headers */,
 				9666945510304CBA00DB5FDF /* VVThreadLoop.h in Headers */,
+				969E5A3311FD95F0006391BD /* MutNRLockDict.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1198,6 +1213,7 @@
 				9666946210304CC700DB5FDF /* VVBasics.h in Headers */,
 				9666946310304CC700DB5FDF /* VVStopwatch.h in Headers */,
 				9666946510304CC800DB5FDF /* VVThreadLoop.h in Headers */,
+				969E5A3511FD95F5006391BD /* MutNRLockDict.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,6 +1234,11 @@
 				96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */,
 				96F98FF41072C637004D5EDE /* VVSpriteManager.h in Headers */,
 				96F98FF61072C638004D5EDE /* VVSpriteView.h in Headers */,
+				969E5A3711FD95FA006391BD /* MutNRLockDict.h in Headers */,
+				969E5A3911FD9601006391BD /* VVCrashReporter.h in Headers */,
+				969E5A3B11FD9602006391BD /* VVCrashReporterDescriptionField.h in Headers */,
+				969E5A3D11FD9605006391BD /* VVCrashReporterEmailField.h in Headers */,
+				969E5A4011FD9608006391BD /* VVCURLDL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1787,6 +1808,7 @@
 				9666945010304CB600DB5FDF /* ObjectHolder.m in Sources */,
 				9666945410304CBA00DB5FDF /* VVStopwatch.m in Sources */,
 				9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */,
+				969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1801,6 +1823,7 @@
 				9666946010304CC500DB5FDF /* ObjectHolder.m in Sources */,
 				9666946410304CC800DB5FDF /* VVStopwatch.m in Sources */,
 				9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */,
+				969E5A3611FD95F5006391BD /* MutNRLockDict.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1819,6 +1842,11 @@
 				96F98FF31072C636004D5EDE /* VVSpriteGLView.m in Sources */,
 				96F98FF51072C637004D5EDE /* VVSpriteManager.m in Sources */,
 				96F98FF71072C638004D5EDE /* VVSpriteView.m in Sources */,
+				969E5A3811FD95FB006391BD /* MutNRLockDict.m in Sources */,
+				969E5A3A11FD9601006391BD /* VVCrashReporter.m in Sources */,
+				969E5A3C11FD9604006391BD /* VVCrashReporterDescriptionField.m in Sources */,
+				969E5A3F11FD9607006391BD /* VVCrashReporterEmailField.m in Sources */,
+				969E5A4111FD9608006391BD /* VVCURLDL.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2174,10 +2202,13 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_CFLAGS = (
+					"-fvisibility=hidden",
+					"-DIPHONE",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.1;
+				SDKROOT = iphonesimulator3.2;
 			};
 			name = Debug;
 		};
@@ -2189,10 +2220,13 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_CFLAGS = (
+					"-fvisibility=hidden",
+					"-DIPHONE",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.1;
+				SDKROOT = iphonesimulator3.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2204,10 +2238,13 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_CFLAGS = (
+					"-fvisibility=hidden",
+					"-DIPHONE",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.1;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Debug;
 		};
@@ -2219,10 +2256,13 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_CFLAGS = (
+					"-fvisibility=hidden",
+					"-DIPHONE",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.1;
+				SDKROOT = iphoneos3.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2387,7 +2427,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.1;
+				SDKROOT = iphonesimulator3.2;
 			};
 			name = Debug;
 		};
@@ -2402,7 +2442,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.1;
+				SDKROOT = iphonesimulator3.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2419,7 +2459,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.1;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Debug;
 		};
@@ -2434,7 +2474,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.1;
+				SDKROOT = iphoneos3.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
