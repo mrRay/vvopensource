@@ -94,6 +94,10 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 - (void) removeObjectsInArray:(NSArray *)otherArray;
 ///	Establishes a write-lock, then calls "removeObjectsInArray:" on self; threadsafe.
 - (void) lockRemoveObjectsInArray:(NSArray *)otherArray;
+///	Calls "removeIdenticalPtrsInArray:" on my array; not threadsafe
+- (void) removeIdenticalPtrsInArray:(NSArray *)a;
+///	Establishes a write-lock, then calls "removeIdenticalPtrsInArray:" on self; threadsafe.
+- (void) lockRemoveIdenticalPtrsInArray:(NSArray *)a;
 
 ///	Calls "replaceObjectsAtIndexes:withObjects" on my array; not threadsafe.
 - (void) replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects;

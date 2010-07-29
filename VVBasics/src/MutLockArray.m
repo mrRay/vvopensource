@@ -344,6 +344,29 @@
 		}
 	}
 }
+- (void) removeIdenticalPtrsInArray:(NSArray *)a	{
+	if ((a==nil) || ([a count]<1))
+		return;
+	@try	{
+		NSMutableIndexSet		*indicesToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+		for (id anObj in a)	{
+			long			identicalIndex = [self indexOfIdenticalPtr:anObj];
+			if (identicalIndex != NSNotFound)
+				[indicesToRemove addIndex:identicalIndex];
+		}
+		[array removeObjectsAtIndexes:indicesToRemove];
+	}
+	@catch (NSException *err)	{
+		NSLog(@"\t\tERR: %s - %@",__func__,err);
+	}
+}
+- (void) lockRemoveIdenticalPtrsInArray:(NSArray *)a	{
+	if ((a==nil) || ([a count]<1))
+		return;
+	pthread_rwlock_wrlock(&arrayLock);
+		[self removeIdenticalPtrsInArray:a];
+	pthread_rwlock_unlock(&arrayLock);
+}
 - (id) valueForKey:(NSString *)key	{
 	if ((array == nil) || (key == nil))
 		return nil;

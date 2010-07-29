@@ -42,7 +42,7 @@
  
  
  //	these are all STATUS MESSAGES: all status mesages have bit 7 set.  ONLY status msgs have bit 7 set to 1!
-//	these status messages go to a specific channel
+//	these status messages go to a specific channel (these are voice messages)
 #define VVMIDINoteOffVal 0x80			//	+2 data bytes
 #define VVMIDINoteOnVal 0x90			//	+2 data bytes
 #define VVMIDIAfterTouchVal 0xA0		//	+2 data bytes
