@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>AlternateSDK</key>
-	<string>vvosciphonesimulator2.0</string>
+	<string>vvosciphonesimulatorXXXXXX</string>
 	<key>CanonicalName</key>
-	<string>vvosciphoneos2.0</string>
+	<string>vvosciphoneosXXXXXX</string>
 	<key>CustomProperties</key>
 	<dict/>
 	<key>DefaultProperties</key>
@@ -23,14 +23,14 @@
 		<key>GCC_THUMB_SUPPORT</key>
 		<string>YES</string>
 		<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-		<string>2.0</string>
+		<string>XXXXXX</string>
 		<key>MACOSX_DEPLOYMENT_TARGET</key>
 		<string>10.5</string>
 		<key>PLATFORM_NAME</key>
 		<string>iphoneos</string>
 	</dict>
 	<key>DisplayName</key>
-	<string>Device - iPhone OS 2.0</string>
+	<string>Device - iPhone OS XXXXXX</string>
 	<key>FamilyIdentifier</key>
 	<string>iphoneos</string>
 	<key>FamilyName</key>
@@ -44,6 +44,6 @@
 	<key>MinimumSupportedToolsVersion</key>
 	<string>3.1</string>
 	<key>Version</key>
-	<string>2.0</string>
+	<string>XXXXXX</string>
 </dict>
 </plist>

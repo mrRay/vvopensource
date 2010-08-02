@@ -363,6 +363,27 @@
 			remoteGlobalIDString = 961745F3100F86B400FB60E6;
 			remoteInfo = VVMIDI;
 		};
+		9650C8631206EFB9009F2478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteInfo = VVBasics;
+		};
+		9650C8651206EFBE009F2478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteInfo = VVBasics;
+		};
+		9650C8671206EFC3009F2478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteInfo = VVBasics;
+		};
 		9656D908100F89D60064EEA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1410,6 +1431,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9650C8641206EFB9009F2478 /* PBXTargetDependency */,
 			);
 			name = "VVBasics-iPhone sim SDK";
 			productName = "VVBasics-iPhone sim SDK";
@@ -1428,6 +1450,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9650C8661206EFBE009F2478 /* PBXTargetDependency */,
 			);
 			name = "VVBasics-iPhone dev SDK";
 			productName = "VVBasics-iPhone dev SDK";
@@ -1446,6 +1469,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9650C8681206EFC3009F2478 /* PBXTargetDependency */,
 			);
 			name = "VVBasics-os x SDK";
 			productName = "VVBasics-os x SDK";
@@ -1906,6 +1930,21 @@
 			isa = PBXTargetDependency;
 			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
 			targetProxy = 96174649100F891A00FB60E6 /* PBXContainerItemProxy */;
+		};
+		9650C8641206EFB9009F2478 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 9650C8631206EFB9009F2478 /* PBXContainerItemProxy */;
+		};
+		9650C8661206EFBE009F2478 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 9650C8651206EFBE009F2478 /* PBXContainerItemProxy */;
+		};
+		9650C8681206EFC3009F2478 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 9650C8671206EFC3009F2478 /* PBXContainerItemProxy */;
 		};
 		9656D909100F89D60064EEA6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

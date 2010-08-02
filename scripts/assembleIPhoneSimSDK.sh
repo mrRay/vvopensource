@@ -14,8 +14,8 @@ echo "#define IPHONE 1" > "build/tmpFile.txt"
 cat "${PRODUCT_NAME}/${PRODUCT_NAME}.h" >> "build/tmpFile.txt"
 mv "build/tmpFile.txt" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/usr/local/include/${PRODUCT_NAME}/${PRODUCT_NAME}.h"
 
-#	copy the sdk settings files
-cp -RfH "${PRODUCT_NAME}/iphonesimulatorSDKSettings.plist" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/SDKSettings.plist"
+#	copy the sdk settings plist, modifying it so the iphone os deployment target used to build the SDK is inserted
+sed "s/XXXXXX/${IPHONEOS_DEPLOYMENT_TARGET}/" "${PRODUCT_NAME}/iphonesimulatorSDKSettings.plist" > "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/SDKSettings.plist"
 
 #	delete the build product folders for iphone stuff (tidying stuff up)
 rm -rf "build/${BUILD_STYLE}-iphonesimulator"
