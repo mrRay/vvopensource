@@ -9,6 +9,9 @@ mv -f "build/${BUILD_STYLE}-iphonesimulator/lib${PRODUCT_NAME}.a" "build/${BUILD
 mkdir -p "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/usr/local/include"
 cp -RfH "build/${BUILD_STYLE}/${PRODUCT_NAME}.framework/Headers" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/usr/local/include/${PRODUCT_NAME}"
 
+#	copy the license
+cp -RfH "lgpl-3.0.txt" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/iphonesimulator.sdk/usr/local/include/${PRODUCT_NAME}"
+
 #	modify the header files for the iphone SDKs
 echo "#define IPHONE 1" > "build/tmpFile.txt"
 cat "${PRODUCT_NAME}/${PRODUCT_NAME}.h" >> "build/tmpFile.txt"

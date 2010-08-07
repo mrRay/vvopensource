@@ -9,6 +9,9 @@ mv -f "build/${BUILD_STYLE}/lib${PRODUCT_NAME}.a" "build/${BUILD_STYLE}/SDKs/${P
 mkdir -p "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/macosx.sdk/usr/local/include"
 cp -RfH "build/${BUILD_STYLE}/${PRODUCT_NAME}.framework/Headers" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/macosx.sdk/usr/local/include/${PRODUCT_NAME}"
 
+#	copy the license
+cp -RfH "lgpl-3.0.txt" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/macosx.sdk/usr/local/include/${PRODUCT_NAME}"
+
 #	copy the sdk settings files
 cp -RfH "${PRODUCT_NAME}/macosxSDKSettings.plist" "build/${BUILD_STYLE}/SDKs/${PRODUCT_NAME}/macosx.sdk/SDKSettings.plist"
 

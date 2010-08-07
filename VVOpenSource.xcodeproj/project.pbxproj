@@ -262,6 +262,9 @@
 		969E5A3F11FD9607006391BD /* VVCrashReporterEmailField.m in Sources */ = {isa = PBXBuildFile; fileRef = 96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */; };
 		969E5A4011FD9608006391BD /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; };
 		969E5A4111FD9608006391BD /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
+		969FCE9E120DB9DA0067E617 /* lgpl-3.0.txt in Headers */ = {isa = PBXBuildFile; fileRef = 969FCE94120DB9A10067E617 /* lgpl-3.0.txt */; settings = {ATTRIBUTES = (Public, ); }; };
+		969FCE9F120DB9E20067E617 /* lgpl-3.0.txt in Headers */ = {isa = PBXBuildFile; fileRef = 969FCE94120DB9A10067E617 /* lgpl-3.0.txt */; settings = {ATTRIBUTES = (Public, ); }; };
+		969FCEA0120DB9EF0067E617 /* lgpl-3.0.txt in Headers */ = {isa = PBXBuildFile; fileRef = 969FCE94120DB9A10067E617 /* lgpl-3.0.txt */; settings = {ATTRIBUTES = (Public, ); }; };
 		96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 96A99119108D668700895DC1 /* VVCrashReporter.m */; };
 		96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A9911A108D668700895DC1 /* VVCrashReporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -367,21 +370,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
 		9650C8651206EFBE009F2478 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
 		9650C8671206EFC3009F2478 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
 		9656D908100F89D60064EEA6 /* PBXContainerItemProxy */ = {
@@ -673,6 +676,7 @@
 		968FAAAB108B6A62000E470D /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = CrashReporterTestApp/AppController.h; sourceTree = "<group>"; };
 		968FAAAC108B6A62000E470D /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = CrashReporterTestApp/AppController.m; sourceTree = "<group>"; };
 		9691B04F10CDA6B9008A0D35 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		969FCE94120DB9A10067E617 /* lgpl-3.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lgpl-3.0.txt"; sourceTree = "<group>"; };
 		96A99011108CEA2600895DC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		96A99119108D668700895DC1 /* VVCrashReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCrashReporter.m; path = VVBasics/src/VVCrashReporter.m; sourceTree = "<group>"; };
 		96A9911A108D668700895DC1 /* VVCrashReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCrashReporter.h; path = VVBasics/src/VVCrashReporter.h; sourceTree = "<group>"; };
@@ -871,6 +875,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				969FCE94120DB9A10067E617 /* lgpl-3.0.txt */,
 				32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */,
 				96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */,
 				96BF10C8100E98760079A2E6 /* assembleIPhoneSimSDK.sh */,
@@ -1084,6 +1089,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969FCE9F120DB9E20067E617 /* lgpl-3.0.txt in Headers */,
 				961745FF100F879000FB60E6 /* VVMIDI.h in Headers */,
 				9617460A100F87B300FB60E6 /* VVMIDIManager.h in Headers */,
 				9617460B100F87B300FB60E6 /* VVMIDINode.h in Headers */,
@@ -1095,6 +1101,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969FCE9E120DB9DA0067E617 /* lgpl-3.0.txt in Headers */,
 				961EA957100E8834007E6C25 /* MutLockArray.h in Headers */,
 				961EA959100E8834007E6C25 /* MutLockDict.h in Headers */,
 				961EA95B100E8834007E6C25 /* VVThreadLoop.h in Headers */,
@@ -1120,6 +1127,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969FCEA0120DB9EF0067E617 /* lgpl-3.0.txt in Headers */,
 				9628D0F1100E8A5200C3944E /* OSCAddressSpace.h in Headers */,
 				9628D113100E8A6700C3944E /* OSCZeroConfManager.h in Headers */,
 				9628D117100E8A6700C3944E /* OSCOutPort.h in Headers */,
