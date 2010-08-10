@@ -173,13 +173,14 @@
 				[window makeFirstResponder:emailField];
 			return;
 		}
+		//	if the email field is empty, prompt the user to enter an email address & return
+		NSString		*emailFieldStringVal = [emailField stringValue];
+		if ((emailFieldStringVal==nil) || ([emailFieldStringVal length]<1))	{
+			NSRunAlertPanel(@"Email Address Required",@"If you'd like a reply, please enter a valid email address.",@"OK",nil,nil);
+			return;
+		}
 	}
-	//	if the email field is empty, prompt the user to enter an email address & return
-	NSString		*emailFieldStringVal = [emailField stringValue];
-	if ((emailFieldStringVal==nil) || ([emailFieldStringVal length]<1))	{
-		NSRunAlertPanel(@"Email Address Required",@"If you'd like a reply, please enter a valid email address.",@"OK",nil,nil);
-		return;
-	}
+	
 	
 	//	if the user entered an email address, store it in the prefs
 	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
