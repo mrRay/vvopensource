@@ -146,7 +146,7 @@
 			initWithDomain:@"local."
 			type:@"_osc._udp."
 #if IPHONE
-			name:nil
+			name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
 #else
 			name:[NSString stringWithFormat:@"%@ %@",CSCopyMachineName(),portLabel]
 #endif
