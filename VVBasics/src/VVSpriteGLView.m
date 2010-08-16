@@ -148,9 +148,21 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
-	mouseDownModifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	[spriteManager localMouseDown:localPoint];
+	mouseDownModifierFlags = [e modifierFlags];
+	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
+		[spriteManager localRightMouseDown:localPoint];
+	else
+		[spriteManager localMouseDown:localPoint];
+}
+- (void) rightMouseDown:(NSEvent *)e	{
+	if (deleted)
+		return;
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	[spriteManager localRightMouseDown:localPoint];
 }
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)

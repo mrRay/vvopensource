@@ -68,6 +68,29 @@
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
 }
+- (BOOL) localRightMouseDown:(NSPoint)p	{
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
+	//	determine if there's a sprite which intersects the mousedown coords
+	NSEnumerator		*it;
+	VVSprite		*spritePtr;
+	VVSprite		*foundSprite = nil;
+	[spriteArray rdlock];
+		it = [spriteArray objectEnumerator];
+		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
+				foundSprite = spritePtr;
+		}
+	[spriteArray unlock];
+	//	if i found a sprite which contains the mousedown loc
+	if (foundSprite!=nil)	{
+		spriteInUse = foundSprite;
+		[foundSprite rightMouseDown:p];
+		return YES;
+	}
+	//	if i'm here, i didn't find a sprite- return NO
+	return NO;
+}
 - (void) localMouseDragged:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteInUse==nil))
