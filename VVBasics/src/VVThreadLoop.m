@@ -122,12 +122,13 @@
 - (void) stopAndWaitUntilDone	{
 	//NSLog(@"%s",__func__);
 	[self stop];
-	/*
+	
 	while (running)	{
-		NSLog(@"\twaiting");
+		//NSLog(@"\twaiting");
 		//pthread_yield_np();
+		usleep(100);
 	}
-	*/
+	
 }
 - (float) interval	{
 	return interval;

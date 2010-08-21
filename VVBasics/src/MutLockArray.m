@@ -145,8 +145,12 @@
 		@try	{
 			[array removeAllObjects];
 			if ([a count]>0)	{
-				if ([a isKindOfClass:[MutLockArray class]])
-					[array addObjectsFromArray:[a lockCreateArrayCopy]];
+				if ([a isKindOfClass:[MutLockArray class]])	{
+					[a rdlock];
+					[array addObjectsFromArray:[a array]];
+					[a unlock];
+					//[array addObjectsFromArray:[a lockCreateArrayCopy]];
+				}
 				else
 					[array addObjectsFromArray:a];
 			}
