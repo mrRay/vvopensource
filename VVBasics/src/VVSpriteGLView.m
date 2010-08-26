@@ -191,12 +191,14 @@
 
 - (void) drawRect:(NSRect)r	{
 	//NSLog(@"%s",__func__);
+	if (!initialized)	{
+		[self initializeGL];
+		initialized = YES;
+	}
+	
 	pthread_mutex_lock(&glLock);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-		if (!initialized)	{
-			[self initializeGL];
-			initialized = YES;
-		}
+		
 		//	set up the view to draw
 		NSRect				bounds = [self bounds];
 		glMatrixMode(GL_MODELVIEW);
