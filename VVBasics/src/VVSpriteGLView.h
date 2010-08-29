@@ -26,6 +26,11 @@
 //- (void) reshapeGL;
 - (void) updateSprites;
 
+- (void) _lock;
+- (void) _unlock;
+//- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
+
+@property (assign,readwrite) BOOL initialized;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (readonly) VVSpriteManager *spriteManager;

@@ -40,7 +40,8 @@
 	pthread_mutexattr_t		attr;
 	
 	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
+	//pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
+	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
 	pthread_mutex_init(&glLock,&attr);
 	pthread_mutexattr_destroy(&attr);
 }
@@ -120,8 +121,8 @@
 	//NSLog(@"%s",__func__);
 	pthread_mutex_lock(&glLock);
 		[super setFrame:f];
-		//[self updateSprites];
-		spritesNeedUpdate = YES;
+		[self updateSprites];
+		//spritesNeedUpdate = YES;
 		//needsReshape = YES;
 		initialized = NO;
 	pthread_mutex_unlock(&glLock);
@@ -134,6 +135,18 @@
 	//NSLog(@"%s",__func__);
 	spritesNeedUpdate = YES;
 	initialized = NO;
+}
+- (void) update	{
+	spritesNeedUpdate = YES;
+	initialized = NO;
+}
+
+
+- (void) _lock	{
+	pthread_mutex_lock(&glLock);
+}
+- (void) _unlock	{
+	pthread_mutex_unlock(&glLock);
 }
 
 
@@ -191,12 +204,17 @@
 
 - (void) drawRect:(NSRect)r	{
 	//NSLog(@"%s",__func__);
-	if (!initialized)	{
-		[self initializeGL];
-		initialized = YES;
-	}
+	
+	
+	//	if the sprites need to be updated, do so now
+	if (spritesNeedUpdate)
+		[self updateSprites];
 	
 	pthread_mutex_lock(&glLock);
+		if (!initialized)	{
+			[self initializeGL];
+			initialized = YES;
+		}
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 		
 		//	set up the view to draw
@@ -209,9 +227,7 @@
 		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
 		//	clear the view
 		glClear(GL_COLOR_BUFFER_BIT);
-		//	if the sprites need to be updated, do so now
-		if (spritesNeedUpdate)
-			[self updateSprites];
+		
 		//	tell the sprite manager to start drawing the sprites
 		if (spriteManager != nil)
 			[spriteManager drawRect:r];
@@ -238,6 +254,7 @@
 }
 
 
+@synthesize initialized;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
 }
