@@ -122,6 +122,7 @@
 		lastMouseEvent = [e retain];
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
 		clickedSubview = [self hitTest:locationInWindow];
@@ -132,6 +133,7 @@
 		}
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
+	*/
 	mouseDownModifierFlags = [e modifierFlags];
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
 		[spriteManager localRightMouseDown:localPoint];
@@ -146,6 +148,7 @@
 		lastMouseEvent = [e retain];
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
 		clickedSubview = [self hitTest:locationInWindow];
@@ -156,6 +159,7 @@
 		}
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
+	*/
 	[spriteManager localRightMouseDown:localPoint];
 }
 - (void) mouseDragged:(NSEvent *)e	{
