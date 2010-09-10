@@ -39,6 +39,7 @@
 	lastMouseEvent = nil;
 	clearColor = nil;
 	mouseDownModifierFlags = 0;
+	clickedSubview = nil;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
@@ -119,7 +120,18 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	NSPoint		locationInWindow = [e locationInWindow];
+	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//	if i have subviews and i clicked on one of them, skip the sprite manager
+	if ([[self subviews] count]>0)	{
+		clickedSubview = [self hitTest:locationInWindow];
+		if (clickedSubview == self) clickedSubview = nil;
+		if (clickedSubview != nil)	{
+			[clickedSubview mouseDown:e];
+			return;
+		}
+	}
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	mouseDownModifierFlags = [e modifierFlags];
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
 		[spriteManager localRightMouseDown:localPoint];
@@ -132,17 +144,32 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	NSPoint		locationInWindow = [e locationInWindow];
+	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//	if i have subviews and i clicked on one of them, skip the sprite manager
+	if ([[self subviews] count]>0)	{
+		clickedSubview = [self hitTest:locationInWindow];
+		if (clickedSubview == self) clickedSubview = nil;
+		if (clickedSubview != nil)	{
+			[clickedSubview mouseDown:e];
+			return;
+		}
+	}
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	[spriteManager localRightMouseDown:localPoint];
 }
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)
 		return;
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
+	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 		lastMouseEvent = [e retain];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	[spriteManager localMouseDragged:localPoint];
+	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+	if (clickedSubview != nil)
+		[clickedSubview mouseDragged:e];
+	else
+		[spriteManager localMouseDragged:localPoint];
 }
 - (void) mouseUp:(NSEvent *)e	{
 	if (deleted)
@@ -151,7 +178,11 @@
 	if (e != nil)
 		lastMouseEvent = [e retain];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	[spriteManager localMouseUp:localPoint];
+	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+	if (clickedSubview != nil)
+		[clickedSubview mouseUp:e];
+	else
+		[spriteManager localMouseUp:localPoint];
 }
 
 

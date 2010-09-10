@@ -12,6 +12,7 @@
 	NSEvent					*lastMouseEvent;
 	NSColor					*clearColor;
 	int						mouseDownModifierFlags;
+	NSView					*clickedSubview;	//	NOT RETAINED
 }
 
 - (void) generalInit;

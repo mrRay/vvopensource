@@ -17,6 +17,7 @@
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 	int						mouseDownModifierFlags;
+	NSView					*clickedSubview;	//	NOT RETAINED
 }
 
 - (void) generalInit;
