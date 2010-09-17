@@ -43,6 +43,7 @@ typedef enum	{
 	MutLockArray		*nodeContents;	//	type 'MutLockArray'
 	OSCNode				*parentNode;	//	NOT retained!
 	int					nodeType;	//	what 'type' of node i am
+	BOOL				hiddenInMenu;	//	NO by default. if YES, this node (and all its sub-nodes) will be omitted from menus!
 	
 	OSCMessage			*lastReceivedMessage;	//	store the msg instead of the val because msgs can have multiple vals
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
@@ -88,6 +89,7 @@ typedef enum	{
 @property (readonly) id nodeContents;
 @property (assign, readwrite) OSCNode *parentNode;
 @property (assign, readwrite) int nodeType;
+@property (assign, readwrite) BOOL hiddenInMenu;
 @property (readonly) OSCMessage *lastReceivedMessage;
 @property (readonly) id delegateArray;
 

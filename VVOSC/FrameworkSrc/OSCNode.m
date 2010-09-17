@@ -80,6 +80,7 @@
 		nodeContents = nil;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
+		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
 		delegateArray = nil;
@@ -378,6 +379,12 @@
 }
 - (int) nodeType	{
 	return nodeType;
+}
+- (void) setHiddenInMenu:(BOOL)n	{
+	hiddenInMenu = n;
+}
+- (BOOL) hiddenInMenu	{
+	return hiddenInMenu;
 }
 - (OSCMessage *) lastReceivedMessage	{
 	return lastReceivedMessage;

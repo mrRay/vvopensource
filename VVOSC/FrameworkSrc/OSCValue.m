@@ -285,7 +285,7 @@
 - (Byte) midiPort	{
 	return ((Byte *)value)[0];
 }
-- (Byte) midiStatus	{
+- (VVOSCMIDIStatus) midiStatus	{
 	return ((Byte *)value)[1];
 }
 - (Byte) midiData1	{
@@ -299,6 +299,79 @@
 }
 - (NSData *) blobNSData	{
 	return (NSData *)value;
+}
+
+
+- (float) calculateFloatValue	{
+	float		returnMe = 0.0;
+	CGFloat		comps[4];
+	switch (type)	{
+		case OSCValInt:
+			returnMe = (float)(*(int *)value);
+			break;
+		case OSCValFloat:
+			returnMe = *(float *)value;
+			break;
+		case OSCValColor:
+			[(NSColor *)value getComponents:comps];
+			returnMe = (comps[0]+comps[1]+comps[2])/3.0;
+			break;
+		case OSCValMIDI:
+			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
+			switch ((VVOSCMIDIStatus)(((Byte *)value)[1]))	{
+				case VVOSCMIDINoteOffVal:
+				case VVOSCMIDIBeginSysexDumpVal:
+				case VVOSCMIDIUndefinedCommon1Val:
+				case VVOSCMIDIUndefinedCommon2Val:
+				case VVOSCMIDIEndSysexDumpVal:
+					returnMe = 0.0;
+					break;
+				case VVOSCMIDINoteOnVal:
+				case VVOSCMIDIAfterTouchVal:
+				case VVOSCMIDIControlChangeVal:
+					returnMe = ((float)([self midiData2]))/127.0;
+					break;
+				case VVOSCMIDIProgramChangeVal:
+				case VVOSCMIDIChannelPressureVal:
+				case VVOSCMIDIMTCQuarterFrameVal:
+				case VVOSCMIDISongSelectVal:
+					returnMe = ((float)([self midiData1]))/127.0;
+					break;
+				case VVOSCMIDIPitchWheelVal:
+				case VVOSCMIDISongPosPointerVal:
+					returnMe = ((float)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/16383.0;
+					break;
+				case VVOSCMIDITuneRequestVal:
+				case VVOSCMIDIClockVal:
+				case VVOSCMIDITickVal:
+				case VVOSCMIDIStartVal:
+				case VVOSCMIDIContinueVal:
+				case VVOSCMIDIStopVal:
+				case VVOSCMIDIUndefinedRealtime1Val:
+				case VVOSCMIDIActiveSenseVal:
+				case VVOSCMIDIResetVal:
+					returnMe = 1.0;
+					break;
+			}
+			break;
+		case OSCValString:
+			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
+			//return ROUNDUP4(([(NSString *)value length] + 1));
+			break;
+		case OSCValBool:
+			returnMe = (*(BOOL *)value) ? 1.0 : 0.0;
+			break;
+		case OSCValNil:
+			returnMe = 0.0;
+			break;
+		case OSCValInfinity:
+			returnMe = 1.0;
+			break;
+		case OSCValBlob:
+			returnMe = 1.0;
+			break;
+	}
+	return returnMe;
 }
 
 

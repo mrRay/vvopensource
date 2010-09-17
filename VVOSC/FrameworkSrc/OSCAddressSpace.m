@@ -37,7 +37,8 @@
 		NSMenuItem			*newItem = nil;
 		[nodeArray rdlock];
 			for (OSCNode *nodePtr in [nodeArray array])	{
-				if (![[nodePtr fullName] isEqualToString:@"/Key"])	{
+				//if (![[nodePtr fullName] isEqualToString:@"/Key"])	{
+				if (![nodePtr hiddenInMenu])	{
 					//NSLog(@"\t\t%@",[nodePtr fullName]);
 					newItem = [[NSMenuItem alloc]
 						initWithTitle:[nodePtr nodeName]
@@ -70,10 +71,12 @@
 	return [returnMe autorelease];
 }
 #endif
-+ (void) initialize	{
++ (void) load	{
 	//NSLog(@"%s",__func__);
+	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
 	_mainAddressSpace = [[OSCAddressSpace alloc] init];
 	[_mainAddressSpace setAddressSpace:_mainAddressSpace];
+	[pool release];
 }
 
 - (NSString *) description	{
@@ -174,6 +177,9 @@
 	OSCNode			*beforeParent = nil;
 	OSCNode			*afterParent = nil;
 	
+	//	retain the node i'm about to insert so it doesn't get released while this is happening
+	if (n != nil)
+		[n retain];
 	//	make sure the node i'm moving has been removed from its parent
 	if (n != nil)
 		beforeParent = [n parentNode];
@@ -227,6 +233,10 @@
 	//	make sure my newNodeCreated method gets called
 	if (n != nil)
 		[self newNodeCreated:n];
+	
+	//	i retained the ndoe i'm about to insert earlier- release it now
+	if (n != nil)
+		[n release];
 }
 //	this method is called whenever a new node is added to the address space- subclasses can override this for custom notifications
 - (void) newNodeCreated:(OSCNode *)n	{

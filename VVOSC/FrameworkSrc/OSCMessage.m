@@ -341,15 +341,31 @@
 }
 - (OSCValue *) valueAtIndex:(int)i	{
 	if (valueCount<2)	{
-		if (i==0)
-			return value;
-		else
-			return nil;
+		return (i==0) ? value : nil;
 	}
 	if ((i<valueCount)&&(valueArray!=nil))
 		return [valueArray objectAtIndex:i];
 	
 	return nil;
+}
+
+
+- (float) calculateFloatValue	{
+	return [self calculateFloatValueAtIndex:0];
+}
+- (float) calculateFloatValueAtIndex:(int)i	{
+	if (valueCount < 2)	{
+		if (value != nil)
+			return (i==0) ? [(OSCValue *)value calculateFloatValue] : 0.0;
+		return 0.0;
+	}
+	//	get the OSCValue at the index
+	if ((i<valueCount)&&(valueArray!=nil))	{
+		OSCValue	*tmpVal = [valueArray objectAtIndex:i];
+		return (tmpVal != nil ) ? [tmpVal calculateFloatValue] : 0.0;
+	}
+	//	return -1.0 if i couldn't find the value!
+	return -1.0;
 }
 
 
