@@ -26,7 +26,7 @@
 	[sourcesTableView reloadData];
 	[receiversTableView reloadData];
 }
-- (void) receivedMIDI:(NSArray *)a	{
+- (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n	{
 	//NSLog(@"AppController:receivedMIDI:");
 	NSEnumerator		*it = [a objectEnumerator];
 	VVMIDIMessage		*msgPtr;

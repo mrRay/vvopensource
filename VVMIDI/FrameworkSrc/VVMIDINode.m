@@ -260,8 +260,12 @@
 - (void) receivedMIDI:(NSArray *)a	{
 	//NSLog(@"VVMIDINode:processMIDIMessageArray: ... %@",name);
 	//NSLog(@"\t\t%@",a);
-	if ((enabled == YES)&&(delegate != nil)&&([delegate respondsToSelector:@selector(receivedMIDI:)]))
-		[delegate receivedMIDI:a];
+	if ((enabled) && (delegate != nil))	{
+		if ([delegate respondsToSelector:@selector(receivedMIDI:fromNode:)])
+			[delegate receivedMIDI:a fromNode:self];
+		else if ([delegate respondsToSelector:@selector(receivedMIDI:)])
+			[delegate receivedMIDI:a];
+	}
 }
 /*
 	this method is called whenever the midi setup is changed

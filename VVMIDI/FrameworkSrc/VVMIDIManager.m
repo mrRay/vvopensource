@@ -217,6 +217,14 @@
 	if ((delegate != nil) && ([delegate respondsToSelector:@selector(receivedMIDI:)]))
 		[delegate receivedMIDI:a];
 }
+- (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n	{
+	if (delegate != nil)	{
+		if ([delegate respondsToSelector:@selector(receivedMIDI:fromNode:)])
+			[delegate receivedMIDI:a fromNode:n];
+		else if ([delegate respondsToSelector:@selector(receivedMIDI:)])
+			[delegate receivedMIDI:a];
+	}
+}
 
 - (void) sendMsg:(VVMIDIMessage *)m	{
 	if (m == nil)

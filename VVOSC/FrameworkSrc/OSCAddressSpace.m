@@ -101,10 +101,19 @@
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		delegate = nil;
+		//	register to receive notifications that the app's about to terminate so i can stop running
+		[[NSNotificationCenter defaultCenter]
+			addObserver:self
+			selector:@selector(applicationWillTerminateNotification:)
+			name:NSApplicationWillTerminateNotification
+			object:nil];
 		return self;
 	}
 	[self release];
 	return nil;
+}
+- (void) applicationWillTerminateNotification:(NSNotification *)note	{
+	[self prepareToBeDeleted];
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -115,7 +124,8 @@
 
 - (void) renameAddress:(NSString *)before to:(NSString *)after	{
 	//NSLog(@"%s ... %@ -> %@",__func__,before,after);
-	
+	if (deleted)
+		return;
 	if (before==nil)	{
 		NSLog(@"\terr: before was nil %s",__func__);
 		return;
@@ -130,7 +140,8 @@
 
 - (void) renameAddressArray:(NSArray *)before toArray:(NSArray *)after	{
 	//NSLog(@"%s",__func__);
-	
+	if (deleted)
+		return;
 	if (before==nil)	{
 		NSLog(@"\terr: before was nil %s",__func__);
 		return;
@@ -162,6 +173,8 @@
 	
 
 - (void) setNode:(OSCNode *)n forAddress:(NSString *)a	{
+	if (deleted)
+		return;
 	if (a == nil)
 		[self setNode:n forAddressArray:nil];
 	else
@@ -169,6 +182,8 @@
 }
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a	{
 	//NSLog(@"%s ... %@ - %@",__func__,n,a);
+	if (deleted)
+		return;
 	if ((a==nil)||([a count]<1))	{
 		NSLog(@"\terr: a was %@ in %s",a,__func__);
 		return;
@@ -228,25 +243,57 @@
 			//	if i was passing a nil node (deleting a node), i'd be deleting the pre-existing (so i'm done)
 		}
 	}
-	
+	/*
 	//	if i was passed a node (if i'm actually moving something), 
 	//	make sure my newNodeCreated method gets called
 	if (n != nil)
 		[self newNodeCreated:n];
-	
+	*/
 	//	i retained the ndoe i'm about to insert earlier- release it now
 	if (n != nil)
 		[n release];
 }
+/*
 //	this method is called whenever a new node is added to the address space- subclasses can override this for custom notifications
 - (void) newNodeCreated:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,[n fullName]);
-	if (delegate != nil)
+	if (deleted)
+		return;
+	if (delegate != nil)	{
+		//	notify the delegate that a new node has been created
 		[delegate newNodeCreated:n];
+		//	 the passed node may have sub-nodes, which may need to notify things that their address has changed
+		MutLockArray	*subNodes = [n nodeContents];
+		if ((subNodes!=nil) && ([subNodes count]>0))	{
+			[subNodes rdlock];
+			for (OSCNode *subNode in [subNodes array])	{
+				[delegate nodeRenamed:subNode];
+			}
+			[subNodes unlock];
+		}
+	}
+}
+*/
+- (void) nodeRenamed:(OSCNode *)n	{
+	if (deleted)
+		return;
+	if (deleted)
+		return;
+	if (delegate != nil)	{
+		[delegate nodeRenamed:n];
+		//	the passed node may have sub-nodes, which may need to notify things that their address has changed
+		MutLockArray	*subNodes = [n nodeContents];
+		if ((subNodes!=nil) && ([subNodes count]>0))	{
+			NSMutableArray		*subNodesCopy = [subNodes lockCreateArrayCopy];
+			for (OSCNode *subNode in subNodesCopy)	{
+				[self nodeRenamed:subNode];
+			}
+		}
+	}
 }
 - (void) dispatchMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
-	if (m == nil)
+	if ((deleted) || (m == nil))
 		return;
 	OSCNode			*foundNode = [self findNodeForAddress:[m address] createIfMissing:YES];
 	if ((foundNode != nil) && (foundNode != self))
@@ -254,7 +301,7 @@
 }
 - (void) addDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);
-	if ((d==nil)||(p==nil))
+	if ((d==nil)||(p==nil)||(deleted))
 		return;
 	if (![d respondsToSelector:@selector(receivedOSCMessage:)])	{
 		NSLog(@"\terr: tried to add a non-conforming delegate: %s",__func__);
@@ -267,7 +314,7 @@
 }
 - (void) removeDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);
-	if ((d==nil)||(p==nil))
+	if ((d==nil)||(p==nil)||(deleted))
 		return;
 	
 	OSCNode			*foundNode = [self findNodeForAddress:p createIfMissing:NO];

@@ -30,7 +30,7 @@
 }
 
 - (void) setupChanged;
-- (void) receivedMIDI:(NSArray *)a;
+- (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n;
 
 - (IBAction) ctrlValSliderUsed:(id)sender;
 

@@ -10,7 +10,7 @@
 
 @protocol VVMIDIDelegateProtocol
 - (void) setupChanged;
-- (void) receivedMIDI:(NSArray *)a;
+- (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n;
 @end
 
 
@@ -36,7 +36,8 @@
 - (void) createVirtualNodes;	//	subclass around this to create a virtual destination with a different name
 
 - (void) setupChanged;	//	called when a midi device is plugged in or unplugged
-- (void) receivedMIDI:(NSArray *)a;	//	called when one of my sources has midi data to hand off to me
+- (void) receivedMIDI:(NSArray *)a;
+- (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n;	//	called when one of my sources has midi data to hand off to me
 
 - (void) sendMsg:(VVMIDIMessage *)m;
 - (void) sendMsgs:(NSArray *)a;

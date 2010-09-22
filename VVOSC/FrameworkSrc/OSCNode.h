@@ -7,6 +7,7 @@
 #import "OSCMessage.h"
 #import <VVBasics/MutNRLockArray.h>
 #import <VVBasics/VVBasicMacros.h>
+#import <pthread.h>
 
 
 
@@ -46,6 +47,7 @@ typedef enum	{
 	BOOL				hiddenInMenu;	//	NO by default. if YES, this node (and all its sub-nodes) will be omitted from menus!
 	
 	OSCMessage			*lastReceivedMessage;	//	store the msg instead of the val because msgs can have multiple vals
+	pthread_mutex_t		lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
 }
 
@@ -55,6 +57,7 @@ typedef enum	{
 + (id) createWithName:(NSString *)n;
 - (id) initWithName:(NSString *)n;
 - (id) init;
+- (void) prepareToBeDeleted;
 
 //	convenience method so nodes may be sorted by name
 - (NSComparisonResult) nodeNameCompare:(OSCNode *)comp;

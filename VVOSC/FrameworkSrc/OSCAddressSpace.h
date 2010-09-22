@@ -21,7 +21,8 @@ id _mainAddressSpace;
 
 //	OSCAddressSpace delegate protocol
 @protocol OSCAddressSpaceDelegateProtocol
-- (void) newNodeCreated:(OSCNode *)n;
+//- (void) newNodeCreated:(OSCNode *)n;
+- (void) nodeRenamed:(OSCNode *)n;
 @end
 
 
@@ -44,7 +45,9 @@ id _mainAddressSpace;
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a;
 
 //	this method is called whenever a new node is added to the address space- subclasses can override this for custom notifications
-- (void) newNodeCreated:(OSCNode *)n;
+//- (void) newNodeCreated:(OSCNode *)n;
+//	this method is called whenever a node is added to another node
+- (void) nodeRenamed:(OSCNode *)n;
 
 //	unlike a normal node: first finds the destination node, then dispatches the msg
 - (void) dispatchMessage:(OSCMessage *)m;

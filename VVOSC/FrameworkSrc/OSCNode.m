@@ -61,6 +61,11 @@
 		nodeType = OSCNodeTypeUnknown;
 		
 		lastReceivedMessage = nil;
+		pthread_mutexattr_t		attr;
+		pthread_mutexattr_init(&attr);
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+		pthread_mutex_init(&lastReceivedMessageLock, &attr);
+		pthread_mutexattr_destroy(&attr);
 		delegateArray = nil;
 		return self;
 	}
@@ -83,6 +88,11 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
+		pthread_mutexattr_t		attr;
+		pthread_mutexattr_init(&attr);
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+		pthread_mutex_init(&lastReceivedMessageLock, &attr);
+		pthread_mutexattr_destroy(&attr);
 		delegateArray = nil;
 		return self;
 	}
@@ -119,6 +129,8 @@
 	if (lastReceivedMessage != nil)
 		[lastReceivedMessage autorelease];
 	lastReceivedMessage = nil;
+	
+	pthread_mutex_destroy(&lastReceivedMessageLock);
 	
 	[super dealloc];
 }
@@ -160,6 +172,8 @@
 	[nodeContents unlock];
 	
 	[n setParentNode:self];
+	
+	[addressSpace nodeRenamed:n];
 }
 - (void) removeNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
@@ -214,7 +228,7 @@
 	if ((nodePtr == nil)&&(c))	{
 		nodePtr = [OSCNode createWithName:n];
 		[self addNode:nodePtr];
-		[addressSpace newNodeCreated:nodePtr];
+		//[addressSpace newNodeCreated:nodePtr];
 	}
 	
 	return nodePtr;
@@ -253,7 +267,7 @@
 		if ((foundNode==nil) && (c))	{
 			foundNode = [OSCNode createWithName:pathComponent];
 			[nodeToSearch addNode:foundNode];
-			[addressSpace newNodeCreated:foundNode];
+			//[addressSpace newNodeCreated:foundNode];
 			
 		}
 		nodeToSearch = foundNode;
@@ -325,10 +339,13 @@
 	
 	if (delegateArray != nil)
 		[delegateArray lockMakeObjectsPerformSelector:@selector(receivedOSCMessage:) withObject:m];
-	
-	if (lastReceivedMessage != nil)
-		[lastReceivedMessage autorelease];
-	lastReceivedMessage = [m retain];
+	//@synchronized (self)	{
+	pthread_mutex_lock(&lastReceivedMessageLock);
+		if (lastReceivedMessage != nil)
+			[lastReceivedMessage autorelease];
+		lastReceivedMessage = [m retain];
+	//}
+	pthread_mutex_unlock(&lastReceivedMessageLock);
 }
 
 
@@ -387,7 +404,18 @@
 	return hiddenInMenu;
 }
 - (OSCMessage *) lastReceivedMessage	{
-	return lastReceivedMessage;
+	if (deleted)
+		return nil;
+	OSCMessage		*returnMe = nil;
+	if (lastReceivedMessage != nil)	{
+		//@synchronized (self)	{
+		pthread_mutex_lock(&lastReceivedMessageLock);
+			returnMe = [lastReceivedMessage copy];
+			[returnMe autorelease];
+		//}
+		pthread_mutex_unlock(&lastReceivedMessageLock);
+	}
+	return returnMe;
 }
 - (id) delegateArray	{
 	return delegateArray;
