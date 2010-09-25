@@ -313,7 +313,11 @@
 			returnMe = *(float *)value;
 			break;
 		case OSCValColor:
+#if IPHONE
+			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
+#else
 			[(NSColor *)value getComponents:comps];
+#endif
 			returnMe = (comps[0]+comps[1]+comps[2])/3.0;
 			break;
 		case OSCValMIDI:

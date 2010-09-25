@@ -18,58 +18,86 @@
 }
 #if !IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a	{
+	NSMenu				*returnMe = nil;
+	NSMutableIndexSet	*tmpSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeString)];
+	returnMe = [OSCAddressSpace
+		makeMenuForNode:n
+		ofType:tmpSet
+		withTarget:t
+		action:a];
+	return returnMe;
+}
++ (NSMenu *) makeMenuForNode:(OSCNode *)n ofType:(NSIndexSet *)ts withTarget:(id)t action:(SEL)a	{
 	if (n == nil)
 		return nil;
 	NSMenu					*returnMe = nil;
 	NSString				*passedNodeName = [n nodeName];
-	//	make the menu i'll be returning, perform basic setup on it
-	if (passedNodeName == nil)
-		returnMe = [[NSMenu alloc] initWithTitle:@"root"];
-	else
-		returnMe = [[NSMenu alloc] initWithTitle:[n nodeName]];
-	if (returnMe == nil)
-		return nil;
-	[returnMe setAutoenablesItems:NO];
+	
 	//	get the contents of the passed node
 	MutLockArray		*nodeArray = [n nodeContents];
 	//	run through the contents of the passed node, making items for its sub-nodes
 	if (nodeArray != nil)	{
-		NSMenuItem			*newItem = nil;
 		[nodeArray rdlock];
-			for (OSCNode *nodePtr in [nodeArray array])	{
-				//if (![[nodePtr fullName] isEqualToString:@"/Key"])	{
-				if (![nodePtr hiddenInMenu])	{
-					//NSLog(@"\t\t%@",[nodePtr fullName]);
+		for (OSCNode *nodePtr in [nodeArray array])	{
+			NSMenuItem			*newItem = nil;
+			NSMenu				*subNodesMenu = nil;
+			BOOL				matchesPassedTypes = [ts containsIndex:[nodePtr nodeType]];
+			MutLockArray		*nodePtrContents = [nodePtr nodeContents];
+			BOOL				hasSubNodes = ((nodePtrContents!=nil)&&([nodePtrContents count]>0)) ? YES : NO;
+			BOOL				itemShouldBeCreated = NO;
+			
+			//	if this node isn't hidden and it either matches the passed types or has sub-nodes, i may have to make an item for it
+			if ((![nodePtr hiddenInMenu]) && (matchesPassedTypes || hasSubNodes))	{
+				//	if this node has sub-nodes, i'm going to need to look into generating a menu for them
+				if (hasSubNodes)	{
+					subNodesMenu = [self makeMenuForNode:nodePtr ofType:ts withTarget:t action:a];
+					//	if the menu of sub-nodes is nil and the node doesn't match the passed node types, do nothing!
+					if ((subNodesMenu==nil) && !matchesPassedTypes)	{
+						//	don't create a menu item for this node!
+					}
+					//	else i need to make a menu item for this node, and add the menu of its sub-nodes to it
+					else
+						itemShouldBeCreated = YES;
+				}
+				//	else it doesn't have subnodes- the node must match the passed type
+				else
+					itemShouldBeCreated = YES;
+				
+				
+				//	if the item should be created...
+				if (itemShouldBeCreated)	{
 					newItem = [[NSMenuItem alloc]
 						initWithTitle:[nodePtr nodeName]
 						action:nil
 						keyEquivalent:@""];
+					//	if i actually made the item- set it up, apply the submenu, add it to the menu i'm returning!
 					if (newItem != nil)	{
-						//	store the item's full path as its tooltip
 						[newItem setToolTip:[nodePtr fullName]];
-						//	set up the new item so it triggers the appropriate target/action
-						if ((t!=nil)&&(a!=nil))	{
-							[newItem setTarget:t];
-							[newItem setAction:a];
+						[newItem setTarget:t];
+						[newItem setAction:a];
+						if (subNodesMenu != nil)
+							[newItem setSubmenu:subNodesMenu];
+						
+						//	i need to add this item to the menu i'll be returning- if the menu doesn't exist yet, create it now
+						if (returnMe == nil)	{
+							returnMe = (passedNodeName==nil) ? [[NSMenu alloc] initWithTitle:@"root"] : [[NSMenu alloc] initWithTitle:passedNodeName];
+							if (returnMe == nil)
+								return nil;
+							[returnMe setAutoenablesItems:NO];
 						}
-						//	add the item to the menu i'll be returning, free it
+						//	now add the item to returnMe!
 						[returnMe addItem:newItem];
 						[newItem autorelease];
-						//	if the node has sub-nodes, generate a menu for them and apply it to the new item
-						if (([nodePtr nodeContents]!=nil)&&([[nodePtr nodeContents] count]>0))	{
-							NSMenu		*subMenu = nil;
-							subMenu = [self makeMenuForNode:nodePtr withTarget:t action:a];
-							if (subMenu != nil)
-								[newItem setSubmenu:subMenu];
-						}
 					}
 				}
 			}
+		}
 		[nodeArray unlock];
 	}
 	//	autorelease the menu and return it
-	return [returnMe autorelease];
+	return (returnMe == nil) ? nil : [returnMe autorelease];
 }
+
 #endif
 + (void) load	{
 	//NSLog(@"%s",__func__);
@@ -101,12 +129,16 @@
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		delegate = nil;
+#if IPHONE
+
+#else
 		//	register to receive notifications that the app's about to terminate so i can stop running
 		[[NSNotificationCenter defaultCenter]
 			addObserver:self
 			selector:@selector(applicationWillTerminateNotification:)
 			name:NSApplicationWillTerminateNotification
 			object:nil];
+#endif
 		return self;
 	}
 	[self release];

@@ -36,6 +36,7 @@ id _mainAddressSpace;
 + (void) refreshMenu;
 #if !IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a;
++ (NSMenu *) makeMenuForNode:(OSCNode *)n ofType:(NSIndexSet *)ts withTarget:(id)t action:(SEL)a;
 #endif
 
 - (void) renameAddress:(NSString *)before to:(NSString *)after;
