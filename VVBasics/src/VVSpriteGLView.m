@@ -270,9 +270,9 @@
 	//NSLog(@"%s",__func__);
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	//NSRect				bounds = [self bounds];
-	long				cpSwapInterval = 1;
+	//long				cpSwapInterval = 1;
+	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	
-	[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
 	glEnable(GL_BLEND);

@@ -102,7 +102,7 @@
 - (void) prepareToBeDeleted	{
 	if (delegateArray != nil)	{
 		[delegateArray wrlock];
-			[delegateArray makeObjectsPerformSelector:@selector(nodeDeleted)];
+			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted)];
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
 		[delegateArray release];
@@ -314,7 +314,7 @@
 	
 	//	tell my delegates that there's been a name change
 	if ((delegateArray!=nil)&&([delegateArray count]>0))
-		[delegateArray lockMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
+		[delegateArray lockBruteForceMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
 	//	tell all my sub-nodes that their name has also changed
 	if ((nodeContents!=nil)&&([nodeContents count]>0))
 		[nodeContents lockMakeObjectsPerformSelector:@selector(informDelegatesOfNameChange)];
@@ -338,7 +338,7 @@
 		return;
 	
 	if (delegateArray != nil)
-		[delegateArray lockMakeObjectsPerformSelector:@selector(receivedOSCMessage:) withObject:m];
+		[delegateArray lockBruteForceMakeObjectsPerformSelector:@selector(receivedOSCMessage:) withObject:m];
 	//@synchronized (self)	{
 	pthread_mutex_lock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)

@@ -190,4 +190,38 @@
 }
 
 
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s	{
+	if (array==nil)
+		return;
+	for (id anObj in array)	{
+		id		actualObj = [anObj object];
+		if (actualObj != nil)
+			[actualObj performSelector:s];
+	}
+}
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s	{
+	if (array == nil)
+		return;
+	pthread_rwlock_rdlock(&arrayLock);
+		[self bruteForceMakeObjectsPerformSelector:s];
+	pthread_rwlock_unlock(&arrayLock);
+}
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o	{
+	if (array==nil)
+		return;
+	for (id anObj in array)	{
+		id		actualObj = [anObj object];
+		if (actualObj != nil)
+			[actualObj performSelector:s withObject:o];
+	}
+}
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o	{
+	if (array == nil)
+		return;
+	pthread_rwlock_rdlock(&arrayLock);
+		[self bruteForceMakeObjectsPerformSelector:s withObject:o];
+	pthread_rwlock_unlock(&arrayLock);
+}
+
+
 @end

@@ -39,4 +39,11 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 - (long) indexOfIdenticalPtr:(id)o;
 - (void) removeIdenticalPtr:(id)o;
 
+//	these methods exist because the lookup cost for an ObjectHolder can be significant for high-performance applications- these methods get the object from the ObjectHolder and call the method directly on it!
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s;
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s;
+- (void) bruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
+- (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
+
+
 @end
