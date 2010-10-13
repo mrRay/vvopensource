@@ -31,6 +31,7 @@
 - (void) _unlock;
 //- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
 
+@property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;

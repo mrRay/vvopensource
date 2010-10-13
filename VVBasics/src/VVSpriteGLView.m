@@ -200,6 +200,19 @@
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	[spriteManager localRightMouseDown:localPoint];
 }
+- (void) rightMouseUp:(NSEvent *)e	{
+	if (deleted)
+		return;
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+	if (clickedSubview != nil)
+		[clickedSubview rightMouseUp:e];
+	else
+		[spriteManager localRightMouseUp:localPoint];
+}
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)
 		return;
@@ -285,6 +298,7 @@
 }
 
 
+@synthesize deleted;
 @synthesize initialized;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;

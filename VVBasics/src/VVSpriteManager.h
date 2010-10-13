@@ -17,6 +17,7 @@
 
 - (BOOL) localMouseDown:(NSPoint)p;
 - (BOOL) localRightMouseDown:(NSPoint)p;
+- (void) localRightMouseUp:(NSPoint)p;
 - (void) localMouseDragged:(NSPoint)p;
 - (void) localMouseUp:(NSPoint)p;
 
@@ -30,7 +31,7 @@
 - (void) removeSprite:(id)z;
 - (void) removeSpritesFromArray:(NSArray *)array;
 - (void) removeAllSprites;
-- (void) moveSpriteToFront:(VVSprite *)z;
+//- (void) moveSpriteToFront:(VVSprite *)z;
 
 - (void) draw;
 - (void) drawRect:(NSRect)r;

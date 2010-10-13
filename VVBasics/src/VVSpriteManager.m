@@ -91,6 +91,12 @@
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
 }
+- (void) localRightMouseUp:(NSPoint)p	{
+	if ((deleted)||(spriteInUse==nil))
+		return;
+	[spriteInUse rightMouseUp:p];
+	spriteInUse = nil;
+}
 - (void) localMouseDragged:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteInUse==nil))
@@ -206,6 +212,7 @@
 	if (spriteArray != nil)
 		[spriteArray lockRemoveAllObjects];
 }
+/*
 - (void) moveSpriteToFront:(VVSprite *)z	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
@@ -217,6 +224,7 @@
 		
 	[spriteArray unlock];
 }
+*/
 - (void) draw	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))

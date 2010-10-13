@@ -20,8 +20,10 @@
 - (void) prepareToBeDeleted;
 - (void) updateSprites;
 
+@property (readonly) BOOL deleted;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
+- (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (retain,readwrite) NSColor *clearColor;
 

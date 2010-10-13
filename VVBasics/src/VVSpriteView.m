@@ -207,12 +207,17 @@
 		[spriteManager drawRect:f];
 }
 
+
+@synthesize deleted;
 @synthesize spriteManager;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
 }
 - (BOOL) spritesNeedUpdate	{
 	return spritesNeedUpdate;
+}
+- (void) setSpritesNeedUpdate	{
+	spritesNeedUpdate = YES;
 }
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;

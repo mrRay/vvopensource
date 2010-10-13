@@ -10,7 +10,8 @@ typedef enum _VVSpriteEventType	{
 	VVSpriteEventDrag = 2,
 	VVSpriteEventUp = 3,
 	VVSpriteEventDouble = 4,
-	VVSpriteEventRightDown = 5
+	VVSpriteEventRightDown = 5,
+	VVSpriteEventRightUp = 6
 } VVSpriteEventType;
 
 
@@ -49,6 +50,7 @@ typedef enum _VVSpriteEventType	{
 
 - (void) mouseDown:(NSPoint)p;
 - (void) rightMouseDown:(NSPoint)p;
+- (void) rightMouseUp:(NSPoint)p;
 - (void) mouseDragged:(NSPoint)p;
 - (void) mouseUp:(NSPoint)p;
 - (void) draw;

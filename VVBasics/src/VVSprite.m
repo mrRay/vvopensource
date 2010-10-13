@@ -115,6 +115,30 @@
 		return;
 	[delegate performSelector:actionCallback withObject:self];
 }
+- (void) rightMouseUp:(NSPoint)p	{
+	if (deleted)
+		return;
+	//	calculate the deltas
+	if (lastActionType == VVSpriteEventRightDown)	{
+		lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+	}
+	else	{
+		lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
+		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+	}
+	//	update the action type and coords
+	lastActionType = VVSpriteEventRightUp;
+	lastActionCoords = p;
+	if (NSPointInRect(p,rect))
+		lastActionInBounds = YES;
+	else
+		lastActionInBounds = NO;
+	trackingFlag = NO;
+	//	if there's a delegate and it has an action callback, call it
+	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
+		[delegate performSelector:actionCallback withObject:self];
+}
 - (void) mouseDragged:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted)
