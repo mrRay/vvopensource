@@ -306,6 +306,9 @@
 - (BOOL) spritesNeedUpdate	{
 	return spritesNeedUpdate;
 }
+- (void) setSpritesNeedUpdate	{
+	spritesNeedUpdate = YES;
+}
 - (NSEvent *) lastMouseEvent	{
 	return lastMouseEvent;
 }

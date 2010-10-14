@@ -34,6 +34,7 @@
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
+- (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (readonly) VVSpriteManager *spriteManager;
 
