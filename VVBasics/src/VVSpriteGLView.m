@@ -36,6 +36,7 @@
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
 	mouseDownModifierFlags = 0;
+	mouseIsDown = NO;
 	clickedSubview = nil;
 	
 	pthread_mutexattr_t		attr;
@@ -162,6 +163,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
@@ -186,6 +188,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
@@ -206,6 +209,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
@@ -232,6 +236,7 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
