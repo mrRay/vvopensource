@@ -198,6 +198,24 @@
 	pthread_rwlock_unlock(&dictLock);
 	return returnMe;
 }
+
+
+- (void) lockMakeObjectsPerformSelector:(SEL)s	{
+	if (dict==nil)
+		return;
+	pthread_rwlock_rdlock(&dictLock);
+		[self makeObjectsPerformSelector:s];
+	pthread_rwlock_unlock(&dictLock);
+}
+- (void) makeObjectsPerformSelector:(SEL)s	{
+	if (dict == nil)
+		return;
+	NSArray			*valArray = [dict allValues];
+	if (valArray != nil)
+		[valArray makeObjectsPerformSelector:s];
+}
+
+
 - (void) addEntriesFromDictionary:(NSDictionary *)otherDictionary	{
 	if ((dict!=nil)&&(otherDictionary!=nil)&&([otherDictionary count]))	{
 		[dict addEntriesFromDictionary:otherDictionary];
