@@ -242,6 +242,7 @@
 		if (localName != NULL)	{
 			name = [[NSString stringWithString:(NSString *)localName] retain];
 			[properties setValue:name forKey:@"name"];
+			CFRelease(localName);
 		}
 	}
 	//	get the midi unique identifier
