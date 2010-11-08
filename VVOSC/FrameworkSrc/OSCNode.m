@@ -337,6 +337,22 @@
 	if ((m==nil)||(deleted))
 		return;
 	
+	NSMutableArray		*tmpCopy = [delegateArray lockCreateArrayCopy];
+	for (ObjectHolder *holder in tmpCopy)	{
+		id		delegate = [holder object];
+		if (delegate != nil)
+			[delegate receivedOSCMessage:m];
+	}
+	pthread_mutex_lock(&lastReceivedMessageLock);
+		if (lastReceivedMessage != nil)
+			[lastReceivedMessage autorelease];
+		lastReceivedMessage = [m retain];
+	pthread_mutex_unlock(&lastReceivedMessageLock);
+	
+	/*
+	if ((m==nil)||(deleted))
+		return;
+	
 	if (delegateArray != nil)
 		[delegateArray lockBruteForceMakeObjectsPerformSelector:@selector(receivedOSCMessage:) withObject:m];
 	//@synchronized (self)	{
@@ -346,6 +362,7 @@
 		lastReceivedMessage = [m retain];
 	//}
 	pthread_mutex_unlock(&lastReceivedMessageLock);
+	*/
 }
 
 
