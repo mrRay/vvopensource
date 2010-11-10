@@ -64,7 +64,8 @@ typedef enum	{
 
 //	"local" add/remove/find methods for working with my node contents
 - (void) addNode:(OSCNode *)n;
-- (void) removeNode:(OSCNode *)n;
+- (void) removeNode:(OSCNode *)n;	//	just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
+- (void) deleteNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
 - (OSCNode *) localNodeAtIndex:(int)i;
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;
 - (OSCNode *) findLocalNodeNamed:(NSString *)n createIfMissing:(BOOL)c;

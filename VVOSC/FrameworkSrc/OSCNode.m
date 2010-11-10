@@ -116,18 +116,18 @@
 		[self prepareToBeDeleted];
 	
 	if (nodeName != nil)
-		[nodeName autorelease];
+		[nodeName release];
 	nodeName = nil;
 	if (fullName != nil)
-		[fullName autorelease];
+		[fullName release];
 	fullName = nil;
 	if (nodeContents != nil)
-		[nodeContents autorelease];
+		[nodeContents release];
 	nodeContents = nil;
 	parentNode = nil;
 	
 	if (lastReceivedMessage != nil)
-		[lastReceivedMessage autorelease];
+		[lastReceivedMessage release];
 	lastReceivedMessage = nil;
 	
 	pthread_mutex_destroy(&lastReceivedMessageLock);
@@ -195,7 +195,29 @@
 		if (parentNode != nil)
 			[parentNode removeNode:self];
 	}
-	[n autorelease];
+	[n release];
+}
+- (void) deleteNode:(OSCNode *)n	{
+	if ((n == nil)||(deleted))
+		return;
+	long		indexOfIdenticalPtr = NSNotFound;
+	[n retain];
+	[nodeContents wrlock];
+		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:n];
+		if (indexOfIdenticalPtr != NSNotFound)
+			[nodeContents removeObjectAtIndex:indexOfIdenticalPtr];
+	[nodeContents unlock];
+	
+	if (indexOfIdenticalPtr != NSNotFound)
+		[n setParentNode:nil];
+	
+	//	if i don't have any contents, remove myself from my parent
+	if ((nodeContents==nil)||([nodeContents count]<1))	{
+		if (parentNode != nil)
+			[parentNode deleteNode:self];
+	}
+	[n prepareToBeDeleted];
+	[n release];
 }
 - (OSCNode *) localNodeAtIndex:(int)i	{
 	if ((i<0)||(nodeContents==nil))
@@ -345,7 +367,7 @@
 	}
 	pthread_mutex_lock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)
-			[lastReceivedMessage autorelease];
+			[lastReceivedMessage release];
 		lastReceivedMessage = [m retain];
 	pthread_mutex_unlock(&lastReceivedMessageLock);
 	

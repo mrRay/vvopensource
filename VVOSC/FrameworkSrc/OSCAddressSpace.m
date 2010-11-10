@@ -264,8 +264,9 @@
 			if (n != nil)
 				[preExistingNode addDelegatesFromNode:n];
 			//	else if i'm passing a nil node (deleting a node), delete the pre-existing node
-			else
-				[afterParent removeNode:preExistingNode];
+			else	{
+				[afterParent deleteNode:preExistingNode];
+			}
 		}
 		//	else if there isn't a pre-existing node
 		else	{
