@@ -225,6 +225,15 @@
 	}
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
+	
+	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
+	[self finishedDrawing];
+}
+/*	this method exists so subclasses of me have an opportunity to do something after drawing 
+	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
+	therefore resources have to stay available- until after glFlush() has been called.		*/
+- (void) finishedDrawing	{
+
 }
 
 

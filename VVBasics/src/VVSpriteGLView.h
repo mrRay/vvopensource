@@ -25,6 +25,7 @@
 - (void) prepareToBeDeleted;
 
 - (void) initializeGL;
+- (void) finishedDrawing;
 //- (void) reshapeGL;
 - (void) updateSprites;
 

@@ -19,6 +19,9 @@
 - (void) generalInit;
 
 - (void) prepareToBeDeleted;
+
+- (void) finishedDrawing;
+
 - (void) updateSprites;
 
 @property (readonly) BOOL deleted;

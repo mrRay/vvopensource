@@ -283,7 +283,13 @@
 		//	flush!
 		glFlush();
 	pthread_mutex_unlock(&glLock);
+	
+	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
+	[self finishedDrawing];
 }
+/*	this method exists so subclasses of me have an opportunity to do something after drawing 
+	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
+	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) initializeGL	{
 	//NSLog(@"%s",__func__);
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
@@ -300,6 +306,9 @@
 	glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+}
+- (void) finishedDrawing	{
+
 }
 
 
