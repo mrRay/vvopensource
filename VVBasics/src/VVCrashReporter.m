@@ -356,6 +356,7 @@
 }
 //	this method returns an auto-released NSString with the last 200 lines this application printed to the console log
 - (NSString *) _consoleLogString	{
+	//NSLog(@"%s",__func__);
 	NSString			*appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
 	NSMutableArray		*mutArray = [NSMutableArray arrayWithCapacity:0];
 	aslmsg				q = asl_new(ASL_TYPE_QUERY);
@@ -363,7 +364,8 @@
 	aslresponse			r;
 	char				*timeString;
 	char				*msgString;
-	
+	//NSLog(@"\t\tappNameString is \"%@\"",appNameString);
+	//NSLog(@"\t\tUTF appNameString is \"%s\"",[appNameString UTF8String]);
 	asl_set_query(q, ASL_KEY_SENDER, [appNameString UTF8String], ASL_QUERY_OP_EQUAL);
 	r = asl_search(NULL, q);
 	while (NULL != (m = aslresponse_next(r)))	{
@@ -471,7 +473,7 @@
 			[returnMe autorelease];
 	}
 	@catch (NSException *err)	{
-		NSLog(@"\t\terr: caught exception: %s, %@",__func__,t);
+		NSLog(@"\t\terr: caught exception: %@ %s, %@",err,__func__,t);
 	}
 	BAIL:
 	VVRELEASE(theTask);

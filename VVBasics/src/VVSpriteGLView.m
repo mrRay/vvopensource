@@ -282,10 +282,9 @@
 			[spriteManager drawRect:r];
 		//	flush!
 		glFlush();
+		//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
+		[self finishedDrawing];
 	pthread_mutex_unlock(&glLock);
-	
-	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
-	[self finishedDrawing];
 }
 /*	this method exists so subclasses of me have an opportunity to do something after drawing 
 	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
@@ -329,6 +328,7 @@
 - (VVSpriteManager *) spriteManager	{
 	return spriteManager;
 }
+@synthesize mouseIsDown;
 
 
 @end

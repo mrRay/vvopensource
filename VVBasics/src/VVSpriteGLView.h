@@ -39,5 +39,6 @@
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (readonly) VVSpriteManager *spriteManager;
+@property (readonly) BOOL mouseIsDown;
 
 @end

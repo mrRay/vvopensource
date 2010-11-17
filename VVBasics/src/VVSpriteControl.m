@@ -261,6 +261,7 @@
 
 
 @synthesize clearColor;
+@synthesize mouseIsDown;
 
 
 @end

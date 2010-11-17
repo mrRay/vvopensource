@@ -30,5 +30,6 @@
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (retain,readwrite) NSColor *clearColor;
+@property (readonly) BOOL mouseIsDown;
 
 @end
