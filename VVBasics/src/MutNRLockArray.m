@@ -170,6 +170,9 @@
 	objIt = [array objectEnumerator];
 	//	run through the array object holders while i haven't found the object i'm looking for
 	while ((objPtr=[objIt nextObject]) && (foundIndex<0))	{
+		//	first, check to see if it's a match for an ObjectHolder- if it is, i can return right away
+		if (objPtr == o)
+			foundIndex = tmpIndex;
 		//	get the object stored by the object holder
 		anObj = [objPtr object];
 		//	if the object in the object holder matches the passed object using isEqual:, i'm going to return it
