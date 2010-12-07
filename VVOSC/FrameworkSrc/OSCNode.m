@@ -396,6 +396,13 @@
 }
 - (void) setNodeName:(NSString *)n	{
 	//NSLog(@"%s ... %@ -> %@",__func__,nodeName,n);
+	[self _setNodeName:n];
+	[addressSpace nodeRenamed:self];
+}
+- (NSString *) nodeName	{
+	return nodeName;
+}
+- (void) _setNodeName:(NSString *)n	{
 	//	first of all, make sure that i'm not trying to rename it to the same name...
 	if ((n!=nil)&&(nodeName!=nil)&&([n isEqualToString:nodeName]))
 		return;
@@ -409,9 +416,6 @@
 		//	informing delegates of name change also fixes my full name!
 		[self informDelegatesOfNameChange];
 	}
-}
-- (NSString *) nodeName	{
-	return nodeName;
 }
 - (NSString *) fullName	{
 	return fullName;

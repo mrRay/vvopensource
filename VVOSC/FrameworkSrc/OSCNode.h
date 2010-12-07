@@ -89,6 +89,7 @@ typedef enum	{
 
 @property (assign, readwrite) id addressSpace;
 @property (assign, readwrite) NSString *nodeName;
+- (void) _setNodeName:(NSString *)n;
 @property (readonly) NSString *fullName;
 @property (readonly) id nodeContents;
 @property (assign, readwrite) OSCNode *parentNode;
