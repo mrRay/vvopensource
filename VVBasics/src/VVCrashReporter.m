@@ -82,7 +82,10 @@
 	NSString			*pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
 	NSArray				*logFolderArray = [fm directoryContentsAtPath:pathToLogFolder];
 	if ((logFolderArray!=nil)&&([logFolderArray count]>0))	{
-		NSString		*appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+		NSString		*appNameString = nil;
+		appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+		if (appNameString == nil)
+			appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
 		//NSLog(@"\t\tappNameString = %@",appNameString);
 		for (NSString *logFileName in logFolderArray)	{
 			if ([logFileName hasPrefix:appNameString])	{

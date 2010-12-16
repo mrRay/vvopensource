@@ -393,7 +393,7 @@
 		break;
 		case OSCValString:
 			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
-			return ROUNDUP4(([(NSString *)value length] + 1));
+			return ROUNDUP4((strlen([(NSString *)value UTF8String]) + 1));
 			break;
 		case OSCValBool:
 		case OSCValNil:
@@ -445,8 +445,8 @@
 			++*t;
 			break;
 		case OSCValString:
-			tmpLong = [(NSString *)value length];
-			charPtr = (unsigned char *)[(NSString *)value cStringUsingEncoding:NSASCIIStringEncoding];
+			tmpLong = strlen([(NSString *)value UTF8String]);
+			charPtr = (unsigned char *)[(NSString *)value UTF8String];
 			strncpy((char *)(b+*d),(char *)charPtr,tmpLong);
 			*d = *d + tmpLong + 1;
 			*d = ROUNDUP4(*d);

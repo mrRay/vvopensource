@@ -42,7 +42,7 @@
 	}
 	//	get the actual address string
 	if (tmpIndex != -1)
-		address = [NSString stringWithCString:(char *)b encoding:NSASCIIStringEncoding];
+		address = [NSString stringWithCString:(char *)b encoding:NSUTF8StringEncoding];
 	//	if i couldn't make the address string for any reason, return
 	if (address == nil)	{
 		NSLog(@"\t\terr: couldn't parse message address");
@@ -134,7 +134,7 @@
 				//	4-byte-struct of '\0' to ensure that you know where that shit ends.
 				//	of course, this means that i don't need to check for the modulus before applying it.
 				
-				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSASCIIStringEncoding]];
+				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSUTF8StringEncoding]];
 				[msg addValue:oscValue];
 				
 				//	beginning of this string (tmpIndex), plus the length of this string (tmpInt - tmpIndex), plus 1 (the null), then round that up to the nearest 4 bytes
@@ -236,7 +236,7 @@
 	
 	if (self = [super init])	{
 		//	if the address doesn't start with a "/", i need to add one
-		const char		*stringPtr = [a cStringUsingEncoding:NSASCIIStringEncoding];
+		const char		*stringPtr = [a UTF8String];
 		if (stringPtr == nil)
 			goto BAIL;
 		if (*stringPtr != '/')
@@ -389,7 +389,7 @@
 	int		payloadLength = 0;
 	
 	//	determine the length of the address (round up to the nearest 4 bytes)
-	addressLength = [address length];
+	addressLength = strlen([address UTF8String]);
 	addressLength = ROUNDUP4((addressLength+1));
 	//	determine the length of the type args (1 [comma] + # of types + 1 [for the null], round up to nearest 4 bytes)
 	typeLength = ROUNDUP4((1 + valueCount + 1));
@@ -417,8 +417,11 @@
 	
 	
 	//	write the address, rounded up to the nearest 4 bytes (the +1 is for the null after the address)
-	strncpy((char *)b, [address cStringUsingEncoding:NSASCIIStringEncoding], [address length]);
-	typeWriteOffset += ([address length] + 1);
+	const char			*tmpChars = [address UTF8String];
+	int					tmpCharsLength = strlen(tmpChars);
+	
+	strncpy((char *)b, tmpChars, tmpCharsLength);
+	typeWriteOffset += (tmpCharsLength + 1);
 	//	the actual type data location is rounded up to the nearest 4-byte segment
 	typeWriteOffset = ROUNDUP4(typeWriteOffset);
 	//	figure out where i'll be starting to write the data (the first +1 is the comma, the second +1 is the null after the types)

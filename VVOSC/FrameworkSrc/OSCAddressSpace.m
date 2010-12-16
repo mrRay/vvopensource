@@ -234,7 +234,7 @@
 		[beforeParent removeNode:n];
 	//	make sure the node's got the proper name (it could be different from the passed array's last object)
 	if (n != nil)
-		[n setNodeName:[a lastObject]];
+		[n _setNodeName:[a lastObject]];
 	//	find the new parent node for the destination
 	NSMutableArray		*parentAddressArray = [[a mutableCopy] autorelease];
 	[parentAddressArray removeLastObject];
