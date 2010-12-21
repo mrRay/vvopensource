@@ -189,12 +189,13 @@
 	
 	if (indexOfIdenticalPtr != NSNotFound)
 		[n setParentNode:nil];
-	
+	/*
 	//	if i don't have any contents, remove myself from my parent
 	if ((nodeContents==nil)||([nodeContents count]<1))	{
 		if (parentNode != nil)
 			[parentNode removeNode:self];
 	}
+	*/
 	[n release];
 }
 - (void) deleteNode:(OSCNode *)n	{
@@ -210,12 +211,13 @@
 	
 	if (indexOfIdenticalPtr != NSNotFound)
 		[n setParentNode:nil];
-	
+	/*
 	//	if i don't have any contents, remove myself from my parent
 	if ((nodeContents==nil)||([nodeContents count]<1))	{
 		if (parentNode != nil)
 			[parentNode deleteNode:self];
 	}
+	*/
 	[n prepareToBeDeleted];
 	[n release];
 }
