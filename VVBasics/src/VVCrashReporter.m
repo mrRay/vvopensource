@@ -360,7 +360,12 @@
 //	this method returns an auto-released NSString with the last 200 lines this application printed to the console log
 - (NSString *) _consoleLogString	{
 	//NSLog(@"%s",__func__);
-	NSString			*appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+	NSString			*appNameString = nil;
+	appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+	if (appNameString == nil)
+		appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+	//NSString			*appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+	
 	NSMutableArray		*mutArray = [NSMutableArray arrayWithCapacity:0];
 	aslmsg				q = asl_new(ASL_TYPE_QUERY);
 	aslmsg				m;
