@@ -1,6 +1,7 @@
 
 #if IPHONE
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #else
 #import <Cocoa/Cocoa.h>
 #endif
@@ -13,8 +14,11 @@
 
 
 
-
+#if IPHONE
+@interface OSCZeroConfDomain : NSObject <NSNetServiceBrowserDelegate,NSNetServiceDelegate> {
+#else
 @interface OSCZeroConfDomain : NSObject {
+#endif
 	NSString				*domainString;
 	NSNetServiceBrowser		*serviceBrowser;
 	

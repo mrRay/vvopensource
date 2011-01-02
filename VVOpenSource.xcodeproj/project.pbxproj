@@ -311,6 +311,7 @@
 		96F2AF00127106AB00AF86DD /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
 		96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
+		96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A99011108CEA2600895DC1 /* Foundation.framework */; };
 		96F98FF01072C635004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; };
 		96F98FF11072C635004D5EDE /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
 		96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; };
@@ -776,6 +777,7 @@
 			files = (
 				9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */,
 				96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */,
+				96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2386,7 +2388,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphonesimulator4.2;
 			};
 			name = Debug;
 		};
@@ -2404,7 +2406,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphonesimulator4.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2422,7 +2424,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos4.2;
 			};
 			name = Debug;
 		};
@@ -2440,7 +2442,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos4.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2611,7 +2613,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphonesimulator4.2;
 			};
 			name = Debug;
 		};
@@ -2626,7 +2628,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator3.2;
+				SDKROOT = iphonesimulator4.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2643,7 +2645,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos4.2;
 			};
 			name = Debug;
 		};
@@ -2658,7 +2660,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos4.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;

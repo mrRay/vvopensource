@@ -11,7 +11,11 @@
 
 
 
+#if IPHONE
+@interface OSCZeroConfManager : NSObject <NSNetServiceBrowserDelegate> {
+#else
 @interface OSCZeroConfManager : NSObject {
+#endif
 	NSNetServiceBrowser		*domainBrowser;
 	
 	NSMutableDictionary		*domainDict;
