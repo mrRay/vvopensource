@@ -5,6 +5,12 @@
 
 
 
+int					_maxSpriteControlCount;
+int					_spriteControlCount;
+
+
+
+
 @interface VVSpriteControl : NSControl {
 	BOOL					deleted;
 	VVSpriteManager			*spriteManager;

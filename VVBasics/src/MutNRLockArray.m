@@ -23,6 +23,13 @@
 	}
 	return returnMe;
 }
+- (NSMutableArray *) lockCreateArrayCopyFromObjects	{
+	NSMutableArray		*returnMe = nil;
+	pthread_rwlock_rdlock(&arrayLock);
+		returnMe = [self createArrayCopyFromObjects];
+	pthread_rwlock_unlock(&arrayLock);
+	return returnMe;
+}
 - (NSMutableArray *) createArrayCopyFromObjects	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	for (id objPtr in array)	{

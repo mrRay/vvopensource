@@ -24,6 +24,7 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 + (id) arrayWithCapacity:(NSUInteger)c;
 
 - (NSMutableArray *) createArrayCopy;
+- (NSMutableArray *) lockCreateArrayCopyFromObjects;
 - (NSMutableArray *) createArrayCopyFromObjects;
 - (void) addObject:(id)o;
 - (void) addObjectsFromArray:(id)a;

@@ -9,6 +9,10 @@
 @implementation VVSpriteView
 
 
++ (void) load	{
+	_spriteViewCount = 0;
+}
+
 /*===================================================================================*/
 #pragma mark --------------------- creation/deletion/setup
 /*------------------------------------*/

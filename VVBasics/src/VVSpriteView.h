@@ -5,6 +5,11 @@
 
 
 
+int				_spriteViewCount;
+
+
+
+
 @interface VVSpriteView : NSView {
 	BOOL					deleted;
 	VVSpriteManager			*spriteManager;

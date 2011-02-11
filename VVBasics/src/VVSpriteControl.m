@@ -12,6 +12,10 @@
 + (void) initialize	{
 	[self setCellClass:[VVSpriteControlCell class]];
 }
++ (void) load	{
+	_maxSpriteControlCount = 0;
+	_spriteControlCount = 0;
+}
 
 
 /*===================================================================================*/

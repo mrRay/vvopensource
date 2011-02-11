@@ -158,12 +158,12 @@
 }
 - (IBAction) replyButtonClicked:(id)sender	{
 	if ([replyButton intValue] == NSOnState)	{
-		[emailFieldHolder setHidden:NO];
+		//[emailFieldHolder setHidden:NO];
 		if ((window!=nil) && (emailField!=nil))
 			[window makeFirstResponder:emailField];
 	}
 	else	{
-		[emailFieldHolder setHidden:YES];
+		//[emailFieldHolder setHidden:YES];
 	}
 }
 - (IBAction) doneClicked:(id)sender	{
@@ -171,7 +171,7 @@
 	//	if the user's requesting a reply make sure the email field is visible
 	if ([replyButton intValue] == NSOnState)	{
 		if ([emailFieldHolder isHidden])	{
-			[emailFieldHolder setHidden:NO];
+			//[emailFieldHolder setHidden:NO];
 			if ((window!=nil) && (emailField!=nil))
 				[window makeFirstResponder:emailField];
 			return;
@@ -460,10 +460,14 @@
 		
 		//	make sure the task doesn't hang- start a loop that executes 20 times/sec which will kill the task after a terminate date
 		NSDate				*terminateDate = [[NSDate date] addTimeInterval:5.0];
+		int					terminateCount = 0;	//	only want to terminate it a couple times!
 		while ((theTask != nil) && ([theTask isRunning]))	{
 			if ([[NSDate date] compare:(id)terminateDate] == NSOrderedDescending)	{
 				NSLog(@"\t\terr: terminating SP task");
 				[theTask terminate];
+				++terminateCount;
+				if (terminateCount > 20)
+					break;
 			}
 			[NSThread sleepForTimeInterval:0.05];
 		}
