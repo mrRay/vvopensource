@@ -33,6 +33,7 @@
 	interval = 0.1;
 	running = NO;
 	bail = NO;
+	paused = NO;
 	targetObj = nil;
 	targetSel = nil;
 }
@@ -47,6 +48,7 @@
 	//NSLog(@"%s",__func__);
 	if (running)
 		return;
+	paused = NO;
 	[NSThread
 		detachNewThreadSelector:@selector(threadCallback)
 		toTarget:self
@@ -70,17 +72,19 @@
 		float				sleepDuration;	//	in microseconds!
 		
 		gettimeofday(&startTime,NULL);
-		//@try	{
-			//	if there's a target object, ping it (delegate-style)
-			if (targetObj != nil)
-				[targetObj performSelector:targetSel];
-			//	else just call threadProc (subclass-style)
-			else
-				[self threadProc];
-		//}
-		//@catch (NSException *err)	{
-		//	NSLog(@"%s caught exception, %@",__func__,err);
-		//}
+		if (!paused)	{
+			//@try	{
+				//	if there's a target object, ping it (delegate-style)
+				if (targetObj != nil)
+					[targetObj performSelector:targetSel];
+				//	else just call threadProc (subclass-style)
+				else
+					[self threadProc];
+			//}
+			//@catch (NSException *err)	{
+			//	NSLog(@"%s caught exception, %@",__func__,err);
+			//}
+		}
 		
 		++runLoopCount;
 		if (runLoopCount > 4)	{
@@ -113,6 +117,12 @@
 }
 - (void) threadProc	{
 	
+}
+- (void) pause	{
+	paused = YES;
+}
+- (void) resume	{
+	paused = NO;
 }
 - (void) stop	{
 	if (!running)

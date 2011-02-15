@@ -28,6 +28,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 	float				interval;
 	BOOL				running;
 	BOOL				bail;
+	BOOL				paused;
 	
 	id					targetObj;	//!<NOT retained!  If there's no valid target obj/sel pair, the instance sill simply call "threadProc" on itself, so you can just override that method
 	SEL					targetSel;
@@ -42,6 +43,9 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 - (void) start;
 - (void) threadCallback;
 - (void) threadProc;
+///	Pauses/resumes execution.  The thread will still be running at the configured interval- that's what differentiates pause/resume from start/stop- but the target/selector won't be getting called.
+- (void) pause;
+- (void) resume;
 ///	Stops execution by setting a "bail" flag, and returns immediately.  IMPORTANT: may return while the thread loop is still executing!
 - (void) stop;
 ///	Stops execution and doesn't return until the thread's done executing and has been closed.
