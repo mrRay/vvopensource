@@ -33,6 +33,41 @@
 	}
 	return [NSString stringWithFormat:@"<OSCValue ?>"];
 }
+- (NSString *) lengthyDescription	{
+#if !IPHONE
+	float		colorComps[4];
+#endif
+	switch (type)	{
+		case OSCValInt:
+			return [NSString stringWithFormat:@"integer %ld",*(int *)value];
+		case OSCValFloat:
+			return [NSString stringWithFormat:@"float %f",*(float *)value];
+		case OSCValString:
+			return [NSString stringWithFormat:@"string \"%@\"",(id)value];
+		case OSCValColor:
+#if IPHONE
+			return [NSString stringWithFormat:@"color %@",(id)value];
+#else
+			[(NSColor *)value getComponents:(CGFloat *)colorComps];
+			return [NSString stringWithFormat:@"color %0.2f-%0.2f-%0.2f-%0.2f",colorComps[0],colorComps[1],colorComps[2],colorComps[3]];
+#endif
+			
+		case OSCValMIDI:
+			return [NSString stringWithFormat:@"MIDI %ld-%ld-%ld-%ld>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+		case OSCValBool:
+			if (*(BOOL *)value)
+				return [NSString stringWithString:@"True"];
+			else
+				return [NSString stringWithString:@"False"];
+		case OSCValNil:
+			return [NSString stringWithFormat:@"nil"];
+		case OSCValInfinity:
+			return [NSString stringWithFormat:@"infinity"];
+		case OSCValBlob:
+			return [NSString stringWithFormat:@"<Data Blob>"];
+	}
+	return [NSString stringWithFormat:@"?"];
+}
 
 
 + (id) createWithInt:(int)n	{

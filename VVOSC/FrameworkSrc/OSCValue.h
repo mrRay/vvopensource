@@ -75,6 +75,8 @@ typedef enum	{
 ///	Creates & returns an auto-released instance of OSCValue with an NSData blob
 + (id) createWithNSDataBlob:(NSData *)d;
 
+- (NSString *) lengthyDescription;
+
 - (id) initWithInt:(int)n;
 - (id) initWithFloat:(float)n;
 - (id) initWithString:(NSString *)n;
