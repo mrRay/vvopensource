@@ -48,6 +48,7 @@
 - (BOOL) sender;
 - (BOOL) receiver;
 
+- (MIDIEndpointRef) endpointRef;
 - (NSString *) name;
 - (id) delegate;
 - (void) setDelegate:(id)n;

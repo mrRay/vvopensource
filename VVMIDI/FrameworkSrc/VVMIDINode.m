@@ -434,6 +434,9 @@
 }
 
 
+- (MIDIEndpointRef) endpointRef	{
+	return endpointRef;
+}
 - (NSString *) name	{
 	return name;
 }

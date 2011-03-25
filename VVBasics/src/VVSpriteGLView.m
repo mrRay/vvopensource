@@ -251,6 +251,11 @@
 /*------------------------------------*/
 
 
+- (void) lockFocus	{
+	pthread_mutex_lock(&glLock);
+	[super lockFocus];
+	pthread_mutex_unlock(&glLock);
+}
 - (void) drawRect:(NSRect)r	{
 	//NSLog(@"%s",__func__);
 	
