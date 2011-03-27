@@ -252,13 +252,19 @@
 
 
 - (void) lockFocus	{
+	if (deleted)	{
+		[super lockFocus];
+		return;
+	}
+	
 	pthread_mutex_lock(&glLock);
 	[super lockFocus];
 	pthread_mutex_unlock(&glLock);
 }
 - (void) drawRect:(NSRect)r	{
 	//NSLog(@"%s",__func__);
-	
+	if (deleted)
+		return;
 	
 	//	if the sprites need to be updated, do so now
 	if (spritesNeedUpdate)
@@ -296,6 +302,8 @@
 	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) initializeGL	{
 	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	//NSRect				bounds = [self bounds];
 	//long				cpSwapInterval = 1;
