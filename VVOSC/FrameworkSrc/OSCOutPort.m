@@ -96,6 +96,12 @@
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 	addr.sin_port = htons(port);
 	
+	//	if any part of the address string contains "255", this is a broadcast output
+	NSRange			bcastRange = [addressString rangeOfString:@"255"];
+	if ((bcastRange.location!=NSNotFound)&&(bcastRange.length>0))	{
+		int			yes = 1;
+		setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes));
+	}
 	return YES;
 }
 
