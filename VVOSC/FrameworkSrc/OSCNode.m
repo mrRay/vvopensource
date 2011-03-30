@@ -126,10 +126,11 @@
 	nodeContents = nil;
 	parentNode = nil;
 	
+	pthread_mutex_lock(&lastReceivedMessageLock);
 	if (lastReceivedMessage != nil)
 		[lastReceivedMessage release];
 	lastReceivedMessage = nil;
-	
+	pthread_mutex_unlock(&lastReceivedMessageLock);
 	pthread_mutex_destroy(&lastReceivedMessageLock);
 	
 	[super dealloc];
@@ -360,7 +361,8 @@
 	//NSLog(@"%s ... %@",__func__,m);
 	if ((m==nil)||(deleted))
 		return;
-	
+	//	retain the message so it doesn't disappear during this callback
+	[m retain];
 	NSMutableArray		*tmpCopy = [delegateArray lockCreateArrayCopy];
 	for (ObjectHolder *holder in tmpCopy)	{
 		id		delegate = [holder object];
@@ -370,9 +372,12 @@
 	pthread_mutex_lock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)
 			[lastReceivedMessage release];
-		lastReceivedMessage = [m retain];
+		lastReceivedMessage = m;
+		if (lastReceivedMessage != nil)
+			[lastReceivedMessage retain];
 	pthread_mutex_unlock(&lastReceivedMessageLock);
-	
+	//	release the message!
+	[m release];
 	/*
 	if ((m==nil)||(deleted))
 		return;
@@ -452,14 +457,15 @@
 	if (deleted)
 		return nil;
 	OSCMessage		*returnMe = nil;
-	if (lastReceivedMessage != nil)	{
-		//@synchronized (self)	{
+	
 		pthread_mutex_lock(&lastReceivedMessageLock);
-			returnMe = [lastReceivedMessage copy];
-			[returnMe autorelease];
-		//}
+			if (lastReceivedMessage != nil)	{
+				returnMe = [lastReceivedMessage copy];
+			}
 		pthread_mutex_unlock(&lastReceivedMessageLock);
-	}
+		if (returnMe != nil)
+			[returnMe autorelease];
+	
 	return returnMe;
 }
 - (id) delegateArray	{
