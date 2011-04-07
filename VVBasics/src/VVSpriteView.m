@@ -59,6 +59,7 @@
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	VVRELEASE(lastMouseEvent);
+	VVRELEASE(clearColor);
 	[super dealloc];
 }
 - (void) awakeFromNib	{
@@ -221,6 +222,8 @@
 
 - (void) drawRect:(NSRect)f	{
 	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	if (clearColor != nil)	{

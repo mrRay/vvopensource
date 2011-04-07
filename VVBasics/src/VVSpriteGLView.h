@@ -16,6 +16,7 @@
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
+	GLfloat					clearColor[4];
 	int						mouseDownModifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
@@ -38,6 +39,7 @@
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
+@property (retain,readwrite) NSColor *clearColor;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (readonly) BOOL mouseIsDown;
 

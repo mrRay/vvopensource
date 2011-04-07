@@ -35,6 +35,8 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
+	for (int i=0;i<4;++i)
+		clearColor[i] = 0.0;
 	mouseDownModifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
@@ -339,7 +341,7 @@
 	
 	//	always here!
 	glDisable(GL_DEPTH_TEST);
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 }
 - (void) finishedDrawing	{
 
@@ -362,6 +364,16 @@
 }
 - (VVSpriteManager *) spriteManager	{
 	return spriteManager;
+}
+- (void) setClearColor:(NSColor *)c	{
+	if ((deleted)||(c==nil))
+		return;
+	[c getComponents:(CGFloat *)clearColor];
+}
+- (NSColor *) clearColor	{
+	if (deleted)
+		return nil;
+	return [NSColor colorWithDeviceRed:clearColor[0] green:clearColor[1] blue:clearColor[2] alpha:clearColor[3]];
 }
 @synthesize mouseIsDown;
 
