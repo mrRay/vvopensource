@@ -1,7 +1,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "VVSpriteManager.h"
+#import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
+#import <libkern/OSAtomic.h>
 
 
 
@@ -20,6 +22,14 @@
 	int						mouseDownModifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
+	
+	int						flushMode;	//	0=glFlush(), 1=CGLFlushDrawable(), 2=[context flushBuffer]
+	
+	BOOL					fenceOutput;
+	GLuint					fenceA;
+	GLuint					fenceB;
+	BOOL					waitingForFenceA;
+	OSSpinLock				fenceLock;
 }
 
 - (void) generalInit;
@@ -42,5 +52,6 @@
 @property (retain,readwrite) NSColor *clearColor;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (readonly) BOOL mouseIsDown;
+@property (assign, readwrite) int flushMode;
 
 @end

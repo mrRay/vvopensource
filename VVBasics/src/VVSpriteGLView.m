@@ -48,6 +48,14 @@
 	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
 	pthread_mutex_init(&glLock,&attr);
 	pthread_mutexattr_destroy(&attr);
+	
+	flushMode = 0;
+	
+	fenceOutput = NO;
+	fenceA = -1;
+	fenceB = -1;
+	waitingForFenceA = NO;
+	fenceLock = OS_SPINLOCK_INIT;
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -277,29 +285,59 @@
 			[self initializeGL];
 			initialized = YES;
 		}
-		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+		NSOpenGLContext		*context = [self openGLContext];
+		CGLContextObj		cgl_ctx = [context CGLContextObj];
 		
-		/*
-		//	set up the view to draw
-		NSRect				bounds = [self bounds];
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
-		*/
+		//	lock around the fence, determine whether i should proceed with the render or not
+		OSSpinLockLock(&fenceLock);
+		BOOL				proceedWithRender = (!fenceOutput)?YES:glTestFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
+		OSSpinLockUnlock(&fenceLock);
+		if (proceedWithRender)	{
+			/*
+			//	set up the view to draw
+			NSRect				bounds = [self bounds];
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
+			glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
+			*/
+			
+			//	clear the view
+			glClear(GL_COLOR_BUFFER_BIT);
+			
+			//	tell the sprite manager to start drawing the sprites
+			if (spriteManager != nil)
+				[spriteManager drawRect:r];
+			//	flush!
+			switch (flushMode)	{
+				case 0:
+					glFlush();
+					break;
+				case 1:
+					CGLFlushDrawable(cgl_ctx);
+					break;
+				case 2:
+					[context flushBuffer];
+					break;
+			}
+			
+			//	lock around the fence, insert a fence in the command stream, and swap fences
+			if (fenceOutput)	{
+				OSSpinLockLock(&fenceLock);
+				glSetFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
+				waitingForFenceA != waitingForFenceA;
+				OSSpinLockUnlock(&fenceLock);
+			}
+			
+			//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
+			[self finishedDrawing];
+		}
+		//else
+		//	NSLog(@"\t\terr: sprite GL view fence prevented output!");
 		
-		//	clear the view
-		glClear(GL_COLOR_BUFFER_BIT);
 		
-		//	tell the sprite manager to start drawing the sprites
-		if (spriteManager != nil)
-			[spriteManager drawRect:r];
-		//	flush!
-		glFlush();
-		//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
-		[self finishedDrawing];
 	pthread_mutex_unlock(&glLock);
 }
 /*	this method exists so subclasses of me have an opportunity to do something after drawing 
@@ -313,6 +351,13 @@
 	//NSRect				bounds = [self bounds];
 	//long				cpSwapInterval = 1;
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
+	
+	OSSpinLockLock(&fenceLock);
+	if (fenceA < 0)
+		glGenFencesAPPLE(1,&fenceA);
+	if (fenceB < 0)
+		glGenFencesAPPLE(1,&fenceB);
+	OSSpinLockUnlock(&fenceLock);
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
@@ -376,6 +421,7 @@
 	return [NSColor colorWithDeviceRed:clearColor[0] green:clearColor[1] blue:clearColor[2] alpha:clearColor[3]];
 }
 @synthesize mouseIsDown;
+@synthesize flushMode;
 
 
 @end
