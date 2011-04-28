@@ -29,6 +29,7 @@
 	return nil;
 }
 - (void) generalInit	{
+	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
 	initialized = NO;
 	//needsReshape = YES;
@@ -52,10 +53,13 @@
 	flushMode = 0;
 	
 	fenceOutput = NO;
-	fenceA = -1;
-	fenceB = -1;
+	fenceA = 0;
+	fenceB = 0;
 	waitingForFenceA = NO;
+	fenceADeployed = NO;
+	fenceBDeployed = NO;
 	fenceLock = OS_SPINLOCK_INIT;
+	//NSLog(@"\t\t%s ... %@, %p - FINISHED",__func__,[self class],self);
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -66,6 +70,19 @@
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
 	deleted = YES;
+	
+	pthread_mutex_lock(&glLock);
+	OSSpinLockLock(&fenceLock);
+		//NSLog(@"\t\tdeleting fences %ld & %ld in context %p",fenceA,fenceB,[self openGLContext]);
+		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+		glDeleteFencesAPPLE(1,&fenceA);
+		fenceA = 0;
+		fenceADeployed = NO;
+		glDeleteFencesAPPLE(1,&fenceB);
+		fenceB = 0;
+		fenceBDeployed = NO;
+	OSSpinLockUnlock(&fenceLock);
+	pthread_mutex_unlock(&glLock);
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -86,6 +103,18 @@
 - (void) setOpenGLContext:(NSOpenGLContext *)c	{
 	//NSLog(@"%s",__func__);
 	pthread_mutex_lock(&glLock);
+		OSSpinLockLock(&fenceLock);
+		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+		if (fenceA > 0)
+			glDeleteFencesAPPLE(1,&fenceA);
+		fenceA = 0;
+		fenceADeployed = NO;
+		if (fenceB > 0)
+			glDeleteFencesAPPLE(1,&fenceB);
+		fenceB = 0;
+		fenceBDeployed = NO;
+		OSSpinLockUnlock(&fenceLock);
+		
 		[super setOpenGLContext:c];
 		[c setView:self];
 		initialized = NO;
@@ -290,7 +319,30 @@
 		
 		//	lock around the fence, determine whether i should proceed with the render or not
 		OSSpinLockLock(&fenceLock);
-		BOOL				proceedWithRender = (!fenceOutput)?YES:glTestFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
+		BOOL		proceedWithRender = NO;
+		if ((!fenceOutput) || (fenceA < 1) || (fenceB < 1))
+			proceedWithRender = YES;
+		else	{
+			if (waitingForFenceA)	{
+				if (fenceADeployed)	{
+					proceedWithRender = glTestFenceAPPLE(fenceA);
+					if (proceedWithRender)
+						fenceADeployed = NO;
+				}
+				else
+					proceedWithRender = YES;
+			}
+			else	{
+				if (fenceBDeployed)	{
+					proceedWithRender = glTestFenceAPPLE(fenceB);
+					if (proceedWithRender)
+						fenceBDeployed = NO;
+				}
+				else
+					proceedWithRender = YES;
+			}
+		}
+		//BOOL				proceedWithRender = ((!fenceOutput) || (fenceA < 1) || (fenceB < 1))?YES:glTestFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
 		OSSpinLockUnlock(&fenceLock);
 		if (proceedWithRender)	{
 			/*
@@ -324,12 +376,19 @@
 			}
 			
 			//	lock around the fence, insert a fence in the command stream, and swap fences
-			if (fenceOutput)	{
-				OSSpinLockLock(&fenceLock);
-				glSetFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
+			OSSpinLockLock(&fenceLock);
+			if ((fenceOutput) && (fenceA > 0) && (fenceB > 0))	{
+				if (waitingForFenceA)	{
+					glSetFenceAPPLE(fenceA);
+					fenceADeployed = YES;
+				}
+				else	{
+					glSetFenceAPPLE(fenceB);
+					fenceBDeployed = YES;
+				}
 				waitingForFenceA != waitingForFenceA;
-				OSSpinLockUnlock(&fenceLock);
 			}
+			OSSpinLockUnlock(&fenceLock);
 			
 			//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 			[self finishedDrawing];
@@ -344,7 +403,7 @@
 	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
 	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) initializeGL	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %p",__func__,self);
 	if (deleted)
 		return;
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
@@ -353,10 +412,14 @@
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	
 	OSSpinLockLock(&fenceLock);
-	if (fenceA < 0)
+	if (fenceA < 1)	{
 		glGenFencesAPPLE(1,&fenceA);
-	if (fenceB < 0)
+		fenceADeployed = NO;
+	}
+	if (fenceB < 1)	{
 		glGenFencesAPPLE(1,&fenceB);
+		fenceBDeployed = NO;
+	}
 	OSSpinLockUnlock(&fenceLock);
 	
 	glEnableClientState(GL_VERTEX_ARRAY);

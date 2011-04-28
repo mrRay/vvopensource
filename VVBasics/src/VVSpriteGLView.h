@@ -29,6 +29,8 @@
 	GLuint					fenceA;
 	GLuint					fenceB;
 	BOOL					waitingForFenceA;
+	BOOL					fenceADeployed;
+	BOOL					fenceBDeployed;
 	OSSpinLock				fenceLock;
 }
 
