@@ -50,12 +50,12 @@
 	pthread_mutex_init(&glLock,&attr);
 	pthread_mutexattr_destroy(&attr);
 	
-	flushMode = 0;
+	flushMode = VVFlushModeGL;
 	
-	fenceOutput = NO;
+	fenceMode = VVFenceModeEveryRefresh;
 	fenceA = 0;
 	fenceB = 0;
-	waitingForFenceA = NO;
+	waitingForFenceA = YES;
 	fenceADeployed = NO;
 	fenceBDeployed = NO;
 	fenceLock = OS_SPINLOCK_INIT;
@@ -320,30 +320,56 @@
 		//	lock around the fence, determine whether i should proceed with the render or not
 		OSSpinLockLock(&fenceLock);
 		BOOL		proceedWithRender = NO;
-		if ((!fenceOutput) || (fenceA < 1) || (fenceB < 1))
+		//	if the fences are broken, i'm going to proceed with rendering and ignore fencing
+		if ((fenceA < 1) || (fenceB < 1))
 			proceedWithRender = YES;
+		//	else the fences are fine- fence based on the fencing mode
 		else	{
-			if (waitingForFenceA)	{
-				if (fenceADeployed)	{
-					proceedWithRender = glTestFenceAPPLE(fenceA);
-					if (proceedWithRender)
-						fenceADeployed = NO;
-				}
-				else
-					proceedWithRender = YES;
+			//	if the fence mode wants to draw every refresh, proceed with rendering
+			if ((fenceMode==VVFenceModeEveryRefresh) || (fenceMode==VVFenceModeFinish))	{
+				//NSLog(@"\t\tfence mode is every refresh!");
+				proceedWithRender = YES;
 			}
+			//	else the fence mode *isn't* drawing every refresh- i need to test fenceA no matter what
 			else	{
-				if (fenceBDeployed)	{
-					proceedWithRender = glTestFenceAPPLE(fenceB);
-					if (proceedWithRender)
-						fenceBDeployed = NO;
+				//	if i'm in single-buffer mode but i'm not waiting for fenceA, something's wrong- i should be waiting for A!
+				if ((fenceMode==VVFenceModeSBSkip) && (!waitingForFenceA))
+					waitingForFenceA = YES;
+				
+				//	if i'm waiting for fence A....
+				if (waitingForFenceA)	{
+					//	if fence A hasn't been deployed, proceed with rendering anyway
+					if (!fenceADeployed)
+						proceedWithRender = YES;
+					else	{
+						proceedWithRender = glTestFenceAPPLE(fenceA);
+						fenceADeployed = (proceedWithRender)?NO:YES;
+					}
+					//if (proceedWithRender)
+					//	NSLog(@"\t\tfenceA executed- clear to render");
+					//else
+					//	NSLog(@"\t\tfenceA hasn't executed yet");
+					
 				}
-				else
-					proceedWithRender = YES;
+				//	if i'm in DB skip mode and i'm not waiting for fence A...
+				if ((fenceMode==VVFenceModeDBSkip) && (!waitingForFenceA))	{
+					//	if fence B hasn't been deployed, proceed with rendering anyway
+					if (!fenceBDeployed)
+						proceedWithRender = YES;
+					else	{
+						proceedWithRender = glTestFenceAPPLE(fenceB);
+						fenceBDeployed = (proceedWithRender)?NO:YES;
+					}
+					//if (proceedWithRender)
+					//	NSLog(@"\t\tfenceB executed- clear to render");
+					//else
+					//	NSLog(@"\t\tfenceB hasn't executed yet");
+				}
 			}
 		}
-		//BOOL				proceedWithRender = ((!fenceOutput) || (fenceA < 1) || (fenceB < 1))?YES:glTestFenceAPPLE((waitingForFenceA)?fenceA:fenceB);
 		OSSpinLockUnlock(&fenceLock);
+		
+		
 		if (proceedWithRender)	{
 			/*
 			//	set up the view to draw
@@ -364,29 +390,39 @@
 				[spriteManager drawRect:r];
 			//	flush!
 			switch (flushMode)	{
-				case 0:
+				case VVFlushModeGL:
 					glFlush();
 					break;
-				case 1:
+				case VVFlushModeCGL:
 					CGLFlushDrawable(cgl_ctx);
 					break;
-				case 2:
+				case VVFlushModeNS:
 					[context flushBuffer];
+					break;
+				case VVFlushModeApple:
+					glFlushRenderAPPLE();
+					break;
+				case VVFlushModeFinish:
+					glFinish();
 					break;
 			}
 			
 			//	lock around the fence, insert a fence in the command stream, and swap fences
 			OSSpinLockLock(&fenceLock);
-			if ((fenceOutput) && (fenceA > 0) && (fenceB > 0))	{
+			if ((fenceMode!=VVFenceModeEveryRefresh) && (fenceMode!=VVFenceModeFinish) && (fenceA > 0) && (fenceB > 0))	{
 				if (waitingForFenceA)	{
 					glSetFenceAPPLE(fenceA);
 					fenceADeployed = YES;
+					//NSLog(@"\t\tdone drawing, inserting fenceA into stream");
+					if (fenceMode == VVFenceModeDBSkip)
+						waitingForFenceA = NO;
 				}
 				else	{
 					glSetFenceAPPLE(fenceB);
 					fenceBDeployed = YES;
+					//NSLog(@"\t\tdone drawing, inserting fenceB into stream");
+					waitingForFenceA = YES;
 				}
-				waitingForFenceA != waitingForFenceA;
 			}
 			OSSpinLockUnlock(&fenceLock);
 			
