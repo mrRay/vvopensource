@@ -173,6 +173,8 @@
 - (void) OSCThreadProc	{
 	//NSLog(@"%s",__func__);
 	
+	if ([NSThread threadPriority]!=1.0)
+		[NSThread setThreadPriority:1.0];
 	//	if i'm not bound, return
 	if (!bound)
 		return;

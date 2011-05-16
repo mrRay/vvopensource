@@ -7,6 +7,72 @@
 @implementation VVCrashReporter
 
 
++ (NSString *) _stringForSystemProfilerDataType:(NSString *)t	{
+	//NSLog(@"%s ... %@",__func__,t);
+	if (t == nil)
+		return nil;
+	NSTask				*theTask = nil;
+	NSData				*data = nil;
+	NSString			*returnMe = nil;
+	
+	//	if i can't find the binary for the system profiler, bail
+	if (![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/sbin/system_profiler"])	{
+		NSLog(@"\t\terr: couldn't locate system_profiler binary");
+		goto BAIL;
+	}
+	//	start an exception catcher so if anything goes wrong i won't crash the app
+	@try	{
+		//	create & set up an NSTask which will execute the system_profiler
+		theTask = [[NSTask alloc] init];
+		[theTask setLaunchPath:@"/usr/sbin/system_profiler"];
+		[theTask setArguments:[NSArray arrayWithObjects:
+			[NSString stringWithString:@"-detailLevel"],
+			[NSString stringWithString:@"mini"],
+			t,
+			nil]	];
+		//	create a pipe, attach it to stdout of the task, get a file handle to the pipe
+		NSPipe				*outputPipe = [NSPipe pipe];
+		[theTask setStandardOutput:outputPipe];
+		NSFileHandle		*fileHandle = [outputPipe fileHandleForReading];
+		
+		//	launch the task
+		[theTask launch];
+		
+		//	make sure the task doesn't hang- start a loop that executes 20 times/sec which will kill the task after a terminate date
+		NSDate				*terminateDate = [[NSDate date] addTimeInterval:5.0];
+		int					terminateCount = 0;	//	only want to terminate it a couple times!
+		while ((theTask != nil) && ([theTask isRunning]))	{
+			if ([[NSDate date] compare:(id)terminateDate] == NSOrderedDescending)	{
+				NSLog(@"\t\terr: terminating SP task");
+				[theTask terminate];
+				++terminateCount;
+				if (terminateCount > 20)
+					break;
+			}
+			[NSThread sleepForTimeInterval:0.05];
+		}
+		//	read the data at the file handle
+		data = [fileHandle readDataToEndOfFile];
+		if (data == nil)	{
+			NSLog(@"\t\terr: couldn't read SP data from file handle");
+			goto BAIL;
+		}
+		//	make a string from the data
+		returnMe = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+		if (returnMe == nil)
+			NSLog(@"\t\terror: couldn't create SP string from data");
+		else
+			[returnMe autorelease];
+	}
+	@catch (NSException *err)	{
+		NSLog(@"\t\terr: caught exception: %@ %s, %@",err,__func__,t);
+	}
+	BAIL:
+	VVRELEASE(theTask);
+	return returnMe;
+}
+
+
 - (id) init	{
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
@@ -400,95 +466,31 @@
 	NSMutableDictionary		*returnMe = [NSMutableDictionary dictionaryWithCapacity:0];
 	NSString				*tmp = nil;
 	//	these are assembled one-at-a-time because i've observed hangs when trying to do 3 or more at once
-	tmp = [self _stringForSystemProfilerDataType:@"SPHardwareDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPHardwareDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"hardware"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPSoftwareDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPSoftwareDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"software"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPUSBDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPUSBDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"usb"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPFireWireDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPFireWireDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"firewire"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPDisplaysDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPDisplaysDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"graphics"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPMemoryDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPMemoryDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"memory"];
-	//tmp = [self _stringForSystemProfilerDataType:@"SPPCCardDataType"];
+	//tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPPCCardDataType"];
 	//if (tmp != nil)
 	//	[returnMe setObject:tmp forKey:@"hardware"];
-	tmp = [self _stringForSystemProfilerDataType:@"SPPCIDataType"];
+	tmp = [VVCrashReporter _stringForSystemProfilerDataType:@"SPPCIDataType"];
 	if (tmp != nil)
 		[returnMe setObject:tmp forKey:@"pci"];
 	
-	return returnMe;
-}
-- (NSString *) _stringForSystemProfilerDataType:(NSString *)t	{
-	//NSLog(@"%s ... %@",__func__,t);
-	if (t == nil)
-		return nil;
-	NSTask				*theTask = nil;
-	NSData				*data = nil;
-	NSString			*returnMe = nil;
-	
-	//	if i can't find the binary for the system profiler, bail
-	if (![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/sbin/system_profiler"])	{
-		NSLog(@"\t\terr: couldn't locate system_profiler binary");
-		goto BAIL;
-	}
-	//	start an exception catcher so if anything goes wrong i won't crash the app
-	@try	{
-		//	create & set up an NSTask which will execute the system_profiler
-		theTask = [[NSTask alloc] init];
-		[theTask setLaunchPath:@"/usr/sbin/system_profiler"];
-		[theTask setArguments:[NSArray arrayWithObjects:
-			[NSString stringWithString:@"-detailLevel"],
-			[NSString stringWithString:@"mini"],
-			t,
-			nil]	];
-		//	create a pipe, attach it to stdout of the task, get a file handle to the pipe
-		NSPipe				*outputPipe = [NSPipe pipe];
-		[theTask setStandardOutput:outputPipe];
-		NSFileHandle		*fileHandle = [outputPipe fileHandleForReading];
-		
-		//	launch the task
-		[theTask launch];
-		
-		//	make sure the task doesn't hang- start a loop that executes 20 times/sec which will kill the task after a terminate date
-		NSDate				*terminateDate = [[NSDate date] addTimeInterval:5.0];
-		int					terminateCount = 0;	//	only want to terminate it a couple times!
-		while ((theTask != nil) && ([theTask isRunning]))	{
-			if ([[NSDate date] compare:(id)terminateDate] == NSOrderedDescending)	{
-				NSLog(@"\t\terr: terminating SP task");
-				[theTask terminate];
-				++terminateCount;
-				if (terminateCount > 20)
-					break;
-			}
-			[NSThread sleepForTimeInterval:0.05];
-		}
-		//	read the data at the file handle
-		data = [fileHandle readDataToEndOfFile];
-		if (data == nil)	{
-			NSLog(@"\t\terr: couldn't read SP data from file handle");
-			goto BAIL;
-		}
-		//	make a string from the data
-		returnMe = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-		if (returnMe == nil)
-			NSLog(@"\t\terror: couldn't create SP string from data");
-		else
-			[returnMe autorelease];
-	}
-	@catch (NSException *err)	{
-		NSLog(@"\t\terr: caught exception: %@ %s, %@",err,__func__,t);
-	}
-	BAIL:
-	VVRELEASE(theTask);
 	return returnMe;
 }
 

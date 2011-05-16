@@ -61,6 +61,8 @@ HOW TO USE THIS CLASS:
 	NSArray							*nibTopLevelObjects;
 }
 
++ (NSString *) _stringForSystemProfilerDataType:(NSString *)t;
+
 ///	This is the main method- when you call 'check', the crash reporter looks for crash logs, gets a basic system profile, and collects anything your applications has dumped to the console log.
 - (void) check;
 - (void) openCrashReporter;
@@ -72,7 +74,6 @@ HOW TO USE THIS CLASS:
 - (NSString *) _nibName;
 - (NSString *) _consoleLogString;
 - (NSMutableDictionary *) _systemProfilerDict;
-- (NSString *) _stringForSystemProfilerDataType:(NSString *)t;
 
 - (void) updateCrashLogTimeout:(NSTimer *)t;
 

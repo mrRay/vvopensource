@@ -140,6 +140,11 @@
 - (BOOL) needsPanelToBecomeKey	{
 	return YES;
 }
+- (void) removeFromSuperview	{
+	pthread_mutex_lock(&glLock);
+	[(id)super removeFromSuperview];
+	pthread_mutex_unlock(&glLock);
+}
 /*
 - (void) keyDown:(NSEvent *)event	{
 	//NSLog(@"%s",__func__);
@@ -305,6 +310,9 @@
 	if (deleted)
 		return;
 	
+	id			myWin = [self window];
+	if (myWin == nil)
+		return;
 	//	if the sprites need to be updated, do so now
 	if (spritesNeedUpdate)
 		[self updateSprites];
@@ -435,9 +443,6 @@
 		
 	pthread_mutex_unlock(&glLock);
 }
-/*	this method exists so subclasses of me have an opportunity to do something after drawing 
-	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
-	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) initializeGL	{
 	//NSLog(@"%s ... %p",__func__,self);
 	if (deleted)
@@ -487,6 +492,9 @@
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 }
+/*	this method exists so subclasses of me have an opportunity to do something after drawing 
+	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
+	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) finishedDrawing	{
 
 }
