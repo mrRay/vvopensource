@@ -241,8 +241,11 @@
 			goto BAIL;
 		if (*stringPtr != '/')
 			address = [[NSString stringWithFormat:@"/%@",a] retain];
-		else
-			address = [a retain];
+		else	{
+			address = a;
+			if (address != nil)
+				[address retain];
+		}
 		valueCount = 0;
 		value = nil;
 		valueArray = nil;
