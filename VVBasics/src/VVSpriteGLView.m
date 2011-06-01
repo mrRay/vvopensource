@@ -313,11 +313,15 @@
 	id			myWin = [self window];
 	if (myWin == nil)
 		return;
-	//	if the sprites need to be updated, do so now
-	if (spritesNeedUpdate)
-		[self updateSprites];
 	
-	pthread_mutex_lock(&glLock);
+	//pthread_mutex_lock(&glLock);
+	if (pthread_mutex_trylock(&glLock) != 0)	//	returns 0 if successful- so if i can't get a gl lock, skip drawing!
+		return;
+	
+		//	if the sprites need to be updated, do so now...this should probably be done inside the gl lock!
+		if (spritesNeedUpdate)
+			[self updateSprites];
+		
 		if (!initialized)	{
 			[self initializeGL];
 			initialized = YES;
@@ -439,8 +443,7 @@
 		}
 		//else
 		//	NSLog(@"\t\terr: sprite GL view fence prevented output!");
-		
-		
+	
 	pthread_mutex_unlock(&glLock);
 }
 - (void) initializeGL	{
