@@ -7,6 +7,18 @@
 @implementation VVCrashReporter
 
 
++ (void) initialize	{
+	//	get the last crash date from the user defaults
+	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
+	NSDate				*lastCrashDate = [def objectForKey:@"lastCrashDate"];
+	//	if there's no last crash date, the crash reporter has never been used with this app- set up the last crash date as today's date, so any logs created from now on will be sent in
+	if (lastCrashDate == nil)	{
+		lastCrashDate = [NSDate date];
+		[def registerDefaults:[NSDictionary dictionaryWithObject:lastCrashDate forKey:@"lastCrashDate"]];
+		[def setObject:lastCrashDate forKey:@"lastCrashDate"];
+		[def synchronize];
+	}
+}
 + (NSString *) _stringForSystemProfilerDataType:(NSString *)t	{
 	//NSLog(@"%s ... %@",__func__,t);
 	if (t == nil)
@@ -17,7 +29,7 @@
 	
 	//	if i can't find the binary for the system profiler, bail
 	if (![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/sbin/system_profiler"])	{
-		NSLog(@"\t\terr: couldn't locate system_profiler binary");
+		NSLog(@"\t\terr: couldn't locate system_profiler binary %s",__func__);
 		goto BAIL;
 	}
 	//	start an exception catcher so if anything goes wrong i won't crash the app
@@ -43,7 +55,7 @@
 		int					terminateCount = 0;	//	only want to terminate it a couple times!
 		while ((theTask != nil) && ([theTask isRunning]))	{
 			if ([[NSDate date] compare:(id)terminateDate] == NSOrderedDescending)	{
-				NSLog(@"\t\terr: terminating SP task");
+				NSLog(@"\t\terr: terminating SP task %s",__func__);
 				[theTask terminate];
 				++terminateCount;
 				if (terminateCount > 20)
@@ -54,13 +66,13 @@
 		//	read the data at the file handle
 		data = [fileHandle readDataToEndOfFile];
 		if (data == nil)	{
-			NSLog(@"\t\terr: couldn't read SP data from file handle");
+			NSLog(@"\t\terr: couldn't read SP data from file handle %s",__func__);
 			goto BAIL;
 		}
 		//	make a string from the data
 		returnMe = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 		if (returnMe == nil)
-			NSLog(@"\t\terror: couldn't create SP string from data");
+			NSLog(@"\t\terror: couldn't create SP string from data %s",__func__);
 		else
 			[returnMe autorelease];
 	}
@@ -127,50 +139,13 @@
 - (void) check	{
 	//	clear the crash log array
 	[crashLogArray lockRemoveAllObjects];
+	
 	//	if the upload URL is nil, bail
 	if (uploadURL == nil)
 		goto BAIL;
 	
-	//	get the last crash date from the prefs
-	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
-	NSDate				*lastCrashDate = [def objectForKey:@"lastCrashDate"];
-	//	if there's no last crash date, the app hasn't been run yet or there aren't any prefs- register the last crash date as this date & bail
-	if (lastCrashDate == nil)	{
-		NSDate			*tmpDate = [NSDate date];
-		[def registerDefaults:[NSDictionary dictionaryWithObject:tmpDate forKey:@"lastCrashDate"]];
-		[def setObject:tmpDate forKey:@"lastCrashDate"];
-		[def synchronize];
-		goto BAIL;
-	}
-	
-	//	make an array with all the crash logs that need to be submitted
-	NSFileManager		*fm = [NSFileManager defaultManager];
-	NSString			*pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
-	NSArray				*logFolderArray = [fm directoryContentsAtPath:pathToLogFolder];
-	if ((logFolderArray!=nil)&&([logFolderArray count]>0))	{
-		NSString		*appNameString = nil;
-		appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
-		if (appNameString == nil)
-			appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
-		//NSLog(@"\t\tappNameString = %@",appNameString);
-		for (NSString *logFileName in logFolderArray)	{
-			if ([logFileName hasPrefix:appNameString])	{
-				NSString		*logPath = nil;
-				NSDictionary	*fileAttribDict = nil;
-				NSDate			*fileModDate = nil;
-				logPath = [NSString stringWithFormat:@"%@/%@",pathToLogFolder,logFileName];
-				//NSLog(@"\t\tlogPath = %@",logPath);
-				if (logPath != nil)
-					fileAttribDict = [fm fileAttributesAtPath:logPath traverseLink:NO];
-				if (fileAttribDict != nil)
-					fileModDate = [fileAttribDict objectForKey:NSFileModificationDate];
-				if ((fileModDate!=nil)&&([fileModDate compare:lastCrashDate]==NSOrderedDescending))
-					[crashLogArray lockAddObject:logPath];
-			}
-		}
-	}
-	//	if the array of crash logs that need to be submitted is empty, bail
-	if ([crashLogArray count]<1)
+	//	assemble the crash logs- if there aren't any, bail
+	if (![self _assembleCrashLogs])
 		goto BAIL;
 	
 	//	extract the domain from the upload url
@@ -196,8 +171,12 @@
 	//	jump here if check gets cancelled or there's nothing to send in!
 	BAIL:
 	//	tell the delegate that the check's been finished
-	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(crashReporterCheckDone)]))
-		[delegate crashReporterCheckDone];
+	if (delegate != nil)	{
+		if ([delegate respondsToSelector:@selector(crashReporterCheckDone:)])
+			[delegate crashReporterCheckDone:((crashLogArray!=nil)&&([crashLogArray count]>0))?YES:NO];
+		else if ([delegate respondsToSelector:@selector(crashReporterCheckDone)])
+			[delegate crashReporterCheckDone];
+	}
 }
 - (void) openCrashReporter	{
 	//NSLog(@"%s",__func__);
@@ -412,8 +391,13 @@
 	//	close the window
 	[window orderOut:nil];
 	//	tell the delegate that the check's been finished
-	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(crashReporterCheckDone)]))
-		[delegate crashReporterCheckDone];
+	//	tell the delegate that the check's been finished
+	if (delegate != nil)	{
+		if ([delegate respondsToSelector:@selector(crashReporterCheckDone:)])
+			[delegate crashReporterCheckDone:YES];
+		else if ([delegate respondsToSelector:@selector(crashReporterCheckDone)])
+			[delegate crashReporterCheckDone];
+	}
 }
 
 
@@ -422,6 +406,51 @@
 //	this method exists so i can specify an alternate nib via a subclass (nibs get loaded on init, so i can't do this with a variable- there's no opportunity to set it)
 - (NSString *) _nibName	{
 	return [NSString stringWithString:@"VVCrashReporter"];
+}
+//	assembles the array of crash logs, returns a YES if logs were found and have to be sent in
+- (BOOL) _assembleCrashLogs	{
+	if (crashLogArray == nil)
+		return NO;
+	BOOL			returnMe = NO;
+	
+	//	first of all, clear the crash log array
+	[crashLogArray lockRemoveAllObjects];
+	
+	//	get the last crash date from the prefs
+	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
+	NSDate				*lastCrashDate = [def objectForKey:@"lastCrashDate"];
+	
+	//	fill 'crashLogArray' with the paths of all the crash logs found on this machine
+	NSFileManager		*fm = [NSFileManager defaultManager];
+	NSString			*pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
+	NSArray				*logFolderArray = [fm directoryContentsAtPath:pathToLogFolder];
+	if ((logFolderArray!=nil)&&([logFolderArray count]>0))	{
+		NSString		*appNameString = nil;
+		appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+		if (appNameString == nil)
+			appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+		//NSLog(@"\t\tappNameString = %@",appNameString);
+		for (NSString *logFileName in logFolderArray)	{
+			if ([logFileName hasPrefix:appNameString])	{
+				NSString		*logPath = nil;
+				NSDictionary	*fileAttribDict = nil;
+				NSDate			*fileModDate = nil;
+				logPath = [NSString stringWithFormat:@"%@/%@",pathToLogFolder,logFileName];
+				//NSLog(@"\t\tlogPath = %@",logPath);
+				if (logPath != nil)
+					fileAttribDict = [fm fileAttributesAtPath:logPath traverseLink:NO];
+				if (fileAttribDict != nil)
+					fileModDate = [fileAttribDict objectForKey:NSFileModificationDate];
+				if ((fileModDate!=nil)&&([fileModDate compare:lastCrashDate]==NSOrderedDescending))
+					[crashLogArray lockAddObject:logPath];
+			}
+		}
+	}
+	
+	if ([crashLogArray count]>0)
+		returnMe = YES;
+	
+	return returnMe;
 }
 //	this method returns an auto-released NSString with the last 200 lines this application printed to the console log
 - (NSString *) _consoleLogString	{

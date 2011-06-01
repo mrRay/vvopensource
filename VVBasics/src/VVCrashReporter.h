@@ -12,8 +12,12 @@
 /*!
 	This protocol exists largely because it's conceivable that objects will want to know when the crash reporter- which uploads asynchronously- has finished sending its data to the remote server.
 */
-@protocol VVCrashReporterDelegate
+@protocol OldVVCrashReporterDelegate
 - (void) crashReporterCheckDone;
+@end
+
+@protocol VVCrashReporterDelegate
+- (void) crashReporterCheckDone:(BOOL)foundLogs;	//	"new"- 'f' designates whether crash reports were found or not
 @end
 
 
@@ -72,6 +76,7 @@ HOW TO USE THIS CLASS:
 - (void) closeCrashReporter;
 
 - (NSString *) _nibName;
+- (BOOL) _assembleCrashLogs;	//	assembles the array of crash logs, returns a YES if logs were found and have to be sent in
 - (NSString *) _consoleLogString;
 - (NSMutableDictionary *) _systemProfilerDict;
 

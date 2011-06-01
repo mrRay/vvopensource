@@ -1,4 +1,13 @@
 
+/*				Always with the sprites...
+		
+		sprite |sprīt|
+		noun
+		1 an elf or fairy.
+		2 a computer graphic that may be moved on-screen and otherwise manipulated as a single entity.
+		3 a faint flash, typically red, sometimes emitted in the upper atmosphere over a thunderstorm owing to the collision of high-energy electrons with air molecules.
+		ORIGIN Middle English : alteration of sprit, a contraction of spirit .			*/
+
 #import <Cocoa/Cocoa.h>
 
 
