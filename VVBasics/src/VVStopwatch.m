@@ -42,6 +42,35 @@
 	returnMe += (((float)(stopTime.tv_usec - startTime.tv_usec)) / 1000000.0);
 	return returnMe;
 }
+- (void) startInTimeInterval:(NSTimeInterval)t	{
+	//NSLog(@"%s ... %f",__func__,t);
+	struct timeval		tmpStartTime;
+	gettimeofday(&tmpStartTime,NULL);
+	struct timeval		intervalStruct;
+	populateTimevalWithFloat(&intervalStruct,t);
+	if (t < 0.0)	{
+		intervalStruct.tv_sec = intervalStruct.tv_sec * -1;
+		intervalStruct.tv_usec = intervalStruct.tv_usec * -1;
+		timersub(&tmpStartTime,&intervalStruct,&startTime);
+	}
+	else
+		timeradd(&tmpStartTime,&intervalStruct,&startTime);
+}
 
 
 @end
+
+void populateTimevalWithFloat(struct timeval *tval, float secVal)	{
+	//NSLog(@"%s ... %f",__func__,secVal);
+	if (tval == nil)
+		return;
+	if (secVal == 0.0)	{
+		(*(tval)).tv_sec = 0;
+		(*(tval)).tv_usec = 0;
+		return;
+	}
+	(*(tval)).tv_sec = (secVal>0.0) ? ((int)floorf(secVal)) : ((int)ceilf(secVal));
+	(*(tval)).tv_usec = ((int)(((float)(secVal - ((float)(*(tval)).tv_sec)))*1000000.0));
+	//NSLog(@"\t\ttv_sec = %ld",(*(tval)).tv_sec);
+	//NSLog(@"\t\ttv_usec = %ld",(*(tval)).tv_usec);
+}

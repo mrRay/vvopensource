@@ -1,6 +1,8 @@
 
 #import <Cocoa/Cocoa.h>
-#import <SystemConfiguration/SCNetwork.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#include "AvailabilityMacros.h"
+#import <SystemConfiguration/SCNetworkReachability.h>
 #import <asl.h>
 #import "VVCURLDL.h"
 #import "MutLockArray.h"

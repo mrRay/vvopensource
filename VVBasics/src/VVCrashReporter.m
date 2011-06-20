@@ -155,11 +155,23 @@
 	NSString			*domainString = nil;
 	domainString = [NSString stringWithFormat:@"http://%@",[pathComponents objectAtIndex:0]];
 	//	check to see if the domain's reachable with the given network configuration
-	BOOL						foundServer = NO;
-	SCNetworkConnectionFlags	status;
-	foundServer = SCNetworkCheckReachabilityByName([domainString UTF8String],&status);
-	BOOL						reachable = NO;
-	reachable = foundServer && (status & kSCNetworkFlagsReachable) && !(status & kSCNetworkFlagsConnectionRequired);
+	#if (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED <= 1050))
+		//	this has to execute if i'm compiling against 10.5
+		BOOL						foundServer = NO;
+		SCNetworkConnectionFlags	status;
+		foundServer = SCNetworkCheckReachabilityByName([domainString UTF8String],&status);
+		BOOL						reachable = NO;
+		reachable = foundServer && (status & kSCNetworkFlagsReachable) && !(status & kSCNetworkFlagsConnectionRequired);
+	#elif (defined(MAC_OS_X_VERSION_MIN_REQUIRED)(MAC_OS_X_VERSION_MIN_REQUIREDD >= 1060))
+		//	this has to execute if i'm compiling against 10.6
+		SCNetworkReachabilityRef	target;
+		SCNetworkConnectionFlags	flags = 0;
+		target = SCNetworkReachabilityCreateWithName(NULL,[domainString UTF8String]);
+		BOOL						foundServer = (target==NULL)?NO:SCNetworkReachabilityGetFlags(target,&flags);
+		CFRelease(target);
+		BOOL						reachable = foundServer && (flags & kSCNetworkReachabilityFlagsReachable) && !(flags & kSCNetworkReachabilityFlagsConnectionRequired);
+	#endif
+	
 	//	if it's not reachable, bail
 	if (!reachable)
 		goto BAIL;

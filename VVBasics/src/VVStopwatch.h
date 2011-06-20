@@ -21,5 +21,9 @@
 - (void) start;
 ///	Returns a float representing the time (in seconds) since the stopwatch was started
 - (float) timeSinceStart;
+///	Sets the stopwatch's starting time as an offset to the current time
+- (void) startInTimeInterval:(NSTimeInterval)t;
 
 @end
+
+void populateTimevalWithFloat(struct timeval *tval, float secVal);
