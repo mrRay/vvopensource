@@ -19,6 +19,7 @@
 	#import "VVSpriteControlCell.h"
 	#import "VVSpriteGLView.h"
 	#import "VVCrashReporter.h"
+	#import "NSHostAdditions.h"
 #endif
 
 /*

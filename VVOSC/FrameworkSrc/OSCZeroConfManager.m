@@ -98,27 +98,14 @@
 	//NSLog(@"\t\tresolved service %@ at %@ : %ld",[s name],ipString,port);
 	
 	//	assemble an array with strings of the ip addresses this machine responds to
-	NSCharacterSet		*charSet;
-	NSMutableArray		*IPAddressArray = [NSMutableArray arrayWithCapacity:0];
-	charSet = [NSCharacterSet characterSetWithCharactersInString:@"abcdefABCDEF:%"];
+	NSArray				*IPAddressArray = nil;
+	
 #if IPHONE
 	
 #else
-	NSRange				charSetRange;
-	NSEnumerator		*addressIt;
-	NSString			*addressPtr;
-	
-	//	run through the array of addresses
-	addressIt = [[[NSHost currentHost] addresses] objectEnumerator];
-	while (addressPtr = [addressIt nextObject])	{
-		//	if the address has any alpha-numeric characters, don't add it to the list
-		charSetRange = [addressPtr rangeOfCharacterFromSet:charSet];
-		if ((charSetRange.length==0) && (charSetRange.location==NSNotFound))	{
-			//	make sure i'm not adding 127.0.0.1!
-			if (![addressPtr isEqualToString:@"127.0.0.1"])
-				[IPAddressArray addObject:addressPtr];
-		}
-	}
+	IPAddressArray = [[NSHost currentHost] IPv4Addresses];
+	if (IPAddressArray == nil)
+		return;
 #endif
 	
 	//	if my osc manager publishes an input with the same name as the matching service,
