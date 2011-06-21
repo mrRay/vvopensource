@@ -5,6 +5,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 #include <sys/time.h>
+#import <libkern/OSAtomic.h>
 
 
 
@@ -12,6 +13,7 @@
 
 @interface VVStopwatch : NSObject {
 	struct timeval		startTime;
+	OSSpinLock			timeLock;
 }
 
 ///	Returns an auto-released instance of VVStopwatch; the stopwatch is started on creation.
@@ -23,6 +25,10 @@
 - (float) timeSinceStart;
 ///	Sets the stopwatch's starting time as an offset to the current time
 - (void) startInTimeInterval:(NSTimeInterval)t;
+///	Populates the passed timeval struct with the current timeval
+- (void) copyStartTimeToTimevalStruct:(struct timeval *)dst;
+///	Populates the starting time with the passed timeval struct
+- (void) setStartTimeStruct:(struct timeval *)src;
 
 @end
 
