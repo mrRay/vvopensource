@@ -315,8 +315,10 @@
 		return;
 	
 	//pthread_mutex_lock(&glLock);
-	if (pthread_mutex_trylock(&glLock) != 0)	//	returns 0 if successful- so if i can't get a gl lock, skip drawing!
+	if (pthread_mutex_trylock(&glLock) != 0)	{	//	returns 0 if successful- so if i can't get a gl lock, skip drawing!
+		//NSLog(@"\t\tcouldn't get GL lock, bailing %s",__func__);
 		return;
+	}
 	
 		//	if the sprites need to be updated, do so now...this should probably be done inside the gl lock!
 		if (spritesNeedUpdate)
@@ -494,6 +496,8 @@
 	//	always here!
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
+	
+	initialized = YES;
 }
 /*	this method exists so subclasses of me have an opportunity to do something after drawing 
 	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
