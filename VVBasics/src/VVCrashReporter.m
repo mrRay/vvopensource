@@ -467,10 +467,11 @@
 //	this method returns an auto-released NSString with the last 200 lines this application printed to the console log
 - (NSString *) _consoleLogString	{
 	//NSLog(@"%s",__func__);
-	NSString			*appNameString = nil;
-	appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+	NSDictionary		*bundleInfoDict = [[NSBundle mainBundle] infoDictionary];
+	NSString			*appNameString = [bundleInfoDict objectForKey:@"CFBundleName"];
 	if (appNameString == nil)
 		appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+	NSString			*appIdentifierString = [bundleInfoDict objectForKey:@"CFBundleIdentifier"];
 	//NSString			*appNameString = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
 	
 	NSMutableArray		*mutArray = [NSMutableArray arrayWithCapacity:0];
@@ -481,7 +482,18 @@
 	char				*msgString;
 	//NSLog(@"\t\tappNameString is \"%@\"",appNameString);
 	//NSLog(@"\t\tUTF appNameString is \"%s\"",[appNameString UTF8String]);
-	asl_set_query(q, ASL_KEY_SENDER, [appNameString UTF8String], ASL_QUERY_OP_EQUAL);
+	
+	//	if i have both an app name and a bundle identifier name, my query should contain both
+	if ((appNameString!=nil) && (appIdentifierString!=nil))	{
+		NSString		*regexQuery = [NSString stringWithFormat:@"%@|%@",appNameString,appIdentifierString];
+		if (asl_set_query(q, ASL_KEY_SENDER, [regexQuery UTF8String], ASL_QUERY_OP_EQUAL | ASL_QUERY_OP_REGEX))
+			NSLog(@"\t\terror setting regex ASL query in %s",__func__);
+	}
+	//	else i only have an app name string
+	else	{
+		if (asl_set_query(q, ASL_KEY_SENDER, [appNameString UTF8String], ASL_QUERY_OP_EQUAL))
+			NSLog(@"\t\terror setting non-regex ASL query in %s",__func__);
+	}
 	r = asl_search(NULL, q);
 	while (NULL != (m = aslresponse_next(r)))	{
 		//NSLog(@"\t\t********");

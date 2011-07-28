@@ -57,60 +57,84 @@
 - (void) threadCallback	{
 	//NSLog(@"%s",__func__);
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	int						runLoopCount = 0;
+	//int						runLoopCount = 0;
 	
 	running = YES;
 	bail = NO;
 	if (![NSThread setThreadPriority:1.0])
 		NSLog(@"\terror setting thread priority to 1.0");
 	
-	while ((running) && (!bail))	{
-		//NSLog(@"\t\tproc start");
-		struct timeval		startTime;
-		struct timeval		stopTime;
-		float				executionTime;
-		float				sleepDuration;	//	in microseconds!
-		
-		gettimeofday(&startTime,NULL);
-		if (!paused)	{
-			//@try	{
-				//	if there's a target object, ping it (delegate-style)
-				if (targetObj != nil)
-					[targetObj performSelector:targetSel];
-				//	else just call threadProc (subclass-style)
-				else
-					[self threadProc];
-			//}
-			//@catch (NSException *err)	{
-			//	NSLog(@"%s caught exception, %@",__func__,err);
-			//}
+	STARTLOOP:
+	@try	{
+		while ((running) && (!bail))	{
+			//NSLog(@"\t\tproc start");
+			struct timeval		startTime;
+			struct timeval		stopTime;
+			float				executionTime;
+			float				sleepDuration;	//	in microseconds!
+			
+			gettimeofday(&startTime,NULL);
+			if (!paused)	{
+				//@try	{
+					//	if there's a target object, ping it (delegate-style)
+					if (targetObj != nil)
+						[targetObj performSelector:targetSel];
+					//	else just call threadProc (subclass-style)
+					else
+						[self threadProc];
+				//}
+				//@catch (NSException *err)	{
+				//	NSLog(@"%s caught exception, %@",__func__,err);
+				//}
+			}
+			
+			//++runLoopCount;
+			//if (runLoopCount > 4)	{
+			{
+				NSAutoreleasePool		*oldPool = pool;
+				pool = nil;
+				[oldPool release];
+				pool = [[NSAutoreleasePool alloc] init];
+			//	runLoopCount = 0;
+			}
+			
+			//	figure out how long it took to run the callback
+			gettimeofday(&stopTime,NULL);
+			while (stopTime.tv_sec > startTime.tv_sec)	{
+				--stopTime.tv_sec;
+				stopTime.tv_usec = stopTime.tv_usec + 1000000;
+			}
+			executionTime = ((float)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
+			sleepDuration = interval - executionTime;
+			
+			//	only sleep if duration's > 0, sleep for a max of 1 sec
+			if (sleepDuration > 0)	{
+				if (sleepDuration > MAXTIME)
+					sleepDuration = MAXTIME;
+				[NSThread sleepForTimeInterval:sleepDuration];
+			}
+			//NSLog(@"\t\tproc looping");
 		}
-		
-		++runLoopCount;
-		if (runLoopCount > 4)	{
-			[pool release];
-			pool = [[NSAutoreleasePool alloc] init];
-			runLoopCount = 0;
-		}
-		
-		//	figure out how long it took to run the callback
-		gettimeofday(&stopTime,NULL);
-		while (stopTime.tv_sec > startTime.tv_sec)	{
-			--stopTime.tv_sec;
-			stopTime.tv_usec = stopTime.tv_usec + 1000000;
-		}
-		executionTime = ((float)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
-		sleepDuration = interval - executionTime;
-		
-		//	only sleep if duration's > 0, sleep for a max of 1 sec
-		if (sleepDuration > 0)	{
-			if (sleepDuration > MAXTIME)
-				sleepDuration = MAXTIME;
-			[NSThread sleepForTimeInterval:sleepDuration];
-		}
-		//NSLog(@"\t\tproc looping");
 	}
-	
+	@catch (NSException *err)	{
+		NSAutoreleasePool		*oldPool = pool;
+		pool = nil;
+		if (targetObj == nil)
+			NSLog(@"\t\t%s caught exception %@ on %@",__func__,err,self);
+		else
+			NSLog(@"\t\t%s caught exception %@ on %@, target is %@",__func__,err,self,[targetObj class]);
+		@try {
+			[oldPool release];
+		}
+		@catch (NSException *subErr)	{
+			if (targetObj == nil)
+				NSLog(@"\t\t%s caught sub-exception %@ on %@",__func__,subErr,self);
+			else
+				NSLog(@"\t\t%s caught sub-exception %@ on %@, target is %@",__func__,subErr,self,[targetObj class]);
+		}
+		pool = [[NSAutoreleasePool alloc] init];
+		goto STARTLOOP;
+	}
 	[pool release];
 	running = NO;
 	//NSLog(@"\t\t%s - FINSHED",__func__);

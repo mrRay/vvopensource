@@ -102,7 +102,7 @@
 - (void) prepareToBeDeleted	{
 	if (delegateArray != nil)	{
 		[delegateArray wrlock];
-			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted)];
+			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
 		[delegateArray release];
@@ -367,7 +367,7 @@
 	for (ObjectHolder *holder in tmpCopy)	{
 		id		delegate = [holder object];
 		if (delegate != nil)
-			[delegate receivedOSCMessage:m];
+			[delegate node:self receivedOSCMessage:m];
 	}
 	pthread_mutex_lock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)
@@ -378,20 +378,6 @@
 	pthread_mutex_unlock(&lastReceivedMessageLock);
 	//	release the message!
 	[m release];
-	/*
-	if ((m==nil)||(deleted))
-		return;
-	
-	if (delegateArray != nil)
-		[delegateArray lockBruteForceMakeObjectsPerformSelector:@selector(receivedOSCMessage:) withObject:m];
-	//@synchronized (self)	{
-	pthread_mutex_lock(&lastReceivedMessageLock);
-		if (lastReceivedMessage != nil)
-			[lastReceivedMessage autorelease];
-		lastReceivedMessage = [m retain];
-	//}
-	pthread_mutex_unlock(&lastReceivedMessageLock);
-	*/
 }
 
 

@@ -336,7 +336,7 @@
 	//NSLog(@"%s",__func__);
 	if ((d==nil)||(p==nil)||(deleted))
 		return;
-	if (![d respondsToSelector:@selector(receivedOSCMessage:)])	{
+	if (![d respondsToSelector:@selector(node:receivedOSCMessage:)])	{
 		NSLog(@"\terr: tried to add a non-conforming delegate: %s",__func__);
 		return;
 	}

@@ -27,9 +27,9 @@ typedef enum	{
 
 
 @protocol OSCNodeDelegateProtocol
-- (void) receivedOSCMessage:(id)msg;
+- (void) node:(id)n receivedOSCMessage:(id)msg;
 - (void) nodeNameChanged:(id)node;
-- (void) nodeDeleted;
+- (void) nodeDeleted:(id)node;
 @end
 
 
