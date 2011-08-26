@@ -527,7 +527,10 @@
 - (void) setClearColor:(NSColor *)c	{
 	if ((deleted)||(c==nil))
 		return;
-	[c getComponents:(CGFloat *)clearColor];
+	pthread_mutex_lock(&glLock);
+		[c getComponents:(CGFloat *)clearColor];
+		initialized = NO;
+	pthread_mutex_unlock(&glLock);
 }
 - (NSColor *) clearColor	{
 	if (deleted)
