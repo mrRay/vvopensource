@@ -47,6 +47,7 @@
 
 //	Generates and returns an array of strings which correspond to the labels of this manager's out ports
 - (NSArray *) destNodeNameArray;
+- (NSArray *) sourceNodeNameArray;
 
 //	these methods exist so subclasses of me can override them to use custom subclasses of VVMIDINode
 - (id) receivingNodeClass;

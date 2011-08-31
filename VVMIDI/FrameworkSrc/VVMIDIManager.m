@@ -304,6 +304,19 @@
 	[destArray unlock];
 	return returnMe;
 }
+- (NSArray *) sourceNodeNameArray	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSString			*nodeName = nil;
+	
+	[sourceArray rdlock];
+	for (VVMIDINode *nodePtr in [sourceArray array])	{
+		nodeName = [nodePtr name];
+		if (nodeName != nil)
+			[returnMe addObject:nodeName];
+	}
+	[sourceArray unlock];
+	return returnMe;
+}
 
 //	these methods exist so subclasses of me can override them to use custom subclasses of VVMIDINode
 - (id) receivingNodeClass	{
