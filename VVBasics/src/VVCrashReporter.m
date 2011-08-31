@@ -679,6 +679,7 @@
 	return uploadURL;
 }
 @synthesize delegate;
+@synthesize replyButton;
 
 
 @end

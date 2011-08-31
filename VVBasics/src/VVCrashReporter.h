@@ -96,5 +96,6 @@ HOW TO USE THIS CLASS:
 
 ///	The crash reporter's delegate is notified when the check has completed
 @property (assign,readwrite) id delegate;
+@property (readonly) NSButton *replyButton;
 
 @end
