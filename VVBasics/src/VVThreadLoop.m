@@ -7,7 +7,7 @@
 @implementation VVThreadLoop
 
 
-- (id) initWithTimeInterval:(float)i target:(id)t selector:(SEL)s	{
+- (id) initWithTimeInterval:(double)i target:(id)t selector:(SEL)s	{
 	if ((t==nil) || (s==nil) || (![t respondsToSelector:s]))
 		return nil;
 	if (self = [super init])	{
@@ -20,7 +20,7 @@
 	[self release];
 	return nil;
 }
-- (id) initWithTimeInterval:(float)i	{
+- (id) initWithTimeInterval:(double)i	{
 	if (self = [super init])	{
 		[self generalInit];
 		interval = i;
@@ -70,8 +70,8 @@
 			//NSLog(@"\t\tproc start");
 			struct timeval		startTime;
 			struct timeval		stopTime;
-			float				executionTime;
-			float				sleepDuration;	//	in microseconds!
+			double				executionTime;
+			double				sleepDuration;	//	in microseconds!
 			
 			gettimeofday(&startTime,NULL);
 			if (!paused)	{
@@ -104,7 +104,7 @@
 				--stopTime.tv_sec;
 				stopTime.tv_usec = stopTime.tv_usec + 1000000;
 			}
-			executionTime = ((float)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
+			executionTime = ((double)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
 			sleepDuration = interval - executionTime;
 			
 			//	only sleep if duration's > 0, sleep for a max of 1 sec
@@ -164,10 +164,10 @@
 	}
 	
 }
-- (float) interval	{
+- (double) interval	{
 	return interval;
 }
-- (void) setInterval:(float)i	{
+- (void) setInterval:(double)i	{
 	interval = (i > MAXTIME) ? MAXTIME : i;
 }
 - (BOOL) running	{

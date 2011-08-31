@@ -36,8 +36,8 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
-	for (int i=0;i<4;++i)
-		clearColor[i] = 0.0;
+	for (long i=0;i<4;++i)
+		clearColor[i] = (GLfloat)0.0;
 	mouseDownModifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
@@ -142,7 +142,7 @@
 }
 - (void) removeFromSuperview	{
 	pthread_mutex_lock(&glLock);
-	[(id)super removeFromSuperview];
+	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
 }
 /*
@@ -482,7 +482,7 @@
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_FOG);
 	glDisable(GL_TEXTURE_2D);
-	glPixelZoom(1.0,1.0);
+	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
 	//	moved in from drawRect:
 	NSRect				bounds = [self bounds];
@@ -528,8 +528,8 @@
 	if ((deleted)||(c==nil))
 		return;
 	pthread_mutex_lock(&glLock);
-		[c getComponents:(CGFloat *)clearColor];
-		initialized = NO;
+	[c getComponents:(CGFloat *)clearColor];
+	initialized = NO;
 	pthread_mutex_unlock(&glLock);
 }
 - (NSColor *) clearColor	{

@@ -37,7 +37,7 @@ typedef enum	{
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 	GLfloat					clearColor[4];
-	int						mouseDownModifierFlags;
+	long					mouseDownModifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
 	

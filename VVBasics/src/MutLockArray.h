@@ -133,9 +133,9 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a read-lock, then calls "containsIdenticalPtr:" on self; threadsafe.
 - (BOOL) lockContainsIdenticalPtr:(id)o;
 ///	Enumerates through my array- compares the address of each item in the array to the passed pointer.  Unlike NSMutableArray, this method does NOT call isEqualTo:, it's just a simple == operator.
-- (int) indexOfIdenticalPtr:(id)o;
+- (long) indexOfIdenticalPtr:(id)o;
 ///	Establishes a read-lock, then calls "indexOfIdenticalPtr:" on self; threadsafe.
-- (int) lockIndexOfIdenticalPtr:(id)o;
+- (long) lockIndexOfIdenticalPtr:(id)o;
 ///	Locates an item in my array by enumerating through it and comparing the address of each item in the array to the passed ptr, and then deletes the matching item from the array; not threadsafe.
 - (void) removeIdenticalPtr:(id)o;
 ///	Establishes a write-lock, then calls "removeIdenticalPtr:" on self; threadsafe.
@@ -178,7 +178,7 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 
 - (NSEnumerator *) objectEnumerator;
 - (NSEnumerator *) reverseObjectEnumerator;
-- (NSUInteger) count;
-- (NSUInteger) lockCount;
+- (long) count;
+- (long) lockCount;
 
 @end

@@ -58,7 +58,7 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (int) valueCount;
 - (NSMutableArray *) valueArray;
 
-- (int) bufferLength;
+- (long) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b;
 
 @end

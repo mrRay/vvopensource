@@ -59,7 +59,7 @@
 	if ([self rangeOfString:@"//"].location != NSNotFound)
 		return nil;
 	
-	int				length = [self length];
+	long			length = [self length];
 	NSRange			desiredRange = NSMakeRange(0,length);
 	
 	//	figure out if it ends with a slash

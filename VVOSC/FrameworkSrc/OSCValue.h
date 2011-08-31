@@ -111,7 +111,7 @@ typedef enum	{
 
 @property (nonatomic, readonly) OSCValueType type;
 
-- (int) bufferLength;
+- (long) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d;
 
 @end

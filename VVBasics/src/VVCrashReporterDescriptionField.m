@@ -8,7 +8,7 @@
 	NSPasteboard		*gpb = [NSPasteboard generalPasteboard];
 	NSString			*type = nil;
 	NSString			*value = nil;
-	int				temp;
+	long				temp;
 	
 	if (gpb == nil)	{	//	return if there's no pasteboard
 		return;

@@ -1,6 +1,6 @@
 #import "VVCrashReporter.h"
 #import "VVBasicMacros.h"
-
+#import "AvailabilityMacros.h"
 
 
 
@@ -162,8 +162,7 @@
 		foundServer = SCNetworkCheckReachabilityByName([domainString UTF8String],&status);
 		BOOL						reachable = NO;
 		reachable = foundServer && (status & kSCNetworkFlagsReachable) && !(status & kSCNetworkFlagsConnectionRequired);
-	#elif (defined(MAC_OS_X_VERSION_MIN_REQUIRED)(MAC_OS_X_VERSION_MIN_REQUIREDD >= 1060))
-		//	this has to execute if i'm compiling against 10.6
+	#else
 		SCNetworkReachabilityRef	target;
 		SCNetworkConnectionFlags	flags = 0;
 		target = SCNetworkReachabilityCreateWithName(NULL,[domainString UTF8String]);
@@ -256,7 +255,7 @@
 	//}
 	
 	//	set up the job details
-	jobSize = [crashLogArray count];
+	jobSize = (int)[crashLogArray count];
 	jobCurrentIndex = 1;
 	
 	//	configure the submitting label so it displays what's going on (and is visible)
@@ -294,7 +293,7 @@
 	//	update the label so it displays which log is being sent
 	[submittingLabel setStringValue:[NSString stringWithFormat:@"Sending log %ld/%ld",jobCurrentIndex,jobSize]];
 	//	update the progress indicator, too
-	[progressIndicator setDoubleValue:(float)jobCurrentIndex/(float)jobSize];
+	[progressIndicator setDoubleValue:(long)jobCurrentIndex/(long)jobSize];
 	
 	//	assemble the transmit string
 	NSMutableString		*transmitString = [NSMutableString stringWithCapacity:0];
@@ -435,7 +434,7 @@
 	//	fill 'crashLogArray' with the paths of all the crash logs found on this machine
 	NSFileManager		*fm = [NSFileManager defaultManager];
 	NSString			*pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
-	NSArray				*logFolderArray = [fm directoryContentsAtPath:pathToLogFolder];
+	NSArray				*logFolderArray = [fm contentsOfDirectoryAtPath:pathToLogFolder error:nil];
 	if ((logFolderArray!=nil)&&([logFolderArray count]>0))	{
 		NSString		*appNameString = nil;
 		appNameString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
@@ -450,7 +449,7 @@
 				logPath = [NSString stringWithFormat:@"%@/%@",pathToLogFolder,logFileName];
 				//NSLog(@"\t\tlogPath = %@",logPath);
 				if (logPath != nil)
-					fileAttribDict = [fm fileAttributesAtPath:logPath traverseLink:NO];
+					fileAttribDict = [fm attributesOfItemAtPath:logPath error:nil];
 				if (fileAttribDict != nil)
 					fileModDate = [fileAttribDict objectForKey:NSFileModificationDate];
 				if ((fileModDate!=nil)&&([fileModDate compare:lastCrashDate]==NSOrderedDescending))
@@ -595,7 +594,7 @@
 		//	release the VVCURLDL
 		[h autorelease];
 		//	the last crash date should be BEFORE the last modification date of the log i just finished sending!
-		NSDictionary		*attribDict = [[NSFileManager defaultManager] fileAttributesAtPath:finishedPath traverseLink:NO];
+		NSDictionary		*attribDict = [[NSFileManager defaultManager] attributesOfItemAtPath:finishedPath error:nil];
 		NSDate				*crashModDate = [attribDict objectForKey:NSFileModificationDate];
 		NSDate				*newLastCrashDate = [crashModDate addTimeInterval:-60.0];
 		NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
@@ -627,7 +626,7 @@
 		//	take the log i just sent out of the array
 		[crashLogArray lockRemoveFirstObject];
 		//	delete the actual crash log
-		[[NSFileManager defaultManager] removeFileAtPath:finishedPath handler:nil];
+		[[NSFileManager defaultManager] removeItemAtPath:finishedPath error:nil];
 		//	release the path to the crash log
 		[finishedPath release];
 		

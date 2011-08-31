@@ -17,7 +17,7 @@ An OSC packet is the basic unit of transmitting OSC data- the OSCPacket class is
 */
 
 @interface OSCPacket : NSObject {
-	int					bufferLength;
+	long				bufferLength;
 	unsigned char		*payload;
 }
 
@@ -26,7 +26,7 @@ An OSC packet is the basic unit of transmitting OSC data- the OSCPacket class is
 + (id) createWithContent:(id)c;
 - (id) initWithContent:(id)c;
 
-- (int) bufferLength;
+- (long) bufferLength;
 - (unsigned char *) payload;
 
 @end

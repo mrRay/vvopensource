@@ -183,10 +183,6 @@
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
 		962C1DC213AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		962C1DC313AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
-		962C1DC413AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; };
-		962C1DC513AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
-		962C1DC613AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; };
-		962C1DC713AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
 		962C1DC813AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; };
 		962C1DC913AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -628,6 +624,7 @@
 
 /* Begin PBXFileReference section */
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		20136A24140E67E900EE499E /* assembleSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleSDK.sh; path = scripts/assembleSDK.sh; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
@@ -710,7 +707,6 @@
 		9656D916100F8A0E0064EEA6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVMIDI/AppSrc/AppController.h; sourceTree = "<group>"; };
 		9656D917100F8A0E0064EEA6 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVMIDI/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9656D918100F8A0E0064EEA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = VVMIDI/AppSrc/AppController.m; sourceTree = "<group>"; };
-		966423A3100E9CAF00630C6D /* installSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = installSDK.sh; path = scripts/installSDK.sh; sourceTree = "<group>"; };
 		9666941210304C0500DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9666942710304C1F00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9666943810304C2E00DB5FDF /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -734,9 +730,6 @@
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
-		96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneDevSDK.sh; path = scripts/assembleIPhoneDevSDK.sh; sourceTree = "<group>"; };
-		96BF10C8100E98760079A2E6 /* assembleIPhoneSimSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleIPhoneSimSDK.sh; path = scripts/assembleIPhoneSimSDK.sh; sourceTree = "<group>"; };
-		96BF10C9100E98930079A2E6 /* assembleMacSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleMacSDK.sh; path = scripts/assembleMacSDK.sh; sourceTree = "<group>"; };
 		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
 		96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOMIDIManager.h; path = MIDIviaOSC/MVOMIDIManager.h; sourceTree = "<group>"; };
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
@@ -935,11 +928,8 @@
 			isa = PBXGroup;
 			children = (
 				969FCE94120DB9A10067E617 /* lgpl-3.0.txt */,
+				20136A24140E67E900EE499E /* assembleSDK.sh */,
 				32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */,
-				96BF10C7100E98680079A2E6 /* assembleIPhoneDevSDK.sh */,
-				96BF10C8100E98760079A2E6 /* assembleIPhoneSimSDK.sh */,
-				96BF10C9100E98930079A2E6 /* assembleMacSDK.sh */,
-				966423A3100E9CAF00630C6D /* installSDK.sh */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -1294,7 +1284,6 @@
 				9666945310304CB900DB5FDF /* VVStopwatch.h in Headers */,
 				9666945510304CBA00DB5FDF /* VVThreadLoop.h in Headers */,
 				969E5A3311FD95F0006391BD /* MutNRLockDict.h in Headers */,
-				962C1DC413AABB82009C2E48 /* NSHostAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1312,7 +1301,6 @@
 				9666946310304CC700DB5FDF /* VVStopwatch.h in Headers */,
 				9666946510304CC800DB5FDF /* VVThreadLoop.h in Headers */,
 				969E5A3511FD95F5006391BD /* MutNRLockDict.h in Headers */,
-				962C1DC613AABB82009C2E48 /* NSHostAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1735,7 +1723,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleIPhoneSimSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96AB37AE10304FB7005F2577 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1748,7 +1736,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleIPhoneDevSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96AB37B010304FBC005F2577 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1761,7 +1749,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleMacSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96E027C5100EA16A006621B1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1774,7 +1762,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleIPhoneSimSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96E027C7100EA178006621B1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1787,7 +1775,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleIPhoneDevSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96E027C9100EA186006621B1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1800,7 +1788,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleMacSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 		96EF5A35122AF2D900F40F69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1813,7 +1801,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./scripts/assembleMacSDK.sh\n./scripts/installSDK.sh";
+			shellScript = ./scripts/assembleSDK.sh;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1966,7 +1954,6 @@
 				9666945410304CBA00DB5FDF /* VVStopwatch.m in Sources */,
 				9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */,
 				969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */,
-				962C1DC513AABB82009C2E48 /* NSHostAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1982,7 +1969,6 @@
 				9666946410304CC800DB5FDF /* VVStopwatch.m in Sources */,
 				9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */,
 				969E5A3611FD95F5006391BD /* MutNRLockDict.m in Sources */,
-				962C1DC713AABB82009C2E48 /* NSHostAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2221,12 +2207,13 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2235,11 +2222,12 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};
@@ -2282,6 +2270,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2308,6 +2297,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2331,6 +2321,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2358,6 +2349,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2380,6 +2372,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2406,6 +2399,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2423,7 +2417,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator4.2;
+				SDKROOT = iphonesimulator4.3;
 			};
 			name = Debug;
 		};
@@ -2441,7 +2435,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator4.2;
+				SDKROOT = iphonesimulator4.3;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2459,7 +2453,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos4.2;
+				SDKROOT = iphoneos4.3;
 			};
 			name = Debug;
 		};
@@ -2477,7 +2471,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos4.2;
+				SDKROOT = iphoneos4.3;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2486,7 +2480,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -2510,7 +2507,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2554,6 +2554,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCTestApp;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2580,6 +2581,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCTestApp;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2607,6 +2609,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDITestApp;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2633,6 +2636,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDITestApp;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2648,7 +2652,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator4.2;
+				SDKROOT = iphonesimulator4.3;
 			};
 			name = Debug;
 		};
@@ -2663,7 +2667,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator4.2;
+				SDKROOT = iphonesimulator4.3;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2680,7 +2684,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos4.2;
+				SDKROOT = iphoneos4.3;
 			};
 			name = Debug;
 		};
@@ -2695,7 +2699,7 @@
 				OTHER_CFLAGS = "-DIPHONE";
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos4.2;
+				SDKROOT = iphoneos4.3;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2704,7 +2708,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -2730,7 +2737,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2797,6 +2807,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = CrashReporterTestApp;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2823,6 +2834,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = CrashReporterTestApp;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2850,6 +2862,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDIviaOSC;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2876,6 +2889,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDIviaOSC;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2884,7 +2898,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -2908,7 +2925,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;

@@ -35,7 +35,7 @@ According to the OSC spec, an OSC bundle is basically a wrapper for multiple OSC
 ///	Adds the array of passed elements to the bundle
 - (void) addElementArray:(NSArray *)a;
 
-- (int) bufferLength;
+- (long) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b;
 
 @end

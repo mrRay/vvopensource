@@ -81,7 +81,7 @@
 	[super dealloc];
 }
 
-- (int) bufferLength	{
+- (long) bufferLength	{
 	return bufferLength;
 }
 - (unsigned char *) payload	{

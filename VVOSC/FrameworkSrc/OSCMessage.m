@@ -20,13 +20,13 @@
 		return;
 	
 	NSString		*address = nil;
-	int				i, j;
-	int				tmpIndex = 0;
-	int				tmpInt;
+	long				i, j;
+	long				tmpIndex = 0;
+	long				tmpInt;
 	float			*tmpFloatPtr;
 	long			tmpLong;
-	int				msgTypeStartIndex = -1;
-	int				msgTypeEndIndex = -1;
+	long				msgTypeStartIndex = -1;
+	long				msgTypeEndIndex = -1;
 	NSData			*tmpData = nil;
 	
 	
@@ -107,13 +107,13 @@
 					tmpInt = b[tmpIndex+j];
 					tmpLong = tmpLong | (tmpInt << (j*8));
 				}
-				tmpInt = ntohl(tmpLong);
-				oscValue = [OSCValue createWithInt:tmpInt];
+				tmpInt = ntohl((int)tmpLong);
+				oscValue = [OSCValue createWithInt:(int)tmpInt];
 				[msg addValue:oscValue];
 				tmpIndex = tmpIndex + 4;
 				break;
 			case 'f':			//	float32
-				tmpInt = ntohl(*((long *)(b+tmpIndex)));
+				tmpInt = ntohl(*((int *)(b+tmpIndex)));
 				tmpFloatPtr = (float *)&tmpInt;
 				oscValue = [OSCValue createWithFloat:*tmpFloatPtr];
 				[msg addValue:oscValue];
@@ -149,7 +149,7 @@
 					tmpInt = b[tmpIndex+j];
 					tmpLong = tmpLong | (tmpInt << (j*8));
 				}
-				tmpInt = ntohl(tmpLong);
+				tmpInt = ntohl((int)tmpLong);
 				//	don't forget to update tmpIndex- i've moved forward in the buffer!
 				tmpIndex += 4;
 				//	now that i know how big the blob is, create an NSData from the buffer
@@ -359,16 +359,16 @@
 - (float) calculateFloatValueAtIndex:(int)i	{
 	if (valueCount < 2)	{
 		if (value != nil)
-			return (i==0) ? [(OSCValue *)value calculateFloatValue] : 0.0;
-		return 0.0;
+			return (i==0) ? [(OSCValue *)value calculateFloatValue] : (float)0.0;
+		return (float)0.0;
 	}
 	//	get the OSCValue at the index
 	if ((i<valueCount)&&(valueArray!=nil))	{
 		OSCValue	*tmpVal = [valueArray objectAtIndex:i];
-		return (tmpVal != nil ) ? [tmpVal calculateFloatValue] : 0.0;
+		return (tmpVal != nil ) ? [tmpVal calculateFloatValue] : (float)0.0;
 	}
 	//	return -1.0 if i couldn't find the value!
-	return -1.0;
+	return (float)-1.0;
 }
 
 
@@ -384,12 +384,12 @@
 
 
 
-- (int) bufferLength	{
+- (long) bufferLength	{
 	//NSLog(@"%s",__func__);
 	
-	int		addressLength = 0;
-	int		typeLength = 0;
-	int		payloadLength = 0;
+	long		addressLength = 0;
+	long		typeLength = 0;
+	long		payloadLength = 0;
 	
 	//	determine the length of the address (round up to the nearest 4 bytes)
 	addressLength = strlen([address UTF8String]);
@@ -421,7 +421,7 @@
 	
 	//	write the address, rounded up to the nearest 4 bytes (the +1 is for the null after the address)
 	const char			*tmpChars = [address UTF8String];
-	int					tmpCharsLength = strlen(tmpChars);
+	int					tmpCharsLength = (int)strlen(tmpChars);
 	
 	strncpy((char *)b, tmpChars, tmpCharsLength);
 	typeWriteOffset += (tmpCharsLength + 1);

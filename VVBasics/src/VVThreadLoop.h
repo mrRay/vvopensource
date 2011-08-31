@@ -25,7 +25,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 
 
 @interface VVThreadLoop : NSObject {
-	float				interval;
+	double				interval;
 	BOOL				running;
 	BOOL				bail;
 	BOOL				paused;
@@ -35,9 +35,9 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 }
 
 ///	Returns an initialized VVThreadLoop which will call method "s" on target "t" every time it executes.  Returns nil if passed a nil target or selector, or if the target doesn't respond to the selector.
-- (id) initWithTimeInterval:(float)i target:(id)t selector:(SEL)s;
+- (id) initWithTimeInterval:(double)i target:(id)t selector:(SEL)s;
 ///	Returns an initialized VVThreadLoop which will call "threadProc" on itself every time it executes, so you should override "threadProc" in your subclass.
-- (id) initWithTimeInterval:(float)i;
+- (id) initWithTimeInterval:(double)i;
 - (void) generalInit;
 ///	Spawns a thread and starts executing.  If the thread has already been spawned and is executing, doesn't do anything.
 - (void) start;
@@ -51,9 +51,9 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 ///	Stops execution and doesn't return until the thread's done executing and has been closed.
 - (void) stopAndWaitUntilDone;
 ///	The interval between executions, in seconds.
-- (float) interval;
+- (double) interval;
 ///	Set the interval between executions, in seconds.
-- (void) setInterval:(float)i;
+- (void) setInterval:(double)i;
 ///	Whether or not the thread loop is running.
 - (BOOL) running;
 

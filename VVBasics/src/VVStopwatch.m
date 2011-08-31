@@ -28,8 +28,8 @@
 		gettimeofday(&startTime,NULL);
 	OSSpinLockUnlock(&timeLock);
 }
-- (float) timeSinceStart	{
-	float				returnMe = 0.0;
+- (double) timeSinceStart	{
+	double				returnMe = 0.0;
 	struct timeval		stopTime;
 	OSSpinLockLock(&timeLock);
 		//	get the current time of day
@@ -43,7 +43,7 @@
 		//	get the time difference in seconds
 		returnMe = stopTime.tv_sec - startTime.tv_sec;
 		//	add the time difference in microseconds
-		returnMe += (((float)(stopTime.tv_usec - startTime.tv_usec)) / 1000000.0);
+		returnMe += (((double)(stopTime.tv_usec - startTime.tv_usec)) / 1000000.0);
 	OSSpinLockUnlock(&timeLock);
 	return returnMe;
 }
@@ -79,7 +79,7 @@
 
 @end
 
-void populateTimevalWithFloat(struct timeval *tval, float secVal)	{
+void populateTimevalWithFloat(struct timeval *tval, double secVal)	{
 	//NSLog(@"%s ... %f",__func__,secVal);
 	if (tval == nil)
 		return;
@@ -88,8 +88,8 @@ void populateTimevalWithFloat(struct timeval *tval, float secVal)	{
 		(*(tval)).tv_usec = 0;
 		return;
 	}
-	(*(tval)).tv_sec = (secVal>0.0) ? ((int)floorf(secVal)) : ((int)ceilf(secVal));
-	(*(tval)).tv_usec = ((int)(((float)(secVal - ((float)(*(tval)).tv_sec)))*1000000.0));
+	(*(tval)).tv_sec = (secVal>0.0) ? ((long)floor(secVal)) : ((long)ceil(secVal));
+	(*(tval)).tv_usec = ((int)(((double)(secVal - ((double)(*(tval)).tv_sec)))*1000000.0));
 	//NSLog(@"\t\ttv_sec = %ld",(*(tval)).tv_sec);
 	//NSLog(@"\t\ttv_usec = %ld",(*(tval)).tv_usec);
 }

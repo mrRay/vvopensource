@@ -209,7 +209,7 @@
 		BOOL					skipThisPacket = NO;
 		
 		addrFromLen = sizeof(addrFrom);
-		numBytes = recvfrom(sock, buf, 8192, 0, (struct sockaddr *)&addrFrom, &addrFromLen);
+		numBytes = (int)recvfrom(sock, buf, 8192, 0, (struct sockaddr *)&addrFrom, &addrFromLen);
 		if (numBytes < 1)	{
 			NSLog(@"\t\terr on recvfrom: %i",errno);
 			skipThisPacket = YES;
@@ -351,7 +351,7 @@
 - (void) setDelegate:(id)n	{
 	delegate = n;
 }
-- (void) setInterval:(float)n	{
+- (void) setInterval:(double)n	{
 	if (threadLooper != nil)
 		[threadLooper setInterval:n];
 }

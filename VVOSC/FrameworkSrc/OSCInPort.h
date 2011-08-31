@@ -79,6 +79,6 @@ the documentation here only covers the basics, the header file for this class is
 ///	sets the delegate- the delegate is NOT retained!
 - (void) setDelegate:(id)n;
 ///	sets the frequency of the callback which checks for OSC input
-- (void) setInterval:(float)n;
+- (void) setInterval:(double)n;
 
 @end

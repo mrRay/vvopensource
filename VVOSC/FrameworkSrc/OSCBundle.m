@@ -99,9 +99,9 @@
 	}
 }
 
-- (int) bufferLength	{
+- (long) bufferLength	{
 	//NSLog(@"%s",__func__);
-	int				totalSize = 0;
+	long			totalSize = 0;
 	NSEnumerator	*it;
 	id				anObj;
 	
@@ -141,7 +141,7 @@
 	it = [elementArray objectEnumerator];
 	while (anObj = [it nextObject])	{
 		//	write the message's size to the buffer
-		elementLength = [anObj bufferLength];
+		elementLength = (int)[anObj bufferLength];
 		tmpInt = htonl(*((UInt32 *)(&elementLength)));
 		memcpy(b+writeOffset, &tmpInt, 4);
 		//	adjust the write offset to compensate for writing the message size

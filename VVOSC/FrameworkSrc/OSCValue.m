@@ -30,6 +30,10 @@
 			return [NSString stringWithFormat:@"<OSCVal infinity>"];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<OSCVal blob: %@>",value];
+		case OSCValTimeTag:
+			return [NSString stringWithFormat:@"<OSCVal TT: %f>",*(float *)value];
+		case OSCValChar:
+			return [NSString stringWithFormat:@"<OSCVal char: %c>",(char *)value];
 	}
 	return [NSString stringWithFormat:@"<OSCValue ?>"];
 }
@@ -65,6 +69,10 @@
 			return [NSString stringWithFormat:@"infinity"];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<Data Blob>"];
+		case OSCValTimeTag:
+			return [NSString stringWithFormat:@"Time Tag %f",*(float *)value];
+		case OSCValChar:
+			return [NSString stringWithFormat:@"Character \"%c\"",(char *)value];
 	}
 	return [NSString stringWithFormat:@"?"];
 }
@@ -229,41 +237,41 @@
 - (id) copyWithZone:(NSZone *)z	{
 	OSCValue		*returnMe = nil;
 	switch (type)	{
-		OSCValInt:
+		case OSCValInt:
 			returnMe = [[OSCValue allocWithZone:z] initWithInt:*((int *)value)];
 			break;
-		OSCValFloat:
+		case OSCValFloat:
 			returnMe = [[OSCValue allocWithZone:z] initWithFloat:*((float *)value)];
 			break;
-		OSCValString:
+		case OSCValString:
 			returnMe = [[OSCValue allocWithZone:z] initWithString:((NSString *)value)];
 			break;
-		OSCValTimeTag:
+		case OSCValTimeTag:
 			NSLog(@"\tERR: TRIED TO COPY TIME TAG");
 			break;
-		OSCValChar:
+		case OSCValChar:
 			NSLog(@"\tERR: TRIED TO COPY CHAR");
 			break;
-		OSCValColor:
+		case OSCValColor:
 			returnMe = [[OSCValue allocWithZone:z] initWithColor:((id)value)];
 			break;
-		OSCValMIDI:
+		case OSCValMIDI:
 			returnMe = [[OSCValue allocWithZone:z]
 				initWithMIDIChannel:*((Byte *)value+0)
 				status:*((Byte *)value+1)
 				data1:*((Byte *)value+2)
 				data2:*((Byte *)value+3)];
 			break;
-		OSCValBool:
+		case OSCValBool:
 			returnMe = [[OSCValue allocWithZone:z] initWithBool:*((BOOL *)value)];
 			break;
-		OSCValNil:
+		case OSCValNil:
 			returnMe = [[OSCValue allocWithZone:z] initWithNil];
 			break;
-		OSCValInfinity:
+		case OSCValInfinity:
 			returnMe = [[OSCValue allocWithZone:z] initWithInfinity];
 			break;
-		OSCValBlob:
+		case OSCValBlob:
 			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:value];
 			break;
 	}
@@ -338,7 +346,7 @@
 
 
 - (float) calculateFloatValue	{
-	float		returnMe = 0.0;
+	float		returnMe = (float)0.0;
 	CGFloat		comps[4];
 	switch (type)	{
 		case OSCValInt:
@@ -353,7 +361,7 @@
 #else
 			[(NSColor *)value getComponents:comps];
 #endif
-			returnMe = (comps[0]+comps[1]+comps[2])/3.0;
+			returnMe = (float)(comps[0]+comps[1]+comps[2])/(float)3.0;
 			break;
 		case OSCValMIDI:
 			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
@@ -363,22 +371,22 @@
 				case VVOSCMIDIUndefinedCommon1Val:
 				case VVOSCMIDIUndefinedCommon2Val:
 				case VVOSCMIDIEndSysexDumpVal:
-					returnMe = 0.0;
+					returnMe = (float)0.0;
 					break;
 				case VVOSCMIDINoteOnVal:
 				case VVOSCMIDIAfterTouchVal:
 				case VVOSCMIDIControlChangeVal:
-					returnMe = ((float)([self midiData2]))/127.0;
+					returnMe = ((float)([self midiData2]))/(float)127.0;
 					break;
 				case VVOSCMIDIProgramChangeVal:
 				case VVOSCMIDIChannelPressureVal:
 				case VVOSCMIDIMTCQuarterFrameVal:
 				case VVOSCMIDISongSelectVal:
-					returnMe = ((float)([self midiData1]))/127.0;
+					returnMe = ((float)([self midiData1]))/(float)127.0;
 					break;
 				case VVOSCMIDIPitchWheelVal:
 				case VVOSCMIDISongPosPointerVal:
-					returnMe = ((float)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/16383.0;
+					returnMe = ((float)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/(float)16383.0;
 					break;
 				case VVOSCMIDITuneRequestVal:
 				case VVOSCMIDIClockVal:
@@ -389,7 +397,7 @@
 				case VVOSCMIDIUndefinedRealtime1Val:
 				case VVOSCMIDIActiveSenseVal:
 				case VVOSCMIDIResetVal:
-					returnMe = 1.0;
+					returnMe = (float)1.0;
 					break;
 			}
 			break;
@@ -398,16 +406,16 @@
 			//return ROUNDUP4(([(NSString *)value length] + 1));
 			break;
 		case OSCValBool:
-			returnMe = (*(BOOL *)value) ? 1.0 : 0.0;
+			returnMe = (*(BOOL *)value) ? (float)1.0 : (float)0.0;
 			break;
 		case OSCValNil:
-			returnMe = 0.0;
+			returnMe = (float)0.0;
 			break;
 		case OSCValInfinity:
-			returnMe = 1.0;
+			returnMe = (float)1.0;
 			break;
 		case OSCValBlob:
-			returnMe = 1.0;
+			returnMe = (float)1.0;
 			break;
 	}
 	return returnMe;
@@ -417,7 +425,7 @@
 @synthesize type;
 
 
-- (int) bufferLength	{
+- (long) bufferLength	{
 	//NSLog(@"%s",__func__);
 	switch (type)	{
 		case OSCValInt:
@@ -449,7 +457,7 @@
 	
 	int					i;
 	long				tmpLong = 0;
-	float				tmpFloat = 0.0;
+	float				tmpFloat = (float)0.0;
 	unsigned char		*charPtr = NULL;
 	void				*voidPtr = NULL;
 	unsigned char		tmpChar = 0;
@@ -461,7 +469,7 @@
 	switch (type)	{
 		case OSCValInt:
 			tmpLong = *(int *)value;
-			tmpLong = htonl(tmpLong);
+			tmpLong = htonl((int)tmpLong);
 			
 			for (i=0; i<4; ++i)
 				b[*d+i] = 255 & (tmpLong >> (i*8));
@@ -472,7 +480,7 @@
 			break;
 		case OSCValFloat:
 			tmpFloat = *(float *)value;
-			tmpLong = htonl(*((long *)(&tmpFloat)));
+			tmpLong = htonl(*((int *)(&tmpFloat)));
 			strncpy((char *)(b+*d), (char *)(&tmpLong), 4);
 			*d += 4;
 			
@@ -483,7 +491,7 @@
 			tmpLong = strlen([(NSString *)value UTF8String]);
 			charPtr = (unsigned char *)[(NSString *)value UTF8String];
 			strncpy((char *)(b+*d),(char *)charPtr,tmpLong);
-			*d = *d + tmpLong + 1;
+			*d = *d + (int)tmpLong + (int)1;
 			*d = ROUNDUP4(*d);
 			
 			b[*t] = 's';
@@ -533,7 +541,7 @@
 		case OSCValBlob:
 			//	calculate the size of the blob, write it to the buffer
 			tmpLong = [(NSData *)value length];
-			tmpLong = htonl(tmpLong);
+			tmpLong = htonl((int)tmpLong);
 			for (i=0;i<4;++i)
 				b[*d+i] = 255 & (tmpLong >> (i*8));
 			*d += 4;
@@ -541,7 +549,7 @@
 			tmpLong = [(NSData *)value length];
 			voidPtr = (void *)[(NSData *)value bytes];
 			memcpy((void *)(b+*d),(void *)voidPtr,tmpLong);
-			*d = *d + tmpLong;
+			*d = *d + (int)tmpLong;
 			*d = ROUNDUP4(*d);
 			b[*t] = 'b';
 			++*t;

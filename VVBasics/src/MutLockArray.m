@@ -497,7 +497,7 @@
 	}
 	return returnMe;
 }
-- (int) indexOfIdenticalPtr:(id)o	{
+- (long) indexOfIdenticalPtr:(id)o	{
 	long		delegateIndex = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -514,7 +514,7 @@
 	
 	return delegateIndex;
 }
-- (int) lockIndexOfIdenticalPtr:(id)o	{
+- (long) lockIndexOfIdenticalPtr:(id)o	{
 	long		returnMe = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -698,15 +698,15 @@ these are commented out because the code in these methods is sloppy
 }
 
 
-- (NSUInteger) count	{
+- (long) count	{
 	if (array == nil)
 		return 0;
 	return [array count];
 }
-- (NSUInteger) lockCount	{
+- (long) lockCount	{
 	if (array == nil)
 		return 0;
-	int			returnMe = 0;
+	long			returnMe = 0;
 	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [array count];
 	pthread_rwlock_unlock(&arrayLock);

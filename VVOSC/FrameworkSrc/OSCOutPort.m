@@ -131,7 +131,7 @@
 	[p retain];
 	
 	int				numBytesSent = -1;
-	int				bufferSize = [p bufferLength];
+	long			bufferSize = [p bufferLength];
 	unsigned char	*buff = [p payload];
 	
 	if (buff == NULL)	{
@@ -139,7 +139,7 @@
 		return;
 	}
 	//	send the packet's data to the destination
-	numBytesSent = sendto(sock, buff, bufferSize, 0, (const struct sockaddr *)&addr, sizeof(addr));
+	numBytesSent = (int)sendto(sock, buff, bufferSize, 0, (const struct sockaddr *)&addr, sizeof(addr));
 	//	make sure the packet can be freed...
 	[p release];
 }
