@@ -171,7 +171,14 @@
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
-		value = [n retain];
+#if IPHONE
+		UIColor			*deviceRGBColor = n;
+#else
+		NSColor			*deviceRGBColor = nil;
+		NSColorSpace	*deviceRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
+		deviceRGBColor = ((void *)[n colorSpace]==(void *)deviceRGBColorSpace) ? n : [(NSColor *)n colorUsingColorSpace:deviceRGBColorSpace];
+#endif
+		value = [deviceRGBColor retain];
 		type = OSCValColor;
 		return self;
 	}
