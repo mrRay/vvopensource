@@ -527,13 +527,11 @@
 - (void) setClearColor:(NSColor *)c	{
 	if ((deleted)||(c==nil))
 		return;
-	NSColor				*safeColor = nil;
-	NSColorSpace		*devCS = [NSColorSpace deviceRGBColorSpace];
-	safeColor = ([c colorSpace]==devCS) ? c : [c colorUsingColorSpace:devCS];
-	
+	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
+	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 	pthread_mutex_lock(&glLock);
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	[safeColor getComponents:(CGFloat *)clearColor];
+	[calibratedColor getComponents:(CGFloat *)clearColor];
 	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	pthread_mutex_unlock(&glLock);
 }

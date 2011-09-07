@@ -172,13 +172,12 @@
 		goto BAIL;
 	if (self = [super init])	{
 #if IPHONE
-		UIColor			*deviceRGBColor = n;
+		UIColor			*calibratedColor = n;
 #else
-		NSColor			*deviceRGBColor = nil;
-		NSColorSpace	*deviceRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
-		deviceRGBColor = ((void *)[n colorSpace]==(void *)deviceRGBColorSpace) ? n : [(NSColor *)n colorUsingColorSpace:deviceRGBColorSpace];
+		NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
+		NSColor			*calibratedColor = ((void *)[n colorSpace]==(void *)devRGBColorSpace) ? n :[n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 #endif
-		value = [deviceRGBColor retain];
+		value = [calibratedColor retain];
 		type = OSCValColor;
 		return self;
 	}
