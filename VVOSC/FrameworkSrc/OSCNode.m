@@ -454,6 +454,14 @@
 	
 	return returnMe;
 }
+- (OSCValue *) lastReceivedValue	{
+	OSCValue		*returnMe = nil;
+	pthread_mutex_lock(&lastReceivedMessageLock);
+		returnMe = (lastReceivedMessage==nil) ? nil : [lastReceivedMessage value];
+		returnMe = [returnMe retain];
+	pthread_mutex_unlock(&lastReceivedMessageLock);
+	return [returnMe autorelease];
+}
 - (id) delegateArray	{
 	return delegateArray;
 }

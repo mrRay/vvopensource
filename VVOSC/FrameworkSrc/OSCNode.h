@@ -96,6 +96,7 @@ typedef enum	{
 @property (assign, readwrite) int nodeType;
 @property (assign, readwrite) BOOL hiddenInMenu;
 @property (readonly) OSCMessage *lastReceivedMessage;
+@property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
 
 @end
