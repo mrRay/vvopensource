@@ -2500,6 +2500,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2527,6 +2528,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2730,6 +2732,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2759,6 +2762,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2918,6 +2922,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVMIDI;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2945,6 +2950,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVMIDI;
+				SDKROOT = macosx10.5;
 				ZERO_LINK = NO;
 			};
 			name = Release;
