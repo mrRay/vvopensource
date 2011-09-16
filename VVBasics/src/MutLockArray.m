@@ -721,7 +721,6 @@ these are commented out because the code in these methods is sloppy
 }
 
 
-/*
 - (NSEnumerator *) objectEnumerator	{
 	if (array != nil)
 		return [array objectEnumerator];
@@ -734,7 +733,6 @@ these are commented out because the code in these methods is sloppy
 	else
 		return nil;
 }
-*/
 
 
 - (long) count	{

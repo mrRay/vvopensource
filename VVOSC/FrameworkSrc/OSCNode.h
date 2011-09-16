@@ -69,14 +69,21 @@ typedef enum	{
 - (void) removeNode:(OSCNode *)n;	//	just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
 - (void) deleteNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
 - (OSCNode *) localNodeAtIndex:(int)i;
+
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;
 - (OSCNode *) findLocalNodeNamed:(NSString *)n createIfMissing:(BOOL)c;
-
-
 //	these methods manage pattern-matching and wildcard OSC address space stuff
 - (NSMutableArray *) findLocalNodesMatchingRegex:(NSString *)regex;
-- (void) addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a;
+- (void) _addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a;
 
+//	these find methods do NOT work with regex!  it is assumed that the passed string is NOT a regex algorithm!
+- (OSCNode *) findNodeForAddress:(NSString *)p;
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c;
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a;
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
+//	these find methods work with regex!  path components may be regex strings- this returns all the nodes that match every component in the passed address/address array!
+- (NSMutableArray *) findNodesMatchingAddress:(NSString *)a;
+- (NSMutableArray *) findNodesMatchingAddressArray:(NSArray *)a;
 
 //	a node's delegate is informed of received osc messages or name changes (OSCNodeDelegateProtocol)
 //	NODE DELEGATES ARE __NOT__ RETAINED!

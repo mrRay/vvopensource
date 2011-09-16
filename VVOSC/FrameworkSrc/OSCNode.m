@@ -267,6 +267,8 @@
 	returnMe = [nodeContents lockObjectAtIndex:i];
 	return returnMe;
 }
+
+
 - (OSCNode *) findLocalNodeNamed:(NSString *)n	{
 	return [self findLocalNodeNamed:n createIfMissing:NO];
 }
@@ -289,36 +291,10 @@
 		[self addNode:returnMe];
 	}
 	return returnMe;
-	
-	/*
-	if (n == nil)
-		return nil;
-	
-	NSEnumerator		*nodeIt;
-	OSCNode				*nodePtr;
-	
-	[nodeContents rdlock];
-		nodeIt = [nodeContents objectEnumerator];
-		do	{
-			nodePtr = [nodeIt nextObject];
-		} while ((nodePtr!=nil) && (![[nodePtr nodeName] isEqualToString:n]));
-	[nodeContents unlock];
-	
-	//	if i couldn't find the node and i'm supposed to create it, do so
-	if ((nodePtr == nil)&&(c))	{
-		nodePtr = [OSCNode createWithName:n];
-		[self addNode:nodePtr];
-		//[addressSpace newNodeCreated:nodePtr];
-	}
-	
-	return nodePtr;
-	*/
 }
-
-
 //	these methods manage pattern-matching and wildcard OSC address space stuff
 - (NSMutableArray *) findLocalNodesMatchingRegex:(NSString *)regex	{
-	NSLog(@"%s ... %@",__func__,regex);
+	//NSLog(@"%s ... %@",__func__,regex);
 	NSMutableArray		*returnMe = nil;
 	[nodeContents rdlock];
 	for (OSCNode *nodePtr in [nodeContents array])	{
@@ -331,7 +307,7 @@
 	[nodeContents unlock];
 	return returnMe;
 }
-- (void) addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a	{
+- (void) _addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a	{
 	if (regex==nil || a==nil)
 		return;
 	
@@ -341,6 +317,88 @@
 			[a addObject:nodePtr];
 	}
 	[nodeContents unlock];
+}
+
+
+- (OSCNode *) findNodeForAddress:(NSString *)p	{
+	//NSLog(@"%s ... %@",__func__,p);
+	return [self findNodeForAddress:p createIfMissing:NO];
+}
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
+	//NSLog(@"%s ... %@",__func__,p);
+	if (p == nil)	{
+		NSLog(@"\terr: p was nil %s",__func__);
+		return nil;
+	}
+	
+	return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
+}
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a	{
+	return [self findNodeForAddressArray:a createIfMissing:NO];
+}
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c	{
+	//NSLog(@"%s ... %@",__func__,a);
+	if ((a==nil)||([a count]<1))	{
+		NSLog(@"\terr: a was %@ in %s",a,__func__);
+		return nil;
+	}
+	
+	OSCNode			*foundNode = nil;
+	OSCNode			*nodeToSearch = self;
+	for (NSString *targetName in a)	{
+		foundNode = [nodeToSearch findLocalNodeNamed:targetName];
+		if ((foundNode==nil) && (c))	{
+			foundNode = [OSCNode createWithName:targetName];
+			[nodeToSearch addNode:foundNode];
+		}
+		nodeToSearch = foundNode;
+		if (nodeToSearch == nil)
+			break;
+	}
+	return foundNode;
+}
+- (NSMutableArray *) findNodesMatchingAddress:(NSString *)a	{
+	if (a==nil)	{
+		NSLog(@"\terr: a was nil %s",__func__);
+		return nil;
+	}
+	return [self findNodesMatchingAddressArray:[[a trimFirstAndLastSlashes] pathComponents]];
+}
+- (NSMutableArray *) findNodesMatchingAddressArray:(NSArray *)a	{
+	if (a==nil || [a count]<1)	{
+		NSLog(@"\terr: a was %@ in %s",a,__func__);
+		return nil;
+	}
+	
+	NSMutableArray		*currentMatches = [NSMutableArray arrayWithCapacity:0];
+	NSMutableArray		*newMatches = [NSMutableArray arrayWithCapacity:0];
+	[currentMatches addObject:self];
+	//	run through each of the address segments
+	for (NSString *addressSegment in a)	{
+		//	determine if this address segment contains any OSC wildcards
+		BOOL		regex = [addressSegment containsOSCWildCard];
+		//	for each address segment, run through all the currently-matched nodes, looking for subnodes of theirs which match this address segment
+		for (OSCNode *nodePtr in currentMatches)	{
+			if (regex)
+				[nodePtr _addLocalNodesMatchingRegex:addressSegment toMutArray:newMatches];
+			else	{
+				OSCNode		*tmpNode = [nodePtr findLocalNodeNamed:addressSegment];
+				if (tmpNode != nil)
+					[newMatches addObject:tmpNode];
+			}
+		}
+		//	if i didn't find any new matches for this address segment, bail & return nil
+		if ([newMatches count]<1)
+			return nil;
+		//	i've run through 'currentMatches'- clear it out for the next run
+		[currentMatches removeAllObjects];
+		//	swap 'newMatches' and 'currentMatches' for the next address segment check
+		NSMutableArray		*tmpArray = currentMatches;
+		currentMatches = newMatches;
+		newMatches = tmpArray;
+	}
+	
+	return newMatches;
 }
 
 
