@@ -10,13 +10,13 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockDict: %@>",dict];
 }
-+ (id) dictionaryWithCapacity:(int)c	{
++ (id) dictionaryWithCapacity:(NSUInteger)c	{
 	MutLockDict		*returnMe = [[MutLockDict alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(int)c	{
+- (id) initWithCapacity:(NSUInteger)c	{
 	if (c < 0)	{
 		[self release];
 		return nil;

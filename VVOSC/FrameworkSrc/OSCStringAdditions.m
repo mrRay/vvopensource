@@ -225,6 +225,8 @@
 			[_OSCStrPOSIXRegexDict lockSetObject:regex forKey:r];
 			return returnMe;
 		}
+		else
+			return NO;
 	}
 	else
 		return [regex evalAgainstString:self];

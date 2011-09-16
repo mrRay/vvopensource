@@ -30,7 +30,8 @@
 		domainManager = m;
 		
 		serviceBrowser = [[NSNetServiceBrowser alloc] init];
-		[serviceBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
+		[serviceBrowser setDelegate:(id)self];
+		//[serviceBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
 		[serviceBrowser searchForServicesOfType:@"_osc._udp" inDomain:domainString];
 		
 		return self;
@@ -63,7 +64,8 @@
 	if (x != nil)	{
 		//pthread_rwlock_wrlock(&servicesLock);
 			[servicesArray lockAddObject:x];
-			[x setDelegate:(id <NSNetServiceDelegate>)self];
+			//[x setDelegate:(id <NSNetServiceDelegate>)self];
+			[x setDelegate:(id)self];
 			[x resolveWithTimeout:10];
 		//pthread_rwlock_wrlock(&servicesLock);
 	}
