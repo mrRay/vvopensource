@@ -23,7 +23,7 @@
 		pthread_rwlockattr_destroy(&attr);
 		
 		domainBrowser = [[NSNetServiceBrowser alloc] init];
-		[domainBrowser setDelegate:self];
+		[domainBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
 		[domainBrowser searchForRegistrationDomains];
 		
 		domainDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];

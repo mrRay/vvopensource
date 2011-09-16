@@ -14,7 +14,7 @@
 	//	get the current interfaces
 	err = getifaddrs(&interfaces);
 	if (err)	{
-		NSLog(@"\t\terr %ld getting ifaddrs in %s",err,__func__);
+		NSLog(@"\t\terr %d getting ifaddrs in %s",err,__func__);
 		return nil;
 	}
 	//	define a character range with alpha-numeric chars so i can exclude IPv6 addresses!

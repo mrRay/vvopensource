@@ -49,15 +49,23 @@
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
 	//	determine if there's a sprite which intersects the mousedown coords
-	NSEnumerator		*it;
-	VVSprite		*spritePtr;
+	//NSEnumerator		*it;
+	VVSprite		*spritePtr = nil;
 	VVSprite		*foundSprite = nil;
 	[spriteArray rdlock];
+		for (spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))	{
+				foundSprite = spritePtr;
+				break;
+			}
+		}
+		/*
 		it = [spriteArray objectEnumerator];
 		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
 			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
 				foundSprite = spritePtr;
 		}
+		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -72,15 +80,23 @@
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
 	//	determine if there's a sprite which intersects the mousedown coords
-	NSEnumerator		*it;
-	VVSprite		*spritePtr;
+	//NSEnumerator		*it;
+	VVSprite		*spritePtr = nil;
 	VVSprite		*foundSprite = nil;
 	[spriteArray rdlock];
+		for (spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))	{
+				foundSprite = spritePtr;
+				break;
+			}
+		}
+		/*
 		it = [spriteArray objectEnumerator];
 		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
 			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
 				foundSprite = spritePtr;
 		}
+		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -124,7 +140,7 @@
 	
 	[spriteArray rdlock];
 	
-		for (VVSprite *tmpSprite in [spriteArray objectEnumerator])	{
+		for (VVSprite *tmpSprite in [spriteArray array])	{
 			if ((![tmpSprite locked]) && ([tmpSprite checkPoint:p]))	{
 				returnMe = tmpSprite;		
 				break;
@@ -156,26 +172,48 @@
 }
 
 - (VVSprite *) spriteForIndex:(long)i	{
-	NSEnumerator		*it;
+	//NSEnumerator		*it;
 	VVSprite		*spritePtr = nil;
 	VVSprite		*returnMe = nil;
 	
 	[spriteArray rdlock];
+	for (spritePtr in [spriteArray array])	{
+		if ([spritePtr spriteIndex] == i)	{
+			returnMe = spritePtr;
+			break;
+		}
+	}
+	/*
 	it = [spriteArray objectEnumerator];
 	while ((spritePtr = [it nextObject]) && (returnMe == nil))	{
 		if ([spritePtr spriteIndex] == i)
 			returnMe = spritePtr;
 	}
+	*/
 	[spriteArray unlock];
 	return returnMe;
 }
 - (void) removeSpriteForIndex:(long)i	{
-	NSEnumerator		*it;
+	//NSEnumerator		*it;
+	int				tmpIndex = 0;
 	VVSprite		*spritePtr;
 	VVSprite		*foundSprite = nil;
 	
 	//	find & remove sprite in sprites array
 	[spriteArray wrlock];
+	for (spritePtr in [spriteArray array])	{
+		if ([spritePtr spriteIndex] == i)	{
+			foundSprite = spritePtr;
+			break;
+		}
+		++tmpIndex;
+	}
+	if (foundSprite != nil)	{
+		if (spriteInUse == foundSprite)
+			spriteInUse = nil;
+		[spriteArray removeObjectAtIndex:tmpIndex];
+	}
+	/*
 	it = [spriteArray objectEnumerator];
 	while ((spritePtr=[it nextObject])&&(foundSprite==nil))	{
 		if ([spritePtr spriteIndex]==i)
@@ -183,10 +221,13 @@
 	}
 	if (foundSprite!=nil)
 		[spriteArray removeObject:foundSprite];
+	*/
 	[spriteArray unlock];
+	/*
 	//	find & remove sprite in sprites in use array
 	if (spriteInUse == foundSprite)
 		spriteInUse = nil;
+	*/
 }
 - (void) removeSprite:(id)z	{
 	if (z == nil)
@@ -230,7 +271,7 @@
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];
-		NSEnumerator	*it = [spriteArray reverseObjectEnumerator];
+		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
 			[spritePtr draw];
@@ -241,7 +282,7 @@
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];
-		NSEnumerator	*it = [spriteArray reverseObjectEnumerator];
+		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
 			if (NSIntersectsRect([spritePtr rect],r))

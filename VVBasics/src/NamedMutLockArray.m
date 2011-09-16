@@ -24,7 +24,7 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<NamedMutLockArray: %@, %@>",name,array];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
+- (id) initWithCapacity:(int)c	{
 	if (self = [super initWithCapacity:c])	{
 		name = nil;
 		return self;

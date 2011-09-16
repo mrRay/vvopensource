@@ -11,7 +11,10 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<OSCNode %@>",nodeName];
+	OSSpinLockLock(&nameLock);
+		NSString		*returnMe = [NSString stringWithFormat:@"<OSCNode %@>",nodeName];
+	OSSpinLockUnlock(&nameLock);
+	return returnMe;
 }
 - (void) logDescriptionToString:(NSMutableString *)s tabDepth:(int)d	{
 	int				i;
@@ -19,13 +22,25 @@
 	//	add the tabs
 	for (i=0;i<d;++i)
 		[s appendString:@"\t"];
+	
 	//	write the description
-	[s appendFormat:@"<%@>",nodeName];
+	OSSpinLockLock(&nameLock);
+		[s appendFormat:@"<%@>",nodeName];
+	OSSpinLockUnlock(&nameLock);
+	
 	//	if there are contents
 	if ((nodeContents!=nil)&&([nodeContents count]>0))	{
 		[s appendString:@"\t{"];
 		//	call this method on my contents
 		[nodeContents rdlock];
+		OSCNode				*nodePtr = nil;
+		for (nodePtr in [nodeContents array])	{
+			[s appendString:@"\n"];
+			[nodePtr logDescriptionToString:s tabDepth:d+1];
+		}
+		[nodeContents unlock];
+		
+		/*
 		NSEnumerator		*it = [nodeContents objectEnumerator];
 		OSCNode				*nodePtr;
 		while (nodePtr = [it nextObject])	{
@@ -33,6 +48,8 @@
 			[nodePtr logDescriptionToString:s tabDepth:d+1];
 		}
 		[nodeContents unlock];
+		*/
+		
 		//	add the tabs, close the description
 		[s appendString:@"\n"];
 		for (i=0;i<d;++i)
@@ -54,6 +71,7 @@
 		addressSpace = [OSCAddressSpace mainSpace];
 		deleted = NO;
 		
+		nameLock = OS_SPINLOCK_INIT;
 		nodeName = [[n trimFirstAndLastSlashes] retain];
 		fullName = nil;
 		nodeContents = nil;
@@ -80,6 +98,7 @@
 		addressSpace = [OSCAddressSpace mainSpace];
 		deleted = NO;
 		
+		nameLock = OS_SPINLOCK_INIT;
 		nodeName = nil;
 		fullName = nil;
 		nodeContents = nil;
@@ -115,12 +134,15 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
-	if (nodeName != nil)
-		[nodeName release];
-	nodeName = nil;
-	if (fullName != nil)
-		[fullName release];
-	fullName = nil;
+	OSSpinLockLock(&nameLock);
+		if (nodeName != nil)
+			[nodeName release];
+		nodeName = nil;
+		if (fullName != nil)
+			[fullName release];
+		fullName = nil;
+	OSSpinLockUnlock(&nameLock);
+	
 	if (nodeContents != nil)
 		[nodeContents release];
 	nodeContents = nil;
@@ -142,7 +164,14 @@
 		return NSOrderedAscending;
 	if (comp == nil)
 		return NSOrderedDescending;
-	return [nodeName caseInsensitiveCompare:[comp nodeName]];
+	NSComparisonResult		returnMe = NSOrderedSame;
+	NSString				*compNodeName = [comp nodeName];
+	
+	OSSpinLockLock(&nameLock);
+		returnMe = [nodeName caseInsensitiveCompare:compNodeName];
+	OSSpinLockUnlock(&nameLock);
+	
+	return returnMe;
 }
 
 
@@ -153,8 +182,15 @@
 	//	if the ptr is an exact match (same instance), return YES
 	if (self == o)
 		return YES;
+	
+	OSSpinLockLock(&nameLock);
+		NSString		*tmpNodeName = nodeName;
+		[tmpNodeName retain];
+	OSSpinLockUnlock(&nameLock);
+	
+	[tmpNodeName autorelease];
 	//	if it's the same class and the nodeName matches, return YES
-	if (([o isKindOfClass:[OSCNode class]]) && ([nodeName isEqualToString:[o nodeName]]))
+	if (([o isKindOfClass:[OSCNode class]]) && ([tmpNodeName isEqualToString:[o nodeName]]))
 		return YES;
 	
 	return NO;
@@ -238,6 +274,25 @@
 	//NSLog(@"%s ... %@, %ld",__func__,n,c);
 	if (n == nil)
 		return nil;
+	OSCNode		*returnMe = nil;
+	[nodeContents rdlock];
+		for (OSCNode *nodePtr in [nodeContents array])	{
+			if ([[nodePtr nodeName] isEqualToString:n])	{
+				returnMe = nodePtr;
+				break;
+			}
+		}
+	[nodeContents unlock];
+	//	if i couldn't find the node and i'm supposed to create it, do so
+	if ((returnMe==nil) && (c))	{
+		returnMe = [OSCNode createWithName:n];
+		[self addNode:returnMe];
+	}
+	return returnMe;
+	
+	/*
+	if (n == nil)
+		return nil;
 	
 	NSEnumerator		*nodeIt;
 	OSCNode				*nodePtr;
@@ -257,48 +312,35 @@
 	}
 	
 	return nodePtr;
+	*/
 }
-- (OSCNode *) findNodeForAddress:(NSString *)p	{
-	//NSLog(@"%s ... %@",__func__,p);
-	return [self findNodeForAddress:p createIfMissing:NO];
-}
-- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
-	//NSLog(@"%s ... %@",__func__,p);
-	if (p == nil)	{
-		NSLog(@"\terr: p was nil %s",__func__);
-		return nil;
-	}
-	
-	return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
-}
-- (OSCNode *) findNodeForAddressArray:(NSArray *)a	{
-	return [self findNodeForAddressArray:a createIfMissing:NO];
-}
-- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c	{
-	//NSLog(@"%s ... %@",__func__,a);
-	if ((a==nil)||([a count]<1))	{
-		NSLog(@"\terr: a was %@ in %s",a,__func__);
-		return nil;
-	}
-	
-	NSEnumerator		*it = [a objectEnumerator];
-	NSString			*pathComponent;
-	OSCNode				*nodeToSearch;
-	OSCNode				*foundNode = nil;
-	
-	nodeToSearch = self;
-	while ((pathComponent=[it nextObject])&&(nodeToSearch!=nil))	{
-		foundNode = [nodeToSearch findLocalNodeNamed:pathComponent];
-		if ((foundNode==nil) && (c))	{
-			foundNode = [OSCNode createWithName:pathComponent];
-			[nodeToSearch addNode:foundNode];
-			//[addressSpace newNodeCreated:foundNode];
-			
+
+
+//	these methods manage pattern-matching and wildcard OSC address space stuff
+- (NSMutableArray *) findLocalNodesMatchingRegex:(NSString *)regex	{
+	NSLog(@"%s ... %@",__func__,regex);
+	NSMutableArray		*returnMe = nil;
+	[nodeContents rdlock];
+	for (OSCNode *nodePtr in [nodeContents array])	{
+		if ([[nodePtr nodeName] posixMatchAgainstFastRegex:regex])	{
+			if (returnMe == nil)
+				returnMe = [NSMutableArray arrayWithCapacity:0];
+			[returnMe addObject:nodePtr];
 		}
-		nodeToSearch = foundNode;
 	}
+	[nodeContents unlock];
+	return returnMe;
+}
+- (void) addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a	{
+	if (regex==nil || a==nil)
+		return;
 	
-	return foundNode;
+	[nodeContents rdlock];
+	for (OSCNode *nodePtr in [nodeContents array])	{
+		if ([[nodePtr nodeName] posixMatchAgainstFastRegex:regex])
+			[a addObject:nodePtr];
+	}
+	[nodeContents unlock];
 }
 
 
@@ -331,11 +373,14 @@
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
-	VVRELEASE(fullName);
-	if (parentNode == addressSpace)
-		fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
-	else if (parentNode != nil)
-		fullName = [[NSString stringWithFormat:@"%@/%@",[parentNode fullName],nodeName] retain];
+	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
+	OSSpinLockLock(&nameLock);
+		VVRELEASE(fullName);
+		if (parentNode == addressSpace)
+			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
+		else if (parentNode != nil)
+			fullName = [[NSString stringWithFormat:@"%@/%@",parentFullName,nodeName] retain];
+	OSSpinLockUnlock(&nameLock);
 	
 	//	tell my delegates that there's been a name change
 	if ((delegateArray!=nil)&&([delegateArray count]>0))
@@ -393,16 +438,24 @@
 	[addressSpace nodeRenamed:self];
 }
 - (NSString *) nodeName	{
-	return nodeName;
+	OSSpinLockLock(&nameLock);
+		NSString		*returnMe = (nodeName==nil)?nil:[[nodeName retain] autorelease];
+	OSSpinLockUnlock(&nameLock);
+	return returnMe;
 }
 - (void) _setNodeName:(NSString *)n	{
-	//	first of all, make sure that i'm not trying to rename it to the same name...
-	if ((n!=nil)&&(nodeName!=nil)&&([n isEqualToString:nodeName]))
-		return;
-	
-	VVAUTORELEASE(nodeName);
-	if (n != nil)
-		nodeName = [n retain];
+	//	get a name-lock, as i'll be checking and potentially changing the name
+	OSSpinLockLock(&nameLock);
+		//	if the new name is the same as the old name, unlock and return immediately
+		if ((n!=nil) && (nodeName!=nil) && ([n isEqualToString:nodeName]))	{
+			OSSpinLockUnlock(&nameLock);
+			return;
+		}
+		//	if i'm here, the name's changing- release, set, retain...then unlock
+		VVRELEASE(nodeName);
+		if (n != nil)
+			nodeName = [n retain];
+	OSSpinLockUnlock(&nameLock);
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
 	if (parentNode != nil)	{
@@ -411,7 +464,10 @@
 	}
 }
 - (NSString *) fullName	{
-	return fullName;
+	OSSpinLockLock(&nameLock);
+		NSString		*returnMe = (fullName==nil)?nil:[[fullName retain] autorelease];
+	OSSpinLockUnlock(&nameLock);
+	return returnMe;
 }
 - (id) nodeContents	{
 	return nodeContents;

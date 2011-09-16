@@ -114,7 +114,7 @@
 		err = curl_easy_perform(curlHandle);
 		//	there's a 60-second timeout on this perform!
 		if (err)	{
-			NSLog(@"\terr %ld at curl_easy_perform for %@: %s",err,urlString,errBuffer);
+			NSLog(@"\terr %u at curl_easy_perform for %@: %s",err,urlString,errBuffer);
 			//	returns error code 6 when the machine isn't connected to a network
 			//	returns error code 6 is the network doesn't have internet access
 			//	returns error code 7 when littlesnitch prevents
@@ -153,15 +153,6 @@
 }
 
 
-- (struct curl_slist *) headerList	{
-	return headerList;
-}
-- (struct curl_httppost *) firstFormPtr	{
-	return firstFormPtr;
-}
-- (struct curl_httppost *) lastFormPtr	{
-	return lastFormPtr;
-}
 - (void) appendDataToPOST:(NSData *)d	{
 	if (d == nil)
 		return;

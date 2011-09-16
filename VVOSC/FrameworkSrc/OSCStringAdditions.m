@@ -4,11 +4,81 @@
 
 
 
+@implementation OSCPOSIXRegExpHolder
+
+
++ (id) createWithString:(NSString *)n	{
+	id		returnMe = (id)[[OSCPOSIXRegExpHolder alloc] initWithString:n];
+	return (returnMe==nil) ? nil : [returnMe autorelease];
+}
+- (id) initWithString:(NSString *)n	{
+	if (self = [super init])	{
+		regexString = nil;
+		regex = nil;
+		if (n==nil)
+			goto BAIL;
+		regexString = [n retain];
+		regex = calloc(1,sizeof(regex_t));
+		const char		*cStr = [regexString cStringUsingEncoding:NSASCIIStringEncoding];
+		if (cStr == nil)
+			goto BAIL;
+		int				err = regcomp(regex,cStr,REG_EXTENDED|REG_NOSUB);
+		if (err != 0)	{
+			NSLog(@"\t\terr %d while compiling regex in %s",err,__func__);
+			goto BAIL;
+		}
+		return self;
+	}
+	BAIL:
+	[self release];
+	return nil;
+}
+- (void) dealloc	{
+	if (regexString != nil)	{
+		[regexString release];
+		regexString = nil;
+	}
+	if (regex != nil)	{
+		regfree(regex);
+		free(regex);
+		regex = nil;
+	}
+	[super dealloc];
+}
+- (BOOL) evalAgainstString:(NSString *)n	{
+	if (n == nil)
+		return NO;
+	const char		*cStr = [n cStringUsingEncoding:NSASCIIStringEncoding];
+	if (cStr == nil)
+		return NO;
+	int				err = regexec(regex,cStr,0,nil,0);
+	if (err != 0)	{
+		NSLog(@"\t\terr %d while executing regex %@ on string %@",err,regexString,n);
+		return NO;
+	}
+	return YES;
+}
+- (NSString *) regexString	{
+	return regexString;
+}
+
+
+@end
+
+
+
+
 @implementation NSString (OSCStringAdditions)
 
 
++ (void) load	{
+	NSLog(@"%s",__func__);
+	_OSCStrAdditionsWildcardCharSet = nil;
+	_OSCStrPOSIXRegexDict = nil;
+}
 - (NSString *) trimFirstAndLastSlashes	{
-	NSRange			desiredRange = NSMakeRange(0,[self length]);
+	int				origLength = [self length];
+	NSRange			desiredRange = NSMakeRange(0,origLength);
 	if ([self characterAtIndex:desiredRange.length-1] == '/')
 		--desiredRange.length;
 	if ([self characterAtIndex:0] == '/')	{
@@ -16,7 +86,7 @@
 		++desiredRange.location;
 	}
 	
-	if (desiredRange.length == [self length])
+	if (desiredRange.length == origLength)
 		return self;
 	return [self substringWithRange:desiredRange];
 }
@@ -86,6 +156,78 @@
 		else
 			return [NSString stringWithFormat:@"/%@",[self substringWithRange:desiredRange]];
 	}
+}
+- (BOOL) containsOSCWildCard	{
+	if (_OSCStrAdditionsWildcardCharSet == nil)	{
+		@synchronized ([self class])	{
+			if (_OSCStrAdditionsWildcardCharSet == nil)	{
+				_OSCStrAdditionsWildcardCharSet = [NSCharacterSet characterSetWithCharactersInString:@"[\\^$.|?*+("];
+				if (_OSCStrAdditionsWildcardCharSet != nil)	{
+					NSLog(@"\t\tmade OSC wildcard char set!");
+					[_OSCStrAdditionsWildcardCharSet retain];
+				}
+			}
+		}
+	}
+	NSRange		foundRange = [self rangeOfCharacterFromSet:_OSCStrAdditionsWildcardCharSet];
+	if (foundRange.location==NSNotFound || foundRange.length<1)
+		return NO;
+	return YES;
+}
+- (BOOL) predicateMatchAgainstRegex:(NSString *)r	{
+	if (r==nil || [r length]<1)
+		return NO;
+	NSPredicate		*pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",r];
+	return (pred==nil) ? NO : [pred evaluateWithObject:self];
+}
+- (BOOL) posixMatchAgainstSlowRegex:(NSString *)r	{
+	if (r==nil)
+		return NO;
+	const char			*regexCStr = [r cStringUsingEncoding:NSASCIIStringEncoding];
+	if (regexCStr == nil)
+		return NO;
+	regex_t				regex;
+	int					err = regcomp(&regex,regexCStr,REG_EXTENDED|REG_NOSUB);
+	if (err != 0)	{
+		NSLog(@"\t\terr %d while compiling regex",err);
+		regfree(&regex);
+		return NO;
+	}
+	const char			*targetCStr = [self cStringUsingEncoding:NSASCIIStringEncoding];
+	//const int			count = 1 + regex->re_nsub;
+	//regmatch_t			match[count];
+	//err = regexec(&regex,targetCStr,count,match,0);
+	err = regexec(&regex,targetCStr,0,nil,0);
+	if (err != 0)	{
+		NSLog(@"\t\terr %d while executing regex",err);
+		regfree(&regex);
+		return NO;
+	}
+	
+	regfree(&regex);
+	return YES;
+}
+- (BOOL) posixMatchAgainstFastRegex:(NSString *)r	{
+	if (r == nil)
+		return NO;
+	if (_OSCStrPOSIXRegexDict == nil)	{
+		@synchronized ([self class])	{
+			if (_OSCStrPOSIXRegexDict == nil)	{
+				_OSCStrPOSIXRegexDict = [[MutLockDict alloc] init];
+			}
+		}
+	}
+	OSCPOSIXRegExpHolder		*regex = [_OSCStrPOSIXRegexDict lockObjectForKey:r];
+	if (regex == nil)	{
+		regex = [OSCPOSIXRegExpHolder createWithString:r];
+		if (regex != nil)	{
+			BOOL		returnMe = [regex evalAgainstString:self];
+			[_OSCStrPOSIXRegexDict lockSetObject:regex forKey:r];
+			return returnMe;
+		}
+	}
+	else
+		return [regex evalAgainstString:self];
 }
 
 

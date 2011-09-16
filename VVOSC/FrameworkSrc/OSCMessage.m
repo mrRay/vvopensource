@@ -401,10 +401,16 @@
 	if ((valueCount < 2) && (value != nil))
 		payloadLength += [value bufferLength];
 	else	{
+		OSCValue		*valuePtr = nil;
+		for (valuePtr in valueArray)	{
+			payloadLength += [valuePtr bufferLength];
+		}
+		/*
 		NSEnumerator		*it = [valueArray objectEnumerator];
 		OSCValue			*valuePtr;
 		while (valuePtr = [it nextObject])
 			payloadLength += [valuePtr bufferLength];
+		*/
 	}
 	
 	return addressLength + typeLength + payloadLength;
@@ -439,10 +445,16 @@
 	if ((valueCount < 2) && (value != nil))
 		[value writeToBuffer:b typeOffset:&typeWriteOffset dataOffset:&dataWriteOffset];
 	else	{
+		OSCValue			*valuePtr = nil;
+		for (valuePtr in valueArray)	{
+			[valuePtr writeToBuffer:b typeOffset:&typeWriteOffset dataOffset:&dataWriteOffset];
+		}
+		/*
 		NSEnumerator		*it = [valueArray objectEnumerator];
 		OSCValue			*valuePtr;
 		while (valuePtr = [it nextObject])
 			[valuePtr writeToBuffer:b typeOffset:&typeWriteOffset dataOffset:&dataWriteOffset];
+		*/
 	}
 }
 

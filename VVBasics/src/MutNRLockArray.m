@@ -92,7 +92,7 @@
 			[self addObjectsFromArray:a];
 		}
 		@catch (NSException *err)	{
-			NSLog(@"%\t\t%s - %@",__func__,err);
+			NSLog(@"\t\t%s - %@",__func__,err);
 		}
 	}
 }
@@ -136,6 +136,25 @@
 	return returnMe;
 }
 - (NSUInteger) indexOfObject:(id)o	{
+	if ((array==nil) || (o==nil) || ([array count]<1))
+		return NSNotFound;
+	NSUInteger			foundIndex = NSNotFound;
+	long				tmpIndex = 0;
+	//	run through the array of object holders
+	for (id objHolder in array)	{
+		//	get the object stored by the object holder
+		id		anObj = [objHolder object];
+		//	if the object in the holder matches the passed object using isEqual:, return it
+		if ((anObj!=nil) && ([o isEqual:anObj]))	{
+			foundIndex = tmpIndex;
+			break;
+		}
+		++tmpIndex;
+	}
+	return foundIndex;
+	
+	
+	/*
 	if (o == nil)
 		return NSNotFound;
 	int				tmpIndex = 0;
@@ -158,6 +177,7 @@
 	if (foundIndex < 0)
 		foundIndex = NSNotFound;
 	return foundIndex;
+	*/
 }
 - (BOOL) containsIdenticalPtr:(id)o	{
 	long		foundIndex = [self indexOfIdenticalPtr:o];
@@ -166,6 +186,23 @@
 	return YES;
 }
 - (long) indexOfIdenticalPtr:(id)o	{
+	if ((array==nil) || (o==nil) || ([array count]<1))
+		return NSNotFound;
+	NSUInteger			foundIndex = NSNotFound;
+	long				tmpIndex = 0;
+	//	run through the array of object holders
+	for (id objHolder in array)	{
+		//	get the object stored by the object holder
+		id		anObj = [objHolder object];
+		//	if the object in the holder matches the passed object using isEqual:, return it
+		if ((anObj!=nil) && (o == anObj))	{
+			foundIndex = tmpIndex;
+			break;
+		}
+		++tmpIndex;
+	}
+	return foundIndex;
+	/*
 	if (o == nil)
 		return NSNotFound;
 	int				tmpIndex = 0;
@@ -191,6 +228,7 @@
 	if (foundIndex < 0)
 		foundIndex = NSNotFound;
 	return foundIndex;
+	*/
 }
 - (void) removeIdenticalPtr:(id)o	{
 	long		foundIndex = [self indexOfIdenticalPtr:o];

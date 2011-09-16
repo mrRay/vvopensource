@@ -18,8 +18,8 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 	pthread_rwlock_t		dictLock;
 }
 
-+ (id) dictionaryWithCapacity:(NSUInteger)c;
-- (id) initWithCapacity:(NSUInteger)c;
++ (id) dictionaryWithCapacity:(int)c;
+- (id) initWithCapacity:(int)c;
 
 - (void) rdlock;
 - (void) wrlock;

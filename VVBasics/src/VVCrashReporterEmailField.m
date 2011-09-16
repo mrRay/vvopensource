@@ -5,7 +5,7 @@
 
 
 - (void) awakeFromNib	{
-	[self setDelegate:self];
+	[self setDelegate:(id <NSTextFieldDelegate>)self];
 }
 
 - (void)textDidChange:(NSNotification *)notification	{

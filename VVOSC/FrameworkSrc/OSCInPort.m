@@ -258,11 +258,16 @@
 - (void) handleScratchArray:(NSArray *)a	{
 	//NSLog(@"%s",__func__);
 	if ((delegate != nil) && ([delegate respondsToSelector:@selector(receivedOSCMessage:)]))	{
+		for (OSCMessage *anObj in a)	{
+			[delegate receivedOSCMessage:anObj];
+		}
+		/*
 		NSEnumerator		*it = [a objectEnumerator];
 		OSCMessage			*anObj;
 		while (anObj = [it nextObject])	{
 			[delegate receivedOSCMessage:anObj];
 		}
+		*/
 	}
 }
 /*

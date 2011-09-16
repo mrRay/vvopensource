@@ -313,6 +313,12 @@
 				[(NSData *)value release];
 			value = nil;
 			break;
+		case OSCValTimeTag:
+			NSLog(@"\t\tERR: TRIED TO RELEASE TIME TAG!");
+			break;
+		case OSCValChar:
+			NSLog(@"\t\tERR: TRIED TO RELEASE TIME TAG!");
+			break;
 	}
 	value = nil;
 	[super dealloc];
@@ -423,6 +429,9 @@
 		case OSCValBlob:
 			returnMe = (float)1.0;
 			break;
+		case OSCValTimeTag:
+		case OSCValChar:
+			break;
 	}
 	return returnMe;
 }
@@ -454,6 +463,9 @@
 				return 0;
 			//	BLOBS DON'T REQUIRE A NULL CHARACTER AFTER THEM!
 			return ROUNDUP4((4 + [(NSData *)value length]));
+			break;
+		case OSCValTimeTag:
+		case OSCValChar:
 			break;
 	}
 	return 0;
@@ -559,6 +571,9 @@
 			*d = ROUNDUP4(*d);
 			b[*t] = 'b';
 			++*t;
+			break;
+		case OSCValTimeTag:
+		case OSCValChar:
 			break;
 	}
 	

@@ -90,6 +90,12 @@
 - (void) addElementArray:(NSArray *)a	{
 	if ((a==nil) || ([a count]<1))
 		return;
+	for (id anObj in a)	{
+		if (([anObj isKindOfClass:[OSCBundle class]]) || ([anObj isKindOfClass:[OSCMessage class]]))	{
+			[elementArray addObject:anObj];
+		}
+	}
+	/*
 	NSEnumerator		*it = [a objectEnumerator];
 	id					anObj;
 	while (anObj = [it nextObject])	{
@@ -97,13 +103,14 @@
 			[elementArray addObject:anObj];
 		}
 	}
+	*/
 }
 
 - (long) bufferLength	{
 	//NSLog(@"%s",__func__);
 	long			totalSize = 0;
-	NSEnumerator	*it;
-	id				anObj;
+	//NSEnumerator	*it;
+	//id				anObj;
 	
 	/*
 	a bundle starts off with:
@@ -113,8 +120,9 @@
 	totalSize = 16;
 	
 	//	run through my elements, getting their sizes
-	it = [elementArray objectEnumerator];
-	while (anObj = [it nextObject])	{
+	//it = [elementArray objectEnumerator];
+	//while (anObj = [it nextObject])	{
+	for (id anObj in elementArray)	{
 		/*
 		each element will occupy an amount of space equal to the size of the payload plus
 		4 bytes (these 4 bytes are used to store the size of the payload which follows it)
@@ -130,16 +138,17 @@
 	int				writeOffset;
 	int				elementLength;
 	UInt32			tmpInt;
-	NSEnumerator	*it;
-	id				anObj;
+	//NSEnumerator	*it;
+	//id				anObj;
 	
 	//	write the "#bundle" to the buffer
 	strncpy((char *)b, "#bundle", 7);
 	//	adjust the offset to take into account the #bundle and the timestamp
 	writeOffset = 16;
 	//	run through all the elements in this bundle
-	it = [elementArray objectEnumerator];
-	while (anObj = [it nextObject])	{
+	//it = [elementArray objectEnumerator];
+	//while (anObj = [it nextObject])	{
+	for (id anObj in elementArray)	{
 		//	write the message's size to the buffer
 		elementLength = (int)[anObj bufferLength];
 		tmpInt = htonl(*((UInt32 *)(&elementLength)));

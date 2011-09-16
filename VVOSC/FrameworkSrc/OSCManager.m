@@ -83,7 +83,7 @@
 	
 	[inPortArray wrlock];
 		//	check for port or name conflicts
-		it = [inPortArray objectEnumerator];
+		it = [[inPortArray array] objectEnumerator];
 		while ((portPtr = [it nextObject]) && (!foundPortConflict) && (!foundNameConflict))	{
 			if ([portPtr port] == p)
 				foundPortConflict = YES;
@@ -172,7 +172,7 @@
 	
 	[outPortArray wrlock];
 		//	check for name conflicts
-		it = [outPortArray objectEnumerator];
+		it = [[outPortArray array] objectEnumerator];
 		while ((portPtr = [it nextObject]) && (!foundNameConflict))	{
 			if (([portPtr portLabel]!=nil) && ([[portPtr portLabel] isEqualToString:l]))
 				foundNameConflict = YES;
@@ -247,7 +247,7 @@
 			tmpString = [NSString stringWithFormat:@"%@ %ld",[self inPortLabelBase],index];
 			
 			alreadyInUse = NO;
-			it = [inPortArray objectEnumerator];
+			it = [[inPortArray array] objectEnumerator];
 			while ((!alreadyInUse) && (portPtr = [it nextObject]))	{
 				if ([[portPtr portLabel] isEqualToString:tmpString])	{
 					alreadyInUse = YES;
@@ -277,7 +277,7 @@
 			tmpString = [NSString stringWithFormat:@"OSC Out Port %ld",index];
 			
 			alreadyInUse = NO;
-			it = [outPortArray objectEnumerator];
+			it = [[outPortArray array] objectEnumerator];
 			while ((!alreadyInUse) && (portPtr = [it nextObject]))	{
 				if ([[portPtr portLabel] isEqualToString:tmpString])	{
 					alreadyInUse = YES;
@@ -303,7 +303,7 @@
 	OSCInPort		*portPtr = nil;
 	
 	[inPortArray rdlock];
-		it = [inPortArray objectEnumerator];
+		it = [[inPortArray array] objectEnumerator];
 		while ((portPtr = [it nextObject]) && (foundPort == nil))	{
 			if ([[portPtr portLabel] isEqualToString:n])	{
 				foundPort = portPtr;
@@ -323,7 +323,7 @@
 	OSCOutPort		*portPtr = nil;
 	
 	[outPortArray rdlock];
-		it = [outPortArray objectEnumerator];
+		it = [[outPortArray array] objectEnumerator];
 		while ((portPtr = [it nextObject]) && (foundPort == nil))	{
 			if ([[portPtr portLabel] isEqualToString:n])	{
 				foundPort = portPtr;
@@ -344,7 +344,7 @@
 	OSCOutPort		*portPtr = nil;
 	
 	[outPortArray rdlock];
-		it = [outPortArray objectEnumerator];
+		it = [[outPortArray array] objectEnumerator];
 		while ((portPtr = [it nextObject]) && (foundPort == nil))	{
 			if (([[portPtr addressString] isEqualToString:a]) && ([portPtr port] == p))	{
 				foundPort = portPtr;
@@ -373,7 +373,7 @@
 	id				zeroConfDest = nil;
 	
 	[inPortArray rdlock];
-		it = [inPortArray objectEnumerator];
+		it = [[inPortArray array] objectEnumerator];
 		while ((anObj = [it nextObject]) && (foundPort == nil))	{
 			zeroConfDest = [anObj zeroConfDest];
 			if (zeroConfDest != nil)	{
@@ -411,7 +411,7 @@
 	OSCOutPort			*portPtr;
 	
 	[outPortArray rdlock];
-		it = [outPortArray objectEnumerator];
+		it = [[outPortArray array] objectEnumerator];
 		while (portPtr = [it nextObject])	{
 			if ([portPtr portLabel] != nil)	{
 				[returnMe addObject:[portPtr portLabel]];

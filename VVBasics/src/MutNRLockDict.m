@@ -15,7 +15,7 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutNRLockDict: %@>",dict];
 }
-+ (id) dictionaryWithCapacity:(NSUInteger)c	{
++ (id) dictionaryWithCapacity:(int)c	{
 	MutNRLockDict	*returnMe = [[MutNRLockDict alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;

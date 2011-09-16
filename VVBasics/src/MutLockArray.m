@@ -24,13 +24,13 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockArray: %@>",array];
 }
-+ (id) arrayWithCapacity:(NSUInteger)c	{
++ (id) arrayWithCapacity:(int)c	{
 	MutLockArray		*returnMe = [[MutLockArray alloc] initWithCapacity:c];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
+- (id) initWithCapacity:(int)c	{
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
@@ -179,7 +179,7 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}	
 }
-- (void) insertObject:(id)o atIndex:(NSUInteger)i	{
+- (void) insertObject:(id)o atIndex:(int)i	{
 	if ((array != nil) && (o != nil) && (i<=[array count]))	{
 		//@try	{
 			[array insertObject:o atIndex:i];
@@ -189,7 +189,7 @@
 		//}
 	}
 }
-- (void) lockInsertObject:(id)o atIndex:(NSUInteger)i	{
+- (void) lockInsertObject:(id)o atIndex:(int)i	{
 	if ((array != nil) && (o != nil))	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self insertObject:o atIndex:i];
@@ -292,7 +292,7 @@
 		[self removeObject:o];
 	pthread_rwlock_unlock(&arrayLock);
 }
-- (void) removeObjectAtIndex:(NSUInteger)i	{
+- (void) removeObjectAtIndex:(int)i	{
 	if ((array!=nil) && ([array count]>0) && (i<[array count]) && (i>=0))	{
 		@try	{
 			[array removeObjectAtIndex:i];
@@ -302,7 +302,7 @@
 		}
 	}
 }
-- (void) lockRemoveObjectAtIndex:(NSUInteger)i	{
+- (void) lockRemoveObjectAtIndex:(int)i	{
 	if (array != nil)	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self removeObjectAtIndex:i];
@@ -405,7 +405,7 @@
 }
 
 
-- (id) objectAtIndex:(NSUInteger)i	{
+- (id) objectAtIndex:(int)i	{
 	if ((array != nil) && (i>=0) && (i<[array count]))	{
 		id			returnMe = nil;
 		//@try	{
@@ -418,7 +418,7 @@
 	}
 	return nil;
 }
-- (id) lockObjectAtIndex:(NSUInteger)i	{
+- (id) lockObjectAtIndex:(int)i	{
 	id		returnMe = nil;
 	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [self objectAtIndex:i];
@@ -445,8 +445,8 @@
 	
 	return returnMe;
 }
-- (NSUInteger) indexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (int) indexOfObject:(id)o	{
+	int returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			returnMe = [array indexOfObject:o];
@@ -457,8 +457,8 @@
 	}
 	return returnMe;	
 }
-- (NSUInteger) lockIndexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (int) lockIndexOfObject:(id)o	{
+	int returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			pthread_rwlock_rdlock(&arrayLock);
@@ -477,12 +477,20 @@
 	BOOL				returnMe = NO;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				returnMe = YES;
+				break;
+			}
+		}
+		/*
 		NSEnumerator		*it = [array objectEnumerator];
 		id					anObj;
 		while ((anObj = [it nextObject]) && (!returnMe))	{
 			if (anObj == o)
 				returnMe = YES;
 		}
+		*/
 	}
 	
 	return returnMe;
@@ -498,6 +506,19 @@
 	return returnMe;
 }
 - (long) indexOfIdenticalPtr:(id)o	{
+	long		foundIndex = NSNotFound;
+	int			indexCount = 0;
+	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				foundIndex = indexCount;
+				break;
+			}
+			++indexCount;
+		}
+	}
+	return foundIndex;
+	/*
 	long		delegateIndex = NSNotFound;
 	
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -513,6 +534,7 @@
 	}
 	
 	return delegateIndex;
+	*/
 }
 - (long) lockIndexOfIdenticalPtr:(id)o	{
 	long		returnMe = NSNotFound;
@@ -527,6 +549,20 @@
 }
 - (void) removeIdenticalPtr:(id)o	{
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+		long			foundIndex = NSNotFound;
+		int				indexCount = 0;
+		for (id anObj in array)	{
+			if (anObj == o)	{
+				foundIndex = indexCount;
+				break;
+			}
+			++indexCount;
+		}
+		if (foundIndex != NSNotFound)
+			[array removeObjectAtIndex:foundIndex];
+	}
+	/*
+	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
 		long				delegateIndex = NSNotFound;
 		NSEnumerator		*it = [array objectEnumerator];
 		id					anObj;
@@ -540,6 +576,7 @@
 		if (delegateIndex!=NSNotFound)
 			[array removeObjectAtIndex:delegateIndex];
 	}
+	*/
 }
 - (void) lockRemoveIdenticalPtr:(id)o	{
 	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
@@ -684,6 +721,7 @@ these are commented out because the code in these methods is sloppy
 }
 
 
+/*
 - (NSEnumerator *) objectEnumerator	{
 	if (array != nil)
 		return [array objectEnumerator];
@@ -696,6 +734,7 @@ these are commented out because the code in these methods is sloppy
 	else
 		return nil;
 }
+*/
 
 
 - (long) count	{

@@ -39,6 +39,16 @@ id _mainAddressSpace;
 + (NSMenu *) makeMenuForNode:(OSCNode *)n ofType:(NSIndexSet *)ts withTarget:(id)t action:(SEL)a;
 #endif
 
+- (OSCNode *) findNodeForAddress:(NSString *)p;
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c;
+
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a;
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
+
+//	these methods manage pattern-matching and wildcard OSC address space stuff
+- (NSMutableArray *) findNodesForAddressArray:(NSArray *)a;
+- (NSMutableArray *) findNodesForAddress:(NSString *)a;
+
 - (void) renameAddress:(NSString *)before to:(NSString *)after;
 - (void) renameAddressArray:(NSArray *)before toArray:(NSArray *)after;
 

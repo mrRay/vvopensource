@@ -8,6 +8,7 @@
 #import <VVBasics/MutNRLockArray.h>
 #import <VVBasics/VVBasicMacros.h>
 #import <pthread.h>
+#import <libkern/OSAtomic.h>
 
 
 
@@ -39,6 +40,7 @@ typedef enum	{
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;
 	
+	OSSpinLock			nameLock;
 	NSString			*nodeName;	//	"local" name: name of the node at /a/b/c is "c"
 	NSString			*fullName;	//	"full" name: name of the node at /a/b/c is "/a/b/c"
 	MutLockArray		*nodeContents;	//	type 'MutLockArray'
@@ -70,11 +72,11 @@ typedef enum	{
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;
 - (OSCNode *) findLocalNodeNamed:(NSString *)n createIfMissing:(BOOL)c;
 
-- (OSCNode *) findNodeForAddress:(NSString *)p;
-- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c;
 
-- (OSCNode *) findNodeForAddressArray:(NSArray *)a;
-- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
+//	these methods manage pattern-matching and wildcard OSC address space stuff
+- (NSMutableArray *) findLocalNodesMatchingRegex:(NSString *)regex;
+- (void) addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a;
+
 
 //	a node's delegate is informed of received osc messages or name changes (OSCNodeDelegateProtocol)
 //	NODE DELEGATES ARE __NOT__ RETAINED!

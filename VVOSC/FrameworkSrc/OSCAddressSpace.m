@@ -113,6 +113,11 @@
 	[mutString appendString:@"********\tOSC Address Space\t********\n"];
 	if ((nodeContents != nil) && ([nodeContents count] > 0))	{
 		[nodeContents rdlock];
+		for (OSCNode *nodePtr in [nodeContents array])	{
+			[nodePtr logDescriptionToString:mutString tabDepth:0];
+			[mutString appendString:@"\n"];
+		}
+		/*
 		NSEnumerator	*it = [nodeContents objectEnumerator];
 		OSCNode			*nodePtr;
 		while (nodePtr = [it nextObject])	{
@@ -120,6 +125,7 @@
 			[mutString appendString:@"\n"];
 		}
 		[nodeContents unlock];
+		*/
 	}
 	
 	//[self logDescriptionToString:mutString tabDepth:0];
@@ -153,6 +159,110 @@
 		_mainAddressSpace = nil;
 	[super dealloc];
 }
+
+
+- (OSCNode *) findNodeForAddress:(NSString *)p	{
+	//NSLog(@"%s ... %@",__func__,p);
+	return [self findNodeForAddress:p createIfMissing:NO];
+}
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
+	//NSLog(@"%s ... %@",__func__,p);
+	if (p == nil)	{
+		NSLog(@"\terr: p was nil %s",__func__);
+		return nil;
+	}
+	
+	return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
+}
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a	{
+	return [self findNodeForAddressArray:a createIfMissing:NO];
+}
+- (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c	{
+	//NSLog(@"%s ... %@",__func__,a);
+	if ((a==nil)||([a count]<1))	{
+		NSLog(@"\terr: a was %@ in %s",a,__func__);
+		return nil;
+	}
+	
+	OSCNode			*foundNode = nil;
+	OSCNode			*nodeToSearch = self;
+	for (NSString *targetName in a)	{
+		foundNode = [nodeToSearch findLocalNodeNamed:targetName];
+		if ((foundNode==nil) && (c))	{
+			foundNode = [OSCNode createWithName:targetName];
+			[nodeToSearch addNode:foundNode];
+		}
+		nodeToSearch = foundNode;
+		if (nodeToSearch == nil)
+			break;
+	}
+	return foundNode;
+	/*
+	NSEnumerator		*it = [a objectEnumerator];
+	NSString			*pathComponent;
+	OSCNode				*nodeToSearch;
+	OSCNode				*foundNode = nil;
+	
+	nodeToSearch = self;
+	while ((pathComponent=[it nextObject])&&(nodeToSearch!=nil))	{
+		foundNode = [nodeToSearch findLocalNodeNamed:pathComponent];
+		if ((foundNode==nil) && (c))	{
+			foundNode = [OSCNode createWithName:pathComponent];
+			[nodeToSearch addNode:foundNode];
+			//[addressSpace newNodeCreated:foundNode];
+			
+		}
+		nodeToSearch = foundNode;
+	}
+	
+	return foundNode;
+	*/
+}
+
+
+- (NSMutableArray *) findNodesForAddressArray:(NSArray *)a	{
+	if (a==nil || [a count]<1)	{
+		NSLog(@"\terr: a was %@ in %s",a,__func__);
+		return nil;
+	}
+	
+	NSMutableArray		*returnMe = nil;
+	NSMutableArray		*currentMatches = [NSMutableArray arrayWithCapacity:0];
+	NSMutableArray		*newMatches = [NSMutableArray arrayWithCapacity:0];
+	[currentMatches addObject:self];
+	//	run through each of the address segments
+	for (NSString *addressSegment in a)	{
+		BOOL		regex = [addressSegment containsOSCWildCard
+		];
+		//	for each address segment, run through all the currently-matched nodes, looking for subnodes of theirs which match this segment
+		for (OSCNode *nodePtr in currentMatches)	{
+			if (regex)
+				[nodePtr addLocalNodesMatchingRegex:addressSegment toMutArray:newMatches];
+			else	{
+				OSCNode		*tmpNode = [nodePtr findLocalNodeNamed:addressSegment];
+				if (tmpNode != nil)
+					[newMatches addObject:tmpNode];
+			}
+		}
+		//	if i didn't find any new matches for this address segment, bail & return nil
+		if (newMatches==nil || [newMatches count]<1)
+			return nil;
+		//	swap the new matches array and the current matched nodes
+		[currentMatches removeAllObjects];
+		NSMutableArray		*tmpArray = currentMatches;
+		currentMatches = newMatches;
+		newMatches = tmpArray;
+	}
+	return returnMe;
+}
+- (NSMutableArray *) findNodesForAddress:(NSString *)a	{
+	if (a==nil)	{
+		NSLog(@"\terr: a was nil %s",__func__);
+		return nil;
+	}
+	return [self findNodesForAddressArray:[[a trimFirstAndLastSlashes] pathComponents]];
+}
+
 
 - (void) renameAddress:(NSString *)before to:(NSString *)after	{
 	//NSLog(@"%s ... %@ -> %@",__func__,before,after);
