@@ -200,12 +200,12 @@
 
 - (void) removeAllObjects	{
 	if ((array != nil) && ([array count] > 0))	{
-		@try	{
+		//@try	{
 			[array removeAllObjects];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveAllObjects	{
@@ -264,12 +264,12 @@
 
 - (void) removeLastObject	{
 	if ((array != nil) && ([array count]>0))	{
-		@try	{
+		//@try	{
 			[array removeLastObject];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveLastObject	{
@@ -279,12 +279,12 @@
 }
 - (void) removeObject:(id)o	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObject:o];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveObject:(id)o	{
@@ -294,12 +294,12 @@
 }
 - (void) removeObjectAtIndex:(NSUInteger)i	{
 	if ((array!=nil) && ([array count]>0) && (i<[array count]) && (i>=0))	{
-		@try	{
+		//@try	{
 			[array removeObjectAtIndex:i];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveObjectAtIndex:(NSUInteger)i	{
@@ -311,12 +311,12 @@
 }
 - (void) removeObjectsAtIndexes:(NSIndexSet *)i	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObjectsAtIndexes:i];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockRemoveObjectsAtIndexes:(NSIndexSet *)i	{
@@ -328,30 +328,30 @@
 }
 - (void) removeObjectsInArray:(NSArray *)otherArray	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array removeObjectsInArray:otherArray];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}	
 }
 - (void) lockRemoveObjectsInArray:(NSArray *)otherArray	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			pthread_rwlock_wrlock(&arrayLock);
 				[array removeObjectsInArray:otherArray];
 			pthread_rwlock_unlock(&arrayLock);
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) removeIdenticalPtrsInArray:(NSArray *)a	{
 	if ((a==nil) || ([a count]<1))
 		return;
-	@try	{
+	//@try	{
 		NSMutableIndexSet		*indicesToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
 		for (id anObj in a)	{
 			long			identicalIndex = [self indexOfIdenticalPtr:anObj];
@@ -359,10 +359,10 @@
 				[indicesToRemove addIndex:identicalIndex];
 		}
 		[array removeObjectsAtIndexes:indicesToRemove];
-	}
-	@catch (NSException *err)	{
-		NSLog(@"\t\tERR: %s - %@",__func__,err);
-	}
+	//}
+	//@catch (NSException *err)	{
+		//NSLog(@"\t\tERR: %s - %@",__func__,err);
+	//}
 }
 - (void) lockRemoveIdenticalPtrsInArray:(NSArray *)a	{
 	if ((a==nil) || ([a count]<1))
@@ -608,12 +608,12 @@
 
 - (void) makeObjectsPerformSelector:(SEL)s	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array makeObjectsPerformSelector:s];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockMakeObjectsPerformSelector:(SEL)s	{
@@ -625,12 +625,12 @@
 }
 - (void) makeObjectsPerformSelector:(SEL)s withObject:(id)o	{
 	if (array != nil)	{
-		@try	{
+		//@try	{
 			[array makeObjectsPerformSelector:s withObject:o];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\tERR: %s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"\t\tERR: %s - %@",__func__,err);
+		//}
 	}
 }
 - (void) lockMakeObjectsPerformSelector:(SEL)s withObject:(id)o	{
@@ -640,72 +640,6 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}
 }
-
-
-/*
-
-these are commented out because the code in these methods is sloppy
-
-- (void) makeCopyPerformSelector:(SEL)s	{
-	if ((array != nil) && ([array count]>0))	{
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) lockMakeCopyPerformSelector:(SEL)s	{
-	if ((array != nil) && ([array count]>0))	{
-		pthread_rwlock_rdlock(&arrayLock);
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		pthread_rwlock_unlock(&arrayLock);
-		
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) makeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if ((array != nil) && ([array count]>0))	{
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s withObject:o];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-- (void) lockMakeCopyPerformSelector:(SEL)s withObject:(id)o	{
-	if ((array != nil) && ([array count]>0))	{
-		pthread_rwlock_rdlock(&arrayLock);
-		NSArray		*copy = [NSArray arrayWithArray:array];
-		pthread_rwlock_unlock(&arrayLock);
-		
-		if (copy != nil)	{
-			@try	{
-				[copy makeObjectsPerformSelector:s withObject:o];
-			}
-			@catch (NSException *err)	{
-				NSLog(@"\t\t%s- %@",__func__,err);
-			}
-		}
-	}
-}
-*/
-
 
 
 - (void) sortUsingSelector:(SEL)s	{

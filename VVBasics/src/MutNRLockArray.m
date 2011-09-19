@@ -39,6 +39,7 @@
 				[returnMe addObject:addMe];
 		}
 		else {
+			NSLog(@"\t\terr: object in MutNRLockArray wasn't a holder! %s, %@",__func__,objPtr);
 			[returnMe addObject:objPtr];
 		}
 
@@ -87,13 +88,13 @@
 }
 - (void) replaceWithObjectsFromArray:(id)a	{
 	if ((array!=nil) && (a!=nil))	{
-		@try	{
+		//@try	{
 			[array removeAllObjects];
 			[self addObjectsFromArray:a];
-		}
-		@catch (NSException *err)	{
-			NSLog(@"\t\t%s - %@",__func__,err);
-		}
+		//}
+		//@catch (NSException *err)	{
+			//NSLog(@"%\t\t%s - %@",__func__,err);
+		//}
 	}
 }
 - (void) insertObject:(id)o atIndex:(NSUInteger)i	{
@@ -215,13 +216,17 @@
 	//	run through the array object holders while i haven't found the object i'm looking for
 	while ((objPtr=[objIt nextObject]) && (foundIndex<0))	{
 		//	first, check to see if it's a match for an ObjectHolder- if it is, i can return right away
-		if (objPtr == o)
+		if (objPtr == o)	{
 			foundIndex = tmpIndex;
+			break;
+		}
 		//	get the object stored by the object holder
 		anObj = [objPtr object];
 		//	if the object in the object holder matches the passed object using isEqual:, i'm going to return it
-		if ((anObj != nil) && (o  == anObj))
+		if ((anObj != nil) && (o  == anObj))	{
 			foundIndex = tmpIndex;
+			break;
+		}
 		++tmpIndex;
 	}
 	//	make sure i return NSNotFound instead of -1
