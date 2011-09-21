@@ -16,7 +16,7 @@
 	OSSpinLockUnlock(&nameLock);
 	return returnMe;
 }
-- (void) logDescriptionToString:(NSMutableString *)s tabDepth:(int)d	{
+- (void) _logDescriptionToString:(NSMutableString *)s tabDepth:(int)d	{
 	int				i;
 	
 	//	add the tabs
@@ -36,7 +36,7 @@
 		OSCNode				*nodePtr = nil;
 		for (nodePtr in [nodeContents array])	{
 			[s appendString:@"\n"];
-			[nodePtr logDescriptionToString:s tabDepth:d+1];
+			[nodePtr _logDescriptionToString:s tabDepth:d+1];
 		}
 		[nodeContents unlock];
 		
@@ -45,7 +45,7 @@
 		OSCNode				*nodePtr;
 		while (nodePtr = [it nextObject])	{
 			[s appendString:@"\n"];
-			[nodePtr logDescriptionToString:s tabDepth:d+1];
+			[nodePtr _logDescriptionToString:s tabDepth:d+1];
 		}
 		[nodeContents unlock];
 		*/
@@ -68,7 +68,7 @@
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
-		addressSpace = [OSCAddressSpace mainSpace];
+		addressSpace = _mainAddressSpace;
 		deleted = NO;
 		
 		nameLock = OS_SPINLOCK_INIT;
@@ -79,11 +79,7 @@
 		nodeType = OSCNodeTypeUnknown;
 		
 		lastReceivedMessage = nil;
-		pthread_mutexattr_t		attr;
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-		pthread_mutex_init(&lastReceivedMessageLock, &attr);
-		pthread_mutexattr_destroy(&attr);
+		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
 		return self;
 	}
@@ -95,7 +91,7 @@
 - (id) init	{
 	//NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
-		addressSpace = [OSCAddressSpace mainSpace];
+		addressSpace = _mainAddressSpace;
 		deleted = NO;
 		
 		nameLock = OS_SPINLOCK_INIT;
@@ -107,11 +103,7 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
-		pthread_mutexattr_t		attr;
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-		pthread_mutex_init(&lastReceivedMessageLock, &attr);
-		pthread_mutexattr_destroy(&attr);
+		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
 		return self;
 	}
@@ -148,12 +140,11 @@
 	nodeContents = nil;
 	parentNode = nil;
 	
-	pthread_mutex_lock(&lastReceivedMessageLock);
+	OSSpinLockLock(&lastReceivedMessageLock);
 	if (lastReceivedMessage != nil)
 		[lastReceivedMessage release];
 	lastReceivedMessage = nil;
-	pthread_mutex_unlock(&lastReceivedMessageLock);
-	pthread_mutex_destroy(&lastReceivedMessageLock);
+	OSSpinLockUnlock(&lastReceivedMessageLock);
 	
 	[super dealloc];
 }
@@ -197,7 +188,7 @@
 }
 
 
-- (void) addNode:(OSCNode *)n	{
+- (void) addLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	if ((n == nil)||(deleted))
 		return;
@@ -212,7 +203,7 @@
 	
 	[addressSpace nodeRenamed:n];
 }
-- (void) removeNode:(OSCNode *)n	{
+- (void) removeLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	if ((n == nil)||(deleted))
 		return;
@@ -226,16 +217,10 @@
 	
 	if (indexOfIdenticalPtr != NSNotFound)
 		[n setParentNode:nil];
-	/*
-	//	if i don't have any contents, remove myself from my parent
-	if ((nodeContents==nil)||([nodeContents count]<1))	{
-		if (parentNode != nil)
-			[parentNode removeNode:self];
-	}
-	*/
+	
 	[n release];
 }
-- (void) deleteNode:(OSCNode *)n	{
+- (void) deleteLocalNode:(OSCNode *)n	{
 	if ((n == nil)||(deleted))
 		return;
 	long		indexOfIdenticalPtr = NSNotFound;
@@ -248,13 +233,7 @@
 	
 	if (indexOfIdenticalPtr != NSNotFound)
 		[n setParentNode:nil];
-	/*
-	//	if i don't have any contents, remove myself from my parent
-	if ((nodeContents==nil)||([nodeContents count]<1))	{
-		if (parentNode != nil)
-			[parentNode deleteNode:self];
-	}
-	*/
+	
 	[n prepareToBeDeleted];
 	[n release];
 }
@@ -288,12 +267,12 @@
 	//	if i couldn't find the node and i'm supposed to create it, do so
 	if ((returnMe==nil) && (c))	{
 		returnMe = [OSCNode createWithName:n];
-		[self addNode:returnMe];
+		[self addLocalNode:returnMe];
 	}
 	return returnMe;
 }
 //	these methods manage pattern-matching and wildcard OSC address space stuff
-- (NSMutableArray *) findLocalNodesMatchingRegex:(NSString *)regex	{
+- (NSMutableArray *) findLocalNodesMatchingPOSIXRegex:(NSString *)regex	{
 	//NSLog(@"%s ... %@",__func__,regex);
 	NSMutableArray		*returnMe = nil;
 	[nodeContents rdlock];
@@ -325,7 +304,7 @@
 	return [self findNodeForAddress:p createIfMissing:NO];
 }
 - (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
-	//NSLog(@"%s ... %@",__func__,p);
+	//NSLog(@"%s ... %@, %ld",__func__,p,c);
 	if (p == nil)	{
 		NSLog(@"\terr: p was nil %s",__func__);
 		return nil;
@@ -345,15 +324,23 @@
 	
 	OSCNode			*foundNode = nil;
 	OSCNode			*nodeToSearch = self;
+	int				tmpIndex = 0;
+	int				lastDirectoryIndex = [a count]-2;	//	the index of the second-to-last node (or, the last node in this path which is known to have one or more sub-nodes)
 	for (NSString *targetName in a)	{
 		foundNode = [nodeToSearch findLocalNodeNamed:targetName];
+		//	if i couldn't find a node matching the name, create one
 		if ((foundNode==nil) && (c))	{
 			foundNode = [OSCNode createWithName:targetName];
-			[nodeToSearch addNode:foundNode];
+			//	if the node i'm creating now is known to have sub-nodes, set its type to directory automatically
+			if (tmpIndex <= lastDirectoryIndex)
+				[foundNode setNodeType:OSCNodeDirectory];
+			//	add the node i created to the appropriate parent node
+			[nodeToSearch addLocalNode:foundNode];
 		}
 		nodeToSearch = foundNode;
 		if (nodeToSearch == nil)
 			break;
+		++tmpIndex;
 	}
 	return foundNode;
 }
@@ -472,13 +459,13 @@
 		if (delegate != nil)
 			[delegate node:self receivedOSCMessage:m];
 	}
-	pthread_mutex_lock(&lastReceivedMessageLock);
+	OSSpinLockLock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)
 			[lastReceivedMessage release];
 		lastReceivedMessage = m;
 		if (lastReceivedMessage != nil)
 			[lastReceivedMessage retain];
-	pthread_mutex_unlock(&lastReceivedMessageLock);
+	OSSpinLockUnlock(&lastReceivedMessageLock);
 	//	release the message!
 	[m release];
 }
@@ -558,11 +545,11 @@
 		return nil;
 	OSCMessage		*returnMe = nil;
 	
-		pthread_mutex_lock(&lastReceivedMessageLock);
+		OSSpinLockLock(&lastReceivedMessageLock);
 			if (lastReceivedMessage != nil)	{
 				returnMe = [lastReceivedMessage copy];
 			}
-		pthread_mutex_unlock(&lastReceivedMessageLock);
+		OSSpinLockUnlock(&lastReceivedMessageLock);
 		if (returnMe != nil)
 			[returnMe autorelease];
 	
@@ -570,10 +557,10 @@
 }
 - (OSCValue *) lastReceivedValue	{
 	OSCValue		*returnMe = nil;
-	pthread_mutex_lock(&lastReceivedMessageLock);
+	OSSpinLockLock(&lastReceivedMessageLock);
 		returnMe = (lastReceivedMessage==nil) ? nil : [lastReceivedMessage value];
 		returnMe = [returnMe retain];
-	pthread_mutex_unlock(&lastReceivedMessageLock);
+	OSSpinLockUnlock(&lastReceivedMessageLock);
 	return [returnMe autorelease];
 }
 - (id) delegateArray	{

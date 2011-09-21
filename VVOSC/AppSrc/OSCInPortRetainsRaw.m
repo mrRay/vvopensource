@@ -34,6 +34,7 @@
 	for displaying the raw OSC data which has been received.
 */
 - (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l	{
+	//NSLog(@"%s",__func__);
 	NSMutableDictionary		*mutDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	NSMutableString			*mutString = nil;
 	int						bundleIndexCount;
@@ -84,6 +85,7 @@
 	
 	[mutString appendString:@"***************"];
 	while (anObj = [it nextObject])	{
+		//NSLog(@"\t\tanObj is %@",anObj);
 		if ([anObj valueCount] < 2)
 			[mutString appendFormat:@"\r%@ : %@",[anObj address],[anObj value]];
 		else

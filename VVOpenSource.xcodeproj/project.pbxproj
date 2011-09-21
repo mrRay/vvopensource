@@ -181,10 +181,6 @@
 		9628D18A100E8B7C00C3944E /* MyOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D182100E8B7C00C3944E /* MyOSCManager.m */; };
 		9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */; };
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
-		962C1DC213AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		962C1DC313AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
-		962C1DC813AABB82009C2E48 /* NSHostAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 962C1DC013AABB82009C2E48 /* NSHostAdditions.h */; };
-		962C1DC913AABB82009C2E48 /* NSHostAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 962C1DC113AABB82009C2E48 /* NSHostAdditions.m */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
 		9656D90F100F89ED0064EEA6 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -698,8 +694,6 @@
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
 		9628D187100E8B7C00C3944E /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVOSC/AppSrc/AppController.h; sourceTree = "<group>"; };
-		962C1DC013AABB82009C2E48 /* NSHostAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSHostAdditions.h; sourceTree = "<group>"; };
-		962C1DC113AABB82009C2E48 /* NSHostAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSHostAdditions.m; sourceTree = "<group>"; };
 		9652676F108C29AC00A2906D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		9656D900100F89BA0064EEA6 /* MIDITestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDITestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9656D904100F89BA0064EEA6 /* MIDITestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDITestApp-Info.plist"; path = "VVMIDI/AppSrc/MIDITestApp-Info.plist"; sourceTree = "<group>"; };
@@ -962,8 +956,6 @@
 				96ED419810628A5500D8373F /* VVCURLDL.m */,
 				968D939D1072A4EA00FE7527 /* Sprites */,
 				96A9911F108D668C00895DC1 /* VVCrashReporter */,
-				962C1DC013AABB82009C2E48 /* NSHostAdditions.h */,
-				962C1DC113AABB82009C2E48 /* NSHostAdditions.m */,
 			);
 			name = "VVBasics framework";
 			sourceTree = "<group>";
@@ -1177,7 +1169,6 @@
 				5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */,
 				96F2AEFF127106AB00AF86DD /* VVSpriteControl.h in Headers */,
 				96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */,
-				962C1DC213AABB82009C2E48 /* NSHostAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1326,7 +1317,6 @@
 				969E5A3B11FD9602006391BD /* VVCrashReporterDescriptionField.h in Headers */,
 				969E5A3D11FD9605006391BD /* VVCrashReporterEmailField.h in Headers */,
 				969E5A4011FD9608006391BD /* VVCURLDL.h in Headers */,
-				962C1DC813AABB82009C2E48 /* NSHostAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1838,7 +1828,6 @@
 				5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */,
 				96F2AF00127106AB00AF86DD /* VVSpriteControl.m in Sources */,
 				96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */,
-				962C1DC313AABB82009C2E48 /* NSHostAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1992,7 +1981,6 @@
 				969E5A3C11FD9604006391BD /* VVCrashReporterDescriptionField.m in Sources */,
 				969E5A3F11FD9607006391BD /* VVCrashReporterEmailField.m in Sources */,
 				969E5A4111FD9608006391BD /* VVCURLDL.m in Sources */,
-				962C1DC913AABB82009C2E48 /* NSHostAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

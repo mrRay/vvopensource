@@ -27,6 +27,7 @@
 	
 	IBOutlet NSSlider			*floatSlider;
 	IBOutlet NSTextField		*intField;
+	IBOutlet NSTextField		*longLongField;
 	IBOutlet NSColorWell		*colorWell;
 	IBOutlet NSButton			*trueButton;
 	IBOutlet NSButton			*falseButton;
@@ -52,6 +53,8 @@
 - (IBAction) clearButtonUsed:(id)sender;
 
 - (IBAction) logAddressSpace:(id)sender;
+
+- (IBAction) timeTestUsed:(id)sender;
 
 - (IBAction) intTest:(id)sender;
 - (IBAction) floatTest:(id)sender;

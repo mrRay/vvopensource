@@ -1,5 +1,6 @@
 
 #import "OSCPacket.h"
+#import "OSCInPort.h"
 
 
 
@@ -8,6 +9,7 @@
 
 
 + (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p	{
+	//NSLog(@"%s",__func__);
 	//	this stuff prints out the buffer to the console log- it's very, very useful.  probably will be added to the test app at some point.
 	/*
 	printf("******************************\n");
@@ -26,13 +28,16 @@
 		[OSCBundle
 			parseRawBuffer:b
 			ofMaxLength:l
-			toInPort:p];
+			toInPort:p
+			inheritedTimeTag:nil];
 	}
 	else if (buffPtr[0] == '/')	{
-		[OSCMessage
+		OSCMessage		*tmpMsg = [OSCMessage
 			parseRawBuffer:b
-			ofMaxLength:l
-			toInPort:p];
+			ofMaxLength:l];
+		if (tmpMsg != nil)	{
+			[p addMessage:tmpMsg];
+		}
 	}
 }
 + (id) createWithContent:(id)c	{
@@ -42,7 +47,7 @@
 	return [returnMe autorelease];
 }
 - (id) initWithContent:(id)c	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,c);
 	if (c == nil)
 		goto BAIL;
 	

@@ -15,6 +15,15 @@
 			return [NSString stringWithFormat:@"<OSCVal f %f>",*(float *)value];
 		case OSCValString:
 			return [NSString stringWithFormat:@"<OSCVal s \"%@\">",(id)value];
+		case OSCValTimeTag:
+			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
+			return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(long)(*((long long *)value)>>32),(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+		case OSCVal64Int:
+			return [NSString stringWithFormat:@"<OSCVal h: %qi>",*(long long *)value];
+		case OSCValDouble:
+			return [NSString stringWithFormat:@"<OSCVal d: %f>",*(double *)value];
+		case OSCValChar:
+			return [NSString stringWithFormat:@"<OSCVal c: %c>",(char *)value];
 		case OSCValColor:
 			return [NSString stringWithFormat:@"<OSCVal r %@>",(id)value];
 		case OSCValMIDI:
@@ -25,15 +34,11 @@
 			else
 				return [NSString stringWithString:@"<OSCVal F>"];
 		case OSCValNil:
-			return [NSString stringWithFormat:@"<OSCVal nil>"];
+			return [NSString stringWithFormat:@"<OSCVal N>"];
 		case OSCValInfinity:
-			return [NSString stringWithFormat:@"<OSCVal infinity>"];
+			return [NSString stringWithFormat:@"<OSCVal I>"];
 		case OSCValBlob:
-			return [NSString stringWithFormat:@"<OSCVal blob: %@>",value];
-		case OSCValTimeTag:
-			return [NSString stringWithFormat:@"<OSCVal TT: %f>",*(float *)value];
-		case OSCValChar:
-			return [NSString stringWithFormat:@"<OSCVal char: %c>",(char *)value];
+			return [NSString stringWithFormat:@"<OSCVal b: %@>",value];
 	}
 	return [NSString stringWithFormat:@"<OSCValue ?>"];
 }
@@ -48,6 +53,14 @@
 			return [NSString stringWithFormat:@"float %f",*(float *)value];
 		case OSCValString:
 			return [NSString stringWithFormat:@"string \"%@\"",(id)value];
+		case OSCValTimeTag:
+			return [NSString stringWithFormat:@"Time Tag %ld-%ld",(long)(*((long long *)value)>>32),(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+		case OSCVal64Int:
+			return [NSString stringWithFormat:@"64-bit Integer %qi",*(long long *)value];
+		case OSCValDouble:
+			return [NSString stringWithFormat:@"64-bit Float %f",*(double *)value];
+		case OSCValChar:
+			return [NSString stringWithFormat:@"Character \"%c\"",(char *)value];
 		case OSCValColor:
 #if IPHONE
 			return [NSString stringWithFormat:@"color %@",(id)value];
@@ -69,10 +82,6 @@
 			return [NSString stringWithFormat:@"infinity"];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<Data Blob>"];
-		case OSCValTimeTag:
-			return [NSString stringWithFormat:@"Time Tag %f",*(float *)value];
-		case OSCValChar:
-			return [NSString stringWithFormat:@"Character \"%c\"",(char *)value];
 	}
 	return [NSString stringWithFormat:@"?"];
 }
@@ -92,6 +101,30 @@
 }
 + (id) createWithString:(NSString *)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithString:n];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithTimeSeconds:(long)s microSeconds:(long)ms	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithTimeSeconds:s microSeconds:ms];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithLongLong:(long long)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithLongLong:n];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithDouble:(double)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithDouble:n];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithChar:(char)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithChar:n];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
@@ -164,6 +197,56 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
+	[self release];
+	return nil;
+}
+- (id) initWithTimeSeconds:(long)s microSeconds:(long)ms	{
+	if (self = [super init])	{
+		value = malloc(sizeof(long long));
+		*(long long *)value = ((((long long)s)<<32)&(0xFFFFFFFF00000000)) | ((long long)ms);
+		type = OSCValTimeTag;
+		return self;
+		/*
+		value = malloc(sizeof(long)*2);
+		long		*valPtr;
+		valPtr = value;
+		*valPtr = s;
+		valPtr += 1;
+		*valPtr = ms;
+		type = OSCValTimeTag;
+		return self;
+		*/
+	}
+	[self release];
+	return nil;
+}
+- (id) initWithLongLong:(long long)n	{
+	if (self = [super init])	{
+		value = malloc(sizeof(long long));
+		*(long long *)value = n;
+		type = OSCVal64Int;
+		return self;
+	}
+	[self release];
+	return nil;
+}
+- (id) initWithDouble:(double)n	{
+	if (self = [super init])	{
+		value = malloc(sizeof(double));
+		*(double *)value = n;
+		type = OSCValDouble;
+		return self;
+	}
+	[self release];
+	return nil;
+}
+- (id) initWithChar:(char)n	{
+	if (self = [super init])	{
+		value = malloc(sizeof(char));
+		*(char *)value = n;
+		type = OSCValChar;
+		return self;
+	}
 	[self release];
 	return nil;
 }
@@ -253,10 +336,17 @@
 			returnMe = [[OSCValue allocWithZone:z] initWithString:((NSString *)value)];
 			break;
 		case OSCValTimeTag:
-			NSLog(@"\tERR: TRIED TO COPY TIME TAG");
+			//returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:*((long *)(value)) microSeconds:*((long *)(value+1))];
+			[[OSCValue allocWithZone:z] initWithTimeSeconds:(long)(*((long long *)value)>>32) microSeconds:(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+			break;
+		case OSCVal64Int:
+			returnMe = [[OSCValue allocWithZone:z] initWithLongLong:*(long long *)value];
+			break;
+		case OSCValDouble:
+			returnMe = [[OSCValue allocWithZone:z] initWithDouble:*(double *)value];
 			break;
 		case OSCValChar:
-			NSLog(@"\tERR: TRIED TO COPY CHAR");
+			returnMe = [[OSCValue allocWithZone:z] initWithChar:*(char *)value];
 			break;
 		case OSCValColor:
 			returnMe = [[OSCValue allocWithZone:z] initWithColor:((id)value)];
@@ -288,8 +378,13 @@
 - (void) dealloc	{
 	switch (type)	{
 		case OSCValInt:
-		case OSCValBool:
 		case OSCValFloat:
+		case OSCValTimeTag:
+		case OSCVal64Int:
+		case OSCValDouble:
+		case OSCValChar:
+		case OSCValMIDI:
+		case OSCValBool:
 			if (value != nil)
 				free(value);
 			value = nil;
@@ -300,11 +395,6 @@
 				[(id)value release];
 			value = nil;
 			break;
-		case OSCValMIDI:
-			if (value != nil)
-				free(value);
-			value = nil;
-			break;
 		case OSCValNil:
 		case OSCValInfinity:
 			break;
@@ -312,12 +402,6 @@
 			if (value != nil)
 				[(NSData *)value release];
 			value = nil;
-			break;
-		case OSCValTimeTag:
-			NSLog(@"\t\tERR: TRIED TO RELEASE TIME TAG!");
-			break;
-		case OSCValChar:
-			NSLog(@"\t\tERR: TRIED TO RELEASE TIME TAG!");
 			break;
 	}
 	value = nil;
@@ -334,13 +418,44 @@
 - (NSString *) stringValue	{
 	return (NSString *)value;
 }
+- (struct timeval) timeValue	{
+	struct timeval		returnMe;
+	returnMe.tv_sec = (*((long long *)value)>>32);
+	returnMe.tv_usec = ((*(long long *)value) & 0xFFFFFFFF);
+	return returnMe;
+	/*
+	struct timeval		returnMe;
+	long				*longPtr = nil;
+	longPtr = value;
+	returnMe.tv_sec = *longPtr;
+	++longPtr;
+	returnMe.tv_usec = *longPtr;
+	return returnMe;
+	*/
+}
+- (NSDate *) dateValue	{
+	double		tmpTime = 0;
+	tmpTime = (float)(*((long long *)value)>>32);
+	tmpTime += (float)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
+	NSDate		*returnMe = [NSDate dateWithTimeIntervalSinceReferenceDate:tmpTime];
+	return returnMe;
+}
+- (long long) longLongValue	{
+	return *(long long *)value;
+}
+- (double) doubleValue	{
+	return *(double *)value;
+}
+- (char) charValue	{
+	return *(char *)value;
+}
 - (id) colorValue	{
 	return (id)value;
 }
 - (Byte) midiPort	{
 	return ((Byte *)value)[0];
 }
-- (VVOSCMIDIStatus) midiStatus	{
+- (OSCMIDIType) midiStatus	{
 	return ((Byte *)value)[1];
 }
 - (Byte) midiData1	{
@@ -367,6 +482,27 @@
 		case OSCValFloat:
 			returnMe = *(float *)value;
 			break;
+		case OSCValString:
+			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
+			//return ROUNDUP4(([(NSString *)value length] + 1));
+			break;
+		case OSCValTimeTag:
+			returnMe = (float)(*((long long *)value)>>32);
+			returnMe += (float)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
+			/*
+			returnMe = *((long *)(value));
+			returnMe += *((long *)(value+1));
+			*/
+			break;
+		case OSCVal64Int:
+			returnMe = (float)(*(long long *)value);
+			break;
+		case OSCValDouble:
+			returnMe = (double)(*(double *)value);
+			break;
+		case OSCValChar:
+			returnMe = (float)(*(char *)value);
+			break;
 		case OSCValColor:
 #if IPHONE
 			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
@@ -377,45 +513,41 @@
 			break;
 		case OSCValMIDI:
 			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
-			switch ((VVOSCMIDIStatus)(((Byte *)value)[1]))	{
-				case VVOSCMIDINoteOffVal:
-				case VVOSCMIDIBeginSysexDumpVal:
-				case VVOSCMIDIUndefinedCommon1Val:
-				case VVOSCMIDIUndefinedCommon2Val:
-				case VVOSCMIDIEndSysexDumpVal:
+			switch ((OSCMIDIType)(((Byte *)value)[1]))	{
+				case OSCMIDINoteOffVal:
+				case OSCMIDIBeginSysexDumpVal:
+				case OSCMIDIUndefinedCommon1Val:
+				case OSCMIDIUndefinedCommon2Val:
+				case OSCMIDIEndSysexDumpVal:
 					returnMe = (float)0.0;
 					break;
-				case VVOSCMIDINoteOnVal:
-				case VVOSCMIDIAfterTouchVal:
-				case VVOSCMIDIControlChangeVal:
+				case OSCMIDINoteOnVal:
+				case OSCMIDIAfterTouchVal:
+				case OSCMIDIControlChangeVal:
 					returnMe = ((float)([self midiData2]))/(float)127.0;
 					break;
-				case VVOSCMIDIProgramChangeVal:
-				case VVOSCMIDIChannelPressureVal:
-				case VVOSCMIDIMTCQuarterFrameVal:
-				case VVOSCMIDISongSelectVal:
+				case OSCMIDIProgramChangeVal:
+				case OSCMIDIChannelPressureVal:
+				case OSCMIDIMTCQuarterFrameVal:
+				case OSCMIDISongSelectVal:
 					returnMe = ((float)([self midiData1]))/(float)127.0;
 					break;
-				case VVOSCMIDIPitchWheelVal:
-				case VVOSCMIDISongPosPointerVal:
+				case OSCMIDIPitchWheelVal:
+				case OSCMIDISongPosPointerVal:
 					returnMe = ((float)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/(float)16383.0;
 					break;
-				case VVOSCMIDITuneRequestVal:
-				case VVOSCMIDIClockVal:
-				case VVOSCMIDITickVal:
-				case VVOSCMIDIStartVal:
-				case VVOSCMIDIContinueVal:
-				case VVOSCMIDIStopVal:
-				case VVOSCMIDIUndefinedRealtime1Val:
-				case VVOSCMIDIActiveSenseVal:
-				case VVOSCMIDIResetVal:
+				case OSCMIDITuneRequestVal:
+				case OSCMIDIClockVal:
+				case OSCMIDITickVal:
+				case OSCMIDIStartVal:
+				case OSCMIDIContinueVal:
+				case OSCMIDIStopVal:
+				case OSCMIDIUndefinedRealtime1Val:
+				case OSCMIDIActiveSenseVal:
+				case OSCMIDIResetVal:
 					returnMe = (float)1.0;
 					break;
 			}
-			break;
-		case OSCValString:
-			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
-			//return ROUNDUP4(([(NSString *)value length] + 1));
 			break;
 		case OSCValBool:
 			returnMe = (*(BOOL *)value) ? (float)1.0 : (float)0.0;
@@ -429,9 +561,6 @@
 		case OSCValBlob:
 			returnMe = (float)1.0;
 			break;
-		case OSCValTimeTag:
-		case OSCValChar:
-			break;
 	}
 	return returnMe;
 }
@@ -443,12 +572,20 @@
 - (long) bufferLength	{
 	//NSLog(@"%s",__func__);
 	switch (type)	{
+		case OSCValTimeTag:
+			return 8;
+			break;
 		case OSCValInt:
 		case OSCValFloat:
+		case OSCValChar:
 		case OSCValColor:
 		case OSCValMIDI:
 			return 4;
-		break;
+			break;
+		case OSCVal64Int:
+		case OSCValDouble:
+			return 8;
+			break;
 		case OSCValString:
 			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
 			return ROUNDUP4((strlen([(NSString *)value UTF8String]) + 1));
@@ -464,9 +601,6 @@
 			//	BLOBS DON'T REQUIRE A NULL CHARACTER AFTER THEM!
 			return ROUNDUP4((4 + [(NSData *)value length]));
 			break;
-		case OSCValTimeTag:
-		case OSCValChar:
-			break;
 	}
 	return 0;
 }
@@ -475,7 +609,7 @@
 	
 	int					i;
 	long				tmpLong = 0;
-	float				tmpFloat = (float)0.0;
+	//float				tmpFloat = (float)0.0;
 	unsigned char		*charPtr = NULL;
 	void				*voidPtr = NULL;
 	unsigned char		tmpChar = 0;
@@ -486,6 +620,13 @@
 	
 	switch (type)	{
 		case OSCValInt:
+			//*((uint32_t *)(b+*d)) = CFSwapInt32HostToBig(*((uint32_t *)(value)));
+			*((unsigned int *)(b+*d)) = NSSwapHostIntToBig(*((unsigned int *)(value)));
+			*d += 4;
+			
+			b[*t] = 'i';
+			++*t;
+			/*
 			tmpLong = *(int *)value;
 			tmpLong = htonl((int)tmpLong);
 			
@@ -495,8 +636,15 @@
 			
 			b[*t] = 'i';
 			++*t;
+			*/
 			break;
 		case OSCValFloat:
+			*((NSSwappedFloat *)(b+*d)) = NSSwapHostFloatToBig(*((float *)(value)));
+			*d += 4;
+			
+			b[*t] = 'f';
+			++*t;
+			/*
 			tmpFloat = *(float *)value;
 			tmpLong = htonl(*((int *)(&tmpFloat)));
 			strncpy((char *)(b+*d), (char *)(&tmpLong), 4);
@@ -504,6 +652,7 @@
 			
 			b[*t] = 'f';
 			++*t;
+			*/
 			break;
 		case OSCValString:
 			tmpLong = strlen([(NSString *)value UTF8String]);
@@ -514,6 +663,37 @@
 			
 			b[*t] = 's';
 			++*t;
+			break;
+		case OSCValTimeTag:
+			*((long *)(b+*d)) = NSSwapHostLongToBig((long)(*((long long *)value)>>32));
+			*d += 4;
+			*((long *)(b+*d)) = NSSwapHostLongToBig((long)((*(long long *)value) & 0xFFFFFFFF));
+			*d += 4;
+			/*
+			*((long *)(b+*d)) = NSSwapHostLongToBig(*((long *)(value)));
+			*d += 4;
+			*((long *)(b+*d)) = NSSwapHostLongToBig(*((long *)(value+1)));
+			*d += 4;
+			*/
+			b[*t] = 't';
+			++*t;
+			break;
+		case OSCVal64Int:
+			*((long long *)(b+*d)) = NSSwapHostLongLongToBig(*((long long *)(value)));
+			*d += 8;
+			
+			b[*t] = 'h';
+			++*t;
+			break;
+		case OSCValDouble:
+			*((NSSwappedDouble *)(b+*d)) = NSSwapHostDoubleToBig(*((double *)(value)));
+			*d += 8;
+			
+			b[*t] = 'd';
+			++*t;
+			break;
+		case OSCValChar:
+			
 			break;
 		case OSCValColor:
 #if IPHONE
@@ -553,8 +733,12 @@
 			++*t;
 			break;
 		case OSCValNil:
+			b[*t] = 'N';
+			++*t;
 			break;
 		case OSCValInfinity:
+			b[*t] = 'I';
+			++*t;
 			break;
 		case OSCValBlob:
 			//	calculate the size of the blob, write it to the buffer
@@ -571,9 +755,6 @@
 			*d = ROUNDUP4(*d);
 			b[*t] = 'b';
 			++*t;
-			break;
-		case OSCValTimeTag:
-		case OSCValChar:
 			break;
 	}
 	

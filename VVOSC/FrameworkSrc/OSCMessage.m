@@ -10,24 +10,24 @@
 
 - (NSString *) description	{
 	if (valueCount < 2)
-		return [NSString stringWithFormat:@"<OSCMessage: %@\n%@\n>",address,value];
+		return [NSString stringWithFormat:@"<OSCMessage: %@, %@>",address,value];
 	else
 		return [NSString stringWithFormat:@"<OSCMessage: %@-%@>",address,valueArray];
 }
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p	{
-	//NSLog(@"%s ... %s, %ld -> %@",__func__,b,l,p);
-	if ((b == nil) || (l == 0) || (p == NULL))
-		return;
++ (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l	{
+	//NSLog(@"%s ... %s, %ld",__func__,b,l);
+	if ((b == nil) || (l == 0))
+		return nil;
 	
-	NSString		*address = nil;
+	OSCMessage			*returnMe = nil;
+	NSString			*address = nil;
 	long				i, j;
 	long				tmpIndex = 0;
 	long				tmpInt;
-	float			*tmpFloatPtr;
-	long			tmpLong;
+	long				tmpLong;
 	long				msgTypeStartIndex = -1;
 	long				msgTypeEndIndex = -1;
-	NSData			*tmpData = nil;
+	NSData				*tmpData = nil;
 	
 	
 	
@@ -46,7 +46,7 @@
 	//	if i couldn't make the address string for any reason, return
 	if (address == nil)	{
 		NSLog(@"\t\terr: couldn't parse message address");
-		return;
+		return nil;
 	}
 	//	"tmpIndex" is the offset i'm currently reading from- so before i go further i
 	//	have to account for any padding
@@ -63,7 +63,7 @@
 	//	if the item at the type tag string start isn't a comma, return immediately
 	if (b[msgTypeStartIndex] != ',')	{
 		NSLog(@"\t\terr: msg type tag string not present");
-		return;
+		return nil;
 	}
 	tmpIndex = -1;
 	//	there's guaranteed to be a '\0' at the end of the type tag string- find it
@@ -74,7 +74,7 @@
 	//	if i couldn't find the '\0', return
 	if (tmpIndex == -1)	{
 		NSLog(@"\t\terr: couldn't find the msg type end index");
-		return;
+		return nil;
 	}
 	msgTypeEndIndex = tmpIndex;
 	//	"tmpIndex" is the offset i'm currently reading from- so before i go further i
@@ -90,18 +90,23 @@
 				now actually parse the contents of the message
 	*/
 	
-	OSCMessage		*msg = [OSCMessage createWithAddress:address];
+	returnMe = [OSCMessage createWithAddress:address];
 	OSCValue		*oscValue = nil;
 	
-	if (msg == nil)	{
+	if (returnMe == nil)	{
 		NSLog(@"\t\terr: msg was nil %s",__func__);
-		return;
+		return nil;
 	}
 	//	run through the type arguments (,ffis etc.)- for each type arg, pull data from the buffer
 	for (i=msgTypeStartIndex; i<msgTypeEndIndex; ++i)	{
 		//	"tmpIndex" is the offset in "b" i'm currently reading data for this type from!
 		switch(b[i])	{
 			case 'i':			//	int32
+				//oscValue = [OSCValue createWithInt:CFSwapInt32BigToHost(*((uint32_t *)(b+tmpIndex)))];
+				oscValue = [OSCValue createWithInt:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
+				tmpIndex += 4;;
+				/*
 				tmpLong = 0;
 				for(j=0; j<4; ++j)	{
 					tmpInt = b[tmpIndex+j];
@@ -109,15 +114,21 @@
 				}
 				tmpInt = ntohl((int)tmpLong);
 				oscValue = [OSCValue createWithInt:(int)tmpInt];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				tmpIndex = tmpIndex + 4;
+				*/
 				break;
 			case 'f':			//	float32
+				oscValue = [OSCValue createWithFloat:NSSwapBigFloatToHost(*((NSSwappedFloat *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
+				tmpIndex += 4;
+				/*
 				tmpInt = ntohl(*((int *)(b+tmpIndex)));
 				tmpFloatPtr = (float *)&tmpInt;
 				oscValue = [OSCValue createWithFloat:*tmpFloatPtr];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				tmpIndex = tmpIndex + 4;
+				*/
 				break;
 			case 's':			//	OSC-string
 			case 'S':			//	alternate type represented as an OSC-string
@@ -135,7 +146,7 @@
 				//	of course, this means that i don't need to check for the modulus before applying it.
 				
 				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSUTF8StringEncoding]];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				
 				//	beginning of this string (tmpIndex), plus the length of this string (tmpInt - tmpIndex), plus 1 (the null), then round that up to the nearest 4 bytes
 				//	this condenses down to....
@@ -155,22 +166,30 @@
 				//	now that i know how big the blob is, create an NSData from the buffer
 				tmpData = [NSData dataWithBytes:(void *)(b+tmpIndex) length:tmpInt];
 				oscValue = [OSCValue createWithNSDataBlob:tmpData];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				
 				//	update tmpIndex, make sure it's an even multiple of 4
 				tmpIndex = tmpIndex + tmpInt;
 				tmpIndex = ROUNDUP4(tmpIndex);
 				break;
 			case 'h':			//	64 bit big-endian two's complement integer
-				tmpIndex = tmpIndex + 8;
+				oscValue = [OSCValue createWithLongLong:NSSwapBigLongLongToHost(*((long long *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
+				tmpIndex += 8;
 				break;
 			case 't':			//	OSC-timetag (64-bit/8 byte)
+				oscValue = [OSCValue
+					createWithTimeSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex)))
+					microSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex+4)))];
+				[returnMe addValue:oscValue];
 				tmpIndex = tmpIndex + 8;
 				break;
 			case 'd':			//	64 bit ("double") IEEE 754 floating point number
+				oscValue = [OSCValue createWithDouble:NSSwapBigDoubleToHost(*((NSSwappedDouble *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
 				tmpIndex = tmpIndex + 8;
 				break;
-			case 'c':			//	an ascii character, sent as 32 bits
+			case 'c':			//	an ascii character, sent as 32 bits- NOT SUPPORTED
 				tmpIndex = tmpIndex + 4;
 				break;
 			case 'r':			//	32 bit RGBA color
@@ -183,7 +202,7 @@
 						green:b[tmpIndex+1]/255.0
 						blue:b[tmpIndex+2]/255.0
 						alpha:b[tmpIndex+3]/255.0]];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 #else
 				oscValue = [OSCValue
 					createWithColor:[NSColor
@@ -191,7 +210,7 @@
 						green:b[tmpIndex+1]/255.0
 						blue:b[tmpIndex+2]/255.0
 						alpha:b[tmpIndex+3]/255.0]];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 #endif
 				tmpIndex = tmpIndex + 4;
 				break;
@@ -201,17 +220,17 @@
 					status:b[tmpIndex+1]
 					data1:b[tmpIndex+2]
 					data2:b[tmpIndex+3]];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				
 				tmpIndex = tmpIndex + 4;
 				break;
 			case 'T':			//	True.  no bytes are allocated in the argument data!
 				oscValue = [OSCValue createWithBool:YES];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				break;
 			case 'F':			//	False.  no bytes are allocated in the argument data!
 				oscValue = [OSCValue createWithBool:NO];
-				[msg addValue:oscValue];
+				[returnMe addValue:oscValue];
 				break;
 			case 'N':			//	Nil.  no bytes are allocated in the argument data!
 				break;
@@ -219,10 +238,8 @@
 				break;
 		}
 	}
-	
-	//	now that i've assembed the message, send it to the in port
-	[p addValue:msg toAddressPath:address];
-	
+	//	return the msg- the bundle that parsed it will add an execution date (if appropriate) and send it to the port
+	return returnMe;
 }
 + (id) createWithAddress:(NSString *)a	{
 	OSCMessage		*returnMe = [[OSCMessage alloc] initWithAddress:a];
@@ -249,6 +266,7 @@
 		valueCount = 0;
 		value = nil;
 		valueArray = nil;
+		timeTag = nil;
 		return self;
 	}
 	
@@ -280,6 +298,10 @@
 		[valueArray release];
 	valueArray = nil;
 	valueCount = 0;
+	if (timeTag != nil)	{
+		[timeTag release];
+		timeTag = nil;
+	}
 	[super dealloc];
 }
 
@@ -380,6 +402,18 @@
 }
 - (NSMutableArray *) valueArray	{
 	return valueArray;
+}
+- (NSDate *) timeTag	{
+	return timeTag;
+}
+- (void) setTimeTag:(NSDate *)n	{
+	if (timeTag != nil)	{
+		[timeTag release];
+		timeTag = nil;
+	}
+	if (n != nil)	{
+		timeTag = [n retain];
+	}
 }
 
 

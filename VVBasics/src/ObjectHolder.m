@@ -24,6 +24,15 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
+	NSException		*exc = nil;
+	exc = [NSException
+		exceptionWithName:@"TestName"
+		reason:@"Test Reason"
+		userInfo:nil];
+	if (exc == nil)
+		NSLog(@"\t\terr: couldn't make the exception!");
+	else
+		[exc raise];
 	[self release];
 	return nil;
 }

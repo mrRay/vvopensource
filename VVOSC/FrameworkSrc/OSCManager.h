@@ -14,7 +14,7 @@
 
 ///	Main VVOSC class- manages in & out port creation, zero configuration networking (bonjour/zeroconf)
 /*!
-The OSCManager should be the "main" class that you're working with: it passes any received OSC data to its delegate (your app), creates/deletes inputs and outputs, automatically creates outputs for any osc destinations detected via bonjour, handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.
+The OSCManager will probably be the main class that you're working with: it creates/deletes inputs (which receive data) and outputs (which send data), passes any OSC data received to its delegate (your application), optionally handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.
 
 Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports are running a loop which checks a socket for data received since the last loop.  By default, the OSCInPort's delegate is the OSCManager which created it.  Every time the loop runs, it passes the received data off to its delegate (the manager) as the raw address/value pairs in the order they're received.  When the OSCManager receives data from its in port it immediately passes the received data to its delegate, which should respond to one of the following methods (referred to as the 'OSCDelegateProtocol'):
 
@@ -33,13 +33,16 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 
 @interface OSCManager : NSObject {
-	MutLockArray			*inPortArray;	//	MutLockArray.  Array of OSCInPorts- do not access without using the lock!
-	MutLockArray			*outPortArray;	//	MutLockArray.  Array of OSCOutPorts- do not access without using the lock!
+	MutLockArray			*inPortArray;	//	Array of OSCInPorts in a locking array for threadsafe access
+	MutLockArray			*outPortArray;	//	Array of OSCOutPorts in a locking array for threadsafe access
 	
 	id						delegate;		//!<If there's a delegate, it will be notified when OSC messages are received
 	
 	OSCZeroConfManager		*zeroConfManager;	//!<Creates OSCOutPorts for any OSC destinations detected via bonjour/zeroconf
 }
+
+//	used to generate the IP addresses for this host
++ (NSArray *) hostIPv4Addresses;
 
 ///	Deletes all input ports
 - (void) deleteAllInputs;

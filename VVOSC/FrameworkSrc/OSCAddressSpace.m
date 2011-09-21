@@ -6,10 +6,15 @@
 
 
 
+id				_mainAddressSpace;
+
+
+
+
 @implementation OSCAddressSpace
 
 
-+ (OSCAddressSpace *) mainSpace	{
++ (id) mainAddressSpace	{
 	return _mainAddressSpace;
 }
 + (void) refreshMenu	{
@@ -97,15 +102,23 @@
 	//	autorelease the menu and return it
 	return (returnMe == nil) ? nil : [returnMe autorelease];
 }
-
 #endif
 + (void) load	{
 	//NSLog(@"%s",__func__);
-	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-	_mainAddressSpace = [[OSCAddressSpace alloc] init];
-	[_mainAddressSpace setAddressSpace:_mainAddressSpace];
-	[pool release];
+	_mainAddressSpace = nil;
+	//NSLog(@"\t\t_mainAddressSpace is %@",_mainAddressSpace);
 }
++ (void) initialize	{
+	//NSLog(@"%s",__func__);
+	if (_mainAddressSpace != nil)
+		return;
+	//NSLog(@"\t\tallocating main address space!");
+	_mainAddressSpace = [[OSCAddressSpace alloc] init];
+	//NSLog(@"\t\t_mainAddressSpace is %@",_mainAddressSpace);
+}
+
+
+
 
 - (NSString *) description	{
 	NSMutableString		*mutString = [NSMutableString stringWithCapacity:0];
@@ -114,21 +127,11 @@
 	if ((nodeContents != nil) && ([nodeContents count] > 0))	{
 		[nodeContents rdlock];
 		for (OSCNode *nodePtr in [nodeContents array])	{
-			[nodePtr logDescriptionToString:mutString tabDepth:0];
+			[nodePtr _logDescriptionToString:mutString tabDepth:0];
 			[mutString appendString:@"\n"];
 		}
-		/*
-		NSEnumerator	*it = [nodeContents objectEnumerator];
-		OSCNode			*nodePtr;
-		while (nodePtr = [it nextObject])	{
-			[nodePtr logDescriptionToString:mutString tabDepth:0];
-			[mutString appendString:@"\n"];
-		}
-		[nodeContents unlock];
-		*/
 	}
 	
-	//[self logDescriptionToString:mutString tabDepth:0];
 	return mutString;
 }
 - (id) init	{
@@ -155,8 +158,8 @@
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	if (_mainAddressSpace == self)
-		_mainAddressSpace = nil;
+	//if (_mainAddressSpace == self)
+	//	_mainAddressSpace = nil;
 	[super dealloc];
 }
 
@@ -233,11 +236,11 @@
 	//	retain the node i'm about to insert so it doesn't get released while this is happening
 	if (n != nil)
 		[n retain];
-	//	make sure the node i'm moving has been removed from its parent
+	//	make sure the node i'm moving has been removed from its parent.  that's removed, NOT RELEASED!
 	if (n != nil)
 		beforeParent = [n parentNode];
 	if (beforeParent != nil)
-		[beforeParent removeNode:n];
+		[beforeParent removeLocalNode:n];
 	//	make sure the node's got the proper name (it could be different from the passed array's last object)
 	if (n != nil)
 		[n _setNodeName:[a lastObject]];
@@ -256,7 +259,7 @@
 		if (n != nil)	{
 			//	make the node, and simply add the passed node to it (don't have to merge delegates)
 			afterParent = [self findNodeForAddressArray:parentAddressArray createIfMissing:YES];
-			[afterParent addNode:n];
+			[afterParent addLocalNode:n];
 		}
 		//	else if i passed a nil node (if i'm deleting a node), i'm done- the parent doesn't even exist
 	}
@@ -271,14 +274,14 @@
 				[preExistingNode addDelegatesFromNode:n];
 			//	else if i'm passing a nil node (deleting a node), delete the pre-existing node
 			else	{
-				[afterParent deleteNode:preExistingNode];
+				[afterParent deleteLocalNode:preExistingNode];
 			}
 		}
 		//	else if there isn't a pre-existing node
 		else	{
 			//	if i'm passing a node, add the node to the parent
 			if (n != nil)
-				[afterParent addNode:n];
+				[afterParent addLocalNode:n];
 			//	if i was passing a nil node (deleting a node), i'd be deleting the pre-existing (so i'm done)
 		}
 	}

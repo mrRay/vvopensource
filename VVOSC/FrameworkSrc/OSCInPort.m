@@ -27,19 +27,14 @@
 	return [self initWithPort:p labelled:nil];
 }
 - (id) initWithPort:(unsigned short)p labelled:(NSString *)l	{
-	pthread_mutexattr_t		attr;
-	
 	if (self = [super init])	{
 		deleted = NO;
 		port = p;
 		
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-		pthread_mutex_init(&lock, &attr);
-		pthread_mutexattr_destroy(&attr);
+		lock = OS_SPINLOCK_INIT;
 		
 		threadLooper = [[VVThreadLoop alloc]
-			initWithTimeInterval:0.03
+			initWithTimeInterval:1.0/30.0
 			target:self
 			selector:@selector(OSCThreadProc)];
 		
@@ -81,7 +76,6 @@
 		[portLabel release];
 	portLabel = nil;
 	
-	pthread_mutex_destroy(&lock);
 	[super dealloc];
 }
 - (void) prepareToBeDeleted	{
@@ -234,10 +228,10 @@
 	if ([scratchArray count] > 0)	{
 		NSArray				*tmpArray = nil;
 		
-		pthread_mutex_lock(&lock);
+		OSSpinLockLock(&lock);
 			tmpArray = [NSArray arrayWithArray:scratchArray];
 			[scratchArray removeAllObjects];
-		pthread_mutex_unlock(&lock);
+		OSSpinLockUnlock(&lock);
 		
 		[self handleScratchArray:tmpArray];
 	}
@@ -253,7 +247,7 @@
 		toInPort:self];
 }
 /*!
-	if you don't want to bother with delegates (or you're not using OSCManager), you can override this method in your subclass of OSCInPort to receive an array of AddressValPair objects.  by default, this method just calls "receivedOSCMessage:" with the in port's delegate for each of the items in the passed array.
+	if you don't want to bother with delegates (or you're not using OSCManager), you can override this method in your subclass of OSCInPort to receive an array of OSCMessage objects.  by default, this method just calls "receivedOSCMessage:" with the in port's delegate for each of the items in the passed array.
 */
 - (void) handleScratchArray:(NSArray *)a	{
 	//NSLog(@"%s",__func__);
@@ -273,15 +267,15 @@
 /*
 	this method exists so received OSCMessage objects can be added to my scratch dict and scratch array for output.  you should never need to call this method!
 */
-- (void) addValue:(OSCMessage *)val toAddressPath:(NSString *)p	{
+- (void) addMessage:(OSCMessage *)val	{
 	//NSLog(@"%s ... %@",__func__,val);
-	if ((val == nil) || (p == nil))
+	if (val == nil)
 		return;
 	
-	pthread_mutex_lock(&lock);
+	OSSpinLockLock(&lock);
 		//	add the osc path msg to the scratch array
 		[scratchArray addObject:val];
-	pthread_mutex_unlock(&lock);
+	OSSpinLockUnlock(&lock);
 }
 
 - (unsigned short) port	{
@@ -298,10 +292,10 @@
 	close(sock);
 	sock = -1;
 	//	clear out the scratch dict/array
-	pthread_mutex_lock(&lock);
+	OSSpinLockLock(&lock);
 		if (scratchArray != nil)
 			[scratchArray removeAllObjects];
-	pthread_mutex_unlock(&lock);
+	OSSpinLockUnlock(&lock);
 	//	set up with the new port
 	bound = NO;
 	port = n;
@@ -314,10 +308,10 @@
 		close(sock);
 		sock = -1;
 		//	clear out the scratch dict
-		pthread_mutex_lock(&lock);
+		OSSpinLockLock(&lock);
 			if (scratchArray != nil)
 				[scratchArray removeAllObjects];
-		pthread_mutex_unlock(&lock);
+		OSSpinLockUnlock(&lock);
 		//	set up with the old port
 		bound = NO;
 		port = oldPort;

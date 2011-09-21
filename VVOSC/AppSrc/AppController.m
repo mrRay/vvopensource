@@ -43,8 +43,11 @@
 	
 	
 	//	populate the IP field string with  this machine's IP and the port of my dedicated input
-	ipFieldString = [NSString stringWithFormat:@"%@, port",[[self ipAddressArray] objectAtIndex:0]];
-	[receivingAddressField setStringValue:ipFieldString];
+	NSArray			*ips = [self ipAddressArray];
+	if (ips!=nil && [ips count]>0)	{
+		ipFieldString = [NSString stringWithFormat:@"%@, port",[[self ipAddressArray] objectAtIndex:0]];
+		[receivingAddressField setStringValue:ipFieldString];
+	}
 	//	populate the receiving port field with the in port's port
 	[receivingPortField setIntValue:[inPort port]];
 	//	populate the sending port field from the current manual out port
@@ -191,6 +194,11 @@
 	else if (sender == intField)	{
 		[msg addInt:[intField intValue]];
 	}
+	else if (sender == longLongField)	{
+		OSCValue		*tmpVal = [OSCValue createWithLongLong:[[sender stringValue] longLongValue]];
+		if (tmpVal != nil)
+			[msg addValue:tmpVal];
+	}
 	else if (sender == colorWell)	{
 		[msg addColor:[colorWell color]];
 	}
@@ -236,6 +244,26 @@
 
 - (IBAction) logAddressSpace:(id)sender	{
 	//NSLog(@"%@",[manager addressSpace]);
+}
+- (IBAction) timeTestUsed:(id)sender	{
+	//NSLog(@"%s",__func__);
+	struct timeval	currentTime;
+	gettimeofday(&currentTime,NULL);
+	OSCValue		*val = [OSCValue createWithTimeSeconds:currentTime.tv_sec microSeconds:currentTime.tv_usec];
+	if (val == nil)
+		return;
+	OSCMessage		*msg = [OSCMessage createWithAddress:@"/test/address"];
+	if (msg == nil)
+		return;
+	[msg addValue:val];
+	//NSLog(@"\t\tmsg is %@",msg);
+	OSCPacket		*pack = [OSCPacket createWithContent:msg];
+	if (pack == nil)
+		return;
+	//NSLog(@"\t\tpack is %@",pack);
+	//NSLog(@"\t\t...should be sending the time test");
+	//NSLog(@"\t\tmanualOutPort is %@",manualOutPort);
+	[manualOutPort sendThisPacket:pack];
 }
 
 
@@ -521,7 +549,7 @@
 				[returnMe addObject:addressPtr];
 		}
 	}
-	//NSLog(@"\t\t%@",returnMe);
+	//NSLog(@"\t\treturning %@",returnMe);
 	return returnMe;
 }
 

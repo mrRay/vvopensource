@@ -9,19 +9,21 @@
 
 
 
+
 ///	Corresponds to an OSC message: contains zero or more values, and the address path the values have to get sent to.
 /*!
 According to the OSC spec, a message consists of an address path (where the message should be sent) and zero or more arguments.  An OSCMessage must be created with an address path- once the OSCMessage exists, you may add as many arguments to it as you'd like.
 */
 @interface OSCMessage : NSObject <NSCopying> {
 	NSString			*address;	//!<The address this message is being sent to
-	int					valueCount;	//!<The # of values in this message
+	int					valueCount;	//!<The number of values in this message
 	OSCValue			*value;	//!<Only used if 'valueCount' is < 2
 	NSMutableArray		*valueArray;//!<Only used if 'valCount' is > 1
-
+	
+	NSDate				*timeTag;	//!<Nil, or the NSDate at which this message should be executed.  If nil, assume immediate execution.
 }
 
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p;
++ (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l;
 ///	Creates & returns an auto-released instance of OSCMessage which will be sent to the passed path
 + (id) createWithAddress:(NSString *)a;
 - (id) initWithAddress:(NSString *)a;
@@ -57,6 +59,8 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (NSString *) address;
 - (int) valueCount;
 - (NSMutableArray *) valueArray;
+- (NSDate *) timeTag;
+- (void) setTimeTag:(NSDate *)n;
 
 - (long) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b;

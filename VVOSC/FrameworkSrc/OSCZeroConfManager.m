@@ -101,13 +101,9 @@
 	//	assemble an array with strings of the ip addresses this machine responds to
 	NSArray				*IPAddressArray = nil;
 	
-#if IPHONE
-	
-#else
-	IPAddressArray = [[NSHost currentHost] IPv4Addresses];
+	IPAddressArray = [OSCManager hostIPv4Addresses];
 	if (IPAddressArray == nil)
 		return;
-#endif
 	
 	//	if my osc manager publishes an input with the same name as the matching service,
 	//	check to see if the port of the resolved service matches the input's port, bail if it does

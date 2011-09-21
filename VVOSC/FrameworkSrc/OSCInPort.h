@@ -10,7 +10,7 @@
 //#import <sys/socket.h>
 #import <netinet/in.h>
 #import <unistd.h>
-#import <pthread.h>
+#import <libkern/OSAtomic.h>
 #import "OSCPacket.h"
 #import "OSCBundle.h"
 #import "OSCMessage.h"
@@ -20,9 +20,9 @@
 
 ///	OSCInPort handles everything needed to receive OSC data on a given port
 /*!
-Typically, instances of OSCInPort will be created by the OSCManager- you should never have to explicitly create or release an OSCInPort (or OSCOutPort).  each OSCInPort is running in its own separate thread- so make sure anything called as a result of received OSC input is thread-safe!
+You should never create or destroy an instance of this class manually.  OSCInPort instances should be created/destroyed by the OSCManager.
 
-When OSCInPort receives data, it gets parsed and passed to the in port's delegate as a series of OSCMessages consisting of an address path and an OSCValue.  By default, the inport's delegate is the manager which created it- and by default, managers pass this data on to *their* delegates (your objects/app).
+Each OSCInPort is running in its own separate thread- so make sure anything called as a result of received OSC input is thread-safe!  When OSCInPort receives data, it gets parsed and passed to the in port's delegate as a series of OSCMessages consisting of an address path and an OSCValue.  By default, the inport's delegate is the manager which created it- and by default, managers pass this data on to *their* delegates (your objects/app).
 
 the documentation here only covers the basics, the header file for this class is small and heavily commented if you want to know more because you're heavily customizing OSCInPort.
 */
@@ -34,7 +34,7 @@ the documentation here only covers the basics, the header file for this class is
 	unsigned short			port;		//	the port number i'm receiving from
 	unsigned char			buf[8192];	//	the socket gets data and dumps it here immediately
 	
-	pthread_mutex_t			lock;
+	OSSpinLock				lock;
 	VVThreadLoop			*threadLooper;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
@@ -44,9 +44,9 @@ the documentation here only covers the basics, the header file for this class is
 	id						delegate;	//!<my delegate gets notified of incoming messages
 }
 
-///	Creates and returns an auto-released OSCInPort for the given port (or nil if the port's busy)
+//	Creates and returns an auto-released OSCInPort for the given port (or nil if the port's busy)
 + (id) createWithPort:(unsigned short)p;
-///	Creates and returns an auto-released OSCInPort for the given port and label (or nil if the port's busy)
+//	Creates and returns an auto-released OSCInPort for the given port and label (or nil if the port's busy)
 + (id) createWithPort:(unsigned short)p labelled:(NSString *)n;
 - (id) initWithPort:(unsigned short)p;
 - (id) initWithPort:(unsigned short)p labelled:(NSString *)n;
@@ -62,10 +62,10 @@ the documentation here only covers the basics, the header file for this class is
 - (void) OSCThreadProc;
 - (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l;
 
-///	called internally by this OSCInPort, passed an array of OSCMessage objects corresponding to the serially received data
+///	called internally by this OSCInPort, passed an array of OSCMessage objects corresponding to the serially received data.  useful if you're subclassing OSCInPort.
 - (void) handleScratchArray:(NSArray *)a;
-
-- (void) addValue:(OSCMessage *)val toAddressPath:(NSString *)p;
+///	called internally as messages are parsed.  useful if you're subclassing OSCInPort.
+- (void) addMessage:(OSCMessage *)val;
 
 - (unsigned short) port;
 - (void) setPort:(unsigned short)n;
@@ -76,7 +76,7 @@ the documentation here only covers the basics, the header file for this class is
 
 ///	returns the delegate (default is the OSCManager which created me).
 - (id) delegate;
-///	sets the delegate- the delegate is NOT retained!
+///	sets the delegate- the delegate is NOT retained!  if the delegate gets released before the port, make sure you set this to nil!
 - (void) setDelegate:(id)n;
 ///	sets the frequency of the callback which checks for OSC input
 - (void) setInterval:(double)n;

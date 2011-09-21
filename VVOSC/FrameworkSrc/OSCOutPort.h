@@ -17,7 +17,7 @@
 
 ///	OSCOutPort handles everything needed to send OSC data to a given address
 /*!
-OSCOutPorts are created by the OSCManager- you should never have to explicitly handle their creation or destruction.
+You should never create or destroy an instance of this class manually.  OSCOutPort instances should be created/destroyed by the OSCManager.
 
 the documentation here only covers the basics, the header file for this class is small and heavily commented if you want to know more because you're heavily customizing OSCOutPort.
 */
