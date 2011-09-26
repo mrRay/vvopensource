@@ -6,6 +6,12 @@
 
 
 
+int					_maxSpriteControlCount;
+int					_spriteControlCount;
+
+
+
+
 @implementation VVSpriteControl
 
 

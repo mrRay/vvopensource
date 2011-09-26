@@ -33,7 +33,7 @@
 	then lets the super do it's thing.  the strings it formats are used
 	for displaying the raw OSC data which has been received.
 */
-- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l	{
+- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s",__func__);
 	NSMutableDictionary		*mutDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	NSMutableString			*mutString = nil;
@@ -74,7 +74,7 @@
 		[packetStringArray removeObjectAtIndex:0];
 	
 	//	tell the super to parse the raw data
-	[super parseRawBuffer:b ofMaxLength:l];
+	[super parseRawBuffer:b ofMaxLength:l fromAddr:txAddr port:txPort];
 }
 
 - (void) handleScratchArray:(NSArray *)a	{

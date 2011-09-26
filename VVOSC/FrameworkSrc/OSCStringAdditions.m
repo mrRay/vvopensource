@@ -4,6 +4,12 @@
 
 
 
+NSCharacterSet		*_OSCStrAdditionsWildcardCharSet;
+MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an OSCPOSIXRegExpHolder containing the compiled regex- which is threadsafe, and may be reused
+
+
+
+
 @implementation OSCPOSIXRegExpHolder
 
 
@@ -75,6 +81,14 @@
 	NSLog(@"%s",__func__);
 	_OSCStrAdditionsWildcardCharSet = nil;
 	_OSCStrPOSIXRegexDict = nil;
+}
++ (NSString *) stringWithBytes:(const void *)b length:(NSUInteger)l encoding:(NSStringEncoding)e	{
+	NSString		*returnMe = nil;
+	returnMe = [[NSString alloc]
+		initWithBytes:b
+		length:l
+		encoding:e];
+	return (returnMe==nil)?nil:[returnMe autorelease];
 }
 - (NSString *) trimFirstAndLastSlashes	{
 	int				origLength = [self length];
@@ -157,13 +171,32 @@
 			return [NSString stringWithFormat:@"/%@",[self substringWithRange:desiredRange]];
 	}
 }
+- (NSString *) stringByDeletingLastAndAddingFirstSlash	{
+	NSString	*returnMe = nil;
+	int			myLength = [self length];
+	if (myLength < 1)
+		return nil;
+	BOOL		endsWSlash = ([self characterAtIndex:myLength-1]=='/')?YES:NO;
+	BOOL		startsWSlash = ([self characterAtIndex:0]=='/')?YES:NO;
+	if (startsWSlash && myLength<2)
+		endsWSlash = NO;
+	if (startsWSlash && endsWSlash)
+		returnMe = [self substringWithRange:NSMakeRange(0,myLength-1)];
+	else if (startsWSlash && !endsWSlash)
+		returnMe = self;
+	else if (!startsWSlash && endsWSlash)
+		returnMe = [NSString stringWithFormat:@"/%@",[self substringWithRange:NSMakeRange(0,myLength-1)]];
+	else if (!startsWSlash && !endsWSlash)
+		returnMe = [NSString stringWithFormat:@"/%@",self];
+	return returnMe;
+}
 - (BOOL) containsOSCWildCard	{
 	if (_OSCStrAdditionsWildcardCharSet == nil)	{
 		@synchronized ([self class])	{
 			if (_OSCStrAdditionsWildcardCharSet == nil)	{
 				_OSCStrAdditionsWildcardCharSet = [NSCharacterSet characterSetWithCharactersInString:@"[\\^$.|?*+("];
 				if (_OSCStrAdditionsWildcardCharSet != nil)	{
-					NSLog(@"\t\tmade OSC wildcard char set!");
+					//NSLog(@"\t\tmade OSC wildcard char set!");
 					[_OSCStrAdditionsWildcardCharSet retain];
 				}
 			}

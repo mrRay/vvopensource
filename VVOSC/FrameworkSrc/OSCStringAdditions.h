@@ -10,8 +10,8 @@
 
 
 
-NSCharacterSet		*_OSCStrAdditionsWildcardCharSet;
-MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an OSCPOSIXRegExpHolder containing the compiled regex- which is threadsafe, and may be reused
+extern NSCharacterSet		*_OSCStrAdditionsWildcardCharSet;
+extern MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an OSCPOSIXRegExpHolder containing the compiled regex- which is threadsafe, and may be reused
 
 
 
@@ -33,10 +33,12 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 
 @interface NSString (OSCStringAdditions)
 
++ (NSString *) stringWithBytes:(const void *)b length:(NSUInteger)l encoding:(NSStringEncoding)e;
 - (NSString *) trimFirstAndLastSlashes;
 - (NSString *) stringByDeletingFirstPathComponent;
 - (NSString *) firstPathComponent;
 - (NSString *) stringBySanitizingForOSCPath;
+- (NSString *) stringByDeletingLastAndAddingFirstSlash;
 - (BOOL) containsOSCWildCard;
 
 - (BOOL) predicateMatchAgainstRegex:(NSString *)r;

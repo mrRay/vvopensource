@@ -44,13 +44,15 @@
 	//	fake an outputs-changed notification to make sure my list of destinations updates (in case it refreshes before i'm awake)
 	[self oscOutputsChangedNotification:nil];
 	//	register to receive notifications that the list of osc outputs has changed
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:VVOSCOutPortsChangedNotification object:nil];
+	//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:VVOSCOutPortsChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:OSCOutPortsChangedNotification object:nil];
 	//	start the osc-sending thread
 	[oscSendingThread start];
 }
 - (NSString *) inPortLabelBase	{
 	return [NSString stringWithString:@"MIDI via OSC"];
 }
+/*
 - (OSCOutPort *) createNewOutputToAddress:(NSString *)a atPort:(int)p withLabel:(NSString *)l	{
 	OSCOutPort		*returnMe = [super createNewOutputToAddress:a atPort:p withLabel:l];
 	//	post a notification that the ports have been changed and need to be reloaded
@@ -67,11 +69,14 @@
 	//	post a notification that the ports have been changed and need to be reloaded
 	[[NSNotificationCenter defaultCenter] postNotificationName:VVOSCOutPortsChangedNotification object:nil];
 }
+*/
+
 - (void) setupChanged	{
 	//NSLog(@"%s",__func__);
 	[midiSourcesTable reloadData];
 	[midiDestTable reloadData];
 }
+
 - (void) receivedMIDI:(NSArray *)a	{
 	//NSLog(@"%s, %ld",__func__,[a count]);
 	if (outPort == nil)

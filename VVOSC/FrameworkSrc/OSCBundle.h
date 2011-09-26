@@ -25,7 +25,7 @@ OSC bundles also have a time stamp- by default, this will be set to immediate ex
 	NSDate				*timeTag;	//	nil by default, or the time at which the contents of this bundle should be dispatched
 }
 
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p inheritedTimeTag:(NSDate *)d;
++ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p inheritedTimeTag:(NSDate *)d fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
 ///	Creates and returns an auto-released bundle
 + (id) create;
 ///	Creates and returns an auto-released bundle with the single passed element

@@ -219,7 +219,11 @@
 			//	if i've reached this point, i have a buffer of the appropriate
 			//	length which needs to be parsed.  the buffer doesn't contain
 			//	multiple messages, or multiple root-level bundles
-			[self parseRawBuffer:buf ofMaxLength:numBytes];
+			[self
+				parseRawBuffer:buf
+				ofMaxLength:numBytes
+				fromAddr:(unsigned int)addrFrom.sin_addr.s_addr
+				port:(unsigned short)addrFrom.sin_port];
 		}
 		
 		readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
@@ -239,13 +243,17 @@
 /*
 	this method exists so subclasses of OSCInPort can subclass around this for custom behavior
 */
-- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l	{
+
+- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s ... %s, %ld",__func__,b,l);
 	[OSCPacket
 		parseRawBuffer:b
 		ofMaxLength:l
-		toInPort:self];
+		toInPort:self
+		fromAddr:txAddr
+		port:txPort];
 }
+
 /*!
 	if you don't want to bother with delegates (or you're not using OSCManager), you can override this method in your subclass of OSCInPort to receive an array of OSCMessage objects.  by default, this method just calls "receivedOSCMessage:" with the in port's delegate for each of the items in the passed array.
 */

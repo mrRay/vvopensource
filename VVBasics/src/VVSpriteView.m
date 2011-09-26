@@ -6,6 +6,11 @@
 
 
 
+int				_spriteViewCount;
+
+
+
+
 @implementation VVSpriteView
 
 

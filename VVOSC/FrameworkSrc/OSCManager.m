@@ -48,18 +48,35 @@
 	return returnMe;
 }
 - (id) init	{
-	_mainAddressSpace;
-	
 	if (self = [super init])	{
-		inPortArray = [[MutLockArray arrayWithCapacity:0] retain];
-		outPortArray = [[MutLockArray arrayWithCapacity:0] retain];
-		delegate = nil;
-		
+		[self _generalInit];
 		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
 		return self;
 	}
-	[self release];
+	if (self != nil)
+		[self release];
 	return nil;
+}
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o	{
+	if (self = [super init])	{
+		[self _generalInit];
+		if (i != nil)
+			inPortClass = i;
+		if (o != nil)
+			outPortClass = o;
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
+		return self;
+	}
+	if (self != nil)
+		[self release];
+	return nil;
+}
+- (void) _generalInit	{
+	inPortArray = [[MutLockArray arrayWithCapacity:0] retain];
+	outPortArray = [[MutLockArray arrayWithCapacity:0] retain];
+	delegate = nil;
+	inPortClass = [OSCInPort class];
+	outPortClass = [OSCOutPort class];
 }
 
 - (void) dealloc	{
@@ -82,18 +99,24 @@
 		[inPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[inPortArray removeAllObjects];
 	[inPortArray unlock];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
+	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 		[delegate setupChanged];
+	*/
 }
 - (void) deleteAllOutputs	{
 	[outPortArray wrlock];
 		[outPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[outPortArray removeAllObjects];
 	[outPortArray unlock];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 		[delegate setupChanged];
+	*/
 }
 /*===================================================================================*/
 #pragma mark --------------------- creating input ports
@@ -131,9 +154,7 @@
 		}
 		//	if there weren't any conflicts, make an instance set it up and add it to the array
 		if ((!foundPortConflict) && (!foundNameConflict))	{
-			Class			inPortClass = [self inPortClass];
-			
-			returnMe = [[inPortClass alloc] initWithPort:p labelled:l];
+			returnMe = [[[self inPortClass] alloc] initWithPort:p labelled:l];
 			
 			if (returnMe != nil)	{
 				[returnMe setDelegate:self];
@@ -145,9 +166,12 @@
 	[inPortArray unlock];
 	//	if i made an in port, i should let the delegate know that stuff changed
 	if (returnMe != nil)	{
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
+		/*
 		//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 		if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 			[delegate setupChanged];
+		*/
 	}
 	return returnMe;
 }
@@ -218,9 +242,7 @@
 		}
 		//	if there weren't any name conflicts, make an instance and add it to the array
 		if (!foundNameConflict)	{
-			Class			outPortClass = [self outPortClass];
-			
-			returnMe = [[outPortClass alloc] initWithAddress:a andPort:p labelled:l];
+			returnMe = [[[self outPortClass] alloc] initWithAddress:a andPort:p labelled:l];
 			
 			if (returnMe != nil)	{
 				[outPortArray addObject:returnMe];
@@ -230,9 +252,12 @@
 	[outPortArray unlock];
 	//	if i made an output, i need to tell the delegate that stuff changed
 	if (returnMe != nil)	{
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+		/*
 		//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 		if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 			[delegate setupChanged];
+		*/
 	}
 	
 	return returnMe;
@@ -430,9 +455,12 @@
 	[inPortArray wrlock];
 		[inPortArray removeObject:p];
 	[inPortArray unlock];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
+	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 		[delegate setupChanged];
+	*/
 }
 - (void) removeOutput:(id)p	{
 	if (p == nil)
@@ -440,9 +468,12 @@
 	[outPortArray wrlock];
 		[outPortArray removeObject:p];
 	[outPortArray unlock];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 		[delegate setupChanged];
+	*/
 }
 - (NSArray *) outPortLabelArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
@@ -467,7 +498,7 @@
 	by default, this method returns [OSCInPort class].  it’s called when creating an input port. this method exists so if you subclass OSCInPort you can override this method to have your manager create your custom subclass with the default port creation methods
 */
 - (id) inPortClass	{
-	return [OSCInPort class];
+	return inPortClass;
 }
 - (NSString *) inPortLabelBase	{
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(inPortLabelBase)]))
@@ -478,7 +509,7 @@
 	by default, this method returns [OSCOutPort class].  it’s called when creating an input port. this method exists so if you subclass OSCOutPort you can override this method to have your manager create your custom subclass with the default port creation methods
 */
 - (id) outPortClass	{
-	return [OSCOutPort class];
+	return outPortClass;
 }
 /*===================================================================================*/
 #pragma mark --------------------- misc.

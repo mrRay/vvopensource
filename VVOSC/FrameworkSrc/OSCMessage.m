@@ -1,6 +1,7 @@
 
 #import "OSCMessage.h"
 #import "OSCInPort.h"
+#import "OSCStringAdditions.h"
 
 
 
@@ -14,7 +15,7 @@
 	else
 		return [NSString stringWithFormat:@"<OSCMessage: %@-%@>",address,valueArray];
 }
-+ (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l	{
++ (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s ... %s, %ld",__func__,b,l);
 	if ((b == nil) || (l == 0))
 		return nil;
@@ -28,26 +29,128 @@
 	long				msgTypeStartIndex = -1;
 	long				msgTypeEndIndex = -1;
 	NSData				*tmpData = nil;
-	
-	
+	BOOL				hasWildcard = NO;
+	OSCMessageType		msgType = OSCMessageTypeControl;
+	OSCQueryType		queryType = OSCQueryTypeUnknown;
 	
 	/*
 				parse the address string
 	*/
 	tmpIndex = -1;
-	//	there's guaranteed to be a '\0' at the end of the address string- find the '\0'
+	//	there's guaranteed to be a '\0' at the end of the address string- find the '\0' and look for some basic properties along the way
 	for (i=0; ((i<l) && (tmpIndex == (-1))); ++i)	{
-		if (b[i] == '\0')
-			tmpIndex = i;
+		switch (b[i])	{
+			case '\0':
+				//	first of all, this character delineates the end of the address string (or the end of the query descriptor)
+				tmpIndex = i;
+				//	if this is an uknown message type- because of a malformed query type- then this is the end of the query
+				if (msgType == OSCMessageTypeUnknown)	{
+					NSLog(@"\t\tfinished parsing malformed query %@ in %s",[NSString stringWithBytes:b length:i encoding:NSUTF8StringEncoding],__func__);
+				}
+				//	else it's a known message type
+				else	{
+					//	if the previous character was a '/', then i'm implicitly requesting a directory listing
+					if (i>0 && b[i-1]=='/')	{
+						address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the /, i'm sending to the directory node)
+						msgType = OSCMessageTypeQuery;
+						queryType = OSCQueryTypeNamespaceExploration;
+					}
+					//	else the previous char *wasn't* a '/', it's *not* a directory listing- just a normal message
+					else
+						address = [NSString stringWithBytes:b length:i encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+				}
+				break;
+			case '#':	//	the # character is reserved for declaring a query type, reply, or error
+				//	if this is the 1st character in the message and the address is #reply or #error...
+				if (i==0)	{
+					if (strncmp((char *)b,"#reply",6)==0)	{
+						msgType = OSCMessageTypeReply;
+						tmpIndex = i+5;
+					}
+					else if (strncmp((char *)b,"#error",6)==0)	{
+						msgType = OSCMessageTypeError;
+						tmpIndex = i+5;
+					}
+					//	 if it's not reply or error, then it's an unrecognized query- continue parsing it anyway
+					else	{
+						msgType = OSCMessageTypeUnknown;
+					}
+				}
+				//	else it's not the 1st character in the message address- it's either a query, or a message with a # in it that someone made (technically, this violates the spec- but there's no benefit to preventing it now)
+				else	{
+					//	if the previous character is a '/', then this is a query of some sort...
+					if (b[i-1]=='/')	{
+						//	set these now, if they aren't recognized they'll be the fallback values
+						msgType = OSCMessageTypeQuery;
+						queryType = OSCQueryTypeUnknown;
+						//	as a shortcut, look to the next character before doing a string comparison to save time
+						switch (b[i+1])	{
+							case 'd':
+								if (strncmp((char *)b,"#documentation",14)==0)	{	//	if the query's recognized...
+									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									queryType = OSCQueryTypeDocumentation;	//	set the query type...
+									tmpIndex = i+13;	//	...and i can exit now and save a couple loops- i know the end
+								}
+								break;
+							case 't':
+								if (strncmp((char *)b,"#type-signature",15)==0)	{
+									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									queryType = OSCQueryTypeDocumentation;
+									tmpIndex = i+14;
+								}
+								break;
+							case 'c':
+								if (strncmp((char *)b,"#current-value",14)==0)	{
+									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									queryType = OSCQueryTypeDocumentation;
+									tmpIndex = i+13;
+								}
+								break;
+							case 'r':
+								if (strncmp((char *)b,"#return-type-string",19)==0)	{
+									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									queryType = OSCQueryTypeDocumentation;
+									tmpIndex = i+18;
+								}
+								break;
+						}
+					}
+					//	else the prev. char wasn't a '/'- this is just a fucked-up message of some sort, let it slide!
+					else	{
+						/*		do nothing here- let the for loop proceed, parsing the message normally.  pretend that the # isn't a violation of the spec.		*/
+					}
+				}
+				break;
+			case '[':
+			case '\\':
+			case '^':
+			case '$':
+			case '.':
+			case '|':
+			case '?':
+			case '*':
+			case '+':
+			case '(':
+				hasWildcard = YES;
+				break;
+		}
 	}
+	
+	/*
 	//	get the actual address string
 	if (tmpIndex != -1)
 		address = [NSString stringWithCString:(char *)b encoding:NSUTF8StringEncoding];
+	*/
+	
+	/*
 	//	if i couldn't make the address string for any reason, return
 	if (address == nil)	{
-		NSLog(@"\t\terr: couldn't parse message address");
+		NSLog(@"\t\terr: couldn't parse message address %s",__func__);
 		return nil;
 	}
+	*/
+	
+	
 	//	"tmpIndex" is the offset i'm currently reading from- so before i go further i
 	//	have to account for any padding
 	if (tmpIndex %4 == 0)
@@ -90,45 +193,27 @@
 				now actually parse the contents of the message
 	*/
 	
-	returnMe = [OSCMessage createWithAddress:address];
-	OSCValue		*oscValue = nil;
-	
+	//returnMe = [OSCMessage createWithAddress:address];
+	returnMe = [[OSCMessage alloc] _fastInit:address:hasWildcard:msgType:queryType:txAddr:txPort];
 	if (returnMe == nil)	{
 		NSLog(@"\t\terr: msg was nil %s",__func__);
 		return nil;
 	}
+	OSCValue		*oscValue = nil;
+	
 	//	run through the type arguments (,ffis etc.)- for each type arg, pull data from the buffer
 	for (i=msgTypeStartIndex; i<msgTypeEndIndex; ++i)	{
 		//	"tmpIndex" is the offset in "b" i'm currently reading data for this type from!
 		switch(b[i])	{
 			case 'i':			//	int32
-				//oscValue = [OSCValue createWithInt:CFSwapInt32BigToHost(*((uint32_t *)(b+tmpIndex)))];
 				oscValue = [OSCValue createWithInt:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
 				[returnMe addValue:oscValue];
 				tmpIndex += 4;;
-				/*
-				tmpLong = 0;
-				for(j=0; j<4; ++j)	{
-					tmpInt = b[tmpIndex+j];
-					tmpLong = tmpLong | (tmpInt << (j*8));
-				}
-				tmpInt = ntohl((int)tmpLong);
-				oscValue = [OSCValue createWithInt:(int)tmpInt];
-				[returnMe addValue:oscValue];
-				tmpIndex = tmpIndex + 4;
-				*/
 				break;
 			case 'f':			//	float32
 				oscValue = [OSCValue createWithFloat:NSSwapBigFloatToHost(*((NSSwappedFloat *)(b+tmpIndex)))];
 				[returnMe addValue:oscValue];
 				tmpIndex += 4;
-				/*
-				tmpInt = ntohl(*((int *)(b+tmpIndex)));
-				tmpFloatPtr = (float *)&tmpInt;
-				oscValue = [OSCValue createWithFloat:*tmpFloatPtr];
-				[returnMe addValue:oscValue];
-				tmpIndex = tmpIndex + 4;
-				*/
 				break;
 			case 's':			//	OSC-string
 			case 'S':			//	alternate type represented as an OSC-string
@@ -239,7 +324,7 @@
 		}
 	}
 	//	return the msg- the bundle that parsed it will add an execution date (if appropriate) and send it to the port
-	return returnMe;
+	return (returnMe==nil)?nil:[returnMe autorelease];
 }
 + (id) createWithAddress:(NSString *)a	{
 	OSCMessage		*returnMe = [[OSCMessage alloc] initWithAddress:a];
@@ -247,36 +332,179 @@
 		return nil;
 	return [returnMe autorelease];
 }
++ (id) createQueryType:(OSCQueryType)t forAddress:(NSString *)a	{
+	OSCMessage		*returnMe = [[OSCMessage alloc] initQueryType:t forAddress:a];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createReplyForAddress:(NSString *)a	{
+	OSCMessage		*returnMe = [[OSCMessage alloc] initReplyForAddress:a];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createReplyForMessage:(OSCMessage*)m	{
+	OSCMessage		*returnMe = [[OSCMessage alloc] initReplyForMessage:m];
+	return (returnMe==nil)?nil:[returnMe autorelease];
+}
++ (id) createErrorForAddress:(NSString *)a	{
+	OSCMessage		*returnMe = [[OSCMessage alloc] initErrorForAddress:a];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createErrorForMessage:(OSCMessage *)m	{
+	OSCMessage		*returnMe = [[OSCMessage alloc] initErrorForMessage:m];
+	return (returnMe==nil)?nil:[returnMe autorelease];
+}
+
+
 - (id) initWithAddress:(NSString *)a	{
-	if (a == nil)
+	if (a == nil)	{
+		if (self != nil)
+			[self release];
+		return nil;
+	}
+	id			returnMe = nil;
+	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
+	returnMe = [self _fastInit:
+		addrString:
+		((a==nil)?NO:[a containsOSCWildCard]):
+		OSCMessageTypeControl:
+		OSCQueryTypeUnknown:
+		0:
+		0];
+	return returnMe;
+}
+- (id) initQueryType:(OSCQueryType)t forAddress:(NSString *)a	{
+	if (a==nil)	{
+		if (self != nil)
+			[self release];
+		return nil;
+	}
+	id			returnMe = nil;
+	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
+	returnMe = [self _fastInit:
+		addrString:
+		((a==nil)?NO:[a containsOSCWildCard]):
+		OSCMessageTypeQuery:
+		t:
+		0:
+		0];
+	return returnMe;
+}
+- (id) initReplyForAddress:(NSString *)a	{
+	if (a == nil)	{
+		if (self != nil)
+			[self release];
+		return nil;
+	}
+	id			returnMe = nil;
+	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
+	returnMe = [self _fastInit:
+		nil:
+		NO:
+		OSCMessageTypeReply:
+		OSCQueryTypeUnknown:
+		0:
+		0];
+	if (returnMe != nil)
+		[returnMe addString:addrString];
+	return returnMe;
+}
+- (id) initReplyForMessage:(OSCMessage *)m	{
+	if (m==nil)
 		goto BAIL;
-	
-	if (self = [super init])	{
-		//	if the address doesn't start with a "/", i need to add one
-		const char		*stringPtr = [a UTF8String];
-		if (stringPtr == nil)
+	self = [self _fastInit:
+		nil:
+		NO:
+		OSCMessageTypeReply:
+		OSCQueryTypeUnknown:
+		[m queryTXAddress]:
+		[m queryTXPort]];
+	if (self == nil)
+		return nil;
+	if ([m valueCount] > 0)	{
+		NSData		*tmpData = [m writeToNSData];
+		if (tmpData == nil)
 			goto BAIL;
-		if (*stringPtr != '/')
-			address = [[NSString stringWithFormat:@"/%@",a] retain];
-		else	{
-			address = a;
-			if (address != nil)
-				[address retain];
-		}
+		[self addNSDataBlob:tmpData];
+	}
+	else
+		[self addString:[m replyAddress]];
+	return self;
+	
+	BAIL:
+	if (self != nil)
+		[self release];
+	return nil;
+}
+- (id) initErrorForAddress:(NSString *)a	{
+	if (a == nil)	{
+		if (self != nil)
+			[self release];
+		return nil;
+	}
+	id			returnMe = nil;
+	returnMe = [self _fastInit:
+		a:
+		((a==nil)?NO:[a containsOSCWildCard]):
+		OSCMessageTypeError:
+		OSCQueryTypeUnknown:
+		0:
+		0];
+	return returnMe;
+}
+- (id) initErrorForMessage:(OSCMessage *)m	{
+	if (m==nil)
+		goto BAIL;
+	self = [self _fastInit:
+		nil:
+		NO:
+		OSCMessageTypeError:
+		OSCQueryTypeUnknown:
+		[m queryTXAddress]:
+		[m queryTXPort]];
+	if (self == nil)
+		return nil;
+	if ([m valueCount] > 0)	{
+		NSData		*tmpData = [m writeToNSData];
+		if (tmpData == nil)
+			goto BAIL;
+		[self addNSDataBlob:tmpData];
+	}
+	else
+		[self addString:[m replyAddress]];
+	return self;
+	
+	BAIL:
+	if (self != nil)
+		[self release];
+	return nil;
+}
+//	DOES NO CHECKING WHATSOEVER.  MEANT TO BE FAST, NOT SAFE.  USE OTHER CREATE/INIT METHODS.
+- (id) _fastInit:(NSString *)addr:(BOOL)addrHasWildcards:(OSCMessageType)mType:(OSCQueryType)qType:(unsigned int)qTxAddr:(unsigned short)qTxPort	{
+	if (self = [super init])	{
+		address = (addr==nil)?nil:[addr retain];
 		valueCount = 0;
 		value = nil;
 		valueArray = nil;
 		timeTag = nil;
+		wildcardsInAddress = addrHasWildcards;
+		messageType = mType;
+		queryType = qType;
+		queryTXAddress = qTxAddr;
+		queryTXPort = qTxPort;
 		return self;
 	}
-	
 	BAIL:
-	NSLog(@"\t\terr: %s - BAIL, %@",__func__,a);
 	[self release];
 	return nil;
 }
 - (id) copyWithZone:(NSZone *)z	{
-	OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initWithAddress:address];
+	//OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initWithAddress:address];
+	OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] _fastInit:address:wildcardsInAddress:messageType:queryType:queryTXAddress:queryTXPort];
 	
 	if (valueCount == 1)
 		[returnMe addValue:value];
@@ -284,6 +512,9 @@
 		for (OSCValue *valPtr in valueArray)
 			[returnMe addValue:valPtr];
 	}
+	if (timeTag != nil)
+		[returnMe setTimeTag:timeTag];
+	
 	return returnMe;
 }
 - (void) dealloc	{
@@ -328,6 +559,11 @@
 - (void) addBOOL:(BOOL)n	{
 	//NSLog(@"%s",__func__);
 	[self addValue:[OSCValue createWithBool:n]];
+}
+- (void) addNSDataBlob:(NSData *)b	{
+	if (b==nil)
+		return;
+	[self addValue:[OSCValue createWithNSDataBlob:b]];
 }
 - (void) addValue:(OSCValue *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
@@ -397,6 +633,43 @@
 - (NSString *) address	{
 	return address;
 }
+- (NSString *) replyAddress	{
+	switch (messageType)	{
+		case OSCMessageTypeUnknown:
+		case OSCMessageTypeControl:
+			return address;
+			break;
+		case OSCMessageTypeQuery:
+			switch (queryType)	{
+				case OSCQueryTypeUnknown:
+					return address;
+					break;
+				case OSCQueryTypeNamespaceExploration:
+					return [NSString stringWithFormat:@"%@/",address];
+					break;
+				case OSCQueryTypeDocumentation:
+					return [NSString stringWithFormat:@"%@/#documentation",address];
+					break;
+				case OSCQueryTypeTypeSignature:
+					return [NSString stringWithFormat:@"%@/#type-signature",address];
+					break;
+				case OSCQueryTypeCurrentValue:
+					return [NSString stringWithFormat:@"%@/#current-value",address];
+					break;
+				case OSCQueryTypeReturnTypeString:
+					return [NSString stringWithFormat:@"%@/#return-type-string",address];
+					break;
+			}
+			break;
+		case OSCMessageTypeReply:
+			return [NSString stringWithString:@"#reply"];
+			break;
+		case OSCMessageTypeError:
+			return [NSString stringWithString:@"#error"];
+			break;
+	}
+	return address;
+}
 - (int) valueCount	{
 	return valueCount;
 }
@@ -420,13 +693,45 @@
 
 - (long) bufferLength	{
 	//NSLog(@"%s",__func__);
-	
 	long		addressLength = 0;
 	long		typeLength = 0;
 	long		payloadLength = 0;
 	
 	//	determine the length of the address (round up to the nearest 4 bytes)
-	addressLength = strlen([address UTF8String]);
+	switch (messageType)	{
+		case OSCMessageTypeUnknown:
+		case OSCMessageTypeControl:
+			addressLength = (address==nil)?0:strlen([address UTF8String]);
+			break;
+		case OSCMessageTypeQuery:
+			addressLength = (address==nil)?0:strlen([address UTF8String]);
+			switch (queryType)	{
+				case OSCQueryTypeUnknown:
+					break;
+				case OSCQueryTypeNamespaceExploration:
+					addressLength += 1;	//	add the '/' at the end of the address
+					break;
+				case OSCQueryTypeDocumentation:
+					addressLength += 15;
+					break;
+				case OSCQueryTypeTypeSignature:
+					addressLength += 16;
+					break;
+				case OSCQueryTypeCurrentValue:
+					addressLength += 15;
+					break;
+				case OSCQueryTypeReturnTypeString:
+					addressLength += 20;
+					break;
+			}
+			break;
+		case OSCMessageTypeReply:
+			addressLength = 6;
+			break;
+		case OSCMessageTypeError:
+			addressLength = 6;
+			break;
+	}
 	addressLength = ROUNDUP4((addressLength+1));
 	//	determine the length of the type args (1 [comma] + # of types + 1 [for the null], round up to nearest 4 bytes)
 	typeLength = ROUNDUP4((1 + valueCount + 1));
@@ -439,19 +744,12 @@
 		for (valuePtr in valueArray)	{
 			payloadLength += [valuePtr bufferLength];
 		}
-		/*
-		NSEnumerator		*it = [valueArray objectEnumerator];
-		OSCValue			*valuePtr;
-		while (valuePtr = [it nextObject])
-			payloadLength += [valuePtr bufferLength];
-		*/
 	}
 	
 	return addressLength + typeLength + payloadLength;
 }
 - (void) writeToBuffer:(unsigned char *)b	{
 	//NSLog(@"%s",__func__);
-	
 	if (b == NULL)
 		return;
 	
@@ -460,8 +758,9 @@
 	
 	
 	//	write the address, rounded up to the nearest 4 bytes (the +1 is for the null after the address)
-	const char			*tmpChars = [address UTF8String];
-	int					tmpCharsLength = (int)strlen(tmpChars);
+	NSString			*tmpString = [self replyAddress];
+	const char			*tmpChars = (tmpString==nil) ? nil : [tmpString UTF8String];
+	int					tmpCharsLength = (tmpChars==nil) ? 0 : (int)strlen(tmpChars);
 	
 	strncpy((char *)b, tmpChars, tmpCharsLength);
 	typeWriteOffset += (tmpCharsLength + 1);
@@ -483,13 +782,49 @@
 		for (valuePtr in valueArray)	{
 			[valuePtr writeToBuffer:b typeOffset:&typeWriteOffset dataOffset:&dataWriteOffset];
 		}
-		/*
-		NSEnumerator		*it = [valueArray objectEnumerator];
-		OSCValue			*valuePtr;
-		while (valuePtr = [it nextObject])
-			[valuePtr writeToBuffer:b typeOffset:&typeWriteOffset dataOffset:&dataWriteOffset];
-		*/
 	}
+}
+- (NSData *) writeToNSData	{
+	NSData			*returnMe = nil;
+	int				bufferLen = [self bufferLength];
+	if (bufferLen>0)	{
+		unsigned char	*buffer = malloc(bufferLen * sizeof(unsigned char));
+		if (buffer != nil)	{
+			memset(buffer,'\0',bufferLen);
+			[self writeToBuffer:buffer];
+			//	create a data from the buffer- the NSData instance takes ownership of the buffer, and will free it when it's released
+			returnMe = [NSData dataWithBytesNoCopy:buffer length:bufferLen];
+			if (returnMe == nil)
+				free(buffer);
+		}
+	}
+	return returnMe;
+}
+
+
+- (BOOL) wildcardsInAddress	{
+	return wildcardsInAddress;
+}
+- (OSCMessageType) messageType	{
+	return messageType;
+}
+- (OSCQueryType) queryType	{
+	return queryType;
+}
+- (unsigned int) queryTXAddress	{
+	return queryTXAddress;
+}
+- (unsigned short) queryTXPort	{
+	return queryTXPort;
+}
+- (void) _setWildcardsInAddress:(BOOL)n	{
+	wildcardsInAddress = n;
+}
+- (void) _setMessageType:(OSCMessageType)n	{
+	messageType = n;
+}
+- (void) _setQueryType:(OSCQueryType)n	{
+	queryType = n;
 }
 
 

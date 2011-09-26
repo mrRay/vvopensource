@@ -8,7 +8,7 @@
 @implementation OSCPacket
 
 
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p	{
++ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s",__func__);
 	//	this stuff prints out the buffer to the console log- it's very, very useful.  probably will be added to the test app at some point.
 	/*
@@ -29,13 +29,19 @@
 			parseRawBuffer:b
 			ofMaxLength:l
 			toInPort:p
-			inheritedTimeTag:nil];
+			inheritedTimeTag:nil
+			fromAddr:txAddr
+			port:txPort];
 	}
 	else if (buffPtr[0] == '/')	{
 		OSCMessage		*tmpMsg = [OSCMessage
 			parseRawBuffer:b
-			ofMaxLength:l];
+			ofMaxLength:l
+			fromAddr:txAddr
+			port:txPort];
 		if (tmpMsg != nil)	{
+			//if ([tmpMsg messageType] == OSCMessageTypeQuery)
+			//	[tmpMsg XXXXXXXXXXXX];
 			[p addMessage:tmpMsg];
 		}
 	}

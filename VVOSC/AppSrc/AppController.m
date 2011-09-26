@@ -7,6 +7,7 @@
 //
 
 #import "AppController.h"
+#import "OSCInPortRetainsRaw.h"
 
 
 
@@ -16,8 +17,9 @@
 
 - (id) init	{
 	if (self = [super init])	{
-		//	make an osc manager- i'm using "MyOSCManager" because i'm using a custom in-port
-		manager = [[MyOSCManager alloc] init];
+		//	make an osc manager- i'm using i'm using a custom in-port to record a bunch of extra conversion for the display, but you can just make a "normal" manager
+		manager = [[OSCManager alloc] init];
+		manager = [[OSCManager alloc] initWithInPortClass:[OSCInPortRetainsRaw class] outPortClass:nil];
 		//	by default, the osc manager's delegate will be told when osc messages are received
 		[manager setDelegate:self];
 	}
@@ -54,7 +56,8 @@
 	[portField setIntValue:[manualOutPort port]];
 	
 	//	register to receive notifications that the list of osc outputs has changed
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:VVOSCOutPortsChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:OSCOutPortsChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(oscOutputsChangedNotification:) name:OSCInPortsChangedNotification object:nil];
 	
 	//	fake an outputs-changed notification to make sure my list of destinations updates (in case it refreshes before i'm awake)
 	[self oscOutputsChangedNotification:nil];

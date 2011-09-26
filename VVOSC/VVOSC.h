@@ -35,7 +35,7 @@ When instances of OSCInPort and OSCManager receive OSC data, they pass it to the
 
 //	OSCManager delegate protocol
 @protocol OSCManagerDelegate
-- (void) setupChanged;
+//- (void) setupChanged;		//	REMOVED FROM DELEGATE PROTOCOL- notifications are fired instead
 - (NSString *) inPortLabelBase;
 @end
 
@@ -81,7 +81,7 @@ VVOSC is an Objective-c framework for assembling, sending, and receiving OSC (Op
 <li>Detects other OSC destinations via bonjour/zero-conf networking and automatically creates output ports so you can send data to them.</li>
 <li>Input ports automagically advertise their presence via bonjour/zero-conf networking.  This is as close to no-setup as it gets!</li>
 <li>Supports the following data types: i (int32), f (float32), s/S (OSC-string), b (OSC blob), h (64-bit int), d (64-bit float/double), r (32-bit RGBA color), m (MIDI message), T (tru), F (false), N(nil), I (infinity), t (OSC-timetag)</li>
-<li>Processing frequency defaults to 30hz, but may be adjusted dynamically well in excess of 100hz</li>
+<li>Processing frequency defaults to 100hz, but may be adjusted dynamically well in excess of 100hz</li>
 <li>Multithreaded- each input port runs on its own thread- and threadsafe.</li>
 <li>Optional OSC address space classes (OSCNode & OSCAddressSpace) may be used to quickly create a simple OSC-based API for controlling software.  Address space includes POSIX regex-based pattern matching engine for dispatching a single message to multiple nodes.</li>
 <li>Built on a handful of small, easy-to-grok classes written specifically for OS X.  Very easy to understand, modify, subclass, or extend.</li>

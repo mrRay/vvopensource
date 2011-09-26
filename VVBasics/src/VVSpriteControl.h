@@ -5,8 +5,8 @@
 
 
 
-int					_maxSpriteControlCount;
-int					_spriteControlCount;
+extern int					_maxSpriteControlCount;
+extern int					_spriteControlCount;
 
 
 

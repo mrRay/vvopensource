@@ -5,7 +5,7 @@
 
 
 //	key for notification which is fired whenever a new output is created
-#define VVOSCOutPortsChangedNotification @"VVOSCOutPortsChangedNotification"
+//#define VVOSCOutPortsChangedNotification @"VVOSCOutPortsChangedNotification"
 
 
 

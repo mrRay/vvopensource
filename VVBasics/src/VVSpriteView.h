@@ -5,7 +5,7 @@
 
 
 
-int				_spriteViewCount;
+extern int				_spriteViewCount;
 
 
 

@@ -22,7 +22,6 @@
 	NSMutableArray		*packetStringArray;	//	array of dicts with strings that describe the received packets
 }
 
-- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l;
 - (NSMutableArray *) packetStringArray;
 - (void) setPacketStringArray:(NSArray *)a;
 

@@ -9,7 +9,7 @@
 @implementation OSCBundle
 
 
-+ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p inheritedTimeTag:(NSDate *)d	{
++ (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p inheritedTimeTag:(NSDate *)d fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s",__func__);
 	if ((b == nil) || (l == 0) || (p == NULL))
 		return;
@@ -46,13 +46,17 @@
 				parseRawBuffer:b+baseIndex
 				ofMaxLength:length
 				toInPort:p
-				inheritedTimeTag:localTimeTag];
+				inheritedTimeTag:localTimeTag
+				fromAddr:txAddr
+				port:txPort];
 		}
 		//	...or a message.
 		else if (c[baseIndex] == '/')	{
 			OSCMessage		*tmpMsg = [OSCMessage
 				parseRawBuffer:b+baseIndex
-				ofMaxLength:length];
+				ofMaxLength:length
+				fromAddr:txAddr
+				port:txPort];
 			if (tmpMsg != nil)	{
 				if (localTimeTag != nil)
 					[tmpMsg setTimeTag:localTimeTag];

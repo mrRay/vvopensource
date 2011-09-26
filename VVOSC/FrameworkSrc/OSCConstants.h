@@ -79,6 +79,11 @@ typedef enum	{
 //	this is the name of the notification that gets posted whenever the address space is told to refresh its menu
 #define AddressSpaceUpdateMenus @"AddressSpaceUpdateMenus"
 
+///	This notification gets fired whenever the input ports in an OSC manager get changed
+#define OSCInPortsChangedNotification @"OSCInPortsChangedNotification"
+///	This notification gets fired whenever the output ports in an OSC manager get changed
+#define OSCOutPortsChangedNotification @"OSCOutPortsChangedNotification"
+
 
 
 
@@ -86,27 +91,21 @@ typedef enum	{
 
 //	there are several different kinds of OSC messages
 typedef enum	{
-	OSCMessageTypeUnknown,	//	if a message is using some sort of unknown identifier, this type is used.  rarely encountered.
+	OSCMessageTypeUnknown=0,	//	if a message's type cannot be determined, this type is used.  rarely encountered.
 	OSCMessageTypeControl,	//	"normal" OSC message- an address, and zero or more values.  does NOT require a reply!
 	OSCMessageTypeQuery,	//	standard query types are listed below (OSCQueryType)- requires a reply of some sort from the address space!
-	OSCMessageTypeReply,	//	standard reply types are listed below (OSCReplyType)
+	OSCMessageTypeReply,	//	a reply presumes that the query was executed successfully and an answer that is presumed to be useful is being returned
+	OSCMessageTypeError,		//	an error presumes taht either the query was malformed or there was an error executing it
 } OSCMessageType;
 //	these are the basic query types
 typedef enum	{
-	OSCQueryTypeUnknown,
+	OSCQueryTypeUnknown=0,
 	OSCQueryTypeNamespaceExploration,
 	OSCQueryTypeDocumentation,
 	OSCQueryTypeTypeSignature,
 	OSCQueryTypeCurrentValue,
 	OSCQueryTypeReturnTypeString
 } OSCQueryType;
-//	these are the basic reply types
-typedef enum	{
-	OSCReplyTypeReply,	//	a (successful) response to one of the specific OSCQueryTypes
-	OSCReplyTypeError,	//	an error message in response to one of the specific OSCQueryTypes
-	//OSCReplyTypeNotification	//	a notification sent in response to key-value observing
-} OSCReplyType;
-
 //	these strings are used in the spec and are defined here for convenience
 #define kOSCQueryTypeReplyString @"#reply"
 #define kOSCQueryTypeErrorString @"#error"
@@ -115,18 +114,18 @@ typedef enum	{
 #define kOSCQueryTypeTypeSignatureString @"#type-signature"
 #define kOSCQueryTypeCurrentValueString @"#current-value"
 #define kOSCQueryTypeReturnTypeStringString @"#return-type-string"
-
+/*
 typedef enum	{
-	OSCQueryErrorTypeUndefined,
-	OSCQueryErrorTypeRelocated,
-	OSCQueryErrorTypeCorrupt,
-	OSCQueryErrorTypeMismatch,
-	OSCQueryErrorTypeInfeasible,
-	OSCQueryErrorTypeMissing,
-	OSCQueryErrorTypeFailed,
-	OSCQueryErrorTypeVolatile,		//	described in supplementary PDF
-} OSCQueryErrorType;
-
+	OSCErrorTypeUnknown,
+	OSCErrorTypeRelocated,
+	OSCErrorTypeCorrupt,
+	OSCErrorTypeMismatch,
+	OSCErrorTypeInfeasible,
+	OSCErrorTypeMissing,
+	OSCErrorTypeFailed,
+	OSCErrorTypeVolatile,		//	described in supplementary PDF, not sure what it means!
+} OSCErrorType;
+*/
 
 
 

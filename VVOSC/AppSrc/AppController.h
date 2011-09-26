@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import <VVOSC/VVOSC.h>
-#import "MyOSCManager.h"
 
 
 @interface AppController : NSObject {

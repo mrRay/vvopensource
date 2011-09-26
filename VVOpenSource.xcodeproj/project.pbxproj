@@ -178,7 +178,6 @@
 		9628D16E100E8A6700C3944E /* OSCManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D112100E8A6700C3944E /* OSCManager.h */; };
 		9628D188100E8B7C00C3944E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D180100E8B7C00C3944E /* main.m */; };
 		9628D189100E8B7C00C3944E /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D181100E8B7C00C3944E /* AppController.m */; };
-		9628D18A100E8B7C00C3944E /* MyOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D182100E8B7C00C3944E /* MyOSCManager.m */; };
 		9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */; };
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -688,8 +687,6 @@
 		9628D17B100E8B4D00C3944E /* OSCTestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "OSCTestApp-Info.plist"; path = "VVOSC/AppSrc/OSCTestApp-Info.plist"; sourceTree = "<group>"; };
 		9628D180100E8B7C00C3944E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = VVOSC/AppSrc/main.m; sourceTree = "<group>"; };
 		9628D181100E8B7C00C3944E /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = VVOSC/AppSrc/AppController.m; sourceTree = "<group>"; };
-		9628D182100E8B7C00C3944E /* MyOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyOSCManager.m; path = VVOSC/AppSrc/MyOSCManager.m; sourceTree = "<group>"; };
-		9628D183100E8B7C00C3944E /* MyOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyOSCManager.h; path = VVOSC/AppSrc/MyOSCManager.h; sourceTree = "<group>"; };
 		9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCInPortRetainsRaw.m; path = VVOSC/AppSrc/OSCInPortRetainsRaw.m; sourceTree = "<group>"; };
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
@@ -1026,8 +1023,6 @@
 				9628D185100E8B7C00C3944E /* MainMenu.xib */,
 				9628D187100E8B7C00C3944E /* AppController.h */,
 				9628D181100E8B7C00C3944E /* AppController.m */,
-				9628D183100E8B7C00C3944E /* MyOSCManager.h */,
-				9628D182100E8B7C00C3944E /* MyOSCManager.m */,
 				9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */,
 				9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */,
 			);
@@ -1917,7 +1912,6 @@
 			files = (
 				9628D188100E8B7C00C3944E /* main.m in Sources */,
 				9628D189100E8B7C00C3944E /* AppController.m in Sources */,
-				9628D18A100E8B7C00C3944E /* MyOSCManager.m in Sources */,
 				9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -60,7 +60,7 @@ the documentation here only covers the basics, the header file for this class is
 - (void) start;
 - (void) stop;
 - (void) OSCThreadProc;
-- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l;
+- (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
 
 ///	called internally by this OSCInPort, passed an array of OSCMessage objects corresponding to the serially received data.  useful if you're subclassing OSCInPort.
 - (void) handleScratchArray:(NSArray *)a;

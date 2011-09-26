@@ -39,10 +39,16 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 	id						delegate;		//!<If there's a delegate, it will be notified when OSC messages are received
 	
 	OSCZeroConfManager		*zeroConfManager;	//!<Creates OSCOutPorts for any OSC destinations detected via bonjour/zeroconf
+	
+	Class					inPortClass;
+	Class					outPortClass;
 }
 
 //	used to generate the IP addresses for this host
 + (NSArray *) hostIPv4Addresses;
+
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o;
+- (void) _generalInit;
 
 ///	Deletes all input ports
 - (void) deleteAllInputs;

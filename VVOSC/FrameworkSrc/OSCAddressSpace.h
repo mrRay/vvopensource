@@ -12,6 +12,7 @@
 //	OSCAddressSpace delegate protocol
 @protocol OSCAddressSpaceDelegateProtocol
 - (void) nodeRenamed:(OSCNode *)n;
+- (void) dispatchReplyOrError:(OSCMessage *)m;
 @end
 
 
