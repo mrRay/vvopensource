@@ -364,6 +364,11 @@
 - (BOOL) bound	{
 	return bound;
 }
+- (NSString *) ipAddressString	{
+	if (deleted || !bound)
+		return nil;
+	return [NSString stringFromRawIPAddress:addr.sin_addr.s_addr];
+}
 - (id) delegate	{
 	return delegate;
 }

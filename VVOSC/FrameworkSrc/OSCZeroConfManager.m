@@ -12,7 +12,7 @@
 - (id) initWithOSCManager:(id)m	{
 	if (m == nil)
 		goto BAIL;
-	
+	//NSLog(@"%s",__func__);
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
@@ -30,7 +30,7 @@
 		domainDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
 		
 		oscManager = m;
-		
+		//NSLog(@"\t\t%s - FINISHED",__func__);
 		return self;
 	}
 	
@@ -94,6 +94,7 @@
 	}
 	//	make an nsstring from the c string of the ip address string of the resolved service
 	ipString = [NSString stringWithCString:charPtr encoding:NSASCIIStringEncoding];
+	
 	//	get the port of the resolved service
 	port = ntohs(sock->sin_port);
 	//NSLog(@"\t\tresolved service %@ at %@ : %ld",[s name],ipString,port);
@@ -109,7 +110,7 @@
 	//	check to see if the port of the resolved service matches the input's port, bail if it does
 	matchingInPort = [oscManager findInputWithZeroConfName:resolvedServiceName];
 	if (matchingInPort != nil)	{
-		if (([matchingInPort port]==port) && ([IPAddressArray containsObject:ipString]))
+		if (([matchingInPort port]==port) && (([IPAddressArray containsObject:ipString]) || ([ipString isEqualToString:@"127.0.0.1"])))
 			return;
 	}
 	

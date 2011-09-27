@@ -7,29 +7,25 @@
 @implementation MVOOSCManager
 
 
-- (id) init	{
-	if (self = [super init])	{
-		NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
-		receivedMIDIStringArray = [[MutLockArray alloc] init];
-		outgoingBuffer = [[MutLockArray alloc] init];
-		oscSendingThread = [[VVThreadLoop alloc] initWithTimeInterval:0.01 target:self selector:@selector(sendOSC)];
-		inPort = [self createNewInput];
-		[inPort setInterval:0.01];
-		
-		NSString			*tmpString = nil;
-		NSNumber			*tmpNum = nil;
-		//	if there's a saved default for the IP address/port, put 'em in the fields
-		tmpString = [def objectForKey:@"IPAddress"];
-		tmpNum = [def objectForKey:@"Port"];
-		if (tmpString!=nil && tmpNum!=nil)
-			outPort = [self createNewOutputToAddress:tmpString atPort:[tmpNum intValue] withLabel:@"MIDI via OSC"];
-		else
-			outPort = [self createNewOutputToAddress:@"127.0.0.1" atPort:[inPort port] withLabel:@"MIDI via OSC"];
-		
-		return self;
-	}
-	[self release];
-	return nil;
+- (void) _generalInit	{
+	[super _generalInit];
+	[self setInPortLabelBase:[NSString stringWithString:@"MIDI via OSC"]];
+	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
+	receivedMIDIStringArray = [[MutLockArray alloc] init];
+	outgoingBuffer = [[MutLockArray alloc] init];
+	oscSendingThread = [[VVThreadLoop alloc] initWithTimeInterval:0.01 target:self selector:@selector(sendOSC)];
+	inPort = [self createNewInput];
+	[inPort setInterval:0.01];
+	
+	NSString			*tmpString = nil;
+	NSNumber			*tmpNum = nil;
+	//	if there's a saved default for the IP address/port, put 'em in the fields
+	tmpString = [def objectForKey:@"IPAddress"];
+	tmpNum = [def objectForKey:@"Port"];
+	if (tmpString!=nil && tmpNum!=nil)
+		outPort = [self createNewOutputToAddress:tmpString atPort:[tmpNum intValue] withLabel:@"MIDI via OSC"];
+	else
+		outPort = [self createNewOutputToAddress:@"127.0.0.1" atPort:[inPort port] withLabel:@"MIDI via OSC"];
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -49,9 +45,11 @@
 	//	start the osc-sending thread
 	[oscSendingThread start];
 }
+/*
 - (NSString *) inPortLabelBase	{
 	return [NSString stringWithString:@"MIDI via OSC"];
 }
+*/
 /*
 - (OSCOutPort *) createNewOutputToAddress:(NSString *)a atPort:(int)p withLabel:(NSString *)l	{
 	OSCOutPort		*returnMe = [super createNewOutputToAddress:a atPort:p withLabel:l];

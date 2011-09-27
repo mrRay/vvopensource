@@ -72,10 +72,12 @@
 	return nil;
 }
 - (void) _generalInit	{
+	//NSLog(@"%s",__func__);
 	inPortArray = [[MutLockArray arrayWithCapacity:0] retain];
 	outPortArray = [[MutLockArray arrayWithCapacity:0] retain];
 	delegate = nil;
 	inPortClass = [OSCInPort class];
+	inPortLabelBase = [[NSString stringWithString:@"VVOSC"] retain];
 	outPortClass = [OSCOutPort class];
 }
 
@@ -91,6 +93,7 @@
 		[outPortArray release];
 	outPortArray = nil;
 	delegate = nil;
+	VVRELEASE(inPortLabelBase);
 	[super dealloc];
 }
 
@@ -473,6 +476,7 @@
 	return returnMe;
 }
 - (OSCInPort *) findInputWithZeroConfName:(NSString *)n	{
+	//NSLog(@"%s ... %@",__func__,n);
 	if (n == nil)
 		return nil;
 	
@@ -520,6 +524,28 @@
 		[delegate setupChanged];
 	*/
 }
+- (void) removeOutputWithLabel:(NSString *)n	{
+	if (n==nil)
+		return;
+	[outPortArray wrlock];
+	int			indexToRemove = -1;
+	int			tmpIndex = 0;
+	for (OSCOutPort *outPort in [outPortArray array])	{
+		NSString		*tmpLabel = [outPort portLabel];
+		if (tmpLabel!=nil && [tmpLabel isEqualToString:n])	{
+			indexToRemove = tmpIndex;
+			break;
+		}
+	}
+	if (indexToRemove >= 0)
+		[outPortArray removeObjectAtIndex:indexToRemove];
+	[outPortArray unlock];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+}
+- (void) removeAllOutputs	{
+	[outPortArray lockRemoveAllObjects];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+}
 - (NSArray *) outPortLabelArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	NSEnumerator		*it;
@@ -546,9 +572,18 @@
 	return inPortClass;
 }
 - (NSString *) inPortLabelBase	{
+	return inPortLabelBase;
+	/*
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(inPortLabelBase)]))
 		return [delegate inPortLabelBase];
 	return [NSString stringWithString:@"VVOSC"];
+	*/
+}
+- (void) setInPortLabelBase:(NSString *)n	{
+	if (n == nil)
+		return;
+	VVRELEASE(inPortLabelBase);
+	inPortLabelBase = [n retain];
 }
 /*!
 	by default, this method returns [OSCOutPort class].  it’s called when creating an input port. this method exists so if you subclass OSCOutPort you can override this method to have your manager create your custom subclass with the default port creation methods

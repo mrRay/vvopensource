@@ -33,15 +33,6 @@ When instances of OSCInPort and OSCManager receive OSC data, they pass it to the
 
 
 
-//	OSCManager delegate protocol
-@protocol OSCManagerDelegate
-//- (void) setupChanged;		//	REMOVED FROM DELEGATE PROTOCOL- notifications are fired instead
-- (NSString *) inPortLabelBase;
-@end
-
-
-
-
 /*
 	the following stuff is for doxygen
 */

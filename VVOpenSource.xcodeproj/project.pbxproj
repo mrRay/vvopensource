@@ -257,6 +257,8 @@
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
 		968FAAAD108B6A62000E470D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAA108B6A62000E470D /* main.m */; };
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
+		96913A141432382F008A2111 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96913A2D14323832008A2111 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
 		969E5A3311FD95F0006391BD /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; };
 		969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
@@ -455,22 +457,8 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 966CCBD71431EFB9006D580F /* OSCQueryTest */;
+			remoteGlobalIDString = 966CCBD71431EFB9006D580F;
 			remoteInfo = OSCQueryTest;
-		};
-		966CCBE11431F022006D580F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
-			remoteInfo = VVBasics;
-		};
-		966CCBE31431F025006D580F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9628D0C4100E89F700C3944E /* VVOSC */;
-			remoteInfo = VVOSC;
 		};
 		9676598F100F81B700E02974 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -506,6 +494,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
+		};
+		96913A4414323839008A2111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			remoteInfo = VVBasics;
+		};
+		96913A461432383C008A2111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9628D0C4100E89F700C3944E /* VVOSC */;
+			remoteInfo = VVOSC;
 		};
 		96A24EB8100F7E6A00F21F0F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -893,6 +895,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96913A141432382F008A2111 /* VVBasics.framework in Frameworks */,
+				96913A2D14323832008A2111 /* VVOSC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -957,10 +961,10 @@
 				9628D0CA100E8A0100C3944E /* VVOSC framework */,
 				9628D17F100E8B5B00C3944E /* OSCTestApp */,
 				96B4931F106AEB8A008FB26E /* MIDI via OSC app */,
+				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
-				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
 			);
 			name = VVOpenSource;
 			sourceTree = "<group>";
@@ -1631,8 +1635,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				966CCBE21431F022006D580F /* PBXTargetDependency */,
-				966CCBE41431F025006D580F /* PBXTargetDependency */,
+				96913A4514323839008A2111 /* PBXTargetDependency */,
+				96913A471432383C008A2111 /* PBXTargetDependency */,
 			);
 			name = OSCQueryTest;
 			productName = OSCQueryTest;
@@ -2216,16 +2220,6 @@
 			target = 966CCBD71431EFB9006D580F /* OSCQueryTest */;
 			targetProxy = 966CCBDF1431F019006D580F /* PBXContainerItemProxy */;
 		};
-		966CCBE21431F022006D580F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
-			targetProxy = 966CCBE11431F022006D580F /* PBXContainerItemProxy */;
-		};
-		966CCBE41431F025006D580F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9628D0C4100E89F700C3944E /* VVOSC */;
-			targetProxy = 966CCBE31431F025006D580F /* PBXContainerItemProxy */;
-		};
 		96765990100F81B700E02974 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
@@ -2250,6 +2244,16 @@
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
 			targetProxy = 968FAAB9108B6B2A000E470D /* PBXContainerItemProxy */;
+		};
+		96913A4514323839008A2111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 96913A4414323839008A2111 /* PBXContainerItemProxy */;
+		};
+		96913A471432383C008A2111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9628D0C4100E89F700C3944E /* VVOSC */;
+			targetProxy = 96913A461432383C008A2111 /* PBXContainerItemProxy */;
 		};
 		96A24EB9100F7E6A00F21F0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2914,12 +2918,12 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "OSCQueryTest/OSCQueryTest-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -2940,11 +2944,12 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "OSCQueryTest/OSCQueryTest-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,

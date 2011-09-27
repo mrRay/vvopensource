@@ -9,6 +9,18 @@
 #import "AppController.h"
 
 
+
+
 @implementation AppController
+
+
+- (IBAction) createButtonUsed:(id)sender	{
+}
+
+
+- (IBAction) populateButtonUsed:(id)sender	{
+
+}
+
 
 @end

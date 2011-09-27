@@ -41,6 +41,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 	OSCZeroConfManager		*zeroConfManager;	//!<Creates OSCOutPorts for any OSC destinations detected via bonjour/zeroconf
 	
 	Class					inPortClass;
+	NSString				*inPortLabelBase;
 	Class					outPortClass;
 }
 
@@ -98,6 +99,10 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (void) removeInput:(id)p;
 ///	Removes the passed output from the outPortArray
 - (void) removeOutput:(id)p;
+///	Removes the first output with the passed label
+- (void) removeOutputWithLabel:(NSString *)n;
+///	Removes all the outputs from the outPortArray
+- (void) removeAllOutputs;
 ///	Generates and returns an array of strings which correspond to the labels of this manager's out ports
 - (NSArray *) outPortLabelArray;
 
@@ -105,6 +110,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (id) inPortClass;
 //	By default, returns @"VVOSC"- subclass around this to use a different base string when generating in port labels
 - (NSString *) inPortLabelBase;
+- (void) setInPortLabelBase:(NSString *)n;
 ///	By default, returns [OSCOutPort class]- subclass around to use different subclasses of OSCOutPort
 - (id) outPortClass;
 

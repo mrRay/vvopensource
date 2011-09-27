@@ -34,6 +34,7 @@ extern MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object 
 @interface NSString (OSCStringAdditions)
 
 + (NSString *) stringWithBytes:(const void *)b length:(NSUInteger)l encoding:(NSStringEncoding)e;
++ (NSString *) stringFromRawIPAddress:(unsigned long)i;
 - (NSString *) trimFirstAndLastSlashes;
 - (NSString *) stringByDeletingFirstPathComponent;
 - (NSString *) firstPathComponent;

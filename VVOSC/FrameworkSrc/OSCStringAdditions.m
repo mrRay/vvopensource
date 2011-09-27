@@ -1,5 +1,7 @@
 
 #import "OSCStringAdditions.h"
+#include <ifaddrs.h>
+#include <arpa/inet.h>
 
 
 
@@ -89,6 +91,11 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 		length:l
 		encoding:e];
 	return (returnMe==nil)?nil:[returnMe autorelease];
+}
++ (NSString *) stringFromRawIPAddress:(unsigned long)i	{
+	struct in_addr		tmpAddr;
+	tmpAddr.s_addr = i;
+	return [NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding];
 }
 - (NSString *) trimFirstAndLastSlashes	{
 	int				origLength = [self length];

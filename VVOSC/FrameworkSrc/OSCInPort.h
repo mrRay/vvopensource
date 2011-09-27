@@ -73,6 +73,7 @@ the documentation here only covers the basics, the header file for this class is
 - (void) setPortLabel:(NSString *)n;
 - (NSNetService *) zeroConfDest;
 - (BOOL) bound;
+- (NSString *) ipAddressString;
 
 ///	returns the delegate (default is the OSCManager which created me).
 - (id) delegate;

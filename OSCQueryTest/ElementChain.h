@@ -7,10 +7,15 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <VVBasics/VVBasics.h>
 
 
-@interface ElementChain : NSObject {
 
+
+@interface ElementChain : NSView {
+	MutLockArray		*elementArray;
 }
+
+- (void) _generalInit;
 
 @end
