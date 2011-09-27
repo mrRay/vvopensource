@@ -75,6 +75,8 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 ///	Called when OSCInPorts are processing received messages serially (by default, the manager is an OSCInPort's delegate)
 - (void) receivedOSCMessage:(OSCMessage *)m;
+///	Used to support the (non-specification) OSC query protocol.  Only works if the passed message is a reply (OSCMessageTypeReply) or error (OSCMessageTypeError) and has a valid (non-0) queryTXAddress & queryTXPort.  locates the corresponding OSCOutPort- creating one if necessary- and sends the OSCMessage out it.
+- (void) dispatchOSCMessage:(OSCMessage *)m;
 
 //	Creates and returns a unique label for an input port (unique to this manager)
 - (NSString *) getUniqueInputLabel;
@@ -86,6 +88,8 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (OSCOutPort *) findOutputWithLabel:(NSString *)n;
 //	Finds and returns an output matching the passed address and port (returns nil if not found)
 - (OSCOutPort *) findOutputWithAddress:(NSString *)a andPort:(int)p;
+//	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address expressed as an int) and port.  Returns nil if not found.
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a andPort:(unsigned short)p;
 //	Returns the output at the provided index in outPortArray
 - (OSCOutPort *) findOutputForIndex:(int)i;
 //	Finds and returns the input whose zero conf name matches the passed string (returns nil if not found)

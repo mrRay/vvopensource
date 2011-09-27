@@ -58,7 +58,10 @@ OSCAddressSpace is your application's main way of dealing with the OSC address s
 
 - (void) addDelegate:(id)d forPath:(NSString *)p;
 - (void) removeDelegate:(id)d forPath:(NSString *)p;
-
+/*
+- (void) addQueryDelegate:(id)d forPath:(NSString *)p;
+- (void) removeQueryDelegate:(id)d forPath:(NSString *)p;
+*/
 @property (assign, readwrite) id delegate;
 
 

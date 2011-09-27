@@ -107,6 +107,16 @@
 		return NO;
 	//	set the socket to non-blocking
 	//fcntl(sock, F_SETFL, 0_NONBLOCK);
+	/*
+	//	specify that the socket can be reused or you may not be able to bind to it
+	int			yes = 1;
+	if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) != 0)	{
+		NSLog(@"\t\terr %ld at setsockopt A in %s",errno,__func__);
+	}
+	if (setsockopt(sock,SOL_SOCKET,SO_REUSEPORT,&yes,sizeof(int)) != 0)	{
+		NSLog(@"\t\terr %ld at setsockopt B in %s",errno,__func__);
+	}
+	*/
 	//	prep the sockaddr_in struct
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
@@ -345,6 +355,8 @@
 		portLabel = [n copy];
 	
 	[self start];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:nil];
 }
 - (NSNetService *) zeroConfDest	{
 	return zeroConfDest;

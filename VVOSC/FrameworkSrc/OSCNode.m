@@ -81,6 +81,7 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
+		//queryDelegateArray = nil;
 		return self;
 	}
 	BAIL:
@@ -105,6 +106,7 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
+		//queryDelegateArray = nil;
 		return self;
 	}
 	[self autorelease];
@@ -119,6 +121,16 @@
 		[delegateArray release];
 		delegateArray = nil;
 	}
+	/*
+	if (queryDelegateArray != nil)	{
+		[queryDelegateArray wrlock];
+			[queryDelegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
+			[queryDelegateArray removeAllObjects];
+		[queryDelegateArray unlock];
+		[queryDelegateArray release];
+		queryDelegateArray = nil;
+	}
+	*/
 	deleted = YES;
 }
 - (void) dealloc	{
@@ -447,6 +459,66 @@
 }
 
 
+/*
+- (void) addQueryDelegate:(id)d	{
+	if (d == nil)
+		return;
+	//	if there's no delegate array, make one
+	if (queryDelegateArray == nil)
+		queryDelegateArray = [[MutNRLockArray alloc] initWithCapacity:0];
+	//	first check to make sure that this delegate hasn't already been added
+	long		foundIndex = [queryDelegateArray lockIndexOfIdenticalPtr:d];
+	if (foundIndex == NSNotFound)	{
+		//	if the delegate hasn't already been added, add it (this retains it)
+		[queryDelegateArray lockAddObject:d];
+	}
+}
+- (void) removeQueryDelegate:(id)d	{
+	//NSLog(@"%s",__func__);
+	if ((d == nil)||(queryDelegateArray==nil)||([queryDelegateArray count]<1))
+		return;
+	
+	//	find the delegate in my delegate array
+	long		foundIndex = [queryDelegateArray lockIndexOfIdenticalPtr:d];
+	//	if i could find it...
+	if (foundIndex != NSNotFound)
+		[queryDelegateArray lockRemoveObjectAtIndex:foundIndex];
+	else
+		NSLog(@"\terr: couldn't find query delegate to remove- %s",__func__);
+}
+- (void) informQueryDelegatesOfNameChange	{
+	//NSLog(@"%s ... %@",__func__,self);
+	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
+	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
+	OSSpinLockLock(&nameLock);
+		VVRELEASE(fullName);
+		if (parentNode == addressSpace)
+			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
+		else if (parentNode != nil)
+			fullName = [[NSString stringWithFormat:@"%@/%@",parentFullName,nodeName] retain];
+	OSSpinLockUnlock(&nameLock);
+	
+	//	tell my delegates that there's been a name change
+	if ((queryDelegateArray!=nil)&&([queryDelegateArray count]>0))
+		[queryDelegateArray lockBruteForceMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
+	//	tell all my sub-nodes that their name has also changed
+	if ((nodeContents!=nil)&&([nodeContents count]>0))
+		[nodeContents lockMakeObjectsPerformSelector:@selector(informQueryDelegatesOfNameChange)];
+}
+- (void) addQueryDelegatesFromNode:(OSCNode *)n	{
+	//	put together an array of the delegates i'll be adding
+	NSArray		*delegatesToAdd = [[n queryDelegateArray] lockCreateArrayCopy];
+	//	copy the delegates to my delegate array
+	[queryDelegateArray lockAddObjectsFromArray:delegatesToAdd];
+	//	notify the delegates i copied that their names changed
+	for (id delegatePtr in delegatesToAdd)	{
+		if ([delegatePtr respondsToSelector:@selector(nodeNameChanged:)])
+			[delegatePtr nodeNameChanged:self];
+	}
+}
+*/
+
+
 - (void) dispatchMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	if ((m==nil)||(deleted))
@@ -566,6 +638,11 @@
 - (id) delegateArray	{
 	return delegateArray;
 }
+/*
+- (id) queryDelegateArray	{
+	return queryDelegateArray;
+}
+*/
 
 
 @end

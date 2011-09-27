@@ -363,7 +363,30 @@ id				_mainAddressSpace;
 	if (foundNode != nil)
 		[foundNode removeDelegate:d];
 }
-
+/*
+- (void) addQueryDelegate:(id)d forPath:(NSString *)p	{
+	//NSLog(@"%s",__func__);
+	if ((d==nil)||(p==nil)||(deleted))
+		return;
+	if (![d respondsToSelector:@selector(node:receivedOSCMessage:)])	{
+		NSLog(@"\terr: tried to add a non-conforming delegate: %s",__func__);
+		return;
+	}
+	
+	OSCNode			*foundNode = [self findNodeForAddress:p createIfMissing:YES];
+	if (foundNode != nil)
+		[foundNode addQueryDelegate:d];
+}
+- (void) removeQueryDelegate:(id)d forPath:(NSString *)p	{
+	//NSLog(@"%s",__func__);
+	if ((d==nil)||(p==nil)||(deleted))
+		return;
+	
+	OSCNode			*foundNode = [self findNodeForAddress:p createIfMissing:NO];
+	if (foundNode != nil)
+		[foundNode removeQueryDelegate:d];
+}
+*/
 - (void) setDelegate:(id)n	{
 	delegate = n;
 }

@@ -263,6 +263,7 @@
 	return returnMe;
 }
 - (OSCOutPort *) createNewOutputToAddress:(NSString *)a atPort:(int)p	{
+	//NSLog(@"%s ... %@, %ld",__func__,a,p);
 	OSCOutPort			*returnMe = nil;
 	NSString			*uniqueLabel = [self getUniqueOutputLabel];
 	returnMe = [self createNewOutputToAddress:a atPort:p withLabel:uniqueLabel];
@@ -295,6 +296,38 @@
 	if ((delegate != nil) && ([delegate respondsToSelector:@selector(receivedOSCMessage:)]))
 		[delegate receivedOSCMessage:m];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- OSC query reply/error message dispatch
+/*------------------------------------*/
+
+
+- (void) dispatchOSCMessage:(OSCMessage *)m	{
+	//	make sure that the passed message is either a reply or error
+	OSCMessageType		mType = [m messageType];
+	if (mType==OSCMessageTypeReply || mType==OSCMessageTypeError)	{
+		//	make sure that the passed message has a valid reply-to address & port
+		unsigned int		txAddr = [m queryTXAddress];
+		unsigned short		txPort = [m queryTXPort];
+		if (txAddr!=0 && txPort!=0)	{
+			//	find the out port which corresponds to the reply-to address & port (create it if it can't be found)
+			OSCOutPort		*outPort = [self findOutputWithRawAddress:txAddr andPort:txPort];
+			if (outPort == nil)	{
+				struct in_addr		tmpAddr;
+				tmpAddr.s_addr = txAddr;
+				outPort = [self
+					createNewOutputToAddress:[NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding]
+					atPort:ntohs(txPort)];
+			}
+			//	send the message out the port
+			if (outPort != nil)
+				[outPort sendThisMessage:m];
+		}
+	}
+}
+
+
 /*===================================================================================*/
 #pragma mark --------------------- working with ports
 /*------------------------------------*/
@@ -416,6 +449,18 @@
 		}
 	[outPortArray unlock];
 	
+	return foundPort;
+}
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a andPort:(unsigned short)p	{
+	OSCOutPort		*foundPort = nil;
+	[outPortArray rdlock];
+	for (OSCOutPort *outPortPtr in [outPortArray array])	{
+		if ([outPortPtr _matchesRawAddress:a andPort:p])	{
+			foundPort = outPortPtr;
+			break;
+		}
+	}
+	[outPortArray unlock];
 	return foundPort;
 }
 - (OSCOutPort *) findOutputForIndex:(int)i	{

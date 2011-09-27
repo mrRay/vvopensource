@@ -22,7 +22,13 @@
 - (void) nodeNameChanged:(id)node;
 - (void) nodeDeleted:(id)node;
 @end
-
+/*
+@protocol OSCNodeQueryDelegateProtocol
+- (void) node:(id)n receivedOSCMessage:(id)msg;
+- (void) nodeNameChanged:(id)node;
+- (void) nodeDeleted:(id)node;
+@end
+*/
 
 
 
@@ -53,6 +59,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	OSCMessage			*lastReceivedMessage;	///	The last message sent to this node is retained (the message is retained instead of the value because messages can have multiple values)
 	OSSpinLock			lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
+	//MutNRLockArray		*queryDelegateArray;	//	type 'MutNRLockArray'.  contents are NOT retained!  could be anything!
 }
 
 //	only called by the address space to craft a formatted string for logging purposes
@@ -100,7 +107,12 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (void) removeDelegate:(id)d;
 - (void) informDelegatesOfNameChange;
 - (void) addDelegatesFromNode:(OSCNode *)n;
-
+/*
+- (void) addQueryDelegate:(id)d;
+- (void) removeQueryDelegate:(id)d;
+- (void) informQueryDelegatesOfNameChange;
+- (void) addQueryDelegatesFromNode:(OSCNode *)n;
+*/
 //	simply sends the passed message to all my delegates
 - (void) dispatchMessage:(OSCMessage *)m;
 
@@ -115,5 +127,6 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (readonly) OSCMessage *lastReceivedMessage;
 @property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
+//@property (readonly) id queryDelegateArray;
 
 @end

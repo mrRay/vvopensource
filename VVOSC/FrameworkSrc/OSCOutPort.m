@@ -181,6 +181,15 @@
 	[self createSocket];
 }
 
+
+- (BOOL) _matchesRawAddress:(unsigned int)a andPort:(unsigned short)p	{
+	BOOL		returnMe = NO;
+	if (((unsigned int)addr.sin_addr.s_addr==a) && ((unsigned short)addr.sin_port==p))
+		returnMe = YES;
+	return returnMe;
+}
+
+
 - (NSString *) portLabel	{
 	return portLabel;
 }
