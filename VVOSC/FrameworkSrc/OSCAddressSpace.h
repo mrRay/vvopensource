@@ -12,7 +12,7 @@
 //	OSCAddressSpace delegate protocol
 @protocol OSCAddressSpaceDelegateProtocol
 - (void) nodeRenamed:(OSCNode *)n;
-- (void) dispatchReplyOrError:(OSCMessage *)m;
+- (void) dispatchReplyOrError:(OSCMessage *)m;	//	this method is called by nodes in the address space.  the passed message is a reply or error in response to a query which should be sent out an output.
 @end
 
 
@@ -53,8 +53,10 @@ OSCAddressSpace is your application's main way of dealing with the OSC address s
 //	this method is called whenever a node is added to another node
 - (void) nodeRenamed:(OSCNode *)n;
 
-//	unlike a normal node: first finds the destination node, then dispatches the msg
+///	Unlike a normal OSCNode, this method finds the destination node and then dispatches the msg.  If the destination is itself, it just calls the super.
 - (void) dispatchMessage:(OSCMessage *)m;
+//	This method gets called by an OSCNode inside me (or by me), and you probably won't need to ever call this method.  The passed message is a reply or error that needs to be sent back in response to a query.  The passed OSCMessage contains the IP address and port of the destination.  This method just passes the data on to the addres space's delegate- it does NOT actually send anything out, this is something you'll have to implement in the delegate.
+- (void) _dispatchReplyOrError:(OSCMessage *)m;
 
 - (void) addDelegate:(id)d forPath:(NSString *)p;
 - (void) removeDelegate:(id)d forPath:(NSString *)p;

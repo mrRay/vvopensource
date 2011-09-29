@@ -10,13 +10,36 @@
 
 
 - (NSString *) description	{
+	NSString			*baseDescription = nil;
+	
+	switch (messageType)	{
+		case OSCMessageTypeControl:
+			baseDescription = [self _description];
+			return [NSString stringWithFormat:@"<OSCMessage %@>",baseDescription];
+		case OSCMessageTypeQuery:
+			baseDescription = [self _description];
+			return [NSString stringWithFormat:@"<OSCMsg Query %ld %@>",queryType,baseDescription];
+		case OSCMessageTypeReply:
+			if (valueCount < 2)
+				return [NSString stringWithFormat:@"<OSCMsg Reply %@>",value];
+			else
+				return [NSString stringWithFormat:@"<OSCMsg Reply %@>",valueArray];
+		case OSCMessageTypeError:
+			if (valueCount < 2)
+				return [NSString stringWithFormat:@"<OSCMsg Err %@>",value];
+			else
+				return [NSString stringWithFormat:@"<OSCMsg Err %@>",valueArray];
+	}
+	return [NSString stringWithFormat:@"<OSCMessage %@>",baseDescription];
+}
+- (NSString *) _description	{
 	if (valueCount < 2)
-		return [NSString stringWithFormat:@"<OSCMessage: %@, %@>",address,value];
+		return [NSString stringWithFormat:@"'%@', '%@'",address,value];
 	else
-		return [NSString stringWithFormat:@"<OSCMessage: %@-%@>",address,valueArray];
+		return [NSString stringWithFormat:@"'%@'-'%@'",address,valueArray];
 }
 + (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
-	//NSLog(@"%s ... %s, %ld",__func__,b,l);
+	NSLog(@"%s ... %s, %ld",__func__,b,l);
 	if ((b == nil) || (l == 0))
 		return nil;
 	
@@ -51,7 +74,12 @@
 				else	{
 					//	if the previous character was a '/', then i'm implicitly requesting a directory listing
 					if (i>0 && b[i-1]=='/')	{
-						address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the /, i'm sending to the directory node)
+						//	if the new length is 0, then i'm requesting a base-level directory listing
+						if ((i-1)==0)
+							address = [NSString stringWithBytes:b length:i encoding:NSUTF8StringEncoding];
+						//	else i want the address to stop one short of the last slash (trim off the last slash)
+						else
+							address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];
 						msgType = OSCMessageTypeQuery;
 						queryType = OSCQueryTypeNamespaceExploration;
 					}
@@ -414,6 +442,7 @@
 	return returnMe;
 }
 - (id) initReplyForMessage:(OSCMessage *)m	{
+	//NSLog(@"%s ... %@",__func__,m);
 	if (m==nil)
 		goto BAIL;
 	self = [self _fastInit:
@@ -431,8 +460,10 @@
 			goto BAIL;
 		[self addNSDataBlob:tmpData];
 	}
-	else
+	else	{
+		//NSLog(@"\t\treplyAddress is %@",[m replyAddress]);
 		[self addString:[m replyAddress]];
+	}
 	return self;
 	
 	BAIL:
@@ -645,6 +676,8 @@
 					return address;
 					break;
 				case OSCQueryTypeNamespaceExploration:
+					if ([address isEqualToString:@"/"])
+						return address;
 					return [NSString stringWithFormat:@"%@/",address];
 					break;
 				case OSCQueryTypeDocumentation:

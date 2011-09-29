@@ -63,9 +63,10 @@
 	bail = NO;
 	if (![NSThread setThreadPriority:1.0])
 		NSLog(@"\terror setting thread priority to 1.0");
-	
+	/*
 	STARTLOOP:
 	@try	{
+	*/
 		while ((running) && (!bail))	{
 			//NSLog(@"\t\tproc start");
 			struct timeval		startTime;
@@ -115,6 +116,7 @@
 			}
 			//NSLog(@"\t\tproc looping");
 		}
+	/*
 	}
 	@catch (NSException *err)	{
 		NSAutoreleasePool		*oldPool = pool;
@@ -135,6 +137,7 @@
 		pool = [[NSAutoreleasePool alloc] init];
 		goto STARTLOOP;
 	}
+	*/
 	[pool release];
 	running = NO;
 	//NSLog(@"\t\t%s - FINSHED",__func__);

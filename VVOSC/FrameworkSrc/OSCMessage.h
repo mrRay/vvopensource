@@ -98,5 +98,6 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (void) _setWildcardsInAddress:(BOOL)n;
 - (void) _setMessageType:(OSCMessageType)n;
 - (void) _setQueryType:(OSCQueryType)n;
+- (NSString *) _description;
 
 @end

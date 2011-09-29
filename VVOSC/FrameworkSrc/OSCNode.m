@@ -63,6 +63,13 @@
 		return nil;
 	return [returnMe autorelease];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- init/dealloc
+/*------------------------------------*/
+
+
 - (id) initWithName:(NSString *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	if (n == nil)
@@ -77,11 +84,14 @@
 		nodeContents = nil;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
+		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
-		//queryDelegateArray = nil;
+		
+		autoQueryReply = NO;
+		queryDelegate = nil;
 		return self;
 	}
 	BAIL:
@@ -106,7 +116,9 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
-		//queryDelegateArray = nil;
+		
+		autoQueryReply = NO;
+		queryDelegate = nil;
 		return self;
 	}
 	[self autorelease];
@@ -131,6 +143,8 @@
 		queryDelegateArray = nil;
 	}
 	*/
+	autoQueryReply = NO;
+	queryDelegate = nil;
 	deleted = YES;
 }
 - (void) dealloc	{
@@ -160,6 +174,11 @@
 	
 	[super dealloc];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- backend comparators
+/*------------------------------------*/
 
 
 - (NSComparisonResult) nodeNameCompare:(OSCNode *)comp	{
@@ -198,6 +217,11 @@
 	
 	return NO;
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- adding/removing nodes
+/*------------------------------------*/
 
 
 - (void) addLocalNode:(OSCNode *)n	{
@@ -249,15 +273,11 @@
 	[n prepareToBeDeleted];
 	[n release];
 }
-- (OSCNode *) localNodeAtIndex:(int)i	{
-	if ((i<0)||(nodeContents==nil))
-		return nil;
-	if (i>= [nodeContents count])
-		return nil;
-	OSCNode			*returnMe = nil;
-	returnMe = [nodeContents lockObjectAtIndex:i];
-	return returnMe;
-}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- finding LOCAL nodes
+/*------------------------------------*/
 
 
 - (OSCNode *) findLocalNodeNamed:(NSString *)n	{
@@ -311,6 +331,11 @@
 }
 
 
+/*===================================================================================*/
+#pragma mark --------------------- finding deeper nodes
+/*------------------------------------*/
+
+
 - (OSCNode *) findNodeForAddress:(NSString *)p	{
 	//NSLog(@"%s ... %@",__func__,p);
 	return [self findNodeForAddress:p createIfMissing:NO];
@@ -321,8 +346,14 @@
 		NSLog(@"\terr: p was nil %s",__func__);
 		return nil;
 	}
-	
-	return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
+	//return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
+	NSString		*trimmedString = [p trimFirstAndLastSlashes];
+	if (trimmedString==nil || [trimmedString length]==0)
+		return self;
+	NSArray			*components = [trimmedString pathComponents];
+	if (components==nil || [components count]<1)
+		return self;
+	return [self findNodeForAddressArray:components createIfMissing:c];
 }
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a	{
 	return [self findNodeForAddressArray:a createIfMissing:NO];
@@ -401,6 +432,11 @@
 }
 
 
+/*===================================================================================*/
+#pragma mark --------------------- delegate stuff
+/*------------------------------------*/
+
+
 - (void) addDelegate:(id)d	{
 	if (d == nil)
 		return;
@@ -459,68 +495,153 @@
 }
 
 
-/*
-- (void) addQueryDelegate:(id)d	{
-	if (d == nil)
-		return;
-	//	if there's no delegate array, make one
-	if (queryDelegateArray == nil)
-		queryDelegateArray = [[MutNRLockArray alloc] initWithCapacity:0];
-	//	first check to make sure that this delegate hasn't already been added
-	long		foundIndex = [queryDelegateArray lockIndexOfIdenticalPtr:d];
-	if (foundIndex == NSNotFound)	{
-		//	if the delegate hasn't already been added, add it (this retains it)
-		[queryDelegateArray lockAddObject:d];
-	}
-}
-- (void) removeQueryDelegate:(id)d	{
-	//NSLog(@"%s",__func__);
-	if ((d == nil)||(queryDelegateArray==nil)||([queryDelegateArray count]<1))
-		return;
-	
-	//	find the delegate in my delegate array
-	long		foundIndex = [queryDelegateArray lockIndexOfIdenticalPtr:d];
-	//	if i could find it...
-	if (foundIndex != NSNotFound)
-		[queryDelegateArray lockRemoveObjectAtIndex:foundIndex];
-	else
-		NSLog(@"\terr: couldn't find query delegate to remove- %s",__func__);
-}
-- (void) informQueryDelegatesOfNameChange	{
-	//NSLog(@"%s ... %@",__func__,self);
-	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
-	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
-	OSSpinLockLock(&nameLock);
-		VVRELEASE(fullName);
-		if (parentNode == addressSpace)
-			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
-		else if (parentNode != nil)
-			fullName = [[NSString stringWithFormat:@"%@/%@",parentFullName,nodeName] retain];
-	OSSpinLockUnlock(&nameLock);
-	
-	//	tell my delegates that there's been a name change
-	if ((queryDelegateArray!=nil)&&([queryDelegateArray count]>0))
-		[queryDelegateArray lockBruteForceMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
-	//	tell all my sub-nodes that their name has also changed
-	if ((nodeContents!=nil)&&([nodeContents count]>0))
-		[nodeContents lockMakeObjectsPerformSelector:@selector(informQueryDelegatesOfNameChange)];
-}
-- (void) addQueryDelegatesFromNode:(OSCNode *)n	{
-	//	put together an array of the delegates i'll be adding
-	NSArray		*delegatesToAdd = [[n queryDelegateArray] lockCreateArrayCopy];
-	//	copy the delegates to my delegate array
-	[queryDelegateArray lockAddObjectsFromArray:delegatesToAdd];
-	//	notify the delegates i copied that their names changed
-	for (id delegatePtr in delegatesToAdd)	{
-		if ([delegatePtr respondsToSelector:@selector(nodeNameChanged:)])
-			[delegatePtr nodeNameChanged:self];
-	}
-}
-*/
+/*===================================================================================*/
+#pragma mark --------------------- the main message dispatch method!
+/*------------------------------------*/
 
 
 - (void) dispatchMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
+	if ((m==nil)||(deleted))
+		return;
+	//	retain the message so it doesn't disappear during this callback
+	[m retain];
+	NSMutableArray		*tmpCopy = nil;
+	OSCMessageType		mType = [m messageType];
+	OSCQueryType		qType;
+	
+	NSString			*tmpString = nil;
+	NSMutableArray		*tmpArray = nil;
+	OSCMessage			*reply = nil;
+	
+	switch (mType)	{
+		case OSCMessageTypeControl:
+			tmpCopy = [delegateArray lockCreateArrayCopy];
+			if (tmpCopy != nil)	{
+				for (ObjectHolder *holder in tmpCopy)	{
+					id		delegate = [holder object];
+					if (delegate != nil)
+						[delegate node:self receivedOSCMessage:m];
+				}
+			}
+			OSSpinLockLock(&lastReceivedMessageLock);
+				if (lastReceivedMessage != nil)
+					[lastReceivedMessage release];
+				lastReceivedMessage = m;
+				if (lastReceivedMessage != nil)
+					[lastReceivedMessage retain];
+			OSSpinLockUnlock(&lastReceivedMessageLock);
+			break;
+		case OSCMessageTypeQuery:
+			//NSLog(@"\t\treceived query %@",m);
+			qType = [m queryType];
+			switch (qType)	{
+				case OSCQueryTypeDocumentation:
+					//	ask the delegate for documentation, if it returns nil make my own answer
+					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(docString)])
+						tmpString = [queryDelegate docString];
+					//	if the string's nil for any reason, AND autoQueryReply is YES, make my own string
+					if (tmpString==nil && autoQueryReply)	{
+						switch (nodeType)	{
+							case OSCNodeTypeUnknown:
+								tmpString = [NSString stringWithFormat:@"%@: OSC node of unknown type.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeDirectory:
+								tmpString = [NSString stringWithFormat:@"%@: Directory-type OSC node- potentially contains subnodes.  this node does not have any other specific data type.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeTypeFloat:
+								tmpString = [NSString stringWithFormat:@"%@: Float-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeType2DPoint:
+								tmpString = [NSString stringWithFormat:@"%@: 2D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeType3DPoint:
+								tmpString = [NSString stringWithFormat:@"%@: 3D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeTypeRect:
+								tmpString = [NSString stringWithFormat:@"%@: Rect-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeTypeColor:
+								tmpString = [NSString stringWithFormat:@"%@: Color-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+							case OSCNodeTypeString:
+								tmpString = [NSString stringWithFormat:@"%@: String-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
+								break;
+						}
+					}
+					break;
+				case OSCQueryTypeNamespaceExploration:
+					//	ask the delegate for subnodes, if it returns nil make my own answer
+					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(namespaceArray)])
+						tmpArray = [queryDelegate namespaceArray];
+					//	if the array's nil for any reason, AND autoQueryReply is YES, make an array
+					if (tmpArray==nil && autoQueryReply)	{
+						switch (nodeType)	{
+							case OSCNodeDirectory:
+							case OSCNodeType2DPoint:
+							case OSCNodeType3DPoint:
+							case OSCNodeTypeColor:
+								if (nodeContents!=nil && [nodeContents count]>0)	{
+									[nodeContents rdlock];
+									for (OSCNode *nodePtr in [nodeContents array])	{
+										if (![nodePtr hiddenInMenu])	{
+											if (tmpArray==nil)
+												tmpArray = [NSMutableArray arrayWithCapacity:0];
+											[tmpArray addObject:[nodePtr nodeName]];
+										}
+									}
+									[nodeContents unlock];
+								}
+								break;
+							case OSCNodeTypeUnknown:
+							case OSCNodeTypeFloat:
+							case OSCNodeTypeRect:
+							case OSCNodeTypeString:
+								break;
+						}
+					}
+					//	make a reply
+					reply = [OSCMessage createReplyForMessage:m];
+					//	if there's a tmpArray, add the objects in the array (the node names) to the reply
+					if (tmpArray != nil)	{
+						for (NSString *tmpName in tmpArray)	{
+							[reply addString:tmpName];
+						}
+					}
+					break;
+				case OSCQueryTypeTypeSignature:
+					//	ask the delegate for a type signature, if it returns nil make my own answer
+					break;
+				case OSCQueryTypeCurrentValue:
+					//	ask the delegate for the current value, if it returns nil make my own answer
+					break;
+				case OSCQueryTypeReturnTypeString:
+					//	ask the delegate for the return type strig, if it returns nil make my own answer
+					break;
+			}
+			break;
+		case OSCMessageTypeReply:
+			NSLog(@"\t\treceived reply %@",m);
+			break;
+		case OSCMessageTypeError:
+			NSLog(@"\t\treceived error %@",m);
+			break;
+	}
+	//	if there's a reply, send it- just give it to the osc manager, which will either dispatch it or create any necessary outputs and then dispatch it
+	if (reply != nil)	{
+		NSLog(@"\t\tshould be sending reply %@",reply);
+		[_mainAddressSpace _dispatchReplyOrError:reply];
+	}
+	
+	
+	
+	
+	
+	//	release the message!
+	[m release];
+	
+	
+	/*
 	if ((m==nil)||(deleted))
 		return;
 	//	retain the message so it doesn't disappear during this callback
@@ -540,7 +661,13 @@
 	OSSpinLockUnlock(&lastReceivedMessageLock);
 	//	release the message!
 	[m release];
+	*/
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- key-val stuff
+/*------------------------------------*/
 
 
 - (void) setAddressSpace:(id)n	{
@@ -643,6 +770,18 @@
 	return queryDelegateArray;
 }
 */
+- (BOOL) autoQueryReply	{
+	return autoQueryReply;
+}
+- (void) setAutoQueryReply:(BOOL)n	{
+	autoQueryReply = n;
+}
+- (id <OSCNodeQueryDelegateProtocol>) queryDelegate	{
+	return queryDelegate;
+}
+- (void) setQueryDelegate:(id <OSCNodeQueryDelegateProtocol>)n	{
+	queryDelegate = n;
+}
 
 
 @end

@@ -66,5 +66,6 @@ the documentation here only covers the basics, the header file for this class is
 
 - (unsigned short) port;
 - (NSString *) addressString;
+- (struct sockaddr_in *) addr;
 
 @end

@@ -14,6 +14,7 @@
 #import "OSCPacket.h"
 #import "OSCBundle.h"
 #import "OSCMessage.h"
+#import "OSCOutPort.h"
 
 
 
@@ -29,12 +30,13 @@ the documentation here only covers the basics, the header file for this class is
 @interface OSCInPort : NSObject {
 	BOOL					deleted;	//	whether or not i'm deleted- ensures that socket gets closed
 	BOOL					bound;		//	whether or not the socket is bound
+	OSSpinLock				socketLock;
 	int						sock;		//	socket file descriptor.  remember, everything in unix is files!
 	struct sockaddr_in		addr;		//	struct that describes *my* address (this is an in port)
 	unsigned short			port;		//	the port number i'm receiving from
 	unsigned char			buf[8192];	//	the socket gets data and dumps it here immediately
 	
-	OSSpinLock				lock;
+	OSSpinLock				scratchLock;
 	VVThreadLoop			*threadLooper;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
@@ -65,7 +67,9 @@ the documentation here only covers the basics, the header file for this class is
 ///	called internally by this OSCInPort, passed an array of OSCMessage objects corresponding to the serially received data.  useful if you're subclassing OSCInPort.
 - (void) handleScratchArray:(NSArray *)a;
 ///	called internally as messages are parsed.  useful if you're subclassing OSCInPort.
-- (void) addMessage:(OSCMessage *)val;
+- (void) _addMessage:(OSCMessage *)val;
+//	called internally by OSCManager when it's asked to dispatch a query.  you should never need to call this method manually.
+- (void) _dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o;
 
 - (unsigned short) port;
 - (void) setPort:(unsigned short)n;

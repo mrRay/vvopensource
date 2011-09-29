@@ -121,9 +121,13 @@
 		[delegate setupChanged];
 	*/
 }
+
+
 /*===================================================================================*/
 #pragma mark --------------------- creating input ports
 /*------------------------------------*/
+
+
 - (OSCInPort *) createNewInputFromSnapshot:(NSDictionary *)s	{
 	if (s == nil)
 		return nil;
@@ -195,9 +199,13 @@
 	
 	return portPtr;
 }
+
+
 /*===================================================================================*/
 #pragma mark --------------------- creating output ports
 /*------------------------------------*/
+
+
 - (OSCOutPort *) createNewOutputFromSnapshot:(NSDictionary *)s	{
 	if (s == nil)
 		return nil;
@@ -284,9 +292,12 @@
 	return portPtr;
 }
 
+
 /*===================================================================================*/
 #pragma mark --------------------- main osc callback
 /*------------------------------------*/
+
+
 /*!
 	the passed OSCMessage has both the address and the value (or values- a message can have more than one value).  this method is called immediately, as the incoming OSC data is received- no attempt is made to coalesce the updates and sort them by address.
 	
@@ -306,7 +317,8 @@
 /*------------------------------------*/
 
 
-- (void) dispatchOSCMessage:(OSCMessage *)m	{
+- (void) dispatchReplyOrError:(OSCMessage *)m	{
+	NSLog(@"%s ... %@",__func__,m);
 	//	make sure that the passed message is either a reply or error
 	OSCMessageType		mType = [m messageType];
 	if (mType==OSCMessageTypeReply || mType==OSCMessageTypeError)	{
@@ -322,18 +334,33 @@
 				outPort = [self
 					createNewOutputToAddress:[NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding]
 					atPort:ntohs(txPort)];
+				NSLog(@"\t\tcouldn't find output, created %@",outPort);
 			}
 			//	send the message out the port
-			if (outPort != nil)
+			if (outPort != nil)	{
+				NSLog(@"\t\tfound matching output (%@), sending the reply...",outPort);
 				[outPort sendThisMessage:m];
+			}
 		}
 	}
+	
+}
+- (void) dispatchQuery:(OSCMessage *)m toOutput:(OSCOutPort *)o	{
+	NSLog(@"%s ... %@, %@",__func__,m,o);
+	OSCMessageType		mType = [m messageType];
+	if (mType != OSCMessageTypeQuery)
+		return;
+	//	find an in port- doesn't matter which one, the query just has to come from a place i'm listening to
+	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
+	[inPort _dispatchQuery:m toOutPort:o];
 }
 
 
 /*===================================================================================*/
 #pragma mark --------------------- working with ports
 /*------------------------------------*/
+
+
 - (NSString *) getUniqueInputLabel	{
 	NSString		*tmpString = nil;
 	NSEnumerator	*it;
@@ -562,9 +589,13 @@
 	
 	return returnMe;
 }
+
+
 /*===================================================================================*/
 #pragma mark --------------------- subclassable methods for customization
 /*------------------------------------*/
+
+
 /*!
 	by default, this method returns [OSCInPort class].  it’s called when creating an input port. this method exists so if you subclass OSCInPort you can override this method to have your manager create your custom subclass with the default port creation methods
 */
@@ -591,9 +622,13 @@
 - (id) outPortClass	{
 	return outPortClass;
 }
+
+
 /*===================================================================================*/
 #pragma mark --------------------- misc.
 /*------------------------------------*/
+
+
 - (id) delegate	{
 	return delegate;
 }

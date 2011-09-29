@@ -12,23 +12,20 @@
 
 
 
-
-
-
-
-
 @protocol OSCNodeDelegateProtocol
 - (void) node:(id)n receivedOSCMessage:(id)msg;
 - (void) nodeNameChanged:(id)node;
 - (void) nodeDeleted:(id)node;
 @end
-/*
+///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode
 @protocol OSCNodeQueryDelegateProtocol
-- (void) node:(id)n receivedOSCMessage:(id)msg;
-- (void) nodeNameChanged:(id)node;
-- (void) nodeDeleted:(id)node;
+- (NSMutableArray *) namespaceArray;
+- (NSString *) docString;
+- (NSString *) typeSignature;
+- (OSCValue *) currentValue;
+- (NSString *) returnTypeString;
 @end
-*/
+
 
 
 
@@ -59,7 +56,9 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	OSCMessage			*lastReceivedMessage;	///	The last message sent to this node is retained (the message is retained instead of the value because messages can have multiple values)
 	OSSpinLock			lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
-	//MutNRLockArray		*queryDelegateArray;	//	type 'MutNRLockArray'.  contents are NOT retained!  could be anything!
+	
+	BOOL				autoQueryReply;	//	NO by default. if YES and the queryDelegate is nil or doesn't respond to one of the delegate methods or returns nil from one of the delegate methods, the OSCNode will try to automatically respond to the query
+	id <OSCNodeQueryDelegateProtocol>	queryDelegate;	//	nil by default, NOT retained; unlike "normal" delegates, an OSCNode has a single query delegate
 }
 
 //	only called by the address space to craft a formatted string for logging purposes
@@ -77,7 +76,6 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (void) addLocalNode:(OSCNode *)n;
 - (void) removeLocalNode:(OSCNode *)n;	//	this just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
 - (void) deleteLocalNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
-- (OSCNode *) localNodeAtIndex:(int)i;
 
 ///	It's assumed that the passed name doesn't have any wildcards/regex.  If the receiver contains a node with the identical name as the passed string, the node will be returned.  This is not a "deep" search, it's restricted to the receiver's nodeContents array.
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;
@@ -107,13 +105,8 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (void) removeDelegate:(id)d;
 - (void) informDelegatesOfNameChange;
 - (void) addDelegatesFromNode:(OSCNode *)n;
-/*
-- (void) addQueryDelegate:(id)d;
-- (void) removeQueryDelegate:(id)d;
-- (void) informQueryDelegatesOfNameChange;
-- (void) addQueryDelegatesFromNode:(OSCNode *)n;
-*/
-//	simply sends the passed message to all my delegates
+
+///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).  If the passed message is a query, this tries to assemble a reply (either from the queryDelegate or automatically if autoQueryReply is enabled) which is sent to the main address space.
 - (void) dispatchMessage:(OSCMessage *)m;
 
 @property (assign, readwrite) id addressSpace;
@@ -128,5 +121,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
 //@property (readonly) id queryDelegateArray;
+@property (assign,readwrite) BOOL autoQueryReply;
+@property (assign,readwrite) id<OSCNodeQueryDelegateProtocol> queryDelegate;
 
 @end

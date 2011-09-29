@@ -29,9 +29,12 @@
 - (id) initWithPort:(unsigned short)p labelled:(NSString *)l	{
 	if (self = [super init])	{
 		deleted = NO;
+		bound = NO;
+		socketLock = OS_SPINLOCK_INIT;
+		sock = -1;
 		port = p;
 		
-		lock = OS_SPINLOCK_INIT;
+		scratchLock = OS_SPINLOCK_INIT;
 		
 		threadLooper = [[VVThreadLoop alloc]
 			initWithTimeInterval:1.0/30.0
@@ -84,10 +87,11 @@
 	
 	if ([threadLooper running])
 		[self stop];
+	
+	OSSpinLockLock(&socketLock);
 	close(sock);
 	sock = -1;
-	
-	
+	OSSpinLockUnlock(&socketLock);
 	
 	deleted = YES;
 }
@@ -101,10 +105,14 @@
 }
 
 - (BOOL) createSocket	{
+	//NSLog(@"%s",__func__);
+	OSSpinLockLock(&socketLock);
 	//	create a UDP socket
-	sock = socket(PF_INET, SOCK_DGRAM, 0);
-	if (sock < 0)
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock < 0)	{
+		OSSpinLockUnlock(&socketLock);
 		return NO;
+	}
 	//	set the socket to non-blocking
 	//fcntl(sock, F_SETFL, 0_NONBLOCK);
 	/*
@@ -120,18 +128,20 @@
 	//	prep the sockaddr_in struct
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
+	NSLog(@"\t\tjust set port to BE %ld, which is %ld on the host",addr.sin_port,ntohs(addr.sin_port));
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 	//	bind the socket
 	if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)	{
 		NSLog(@"\t\terr: couldn't bind socket for OSC");
+		OSSpinLockUnlock(&socketLock);
 		return NO;
 	}
-	
+	OSSpinLockUnlock(&socketLock);
 	return YES;
 }
 - (void) start	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	
 	//	return immediately if the thread looper's already running
 	if ([threadLooper running])
@@ -193,10 +203,12 @@
 	timeout.tv_sec = 0;
 	timeout.tv_usec = 10000;		//	0.01 secs = 100hz
 	
+	OSSpinLockLock(&socketLock);
 	//	figure out if there are any open file descriptors
 	readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
 	if (readyFileCount < 0)	{	//	if there was an error, bail immediately
 		NSLog(@"\t\terr: socket got closed unexpectedly");
+		OSSpinLockUnlock(&socketLock);
 		[self stop];
 	}
 	//NSLog(@"\t\tcounted %ld ready files",readyFileCount);
@@ -204,11 +216,15 @@
 	while (FD_ISSET(sock, &readFileDescriptor))	{
 		//NSLog(@"\t\twhile/packet ping");
 		//	if i'm no longer supposed to be running, kill the thread
-		if (![threadLooper running])
+		if (![threadLooper running])	{
+			OSSpinLockUnlock(&socketLock);
 			return;
+		}
 		
 		struct sockaddr_in		addrFrom;
-		socklen_t				addrFromLen;
+		memset(&addrFrom,0,sizeof(addrFrom));
+		addrFrom.sin_family = AF_INET;
+		socklen_t				addrFromLen = sizeof(struct sockaddr_in);
 		int						numBytes;
 		BOOL					skipThisPacket = NO;
 		
@@ -238,14 +254,15 @@
 		
 		readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
 	}
+	OSSpinLockUnlock(&socketLock);
 	//	if there's stuff in the scratch dict, i have to pass the info on to my delegate
 	if ([scratchArray count] > 0)	{
 		NSArray				*tmpArray = nil;
 		
-		OSSpinLockLock(&lock);
+		OSSpinLockLock(&scratchLock);
 			tmpArray = [NSArray arrayWithArray:scratchArray];
 			[scratchArray removeAllObjects];
-		OSSpinLockUnlock(&lock);
+		OSSpinLockUnlock(&scratchLock);
 		
 		[self handleScratchArray:tmpArray];
 	}
@@ -273,27 +290,47 @@
 		for (OSCMessage *anObj in a)	{
 			[delegate receivedOSCMessage:anObj];
 		}
-		/*
-		NSEnumerator		*it = [a objectEnumerator];
-		OSCMessage			*anObj;
-		while (anObj = [it nextObject])	{
-			[delegate receivedOSCMessage:anObj];
-		}
-		*/
 	}
 }
 /*
 	this method exists so received OSCMessage objects can be added to my scratch dict and scratch array for output.  you should never need to call this method!
 */
-- (void) addMessage:(OSCMessage *)val	{
+- (void) _addMessage:(OSCMessage *)val	{
 	//NSLog(@"%s ... %@",__func__,val);
 	if (val == nil)
 		return;
 	
-	OSSpinLockLock(&lock);
+	OSSpinLockLock(&scratchLock);
 		//	add the osc path msg to the scratch array
 		[scratchArray addObject:val];
-	OSSpinLockUnlock(&lock);
+	OSSpinLockUnlock(&scratchLock);
+}
+
+- (void) _dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o	{
+	NSLog(@"%s ... %@, %@",__func__,m,o);
+	if (deleted || m==nil || o==nil || (sock==-1))
+		return;
+	OSCPacket		*pack = [OSCPacket createWithContent:m];
+	if (pack == nil)
+		return;
+	//	make sure the packet doesn't get released if its pool gets drained while i'm sending it
+	[pack retain];
+	
+	int				numBytesSent = -1;
+	long			bufferSize = [pack bufferLength];
+	unsigned char	*buff = [pack payload];
+	if (buff == nil)	{
+		NSLog(@"\t\terr, buff nil in %s",__func__);
+		[pack release];
+		return;
+	}
+	struct sockaddr_in	*outAddr = [o addr];
+	
+	OSSpinLockLock(&socketLock);
+	numBytesSent = (int)sendto(sock,buff,bufferSize,0,(const struct sockaddr *)outAddr,sizeof(*outAddr));
+	OSSpinLockUnlock(&socketLock);
+	
+	[pack release];
 }
 
 - (unsigned short) port	{
@@ -307,13 +344,17 @@
 	
 	//	stop & close my socket
 	[self stop];
+	
+	OSSpinLockLock(&socketLock);
 	close(sock);
 	sock = -1;
+	OSSpinLockUnlock(&socketLock);
+	
 	//	clear out the scratch dict/array
-	OSSpinLockLock(&lock);
+	OSSpinLockLock(&scratchLock);
 		if (scratchArray != nil)
 			[scratchArray removeAllObjects];
-	OSSpinLockUnlock(&lock);
+	OSSpinLockUnlock(&scratchLock);
 	//	set up with the new port
 	bound = NO;
 	port = n;
@@ -323,13 +364,15 @@
 		[self start];
 	else	{
 		//	close the socket
+		OSSpinLockLock(&socketLock);
 		close(sock);
 		sock = -1;
+		OSSpinLockUnlock(&socketLock);
 		//	clear out the scratch dict
-		OSSpinLockLock(&lock);
+		OSSpinLockLock(&scratchLock);
 			if (scratchArray != nil)
 				[scratchArray removeAllObjects];
-		OSSpinLockUnlock(&lock);
+		OSSpinLockUnlock(&scratchLock);
 		//	set up with the old port
 		bound = NO;
 		port = oldPort;

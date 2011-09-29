@@ -42,7 +42,7 @@
 		if (tmpMsg != nil)	{
 			//if ([tmpMsg messageType] == OSCMessageTypeQuery)
 			//	[tmpMsg XXXXXXXXXXXX];
-			[p addMessage:tmpMsg];
+			[p _addMessage:tmpMsg];
 		}
 	}
 }

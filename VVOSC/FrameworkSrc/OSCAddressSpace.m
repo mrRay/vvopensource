@@ -338,8 +338,19 @@ id				_mainAddressSpace;
 	if ((deleted) || (m == nil))
 		return;
 	OSCNode			*foundNode = [self findNodeForAddress:[m address] createIfMissing:YES];
-	if ((foundNode != nil) && (foundNode != self))
-		[foundNode dispatchMessage:m];
+	if (foundNode != nil)	{
+		if (foundNode == self)	{
+			[super dispatchMessage:m];
+		}
+		else	{
+			[foundNode dispatchMessage:m];
+		}
+	}
+}
+- (void) _dispatchReplyOrError:(OSCMessage *)m	{
+	NSLog(@"%s ... %@",__func__,m);
+	if (delegate!=nil)
+		[delegate dispatchReplyOrError:m];
 }
 - (void) addDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);

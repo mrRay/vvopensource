@@ -61,7 +61,7 @@
 				if (localTimeTag != nil)
 					[tmpMsg setTimeTag:localTimeTag];
 				//	now that i've assembed the message, send it to the in port
-				[p addMessage:tmpMsg];
+				[p _addMessage:tmpMsg];
 			}
 			/*
 			//	if the bundle i'm currently parsing has a non-immediate timetag, set its timeTag
@@ -70,7 +70,7 @@
 				[tmpMsg setTimeTag:[NSDate dateWithTimeIntervalSinceReferenceDate:timeSinceRefDate]];
 			}
 			//	now that i've assembed the message, send it to the in port
-			[p addMessage:tmpMsg];
+			[p _addMessage:tmpMsg];
 			*/
 		}
 		//	advance the baseIndex so it's pointing at the the int describing the length of the next element (or done)

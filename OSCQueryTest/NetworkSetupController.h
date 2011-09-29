@@ -20,8 +20,6 @@
 	IBOutlet NSTextField		*dstIPField;
 	IBOutlet NSTextField		*dstPortField;
 	
-	IBOutlet NSTextField		*oscAddressField;
-	
 	IBOutlet OSCManager			*oscManager;
 }
 
@@ -31,10 +29,5 @@
 
 - (IBAction) dstPopUpButtonUsed:(id)sender;
 - (IBAction) dstFieldUsed:(id)sender;
-
-- (IBAction) listNodesClicked:(id)sender;
-- (IBAction) documentationClicked:(id)sender;
-- (IBAction) acceptedTypesClicked:(id)sender;
-- (IBAction) currentValClicked:(id)sender;
 
 @end

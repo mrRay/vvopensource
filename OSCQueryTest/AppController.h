@@ -13,7 +13,7 @@
 
 
 
-@interface AppController : NSObject {
+@interface AppController : NSObject <OSCNodeQueryDelegateProtocol,OSCDelegateProtocol,OSCAddressSpaceDelegateProtocol> {
 	IBOutlet NSPopUpButton		*createTypePopUpButton;
 	IBOutlet NSScrollView		*myScrollView;
 	
@@ -23,6 +23,9 @@
 	IBOutlet NSTextView			*txDataView;
 	
 	IBOutlet OSCManager			*oscManager;
+	
+	MutLockArray				*rxMsgs;
+	MutLockArray				*txMsgs;
 }
 
 - (IBAction) createButtonUsed:(id)sender;

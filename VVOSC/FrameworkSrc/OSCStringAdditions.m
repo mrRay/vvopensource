@@ -100,14 +100,21 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 - (NSString *) trimFirstAndLastSlashes	{
 	int				origLength = [self length];
 	NSRange			desiredRange = NSMakeRange(0,origLength);
-	if ([self characterAtIndex:desiredRange.length-1] == '/')
-		--desiredRange.length;
-	if ([self characterAtIndex:0] == '/')	{
-		--desiredRange.length;
-		++desiredRange.location;
+	switch (origLength)	{
+		case 0:
+			return self;
+		case 1:
+			return (([self isEqualToString:@"/"]) ? [NSString string] : self);
+		default:
+			if ([self characterAtIndex:desiredRange.length-1] == '/')
+				--desiredRange.length;
+			if ([self characterAtIndex:0] == '/')	{
+				--desiredRange.length;
+				++desiredRange.location;
+			}
+			break;
 	}
-	
-	if (desiredRange.length == origLength)
+	if (desiredRange.length==origLength)
 		return self;
 	return [self substringWithRange:desiredRange];
 }

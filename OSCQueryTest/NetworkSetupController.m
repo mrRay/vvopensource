@@ -43,7 +43,7 @@
 
 
 - (void) refreshDestinations:(NSNotification *)note	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	MutLockArray		*outPorts = [oscManager outPortArray];
 	[dstPopUpButton removeAllItems];
 	[outPorts rdlock];
@@ -66,7 +66,7 @@
 
 
 - (IBAction) dstPopUpButtonUsed:(id)sender	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	//	if the sender selected the manual output item, ignore it- this just doesn't do anything
 	NSString		*selectedTitle = [sender titleOfSelectedItem];
 	if (selectedTitle==nil || [selectedTitle isEqualToString:@"ManualOutput"])
@@ -83,7 +83,9 @@
 		NSLog(@"\t\terr: couldn't find manualOutput in %s",__func__);
 		return;
 	}
+	[dstIPField setStringValue:[selectedOutput addressString]];
 	[manualOutput setAddressString:[selectedOutput addressString]];
+	[dstPortField setIntValue:[selectedOutput port]];
 	[manualOutput setPort:[selectedOutput port]];
 	//	select 'manual output' from the pop-up button
 	[dstPopUpButton selectItemWithTitle:@"ManualOutput"];
@@ -101,20 +103,6 @@
 	else if (sender == dstPortField)	{
 		[manualOutput setPort:[dstPortField intValue]];
 	}
-}
-
-
-- (IBAction) listNodesClicked:(id)sender	{
-	NSLog(@"%s",__func__);
-}
-- (IBAction) documentationClicked:(id)sender	{
-	NSLog(@"%s",__func__);
-}
-- (IBAction) acceptedTypesClicked:(id)sender	{
-	NSLog(@"%s",__func__);
-}
-- (IBAction) currentValClicked:(id)sender	{
-	NSLog(@"%s",__func__);
 }
 
 

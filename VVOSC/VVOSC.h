@@ -7,8 +7,8 @@
 #import "OSCBundle.h"
 #import "OSCPacket.h"
 
-#import "OSCInPort.h"
 #import "OSCOutPort.h"
+#import "OSCInPort.h"
 
 #import "OSCManager.h"
 #import "OSCZeroConfManager.h"
