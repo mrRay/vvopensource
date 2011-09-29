@@ -39,7 +39,7 @@
 		return [NSString stringWithFormat:@"'%@'-'%@'",address,valueArray];
 }
 + (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
-	NSLog(@"%s ... %s, %ld",__func__,b,l);
+	//NSLog(@"%s ... %s, %ld",__func__,b,l);
 	if ((b == nil) || (l == 0))
 		return nil;
 	

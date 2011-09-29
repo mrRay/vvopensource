@@ -24,6 +24,8 @@
 	
 	IBOutlet OSCManager			*oscManager;
 	
+	IBOutlet NSTextField		*oscAddressField;
+	
 	MutLockArray				*rxMsgs;
 	MutLockArray				*txMsgs;
 }
@@ -31,5 +33,12 @@
 - (IBAction) createButtonUsed:(id)sender;
 
 - (IBAction) populateButtonUsed:(id)sender;
+
+- (IBAction) listNodesClicked:(id)sender;
+- (IBAction) documentationClicked:(id)sender;
+- (IBAction) acceptedTypesClicked:(id)sender;
+- (IBAction) currentValClicked:(id)sender;
+
+- (void) _lockedUpdateDataAndViews;
 
 @end

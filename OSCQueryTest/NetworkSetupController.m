@@ -43,7 +43,7 @@
 
 
 - (void) refreshDestinations:(NSNotification *)note	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	MutLockArray		*outPorts = [oscManager outPortArray];
 	[dstPopUpButton removeAllItems];
 	[outPorts rdlock];

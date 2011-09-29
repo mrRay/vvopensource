@@ -348,7 +348,7 @@ id				_mainAddressSpace;
 	}
 }
 - (void) _dispatchReplyOrError:(OSCMessage *)m	{
-	NSLog(@"%s ... %@",__func__,m);
+	//NSLog(@"%s ... %@",__func__,m);
 	if (delegate!=nil)
 		[delegate dispatchReplyOrError:m];
 }

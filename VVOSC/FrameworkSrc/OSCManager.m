@@ -98,11 +98,16 @@
 }
 
 - (void) deleteAllInputs	{
+	BOOL			postNotification = NO;
 	[inPortArray wrlock];
+		if ([inPortArray count]>0)
+			postNotification = YES;
 		[inPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[inPortArray removeAllObjects];
 	[inPortArray unlock];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
+	
+	if (postNotification)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -110,11 +115,16 @@
 	*/
 }
 - (void) deleteAllOutputs	{
+	BOOL			postNotification = NO;
 	[outPortArray wrlock];
+		if ([outPortArray count]>0)
+			postNotification = YES;
 		[outPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[outPortArray removeAllObjects];
 	[outPortArray unlock];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	
+	if (postNotification)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -318,7 +328,7 @@
 
 
 - (void) dispatchReplyOrError:(OSCMessage *)m	{
-	NSLog(@"%s ... %@",__func__,m);
+	//NSLog(@"%s ... %@",__func__,m);
 	//	make sure that the passed message is either a reply or error
 	OSCMessageType		mType = [m messageType];
 	if (mType==OSCMessageTypeReply || mType==OSCMessageTypeError)	{
@@ -334,11 +344,11 @@
 				outPort = [self
 					createNewOutputToAddress:[NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding]
 					atPort:ntohs(txPort)];
-				NSLog(@"\t\tcouldn't find output, created %@",outPort);
+				//NSLog(@"\t\tcouldn't find output, created %@",outPort);
 			}
 			//	send the message out the port
 			if (outPort != nil)	{
-				NSLog(@"\t\tfound matching output (%@), sending the reply...",outPort);
+				//NSLog(@"\t\tfound matching output (%@), sending the reply...",outPort);
 				[outPort sendThisMessage:m];
 			}
 		}
@@ -346,7 +356,7 @@
 	
 }
 - (void) dispatchQuery:(OSCMessage *)m toOutput:(OSCOutPort *)o	{
-	NSLog(@"%s ... %@, %@",__func__,m,o);
+	//NSLog(@"%s ... %@, %@",__func__,m,o);
 	OSCMessageType		mType = [m messageType];
 	if (mType != OSCMessageTypeQuery)
 		return;
@@ -527,11 +537,17 @@
 - (void) removeInput:(id)p	{
 	if (p == nil)
 		return;
+	BOOL				postNotification = NO;
+	int					origCount;
 	[(OSCInPort *)p stop];
 	[inPortArray wrlock];
+		origCount = [inPortArray count];
 		[inPortArray removeObject:p];
+		if (origCount != [inPortArray count])
+			postNotification = YES;
 	[inPortArray unlock];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
+	if (postNotification)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -541,10 +557,16 @@
 - (void) removeOutput:(id)p	{
 	if (p == nil)
 		return;
+	BOOL				postNotification = NO;
+	int					origCount;
 	[outPortArray wrlock];
+		origCount = [outPortArray count];
 		[outPortArray removeObject:p];
+		if (origCount != [outPortArray count])
+			postNotification = YES;
 	[outPortArray unlock];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	if (postNotification)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -557,6 +579,7 @@
 	[outPortArray wrlock];
 	int			indexToRemove = -1;
 	int			tmpIndex = 0;
+	BOOL		postNote = NO;
 	for (OSCOutPort *outPort in [outPortArray array])	{
 		NSString		*tmpLabel = [outPort portLabel];
 		if (tmpLabel!=nil && [tmpLabel isEqualToString:n])	{
@@ -564,14 +587,19 @@
 			break;
 		}
 	}
-	if (indexToRemove >= 0)
+	if (indexToRemove >= 0)	{
+		postNote = YES;
 		[outPortArray removeObjectAtIndex:indexToRemove];
+	}
 	[outPortArray unlock];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	if (postNote)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 }
 - (void) removeAllOutputs	{
+	BOOL			postNote = ([outPortArray count]>0)?YES:NO;
 	[outPortArray lockRemoveAllObjects];
-	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	if (postNote)
+		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 }
 - (NSArray *) outPortLabelArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];

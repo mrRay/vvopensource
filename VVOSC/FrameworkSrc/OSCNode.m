@@ -621,15 +621,15 @@
 			}
 			break;
 		case OSCMessageTypeReply:
-			NSLog(@"\t\treceived reply %@",m);
+			NSLog(@"\t\treceived reply %@ %s",m,__func__);
 			break;
 		case OSCMessageTypeError:
-			NSLog(@"\t\treceived error %@",m);
+			NSLog(@"\t\treceived error %@ %s",m,__func__);
 			break;
 	}
 	//	if there's a reply, send it- just give it to the osc manager, which will either dispatch it or create any necessary outputs and then dispatch it
 	if (reply != nil)	{
-		NSLog(@"\t\tshould be sending reply %@",reply);
+		//NSLog(@"\t\tshould be sending reply %@",reply);
 		[_mainAddressSpace _dispatchReplyOrError:reply];
 	}
 	

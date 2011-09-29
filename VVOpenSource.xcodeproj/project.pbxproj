@@ -259,7 +259,6 @@
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
 		96913A141432382F008A2111 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96913A2D14323832008A2111 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
-		96913C8F1433636D008A2111 /* ManualOSCSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 96913C8E1433636D008A2111 /* ManualOSCSender.m */; };
 		9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
 		969E5A3311FD95F0006391BD /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; };
 		969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
@@ -763,8 +762,6 @@
 		968FAAAA108B6A62000E470D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CrashReporterTestApp/main.m; sourceTree = "<group>"; };
 		968FAAAB108B6A62000E470D /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = CrashReporterTestApp/AppController.h; sourceTree = "<group>"; };
 		968FAAAC108B6A62000E470D /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = CrashReporterTestApp/AppController.m; sourceTree = "<group>"; };
-		96913C8D1433636D008A2111 /* ManualOSCSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ManualOSCSender.h; path = OSCQueryTest/ManualOSCSender.h; sourceTree = "<group>"; };
-		96913C8E1433636D008A2111 /* ManualOSCSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ManualOSCSender.m; path = OSCQueryTest/ManualOSCSender.m; sourceTree = "<group>"; };
 		9691B04F10CDA6B9008A0D35 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		969FCE94120DB9A10067E617 /* lgpl-3.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lgpl-3.0.txt"; sourceTree = "<group>"; };
 		96A99011108CEA2600895DC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -1124,8 +1121,6 @@
 				966CCC6414322FCA006D580F /* AppController.m */,
 				966CCC6614322FD6006D580F /* NetworkSetupController.h */,
 				966CCC6714322FD6006D580F /* NetworkSetupController.m */,
-				96913C8D1433636D008A2111 /* ManualOSCSender.h */,
-				96913C8E1433636D008A2111 /* ManualOSCSender.m */,
 			);
 			name = OSCQueryTest;
 			sourceTree = "<group>";
@@ -2105,7 +2100,6 @@
 				966CCC6214322FBD006D580F /* ElementChain.m in Sources */,
 				966CCC6514322FCA006D580F /* AppController.m in Sources */,
 				966CCC6814322FD6006D580F /* NetworkSetupController.m in Sources */,
-				96913C8F1433636D008A2111 /* ManualOSCSender.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

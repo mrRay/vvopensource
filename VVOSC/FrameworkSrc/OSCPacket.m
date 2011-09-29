@@ -16,7 +16,7 @@
 	int				bundleIndexCount;
 	unsigned char	*bufferCharPtr=b;
 	for (bundleIndexCount=0; bundleIndexCount<(l/4); ++bundleIndexCount)	{
-		printf("\t(%ld)\t\t%c\t%c\t%c\t%c\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",bundleIndexCount * 4,
+		printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
 			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
 			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
 	}
@@ -24,6 +24,33 @@
 	*/
 	
 	unsigned char	*buffPtr = b;
+	BOOL			isBundle = NO;
+	if ((buffPtr[0]=='#') && (buffPtr[1]=='b'))
+		isBundle = YES;
+	
+	if (isBundle)	{
+		[OSCBundle
+			parseRawBuffer:b
+			ofMaxLength:l
+			toInPort:p
+			inheritedTimeTag:nil
+			fromAddr:txAddr
+			port:txPort];
+	}
+	else	{
+		OSCMessage		*tmpMsg = [OSCMessage
+			parseRawBuffer:b
+			ofMaxLength:l
+			fromAddr:txAddr
+			port:txPort];
+		if (tmpMsg != nil)	{
+			//if ([tmpMsg messageType] == OSCMessageTypeQuery)
+			//	[tmpMsg XXXXXXXXXXXX];
+			[p _addMessage:tmpMsg];
+		}
+	}
+	
+	/*
 	if (buffPtr[0] == '#')	{
 		[OSCBundle
 			parseRawBuffer:b
@@ -45,6 +72,7 @@
 			[p _addMessage:tmpMsg];
 		}
 	}
+	*/
 }
 + (id) createWithContent:(id)c	{
 	OSCPacket		*returnMe = [[OSCPacket alloc] initWithContent:c];
@@ -70,7 +98,7 @@
 		int				bundleIndexCount;
 		unsigned char	*bufferCharPtr=payload;
 		for (bundleIndexCount=0; bundleIndexCount<(bufferLength/4); ++bundleIndexCount)	{
-			printf("\t(%ld)\t\t%c\t%c\t%c\t%c\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",bundleIndexCount * 4,
+			printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
 				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
 				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
 		}

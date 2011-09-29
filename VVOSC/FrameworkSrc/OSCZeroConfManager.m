@@ -60,7 +60,7 @@
 //	called when an osc service disappears
 //	it finds an output matching the service being removed it will release the out port
 - (void) serviceRemoved:(NSNetService *)s	{
-	NSLog(@"%s ... %@",__func__,[s name]);
+	//NSLog(@"%s ... %@",__func__,[s name]);
 	OSCOutPort		*foundPort = nil;
 	//	try to find an out port in the manager with the same name
 	foundPort = [oscManager findOutputWithLabel:[s name]];
@@ -72,7 +72,7 @@
 //	called when an osc service (an osc destination) appears
 //	it either updates an existing output port or it makes a new output port for the service
 - (void) serviceResolved:(NSNetService *)s	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	OSCInPort			*matchingInPort = nil;
 	OSCOutPort			*matchingOutPort = nil;
 	NSArray				*addressArray = [s addresses];
@@ -97,7 +97,7 @@
 	
 	//	get the port of the resolved service
 	port = ntohs(sock->sin_port);
-	NSLog(@"\t\tresolved service %@ at %@ : %ld",[s name],ipString,port);
+	//NSLog(@"\t\tresolved service %@ at %@ : %ld",[s name],ipString,port);
 	
 	//	assemble an array with strings of the ip addresses this machine responds to
 	NSArray				*IPAddressArray = nil;
@@ -139,7 +139,7 @@
 	
 	//	if i'm here, i couldn't find an out port with the same address/port
 	//	make a new out port with the relevant data
-	NSLog(@"\t\tshould be creating new output to %@ on port %ld with label %@",ipString,port,[s name]);
+	//NSLog(@"\t\tshould be creating new output to %@ on port %ld with label %@",ipString,port,[s name]);
 	[oscManager createNewOutputToAddress:ipString atPort:port withLabel:[s name]];
 	
 }
@@ -149,7 +149,7 @@
 
 //	NSNetServiceBrowser delegate methods
 - (void)netServiceBrowser:(NSNetServiceBrowser *)n didFindDomain:(NSString *)d moreComing:(BOOL)m	{
-	NSLog(@"%s ... %@, %ld",__func__,d,m);
+	//NSLog(@"%s ... %@, %ld",__func__,d,m);
 	OSCZeroConfDomain	*newDomain = nil;
 	
 	newDomain = [OSCZeroConfDomain createWithDomain:d andDomainManager:self];

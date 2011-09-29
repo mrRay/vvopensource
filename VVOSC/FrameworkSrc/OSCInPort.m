@@ -128,7 +128,6 @@
 	//	prep the sockaddr_in struct
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	NSLog(@"\t\tjust set port to BE %ld, which is %ld on the host",addr.sin_port,ntohs(addr.sin_port));
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 	//	bind the socket
@@ -141,7 +140,7 @@
 	return YES;
 }
 - (void) start	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	
 	//	return immediately if the thread looper's already running
 	if ([threadLooper running])
@@ -235,7 +234,7 @@
 			skipThisPacket = YES;
 		}
 		if (numBytes % 4)	{
-			NSLog(@"\t\terr: bytes isn't multiple of 4");
+			NSLog(@"\t\terr: bytes isn't multiple of 4 in %s",__func__);
 			skipThisPacket = YES;
 		}
 		
@@ -307,7 +306,7 @@
 }
 
 - (void) _dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o	{
-	NSLog(@"%s ... %@, %@",__func__,m,o);
+	//NSLog(@"%s ... %@, %@",__func__,m,o);
 	if (deleted || m==nil || o==nil || (sock==-1))
 		return;
 	OSCPacket		*pack = [OSCPacket createWithContent:m];
@@ -315,7 +314,7 @@
 		return;
 	//	make sure the packet doesn't get released if its pool gets drained while i'm sending it
 	[pack retain];
-	
+	//[self stop];
 	int				numBytesSent = -1;
 	long			bufferSize = [pack bufferLength];
 	unsigned char	*buff = [pack payload];
@@ -329,7 +328,7 @@
 	OSSpinLockLock(&socketLock);
 	numBytesSent = (int)sendto(sock,buff,bufferSize,0,(const struct sockaddr *)outAddr,sizeof(*outAddr));
 	OSSpinLockUnlock(&socketLock);
-	
+	//[self start];
 	[pack release];
 }
 

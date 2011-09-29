@@ -135,7 +135,8 @@
 	if (newPacket != nil)
 		[self sendThisPacket:newPacket];
 	*/
-	NSLog(@"%s ... %@",__func__,m);
+	
+	//NSLog(@"%s ... %@",__func__,m);
 	if ((deleted) || (sock == -1) || (m == nil))
 		return;
 	
@@ -146,7 +147,7 @@
 	
 }
 - (void) sendThisPacket:(OSCPacket *)p	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	if ((deleted) || (sock == -1) || (p == nil))
 		return;
 	//	make sure the packet doesn't get released if its pool gets drained while i'm sending it
@@ -162,7 +163,6 @@
 	}
 	//	send the packet's data to the destination
 	numBytesSent = (int)sendto(sock, buff, bufferSize, 0, (const struct sockaddr *)&addr, sizeof(addr));
-	NSLog(@"\t\tnumBytesSent is %ld",numBytesSent);
 	//	make sure the packet can be freed...
 	[p release];
 }

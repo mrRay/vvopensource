@@ -40,6 +40,35 @@
 		length = (c[baseIndex+3]) + (c[baseIndex+2] << 8) + (c[baseIndex+1] << 16) + (c[baseIndex] << 24);
 		//	advance the baseIndex so it's pointing at the start of the first element
 		baseIndex = baseIndex + 4;
+		//	parse the first element, which is either a bundle or a msg
+		BOOL			isBundle = NO;
+		if ((c[baseIndex]=='#') && (c[baseIndex+1]=='b'))
+			isBundle = YES;
+		
+		if (isBundle)	{
+			[OSCBundle
+				parseRawBuffer:b+baseIndex
+				ofMaxLength:length
+				toInPort:p
+				inheritedTimeTag:localTimeTag
+				fromAddr:txAddr
+				port:txPort];
+		}
+		else	{
+			OSCMessage		*tmpMsg = [OSCMessage
+				parseRawBuffer:b+baseIndex
+				ofMaxLength:length
+				fromAddr:txAddr
+				port:txPort];
+			if (tmpMsg != nil)	{
+				if (localTimeTag != nil)
+					[tmpMsg setTimeTag:localTimeTag];
+				//	now that i've assembed the message, send it to the in port
+				[p _addMessage:tmpMsg];
+			}
+		}
+		
+		/*
 		//	parse the first element, which is either a bundle...
 		if (c[baseIndex] == '#')	{
 			[OSCBundle
@@ -63,16 +92,8 @@
 				//	now that i've assembed the message, send it to the in port
 				[p _addMessage:tmpMsg];
 			}
-			/*
-			//	if the bundle i'm currently parsing has a non-immediate timetag, set its timeTag
-			if (	(tmpMsg!=nil)	&&		((time_s!=0)||(time_us!=1)||(time_us!=0))	)	{
-				double			timeSinceRefDate = ((double)(time_s)) + ((double)time_us)/((double)1000000.0);
-				[tmpMsg setTimeTag:[NSDate dateWithTimeIntervalSinceReferenceDate:timeSinceRefDate]];
-			}
-			//	now that i've assembed the message, send it to the in port
-			[p _addMessage:tmpMsg];
-			*/
 		}
+		*/
 		//	advance the baseIndex so it's pointing at the the int describing the length of the next element (or done)
 		baseIndex = baseIndex + length;
 	}
