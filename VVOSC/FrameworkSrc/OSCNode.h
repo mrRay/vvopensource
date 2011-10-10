@@ -19,11 +19,11 @@
 @end
 ///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode
 @protocol OSCNodeQueryDelegateProtocol
-- (NSMutableArray *) namespaceArray;
-- (NSString *) docString;
-- (NSString *) typeSignature;
-- (OSCValue *) currentValue;
-- (NSString *) returnTypeString;
+- (NSMutableArray *) namespaceArrayForNode:(id)n;
+- (NSString *) docStringForNode:(id)n;
+- (NSString *) typeSignatureForNode:(id)n;
+- (OSCValue *) currentValueForNode:(id)n;
+- (NSString *) returnTypeStringForNode:(id)n;
 @end
 
 
@@ -76,6 +76,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (void) addLocalNode:(OSCNode *)n;
 - (void) removeLocalNode:(OSCNode *)n;	//	this just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
 - (void) deleteLocalNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
+- (void) removeFromAddressSpace;	//	tries to remove me from the OSCAddressSpace singleton by setting my fullName to nil
 
 ///	It's assumed that the passed name doesn't have any wildcards/regex.  If the receiver contains a node with the identical name as the passed string, the node will be returned.  This is not a "deep" search, it's restricted to the receiver's nodeContents array.
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;

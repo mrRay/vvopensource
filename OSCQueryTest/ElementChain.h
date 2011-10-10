@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 #import <VVBasics/VVBasics.h>
+#import <VVOSC/VVOSC.h>
+#import "ElementBox.h"
 
 
 
@@ -17,5 +19,13 @@
 }
 
 - (void) _generalInit;
+
+- (void) clearAllElements;
+- (void) addElement:(ElementBox *)n;
+
+- (void) _resizeSelf;
+- (void) _resizeElementItems;
+
+- (int) count;
 
 @end

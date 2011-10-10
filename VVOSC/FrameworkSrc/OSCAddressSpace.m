@@ -114,6 +114,8 @@ id				_mainAddressSpace;
 		return;
 	//NSLog(@"\t\tallocating main address space!");
 	_mainAddressSpace = [[OSCAddressSpace alloc] init];
+	[_mainAddressSpace setNodeType:OSCNodeDirectory];
+	[_mainAddressSpace setAutoQueryReply:YES];
 	//NSLog(@"\t\t_mainAddressSpace is %@",_mainAddressSpace);
 }
 
@@ -214,14 +216,20 @@ id				_mainAddressSpace;
 
 	
 - (void) setNode:(OSCNode *)n forAddress:(NSString *)a	{
+	[self setNode:n forAddress:a createIfMissing:YES];
+}
+- (void) setNode:(OSCNode *)n forAddress:(NSString *)a createIfMissing:(BOOL)c	{
 	if (deleted)
 		return;
 	if (a == nil)
-		[self setNode:n forAddressArray:nil];
+		[self setNode:n forAddressArray:nil createIfMissing:c];
 	else
-		[self setNode:n forAddressArray:[[a trimFirstAndLastSlashes] pathComponents]];
+		[self setNode:n forAddressArray:[[a trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
 }
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a	{
+	[self setNode:n forAddressArray:a createIfMissing:YES];
+}
+- (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a createIfMissing:(BOOL)c	{
 	//NSLog(@"%s ... %@ - %@",__func__,n,a);
 	if (deleted)
 		return;
@@ -258,7 +266,7 @@ id				_mainAddressSpace;
 		//	if i passed a non-nil node (if i'm actually moving a node), i'll have to make the parent
 		if (n != nil)	{
 			//	make the node, and simply add the passed node to it (don't have to merge delegates)
-			afterParent = [self findNodeForAddressArray:parentAddressArray createIfMissing:YES];
+			afterParent = [self findNodeForAddressArray:parentAddressArray createIfMissing:c];
 			[afterParent addLocalNode:n];
 		}
 		//	else if i passed a nil node (if i'm deleting a node), i'm done- the parent doesn't even exist

@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <VVBasics/VVBasics.h>
 #import <VVOSC/VVOSC.h>
+#import "ElementChain.h"
 
 
 
@@ -16,8 +17,10 @@
 @interface AppController : NSObject <OSCNodeQueryDelegateProtocol,OSCDelegateProtocol,OSCAddressSpaceDelegateProtocol> {
 	IBOutlet NSPopUpButton		*createTypePopUpButton;
 	IBOutlet NSScrollView		*myScrollView;
+	IBOutlet ElementChain		*myChain;
 	
 	IBOutlet NSScrollView		*targetScrollView;
+	IBOutlet ElementChain		*targetChain;
 	
 	IBOutlet NSTextView			*rxDataView;
 	IBOutlet NSTextView			*txDataView;
@@ -30,7 +33,8 @@
 	MutLockArray				*txMsgs;
 }
 
-- (IBAction) createButtonUsed:(id)sender;
+- (IBAction) createMenuItemChosen:(id)sender;
+- (IBAction) clearButtonUsed:(id)sender;
 
 - (IBAction) populateButtonUsed:(id)sender;
 
@@ -38,6 +42,11 @@
 - (IBAction) documentationClicked:(id)sender;
 - (IBAction) acceptedTypesClicked:(id)sender;
 - (IBAction) currentValClicked:(id)sender;
+
+- (IBAction) clearDataViewsClicked:(id)sender;
+
+- (void) addTXMsg:(OSCMessage *)m;
+- (void) addRXMsg:(OSCMessage *)m;
 
 - (void) _lockedUpdateDataAndViews;
 

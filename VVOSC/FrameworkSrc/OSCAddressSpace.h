@@ -48,7 +48,9 @@ OSCAddressSpace is your application's main way of dealing with the OSC address s
 
 ///	If 'n' is nil, the node at the passed address will be deleted (as will any of its sub-nodes)
 - (void) setNode:(OSCNode *)n forAddress:(NSString *)a;
+- (void) setNode:(OSCNode *)n forAddress:(NSString *)a createIfMissing:(BOOL)c;
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a;
+- (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
 
 //	this method is called whenever a node is added to another node
 - (void) nodeRenamed:(OSCNode *)n;

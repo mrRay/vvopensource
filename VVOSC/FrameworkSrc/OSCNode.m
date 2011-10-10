@@ -273,6 +273,11 @@
 	[n prepareToBeDeleted];
 	[n release];
 }
+- (void) removeFromAddressSpace	{
+	if (deleted || _mainAddressSpace==nil || fullName==nil)
+		return;
+	[_mainAddressSpace setNode:nil forAddress:fullName];
+}
 
 
 /*===================================================================================*/
@@ -533,13 +538,12 @@
 			OSSpinLockUnlock(&lastReceivedMessageLock);
 			break;
 		case OSCMessageTypeQuery:
-			//NSLog(@"\t\treceived query %@",m);
 			qType = [m queryType];
 			switch (qType)	{
 				case OSCQueryTypeDocumentation:
 					//	ask the delegate for documentation, if it returns nil make my own answer
-					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(docString)])
-						tmpString = [queryDelegate docString];
+					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(docStringForNode:)])
+						tmpString = [queryDelegate docStringForNode:self];
 					//	if the string's nil for any reason, AND autoQueryReply is YES, make my own string
 					if (tmpString==nil && autoQueryReply)	{
 						switch (nodeType)	{
@@ -569,11 +573,15 @@
 								break;
 						}
 					}
+					//	make a reply
+					reply = [OSCMessage createReplyForMessage:m];
+					if (tmpString != nil)
+						[reply addString:tmpString];
 					break;
 				case OSCQueryTypeNamespaceExploration:
 					//	ask the delegate for subnodes, if it returns nil make my own answer
-					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(namespaceArray)])
-						tmpArray = [queryDelegate namespaceArray];
+					if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(namespaceArray:)])
+						tmpArray = [queryDelegate namespaceArrayForNode:self];
 					//	if the array's nil for any reason, AND autoQueryReply is YES, make an array
 					if (tmpArray==nil && autoQueryReply)	{
 						switch (nodeType)	{

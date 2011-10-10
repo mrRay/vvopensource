@@ -18,7 +18,21 @@
 			return [NSString stringWithFormat:@"<OSCMessage %@>",baseDescription];
 		case OSCMessageTypeQuery:
 			baseDescription = [self _description];
-			return [NSString stringWithFormat:@"<OSCMsg Query %ld %@>",queryType,baseDescription];
+			//return [NSString stringWithFormat:@"<OSCMsg Query %ld %@>",queryType,baseDescription];
+			switch (queryType)	{
+				case OSCQueryTypeUnknown:
+					return [NSString stringWithFormat:@"<OSCMsg unknown query %@>",baseDescription];
+				case OSCQueryTypeNamespaceExploration:
+					return [NSString stringWithFormat:@"<OSCMsg namespace query %@>",baseDescription];
+				case OSCQueryTypeDocumentation:
+					return [NSString stringWithFormat:@"<OSCMsg doc query %@>",baseDescription];
+				case OSCQueryTypeTypeSignature:
+					return [NSString stringWithFormat:@"<OSCMsg type sig query %@>",baseDescription];
+				case OSCQueryTypeCurrentValue:
+					return [NSString stringWithFormat:@"<OSCMsg current val query %@>",baseDescription];
+				case OSCQueryTypeReturnTypeString:
+					return [NSString stringWithFormat:@"<OSCMsg return type query %@>",baseDescription];
+			}
 		case OSCMessageTypeReply:
 			if (valueCount < 2)
 				return [NSString stringWithFormat:@"<OSCMsg Reply %@>",value];
@@ -114,30 +128,30 @@
 						//	as a shortcut, look to the next character before doing a string comparison to save time
 						switch (b[i+1])	{
 							case 'd':
-								if (strncmp((char *)b,"#documentation",14)==0)	{	//	if the query's recognized...
+								if (strncmp((char *)(b+i),"#documentation",14)==0)	{	//	if the query's recognized...
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
 									queryType = OSCQueryTypeDocumentation;	//	set the query type...
 									tmpIndex = i+13;	//	...and i can exit now and save a couple loops- i know the end
 								}
 								break;
 							case 't':
-								if (strncmp((char *)b,"#type-signature",15)==0)	{
+								if (strncmp((char *)(b+i),"#type-signature",15)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
-									queryType = OSCQueryTypeDocumentation;
+									queryType = OSCQueryTypeTypeSignature;
 									tmpIndex = i+14;
 								}
 								break;
 							case 'c':
-								if (strncmp((char *)b,"#current-value",14)==0)	{
+								if (strncmp((char *)(b+i),"#current-value",14)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
-									queryType = OSCQueryTypeDocumentation;
+									queryType = OSCQueryTypeCurrentValue;
 									tmpIndex = i+13;
 								}
 								break;
 							case 'r':
-								if (strncmp((char *)b,"#return-type-string",19)==0)	{
+								if (strncmp((char *)(b+i),"#return-type-string",19)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
-									queryType = OSCQueryTypeDocumentation;
+									queryType = OSCQueryTypeReturnTypeString;
 									tmpIndex = i+18;
 								}
 								break;
@@ -681,15 +695,23 @@
 					return [NSString stringWithFormat:@"%@/",address];
 					break;
 				case OSCQueryTypeDocumentation:
+					if ([address isEqualToString:@"/"])
+						return [NSString stringWithString:@"/#documentation"];
 					return [NSString stringWithFormat:@"%@/#documentation",address];
 					break;
 				case OSCQueryTypeTypeSignature:
+					if ([address isEqualToString:@"/"])
+						return [NSString stringWithString:@"/#type-signature"];
 					return [NSString stringWithFormat:@"%@/#type-signature",address];
 					break;
 				case OSCQueryTypeCurrentValue:
+					if ([address isEqualToString:@"/"])
+						return [NSString stringWithString:@"/#current-value"];
 					return [NSString stringWithFormat:@"%@/#current-value",address];
 					break;
 				case OSCQueryTypeReturnTypeString:
+					if ([address isEqualToString:@"/"])
+						return [NSString stringWithString:@"/#return-type-string"];
 					return [NSString stringWithFormat:@"%@/#return-type-string",address];
 					break;
 			}
