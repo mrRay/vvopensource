@@ -136,6 +136,12 @@
 		OSSpinLockUnlock(&socketLock);
 		return NO;
 	}
+	
+	long			bufSize = 65506;
+	if (setsockopt(sock,SOL_SOCKET,SO_RCVBUF,&bufSize,sizeof(long)) != 0)	{
+		NSLog(@"\t\terr %ld at setsockopt() in %s",errno,__func__);
+	}
+	
 	OSSpinLockUnlock(&socketLock);
 	return YES;
 }
@@ -228,7 +234,7 @@
 		BOOL					skipThisPacket = NO;
 		
 		addrFromLen = sizeof(addrFrom);
-		numBytes = (int)recvfrom(sock, buf, 8192, 0, (struct sockaddr *)&addrFrom, &addrFromLen);
+		numBytes = (int)recvfrom(sock, buf, 65506, 0, (struct sockaddr *)&addrFrom, &addrFromLen);
 		if (numBytes < 1)	{
 			NSLog(@"\t\terr on recvfrom: %i",errno);
 			skipThisPacket = YES;

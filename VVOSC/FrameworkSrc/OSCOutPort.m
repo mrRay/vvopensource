@@ -97,6 +97,11 @@
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 	addr.sin_port = htons(port);
 	
+	long			bufSize = 65506;
+	if (setsockopt(sock,SOL_SOCKET,SO_SNDBUF,&bufSize,sizeof(long)) != 0)	{
+		NSLog(@"\t\terr %ld at setsockopt() in %s",errno,__func__);
+	}
+	
 	//	if any part of the address string contains "255", this is a broadcast output
 	NSRange			bcastRange = [addressString rangeOfString:@"255"];
 	if ((bcastRange.location!=NSNotFound)&&(bcastRange.length>0))	{
@@ -144,7 +149,8 @@
 	
 	if (newPacket != nil)
 		[self sendThisPacket:newPacket];
-	
+	else
+		NSLog(@"\t\terr: couldnt create packet at %s",__func__);
 }
 - (void) sendThisPacket:(OSCPacket *)p	{
 	//NSLog(@"%s",__func__);
