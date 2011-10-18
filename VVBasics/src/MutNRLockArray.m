@@ -187,13 +187,8 @@
 	return YES;
 }
 - (long) indexOfIdenticalPtr:(id)o	{
-	//NSLog(@"%s ... %@",__func__,o);
 	if ((array==nil) || (o==nil) || ([array count]<1))
 		return NSNotFound;
-	if ([o isKindOfClass:[ObjectHolder class]])	{
-		NSLog(@"\t\terr: passed ObjectHolder to compare against!",__func__);
-		return NSNotFound;
-	}
 	NSUInteger			foundIndex = NSNotFound;
 	long				tmpIndex = 0;
 	//	run through the array of object holders
