@@ -33,6 +33,6 @@
 + (id) createWithObject:(id)o;
 - (id) initWithObject:(id)o;
 
-- (id) object;
+@property (assign,readwrite) id object;
 
 @end

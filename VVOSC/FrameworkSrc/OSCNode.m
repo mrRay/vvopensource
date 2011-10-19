@@ -457,6 +457,27 @@
 }
 - (void) removeDelegate:(id)d	{
 	//NSLog(@"%s",__func__);
+	
+	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
+		return;
+	
+	//	find the index of the delegate to delete
+	[delegateArray rdlock];
+	long			foundIndex = [delegateArray indexOfIdenticalPtr:d];
+	if (foundIndex != NSNotFound)	{
+		//	get the actual ObjectHolder which corresponds to the delegate, set its object to nil
+		ObjectHolder	*holder = [[delegateArray array] objectAtIndex:foundIndex];
+		if (holder != nil)
+			[holder setObject:nil];
+	}
+	[delegateArray unlock];
+	//	if i found it, remove the object from the delegate array entirely
+	if (foundIndex != NSNotFound)
+		[delegateArray lockRemoveObjectAtIndex:foundIndex];
+	else
+		NSLog(@"\t\terr: couldn't find delegate to remove- %s",__func__);
+	
+	/*
 	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
 		return;
 	
@@ -467,6 +488,7 @@
 		[delegateArray lockRemoveObjectAtIndex:foundIndex];
 	else
 		NSLog(@"\terr: couldn't find delegate to remove- %s",__func__);
+	*/
 }
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -521,6 +543,15 @@
 	
 	switch (mType)	{
 		case OSCMessageTypeControl:
+			
+			tmpCopy = [delegateArray lockCreateArrayCopyFromObjects];
+			if (tmpCopy != nil)	{
+				for (id delegate in tmpCopy)	{
+					[delegate node:self receivedOSCMessage:m];
+				}
+			}
+			
+			/*
 			tmpCopy = [delegateArray lockCreateArrayCopy];
 			if (tmpCopy != nil)	{
 				for (ObjectHolder *holder in tmpCopy)	{
@@ -529,6 +560,7 @@
 						[delegate node:self receivedOSCMessage:m];
 				}
 			}
+			*/
 			OSSpinLockLock(&lastReceivedMessageLock);
 				if (lastReceivedMessage != nil)
 					[lastReceivedMessage release];

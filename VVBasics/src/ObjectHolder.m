@@ -42,6 +42,9 @@
 	[super dealloc];
 }
 
+- (void) setObject:(id)n	{
+	object = n;
+}
 - (id) object	{
 	return object;
 }
@@ -66,7 +69,7 @@
 - (NSMethodSignature *) methodSignatureForSelector:(SEL)s	{
 	//NSLog(@"%s ... %s",__func__,s);
 	//	if i've been deleted, return nil
-	if (deleted)
+	if ((deleted) || (object==nil))
 		return nil;
 	//	try to find the actual method signature for me
 	NSMethodSignature	*returnMe = [super methodSignatureForSelector:s];
