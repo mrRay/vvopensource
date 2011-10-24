@@ -54,7 +54,7 @@
 	VVSprite		*foundSprite = nil;
 	[spriteArray rdlock];
 		for (spritePtr in [spriteArray array])	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
 				foundSprite = spritePtr;
 				break;
 			}
@@ -85,7 +85,7 @@
 	VVSprite		*foundSprite = nil;
 	[spriteArray rdlock];
 		for (spritePtr in [spriteArray array])	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
 				foundSprite = spritePtr;
 				break;
 			}
