@@ -37,7 +37,8 @@ the documentation here only covers the basics, the header file for this class is
 	unsigned char			buf[65506];	//	the socket gets data and dumps it here immediately
 	
 	OSSpinLock				scratchLock;
-	VVThreadLoop			*threadLooper;
+	NSThread				*thread;
+	//VVThreadLoop			*threadLooper;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
 	NSNetService			*zeroConfDest;	//	bonjour service for publishing this input's address...only active if there's a portLabel!

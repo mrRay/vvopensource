@@ -35,11 +35,13 @@
 		port = p;
 		
 		scratchLock = OS_SPINLOCK_INIT;
-		
+		/*
 		threadLooper = [[VVThreadLoop alloc]
 			initWithTimeInterval:1.0/30.0
 			target:self
 			selector:@selector(OSCThreadProc)];
+		*/
+		thread = nil;
 		
 		portLabel = nil;
 		if (l != nil)
@@ -66,11 +68,11 @@
 	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
-	
+	/*
 	if (threadLooper != nil)
 		[threadLooper release];
 	threadLooper = nil;
-	
+	*/
 	if (scratchArray != nil)
 		[scratchArray release];
 	scratchArray = nil;
@@ -84,8 +86,11 @@
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
 	delegate = nil;
-	
+	/*
 	if ([threadLooper running])
+		[self stop];
+	*/
+	if (thread!=nil && ![thread isCancelled])
 		[self stop];
 	
 	OSSpinLockLock(&socketLock);
@@ -149,10 +154,20 @@
 	//NSLog(@"%s",__func__);
 	
 	//	return immediately if the thread looper's already running
+	/*
 	if ([threadLooper running])
 		return;
+	*/
+	if (thread!=nil && ![thread isFinished] && ![thread isCancelled])
+		return;
 	
+	/*
 	[threadLooper start];
+	*/
+	[NSThread
+		detachNewThreadSelector:@selector(OSCThreadProc)
+		toTarget:self
+		withObject:nil];
 	
 	//	if there's a port name, create a NSNetService so devices using bonjour know they can send data to me
 	if (portLabel != nil)	{
@@ -179,16 +194,134 @@
 - (void) stop	{
 	//NSLog(@"%s",__func__);
 	
+	if (![NSThread isMainThread])	{
+		[self performSelectorOnMainThread:@selector(stop) withObject:nil waitUntilDone:NO];
+		return;
+	}
+	
 	//	stop & release the bonjour service
 	if (zeroConfDest != nil)	{
 		[zeroConfDest stop];
 		[zeroConfDest release];
 		zeroConfDest = nil;
 	}
-	
+	/*
 	[threadLooper stopAndWaitUntilDone];
+	*/
+	if (thread != nil)	{
+		[thread cancel];
+		while (thread != nil)
+			usleep(100);
+	}
+}
+- (void) OSCThreadProc	{
+	NSAutoreleasePool			*pool = [[NSAutoreleasePool alloc] init];
+	
+	thread = [NSThread currentThread];
+	if ([NSThread threadPriority]!=1.0)
+		[NSThread setThreadPriority:1.0];
+	
+	STARTLOOP:
+	@try	{
+		while (thread!=nil && ![thread isCancelled] && bound)	{
+			fd_set				readFileDescriptor;
+			int					readyFileCount;
+			struct timeval		timeout;
+			
+			//	set up the file descriptors and timeout struct
+			FD_ZERO(&readFileDescriptor);
+			FD_SET(sock, &readFileDescriptor);
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 1000;		//	0.01 secs = 100hz
+			
+			OSSpinLockLock(&socketLock);
+			//	figure out if there are any open file descriptors
+			readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
+			if (readyFileCount < 1)	{	//	if there was an error, bail immediately
+				OSSpinLockUnlock(&socketLock);
+				if (readyFileCount < 0)	{
+					NSLog(@"\t\terr: socket got closed unexpectedly");
+					[self stop];
+				}
+			}
+			
+			//	if the socket is one of the file descriptors, i need to get data from it
+			while (FD_ISSET(sock, &readFileDescriptor))	{
+				//NSLog(@"\t\twhile/packet ping");
+				struct sockaddr_in		addrFrom;
+				memset(&addrFrom,0,sizeof(addrFrom));
+				addrFrom.sin_family = AF_INET;
+				socklen_t				addrFromLen = sizeof(struct sockaddr_in);
+				int						numBytes;
+				BOOL					skipThisPacket = NO;
+				
+				addrFromLen = sizeof(addrFrom);
+				numBytes = (int)recvfrom(sock, buf, 65506, 0, (struct sockaddr *)&addrFrom, &addrFromLen);
+				if (numBytes < 1)	{
+					NSLog(@"\t\terr on recvfrom: %i",errno);
+					skipThisPacket = YES;
+				}
+				if (numBytes % 4)	{
+					NSLog(@"\t\terr: bytes isn't multiple of 4 in %s",__func__);
+					skipThisPacket = YES;
+				}
+				
+				if (!skipThisPacket)	{
+					buf[numBytes] = '\0';
+					
+					//	if i've reached this point, i have a buffer of the appropriate
+					//	length which needs to be parsed.  the buffer doesn't contain
+					//	multiple messages, or multiple root-level bundles
+					[self
+						parseRawBuffer:buf
+						ofMaxLength:numBytes
+						fromAddr:(unsigned int)addrFrom.sin_addr.s_addr
+						port:(unsigned short)addrFrom.sin_port];
+				}
+				
+				readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
+			}
+			OSSpinLockUnlock(&socketLock);
+			//	if there's stuff in the scratch dict, i have to pass the info on to my delegate
+			if ([scratchArray count] > 0)	{
+				NSArray				*tmpArray = nil;
+				
+				OSSpinLockLock(&scratchLock);
+					tmpArray = [NSArray arrayWithArray:scratchArray];
+					[scratchArray removeAllObjects];
+				OSSpinLockUnlock(&scratchLock);
+				
+				[self handleScratchArray:tmpArray];
+			}
+			
+			{
+				NSAutoreleasePool		*oldPool = pool;
+				pool = nil;
+				[oldPool release];
+				pool = [[NSAutoreleasePool alloc] init];
+			}
+		}
+	}
+	@catch (NSException *err)	{
+		NSAutoreleasePool		*oldPool = pool;
+		pool = nil;
+		NSLog(@"\t\t%s caught exception %@ on %@",__func__,err,self);
+		@try {
+			[oldPool release];
+		}
+		@catch (NSException *subErr)	{
+			NSLog(@"\t\t%s caught sub-exception %@ on %@",__func__,subErr,self);
+		}
+		pool = [[NSAutoreleasePool alloc] init];
+		goto STARTLOOP;
+	}
+	
+	thread = nil;
+	
+	[pool release];
 }
 
+/*
 - (void) OSCThreadProc	{
 	//NSLog(@"%s",__func__);
 	
@@ -211,10 +344,12 @@
 	OSSpinLockLock(&socketLock);
 	//	figure out if there are any open file descriptors
 	readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
-	if (readyFileCount < 0)	{	//	if there was an error, bail immediately
-		NSLog(@"\t\terr: socket got closed unexpectedly");
+	if (readyFileCount < 1)	{	//	if there was an error, bail immediately
 		OSSpinLockUnlock(&socketLock);
-		[self stop];
+		if (readyFileCount < 0)	{
+			NSLog(@"\t\terr: socket got closed unexpectedly");
+			[self stop];
+		}
 	}
 	//NSLog(@"\t\tcounted %ld ready files",readyFileCount);
 	//	if the socket is one of the file descriptors, i need to get data from it
@@ -272,10 +407,12 @@
 		[self handleScratchArray:tmpArray];
 	}
 }
+*/
+
+
 /*
 	this method exists so subclasses of OSCInPort can subclass around this for custom behavior
 */
-
 - (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s ... %s, %ld",__func__,b,l);
 	[OSCPacket
@@ -424,8 +561,11 @@
 	delegate = n;
 }
 - (void) setInterval:(double)n	{
+	NSLog(@"**** PROBABLY DEPRECATED: %s",__func__);
+	/*
 	if (threadLooper != nil)
 		[threadLooper setInterval:n];
+	*/
 }
 
 

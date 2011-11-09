@@ -34,6 +34,10 @@
 	running = NO;
 	bail = NO;
 	paused = NO;
+	executingCallback = NO;
+	
+	valLock = OS_SPINLOCK_INIT;
+	
 	targetObj = nil;
 	targetSel = nil;
 }
@@ -46,9 +50,14 @@
 }
 - (void) start	{
 	//NSLog(@"%s",__func__);
-	if (running)
+	OSSpinLockLock(&valLock);
+	if (running)	{
+		OSSpinLockUnlock(&valLock);
 		return;
+	}
 	paused = NO;
+	OSSpinLockUnlock(&valLock);
+	
 	[NSThread
 		detachNewThreadSelector:@selector(threadCallback)
 		toTarget:self
@@ -57,17 +66,20 @@
 - (void) threadCallback	{
 	//NSLog(@"%s",__func__);
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	//int						runLoopCount = 0;
 	
+	BOOL					tmpRunning = YES;
+	BOOL					tmpBail = NO;
+	OSSpinLockLock(&valLock);
 	running = YES;
 	bail = NO;
+	OSSpinLockUnlock(&valLock);
+	
 	if (![NSThread setThreadPriority:1.0])
 		NSLog(@"\terror setting thread priority to 1.0");
 	
 	STARTLOOP:
 	@try	{
-	
-		while ((running) && (!bail))	{
+		while ((tmpRunning) && (!tmpBail))	{
 			//NSLog(@"\t\tproc start");
 			struct timeval		startTime;
 			struct timeval		stopTime;
@@ -75,7 +87,10 @@
 			double				sleepDuration;	//	in microseconds!
 			
 			gettimeofday(&startTime,NULL);
+			OSSpinLockLock(&valLock);
 			if (!paused)	{
+				executingCallback = YES;
+				OSSpinLockUnlock(&valLock);
 				//@try	{
 					//	if there's a target object, ping it (delegate-style)
 					if (targetObj != nil)
@@ -87,7 +102,13 @@
 				//@catch (NSException *err)	{
 				//	NSLog(@"%s caught exception, %@",__func__,err);
 				//}
+				
+				OSSpinLockLock(&valLock);
+				executingCallback = NO;
+				OSSpinLockUnlock(&valLock);
 			}
+			else
+				OSSpinLockUnlock(&valLock);
 			
 			//++runLoopCount;
 			//if (runLoopCount > 4)	{
@@ -114,9 +135,13 @@
 					sleepDuration = MAXTIME;
 				[NSThread sleepForTimeInterval:sleepDuration];
 			}
+			
+			OSSpinLockLock(&valLock);
+			tmpRunning = running;
+			tmpBail = bail;
+			OSSpinLockUnlock(&valLock);
 			//NSLog(@"\t\tproc looping");
 		}
-	
 	}
 	@catch (NSException *err)	{
 		NSAutoreleasePool		*oldPool = pool;
@@ -139,31 +164,50 @@
 	}
 	
 	[pool release];
+	OSSpinLockLock(&valLock);
 	running = NO;
+	OSSpinLockUnlock(&valLock);
 	//NSLog(@"\t\t%s - FINSHED",__func__);
 }
 - (void) threadProc	{
 	
 }
 - (void) pause	{
+	OSSpinLockLock(&valLock);
 	paused = YES;
+	OSSpinLockUnlock(&valLock);
 }
 - (void) resume	{
+	OSSpinLockLock(&valLock);
 	paused = NO;
+	OSSpinLockUnlock(&valLock);
 }
 - (void) stop	{
-	if (!running)
+	OSSpinLockLock(&valLock);
+	if (!running)	{
+		OSSpinLockUnlock(&valLock);
 		return;
+	}
 	bail = YES;
+	OSSpinLockUnlock(&valLock);
 }
 - (void) stopAndWaitUntilDone	{
 	//NSLog(@"%s",__func__);
 	[self stop];
+	BOOL			tmpRunning = NO;
 	
-	while (running)	{
+	OSSpinLockLock(&valLock);
+	tmpRunning = running;
+	OSSpinLockUnlock(&valLock);
+	
+	while (tmpRunning)	{
 		//NSLog(@"\twaiting");
 		//pthread_yield_np();
 		usleep(100);
+		
+		OSSpinLockLock(&valLock);
+		tmpRunning = running;
+		OSSpinLockUnlock(&valLock);
 	}
 	
 }
@@ -174,7 +218,11 @@
 	interval = (i > MAXTIME) ? MAXTIME : i;
 }
 - (BOOL) running	{
-	return running;
+	BOOL		returnMe = NO;
+	OSSpinLockLock(&valLock);
+	returnMe = running;
+	OSSpinLockUnlock(&valLock);
+	return returnMe;
 }
 
 
