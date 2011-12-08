@@ -61,7 +61,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 		return NO;
 	int				err = regexec(regex,cStr,0,nil,0);
 	if (err != 0)	{
-		NSLog(@"\t\terr %d while executing regex %@ on string %@",err,regexString,n);
+		//NSLog(@"\t\terr %d while executing regex %@ on string %@",err,regexString,n);
 		return NO;
 	}
 	return YES;

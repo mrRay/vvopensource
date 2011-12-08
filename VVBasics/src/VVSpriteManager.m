@@ -274,7 +274,8 @@
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
-			[spritePtr draw];
+			//if (![spritePtr hidden])
+				[spritePtr draw];
 		}
 	[spriteArray unlock];
 }
@@ -285,8 +286,10 @@
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
-			if (NSIntersectsRect([spritePtr rect],r))
-				[spritePtr draw];
+			//if (![spritePtr hidden])	{
+				if (NSIntersectsRect([spritePtr rect],r))
+					[spritePtr draw];
+			//}
 		}
 	[spriteArray unlock];
 }

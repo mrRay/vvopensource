@@ -16,6 +16,14 @@
 		return nil;
 	return [returnMe autorelease];
 }
++ (id) dictionaryWithDict:(NSDictionary *)d	{
+	id			returnMe = [[MutLockDict alloc] initWithCapacity:0];
+	if (returnMe == nil)
+		return nil;
+	if (d != nil)
+		[[returnMe dict] addEntriesFromDictionary:d];
+	return [returnMe autorelease];
+}
 - (id) initWithCapacity:(NSUInteger)c	{
 	if (c < 0)	{
 		[self release];

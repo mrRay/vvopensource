@@ -236,8 +236,6 @@
 	[nodeContents unlock];
 	
 	[n setParentNode:self];
-	
-	[addressSpace nodeRenamed:n];
 }
 - (void) removeLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
@@ -432,8 +430,7 @@
 		currentMatches = newMatches;
 		newMatches = tmpArray;
 	}
-	
-	return newMatches;
+	return currentMatches;
 }
 
 
@@ -508,6 +505,8 @@
 	//	tell all my sub-nodes that their name has also changed
 	if ((nodeContents!=nil)&&([nodeContents count]>0))
 		[nodeContents lockMakeObjectsPerformSelector:@selector(informDelegatesOfNameChange)];
+	
+	[addressSpace nodeRenamed:self];
 }
 - (void) addDelegatesFromNode:(OSCNode *)n	{
 	//	put together an array of the delegates i'll be adding
@@ -719,7 +718,7 @@
 - (void) setNodeName:(NSString *)n	{
 	//NSLog(@"%s ... %@ -> %@",__func__,nodeName,n);
 	[self _setNodeName:n];
-	[addressSpace nodeRenamed:self];
+	//[addressSpace nodeRenamed:self];
 }
 - (NSString *) nodeName	{
 	OSSpinLockLock(&nameLock);
@@ -758,10 +757,12 @@
 }
 - (void) setParentNode:(OSCNode *)n	{
 	//NSLog(@"%s",__func__);
+	//	if there's a parent node and it doesn't match the current parent node then the parent node changed
+	BOOL			parentNodeChanged = (parentNode!=n && n!=nil)?YES:NO;
 	parentNode = n;
 	
-	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
-	if (parentNode != nil)
+	//	if the parent node changed, inform my delegates of the name change
+	if (parentNodeChanged)
 		[self informDelegatesOfNameChange];
 }
 - (OSCNode *) parentNode	{

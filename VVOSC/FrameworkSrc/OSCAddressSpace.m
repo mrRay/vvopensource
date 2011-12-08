@@ -325,12 +325,12 @@ id				_mainAddressSpace;
 }
 */
 - (void) nodeRenamed:(OSCNode *)n	{
-	if (deleted)
-		return;
+	//NSLog(@"%s ... %@",__func__,[n fullName]);
 	if (deleted)
 		return;
 	if (delegate != nil)	{
 		[delegate nodeRenamed:n];
+		/*
 		//	the passed node may have sub-nodes, which may need to notify things that their address has changed
 		MutLockArray	*subNodes = [n nodeContents];
 		if ((subNodes!=nil) && ([subNodes count]>0))	{
@@ -339,6 +339,7 @@ id				_mainAddressSpace;
 				[self nodeRenamed:subNode];
 			}
 		}
+		*/
 	}
 }
 - (void) dispatchMessage:(OSCMessage *)m	{
