@@ -92,8 +92,14 @@
 			charPtr = inet_ntoa(sock->sin_addr);
 		}
 	}
+	
+	if (charPtr == nil)
+		return;
+	
 	//	make an nsstring from the c string of the ip address string of the resolved service
 	ipString = [NSString stringWithCString:charPtr encoding:NSASCIIStringEncoding];
+	if (ipString == nil)
+		return;
 	
 	//	get the port of the resolved service
 	port = ntohs(sock->sin_port);
