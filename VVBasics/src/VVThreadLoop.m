@@ -1,5 +1,6 @@
 
 #import "VVThreadLoop.h"
+#import "VVAssertionHandler.h"
 
 
 
@@ -66,6 +67,8 @@
 - (void) threadCallback	{
 	//NSLog(@"%s",__func__);
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
+	
+	USE_CUSTOM_ASSERTION_HANDLER
 	
 	BOOL					tmpRunning = YES;
 	BOOL					tmpBail = NO;

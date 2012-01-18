@@ -2,6 +2,7 @@
 #import "VVBasicMacros.h"
 
 #import "VVThreadLoop.h"
+#import "VVAssertionHandler.h"
 #import "VVStopwatch.h"
 #import "ObjectHolder.h"
 #import "MutLockArray.h"
