@@ -74,6 +74,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 
 //	"local" add/remove/find methods for working with my node contents
 - (void) addLocalNode:(OSCNode *)n;
+- (void) addLocalNodes:(NSArray *)n;
 - (void) removeLocalNode:(OSCNode *)n;	//	this just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
 - (void) deleteLocalNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
 - (void) removeFromAddressSpace;	//	tries to remove me from the OSCAddressSpace singleton by setting my fullName to nil

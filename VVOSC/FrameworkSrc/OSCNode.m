@@ -237,6 +237,16 @@
 	
 	[n setParentNode:self];
 }
+- (void) addLocalNodes:(NSArray *)n	{
+	if (n==nil || deleted)
+		return;
+	if (nodeContents == nil)
+		nodeContents = [[MutLockArray alloc] initWithCapacity:0];
+	[nodeContents wrlock];
+		[nodeContents addObjectsFromArray:n];
+		[nodeContents sortUsingSelector:@selector(nodeNameCompare:)];
+	[nodeContents unlock];
+}
 - (void) removeLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	if ((n == nil)||(deleted))
