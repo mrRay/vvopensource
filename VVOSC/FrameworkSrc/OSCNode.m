@@ -246,6 +246,9 @@
 		[nodeContents addObjectsFromArray:n];
 		[nodeContents sortUsingSelector:@selector(nodeNameCompare:)];
 	[nodeContents unlock];
+	
+	for (OSCNode *nodePtr in n)
+		[nodePtr setParentNode:self];
 }
 - (void) removeLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
