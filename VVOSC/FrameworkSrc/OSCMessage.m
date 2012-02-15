@@ -92,14 +92,20 @@
 						if ((i-1)==0)
 							address = [NSString stringWithBytes:b length:i encoding:NSUTF8StringEncoding];
 						//	else i want the address to stop one short of the last slash (trim off the last slash)
-						else
+						else	{
 							address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];
+							if (b[0] != '/')
+								address = [NSString stringWithFormat:@"/%@",address];
+						}
 						msgType = OSCMessageTypeQuery;
 						queryType = OSCQueryTypeNamespaceExploration;
 					}
 					//	else the previous char *wasn't* a '/', it's *not* a directory listing- just a normal message
-					else
+					else	{
 						address = [NSString stringWithBytes:b length:i encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+						if (b[0] != '/')
+							address = [NSString stringWithFormat:@"/%@",address];
+					}
 				}
 				break;
 			case '#':	//	the # character is reserved for declaring a query type, reply, or error
@@ -130,6 +136,8 @@
 							case 'd':
 								if (strncmp((char *)(b+i),"#documentation",14)==0)	{	//	if the query's recognized...
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									if (b[0] != '/')
+										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeDocumentation;	//	set the query type...
 									tmpIndex = i+13;	//	...and i can exit now and save a couple loops- i know the end
 								}
@@ -137,6 +145,8 @@
 							case 't':
 								if (strncmp((char *)(b+i),"#type-signature",15)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									if (b[0] != '/')
+										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeTypeSignature;
 									tmpIndex = i+14;
 								}
@@ -144,6 +154,8 @@
 							case 'c':
 								if (strncmp((char *)(b+i),"#current-value",14)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									if (b[0] != '/')
+										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeCurrentValue;
 									tmpIndex = i+13;
 								}
@@ -151,6 +163,8 @@
 							case 'r':
 								if (strncmp((char *)(b+i),"#return-type-string",19)==0)	{
 									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									if (b[0] != '/')
+										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeReturnTypeString;
 									tmpIndex = i+18;
 								}
