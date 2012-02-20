@@ -151,19 +151,45 @@
 	
 	return returnMe;
 }
+- (VVSprite *) visibleSpriteAtPoint:(NSPoint)p	{
+	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
+	if (deleted)
+		return nil;
+		
+	id	returnMe = nil;
+	
+	[spriteArray rdlock];
+	
+		for (VVSprite *tmpSprite in [spriteArray array])	{
+			if ((![tmpSprite locked]) && (![tmpSprite hidden]) && ([tmpSprite checkPoint:p]))	{
+				returnMe = tmpSprite;		
+				break;
+			}
+		}
+	
+	[spriteArray unlock];
+	
+	return returnMe;
+}
 - (id) newSpriteAtBottomForRect:(NSRect)r	{
+	if (deleted)
+		return nil;
 	id			returnMe = nil;
 	returnMe = [VVSprite createWithRect:r inManager:self];
 	[spriteArray lockAddObject:returnMe];
 	return returnMe;
 }
 - (id) newSpriteAtTopForRect:(NSRect)r	{
+	if (deleted)
+		return nil;
 	id			returnMe = nil;
 	returnMe = [VVSprite createWithRect:r inManager:self];
 	[spriteArray lockInsertObject:returnMe atIndex:0];
 	return returnMe;
 }
 - (long) getUniqueSpriteIndex	{
+	if (deleted)
+		return -1;
 	long		returnMe = spriteIndexCount;
 	++spriteIndexCount;
 	if (spriteIndexCount >= 0x7FFFFFFF)
@@ -172,6 +198,8 @@
 }
 
 - (VVSprite *) spriteForIndex:(long)i	{
+	if (deleted)
+		return nil;
 	//NSEnumerator		*it;
 	VVSprite		*spritePtr = nil;
 	VVSprite		*returnMe = nil;
@@ -194,6 +222,8 @@
 	return returnMe;
 }
 - (void) removeSpriteForIndex:(long)i	{
+	if (deleted)
+		return;
 	//NSEnumerator		*it;
 	int				tmpIndex = 0;
 	VVSprite		*spritePtr;
@@ -230,7 +260,7 @@
 	*/
 }
 - (void) removeSprite:(id)z	{
-	if (z == nil)
+	if (deleted || z==nil)
 		return;
 	if ((spriteArray!=nil)&&([spriteArray count]>0))	{
 		//[spriteArray lockRemoveObject:z];
@@ -240,13 +270,15 @@
 		spriteInUse = nil;
 }
 - (void) removeSpritesFromArray:(NSArray *)array	{
-	if (array == nil)
+	if (deleted || array==nil)
 		return;
 	for (id sprite in array)	{
 		[self removeSprite:sprite];
 	}
 }
 - (void) removeAllSprites	{
+	if (deleted)
+		return;
 	//	remove everything from the tracker array
 	spriteInUse = nil;
 	//	remove everything from the sprites in use array
@@ -280,12 +312,15 @@
 	[spriteArray unlock];
 }
 - (void) drawRect:(NSRect)r	{
+	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
+			//NSRect		tmp = [spritePtr rect];
+			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
 			//if (![spritePtr hidden])	{
 				if (NSIntersectsRect([spritePtr rect],r))
 					[spritePtr draw];
@@ -295,9 +330,13 @@
 }
 
 - (VVSprite *) spriteInUse	{
+	if (deleted)
+		return nil;
 	return spriteInUse;
 }
 - (void) setSpriteInUse:(VVSprite *)z	{
+	if (deleted)
+		return;
 	spriteInUse = z;
 }
 - (MutLockArray *) spriteArray	{
