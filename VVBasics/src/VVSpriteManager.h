@@ -16,7 +16,9 @@
 - (void) prepareToBeDeleted;
 
 - (BOOL) localMouseDown:(NSPoint)p;
+- (BOOL) localVisibleMouseDown:(NSPoint)p;
 - (BOOL) localRightMouseDown:(NSPoint)p;
+- (BOOL) localVisibleRightMouseDown:(NSPoint)p;
 - (void) localRightMouseUp:(NSPoint)p;
 - (void) localMouseDragged:(NSPoint)p;
 - (void) localMouseUp:(NSPoint)p;

@@ -76,6 +76,38 @@
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
 }
+- (BOOL) localVisibleMouseDown:(NSPoint)p	{
+	//NSLog(@"%s",__func__);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
+	//	determine if there's a sprite which intersects the mousedown coords
+	//NSEnumerator		*it;
+	VVSprite		*spritePtr = nil;
+	VVSprite		*foundSprite = nil;
+	[spriteArray rdlock];
+		for (spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				foundSprite = spritePtr;
+				break;
+			}
+		}
+		/*
+		it = [spriteArray objectEnumerator];
+		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
+				foundSprite = spritePtr;
+		}
+		*/
+	[spriteArray unlock];
+	//	if i found a sprite which contains the mousedown loc
+	if (foundSprite!=nil)	{
+		spriteInUse = foundSprite;
+		[foundSprite mouseDown:p];
+		return YES;
+	}
+	//	if i'm here, i didn't find a sprite- return NO
+	return NO;
+}
 - (BOOL) localRightMouseDown:(NSPoint)p	{
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
@@ -86,6 +118,37 @@
 	[spriteArray rdlock];
 		for (spritePtr in [spriteArray array])	{
 			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				foundSprite = spritePtr;
+				break;
+			}
+		}
+		/*
+		it = [spriteArray objectEnumerator];
+		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
+				foundSprite = spritePtr;
+		}
+		*/
+	[spriteArray unlock];
+	//	if i found a sprite which contains the mousedown loc
+	if (foundSprite!=nil)	{
+		spriteInUse = foundSprite;
+		[foundSprite rightMouseDown:p];
+		return YES;
+	}
+	//	if i'm here, i didn't find a sprite- return NO
+	return NO;
+}
+- (BOOL) localVisibleRightMouseDown:(NSPoint)p	{
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
+	//	determine if there's a sprite which intersects the mousedown coords
+	//NSEnumerator		*it;
+	VVSprite		*spritePtr = nil;
+	VVSprite		*foundSprite = nil;
+	[spriteArray rdlock];
+		for (spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
 				foundSprite = spritePtr;
 				break;
 			}
