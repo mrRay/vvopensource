@@ -596,7 +596,7 @@
 		//	the last crash date should be BEFORE the last modification date of the log i just finished sending!
 		NSDictionary		*attribDict = [[NSFileManager defaultManager] attributesOfItemAtPath:finishedPath error:nil];
 		NSDate				*crashModDate = [attribDict objectForKey:NSFileModificationDate];
-		NSDate				*newLastCrashDate = [crashModDate addTimeInterval:-60.0];
+		NSDate				*newLastCrashDate = [crashModDate dateByAddingTimeInterval:-60.0];
 		//NSDate				*newLastCrashDate = [crashModDate dateByAddingTimeInterval:-60.0];
 		NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
 		[def setObject:newLastCrashDate forKey:@"lastCrashDate"];

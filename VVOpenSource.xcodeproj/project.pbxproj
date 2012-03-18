@@ -2412,7 +2412,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2420,12 +2420,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					ppc64,
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2439,7 +2434,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2463,7 +2458,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2471,12 +2466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					ppc64,
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2491,7 +2481,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2514,7 +2504,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2522,12 +2512,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					ppc64,
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2541,7 +2526,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2642,7 +2627,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2650,10 +2635,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2670,7 +2652,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2698,7 +2680,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCTestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2725,7 +2707,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCTestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2753,7 +2735,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDITestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2780,7 +2762,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDITestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2874,7 +2856,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2882,10 +2864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2904,7 +2883,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2952,7 +2931,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCQueryTest;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2960,6 +2939,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2978,7 +2958,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OSCQueryTest;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3006,7 +2986,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = CrashReporterTestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -3033,7 +3013,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = CrashReporterTestApp;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3061,7 +3041,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDIviaOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -3088,7 +3068,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MIDIviaOSC;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3117,7 +3097,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -3125,10 +3105,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -3145,7 +3122,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;

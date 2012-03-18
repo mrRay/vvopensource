@@ -71,6 +71,11 @@
 - (void) rdlock	{
 	pthread_rwlock_rdlock(&arrayLock);
 }
+- (BOOL) tryRdLock	{
+	BOOL		returnMe = NO;
+	returnMe = (pthread_rwlock_tryrdlock(&arrayLock)==0) ? YES : NO;
+	return returnMe;
+}
 - (void) wrlock	{
 	pthread_rwlock_wrlock(&arrayLock);
 }

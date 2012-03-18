@@ -30,6 +30,7 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 
 ///	Establishes a read-lock for the array; multiple read locks may exist simultaneously (if it's not changing, anything can look at the contents of the array).  This method does not return until it has been able to get the lock.
 - (void) rdlock;
+- (BOOL) tryRdLock;	//	returns YES if i got a read-lock successfully!
 ///	Establishes a write-lock for the array.  Only one write-lock may exist at any given time, and all read-locks must be relinquished before the write-lock may be established (if you're going to change the array, nothing else can be changing or observing it).
 - (void) wrlock;
 ///	Unlocks the array.

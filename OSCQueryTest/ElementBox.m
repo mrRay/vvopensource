@@ -104,7 +104,7 @@
 	
 	//	put the UI item in my content view, set up autoresizing
 	[[self contentView] addSubview:myUIItem];
-	[myUIItem setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+	[(NSView *)myUIItem setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 	//	put the node in the address space, which retains it so it doesn't get released
 	[_mainAddressSpace setNode:myNode forAddress:[NSString stringWithFormat:@"/%@",[myNode nodeName]]];
 	//	set myself up as the node's delegate (so i receive OSCMessages dispatched to the node, as well as other node-related stuff)
