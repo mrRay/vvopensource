@@ -36,8 +36,11 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	lastMouseEvent = nil;
-	for (long i=0;i<4;++i)
+	drawBorder = NO;
+	for (long i=0;i<4;++i)	{
 		clearColor[i] = (GLfloat)0.0;
+		borderColor[i] = (GLfloat)0.0;
+	}
 	mouseDownModifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
@@ -402,6 +405,12 @@
 			//	tell the sprite manager to start drawing the sprites
 			if (spriteManager != nil)
 				[spriteManager drawRect:r];
+			if (drawBorder)	{
+				glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
+				glEnableClientState(GL_VERTEX_ARRAY);
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+				GLSTROKERECT([self bounds]);
+			}
 			//	flush!
 			switch (flushMode)	{
 				case VVFlushModeGL:
@@ -539,6 +548,23 @@
 	if (deleted)
 		return nil;
 	return [NSColor colorWithDeviceRed:clearColor[0] green:clearColor[1] blue:clearColor[2] alpha:clearColor[3]];
+}
+@synthesize drawBorder;
+- (void) setBorderColor:(NSColor *)c	{
+	if ((deleted)||(c==nil))
+		return;
+	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
+	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	pthread_mutex_lock(&glLock);
+	//CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+	[calibratedColor getComponents:(CGFloat *)borderColor];
+	//glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
+	pthread_mutex_unlock(&glLock);
+}
+- (NSColor *) borderColor	{
+	if (deleted)
+		return nil;
+	return [NSColor colorWithDeviceRed:borderColor[0] green:borderColor[1] blue:borderColor[2] alpha:borderColor[3]];
 }
 @synthesize mouseIsDown;
 @synthesize flushMode;

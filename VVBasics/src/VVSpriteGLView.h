@@ -37,6 +37,9 @@ typedef enum	{
 	BOOL					spritesNeedUpdate;
 	NSEvent					*lastMouseEvent;
 	GLfloat					clearColor[4];
+	BOOL					drawBorder;
+	GLfloat					borderColor[4];
+	
 	long					mouseDownModifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
@@ -70,6 +73,8 @@ typedef enum	{
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (retain,readwrite) NSColor *clearColor;
+@property (assign,readwrite) BOOL drawBorder;
+@property (retain,readwrite) NSColor *borderColor;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (readonly) BOOL mouseIsDown;
 @property (assign, readwrite) VVFlushMode flushMode;

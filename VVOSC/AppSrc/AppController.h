@@ -25,6 +25,7 @@
 	IBOutlet NSButton			*bundleMsgsButton;
 	
 	IBOutlet NSSlider			*floatSlider;
+	IBOutlet NSTextField		*floatField;
 	IBOutlet NSTextField		*intField;
 	IBOutlet NSTextField		*longLongField;
 	IBOutlet NSColorWell		*colorWell;

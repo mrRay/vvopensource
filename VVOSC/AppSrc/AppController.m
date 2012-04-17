@@ -194,6 +194,9 @@
 	if (sender == floatSlider)	{
 		[msg addFloat:[floatSlider floatValue]];
 	}
+	else if (sender == floatField)	{
+		[msg addFloat:[floatField floatValue]];
+	}
 	else if (sender == intField)	{
 		[msg addInt:[intField intValue]];
 	}

@@ -56,6 +56,99 @@
 #define OBJSDICT(o, ...) [NSDictionary dictionaryWithObjectsAndKeys:o,#__VA_ARGS__, nil]
 #define MUTDICT [NSMutableDictionary dictionaryWithCapacity:0]
 
+//	calculating the distance between two NSPoints or similar structs
+#define POINTDISTANCE(a,b) fabs(sqrtf((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y)))
+
+
+//	this is a macro for drawing an NSRect in opengl
+#define GLDRAWRECT(r)														\
+{																			\
+	GLfloat 	vvMacroVertices[]={											\
+		r.origin.x, r.origin.y, 0.0,										\
+		r.origin.x, r.origin.y+r.size.height, 0.0,							\
+		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
+		r.origin.x+r.size.width, r.origin.y, 0.0};							\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
+	glDrawArrays(GL_QUADS,0,4);												\
+}
+
+
+
+//	this is a macro for stroking an NSRect in opengl
+#define GLSTROKERECT(r)														\
+{																			\
+	GLfloat 	vvMacroVertices[]={											\
+		r.origin.x-0.5, r.origin.y-0.5, 0.0,								\
+		r.origin.x+r.size.width+0.5, r.origin.y-0.5, 0.0,					\
+		r.origin.x+r.size.width+0.5, r.origin.y-0.5, 0.0,					\
+		r.origin.x+r.size.width+0.5, r.origin.y+r.size.height-0.5, 0.0,		\
+		r.origin.x+r.size.width+0.5, r.origin.y+r.size.height-0.5, 0.0,		\
+		r.origin.x-0.5, r.origin.y+r.size.height-0.5, 0.0,					\
+		r.origin.x-0.5, r.origin.y+r.size.height-0.5, 0.0,					\
+		r.origin.x-0.5, r.origin.y-0.5, 0.0};								\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
+	glDrawArrays(GL_LINES,0,8);												\
+}
+/*
+#define GLSTROKERECT(r)														\
+{																			\
+	GLfloat 	vvMacroVertices[]={											\
+		r.origin.x, r.origin.y, 0.0,										\
+		r.origin.x+r.size.width, r.origin.y, 0.0,							\
+		r.origin.x+r.size.width, r.origin.y, 0.0,							\
+		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
+		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
+		r.origin.x, r.origin.y+r.size.height, 0.0,							\
+		r.origin.x, r.origin.y+r.size.height, 0.0,							\
+		r.origin.x, r.origin.y, 0.0};										\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
+	glDrawArrays(GL_LINES,0,8);												\
+}
+*/
+
+
+//	this is a macro for drawing a line connecting two points
+#define GLDRAWLINE(p,q)									\
+{														\
+	GLfloat		vvMacroVertices[]={						\
+		p.x, p.y, 0.0,									\
+		q.x, q.y, 0.0};									\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);		\
+	glDrawArrays(GL_LINES,0,2);							\
+}
+
+
+
+//	this is a macro for drawing a diamond specified by a point and radius in opengl
+#define GLDRAWDIAMOND(p,r)								\
+{														\
+	GLfloat		vvMacroVertices[] = {					\
+		p.x-r, p.y, 0.0,								\
+		p.x, p.y+r, 0.0,								\
+		p.x+r, p.y, 0.0,								\
+		p.x, p.y-r, 0.0};								\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);		\
+	glDrawArrays(GL_QUADS,0,4);							\
+}
+
+
+
+//	this is a macro for stroking an diamond around a point in opengl
+#define GLSTROKEDIAMOND(p,r)							\
+{														\
+	GLfloat		vvMacroVertices[] = {					\
+		p.x-r, p.y, 0.0,								\
+		p.x, p.y+r, 0.0,								\
+		p.x, p.y+r, 0.0,								\
+		p.x+r, p.y, 0.0,								\
+		p.x+r, p.y, 0.0,								\
+		p.x, p.y-r, 0.0,								\
+		p.x, p.y-r, 0.0,								\
+		p.x-r, p.y, 0.0};								\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);		\
+	glDrawArrays(GL_LINE_LOOP,0,8);							\
+}
+
 
 //	this is a macro for drawing a texture of a specified size in a rect
 #define GLDRAWTEXSIZEDINRECT(t,s,r)											\
