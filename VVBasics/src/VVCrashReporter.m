@@ -145,7 +145,7 @@
 		goto BAIL;
 	
 	//	assemble the crash logs- if there aren't any, bail
-	if (![self _assembleCrashLogs])
+	if (![self _assembleCrashLogs] || [crashLogArray count]<1)
 		goto BAIL;
 	
 	//	extract the domain from the upload url
@@ -279,6 +279,8 @@
 	[self sendACrashLog];
 }
 - (void) sendACrashLog	{
+	if (jobSize<1)
+		return;
 	//	make sure this method always executes on the main thread, or the timer stuff won't be added/removed properly
 	if (![NSThread isMainThread])	{
 		[self performSelectorOnMainThread:@selector(sendACrashLog) withObject:nil waitUntilDone:NO];

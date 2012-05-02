@@ -9,8 +9,10 @@
 
 - (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...	{
 	NSLog(@"**** ERR: assertion failure!");
-	NSLog(@"**** [%@ %@]",object,NSStringFromSelector(selector));
+	NSLog(@"**** method: %@",NSStringFromSelector(selector));
 	NSLog(@"**** %@, %ld",fileName,line);
+	NSLog(@"**** object: %@",object);
+	//NSLog(@"**** [%@ %@]",object,NSStringFromSelector(selector));
 	
 	va_list			argList;
 	va_start(argList,format);

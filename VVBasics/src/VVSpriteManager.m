@@ -15,8 +15,10 @@
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		deleted = NO;
+		allowMultiSpriteInteraction = NO;
 		spriteArray = [[MutLockArray alloc] initWithCapacity:0];
 		spriteInUse = nil;
+		spritesInUse = nil;
 		spriteIndexCount = 1;
 		return self;
 	}
@@ -34,6 +36,7 @@
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteArray);
 	spriteInUse = nil;
+	VVRELEASE(spritesInUse);
 	[super dealloc];
 }
 
@@ -48,8 +51,79 @@
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
-	//	determine if there's a sprite which intersects the mousedown coords
-	//NSEnumerator		*it;
+	BOOL			returnMe = NO;
+	//	if i'm doing multi-sprite interaction
+	if (allowMultiSpriteInteraction)	{
+		[spritesInUse lockRemoveAllObjects];
+		[spriteArray rdlock];
+		for (VVSprite *spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				[spritesInUse lockAddObject:spritePtr];
+				returnMe = YES;
+			}
+		}
+		[spriteArray unlock];
+		
+		//	if 'spritesInUse' has more than one item, i may have to ignore some of them (because 'dropFromMultipleSpriteActions' may be YES)
+		if ([spritesInUse count]>1)	{
+			//	run through 'spritesInUse'- do mousedowns, and remove any sprites that have 'dropFromMultiSpriteActions' set to YES
+			[spritesInUse wrlock];
+			NSMutableIndexSet	*indicesToRemove = nil;
+			int					tmpIndex = 0;
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				if ([spritePtr dropFromMultiSpriteActions])	{
+					if (indicesToRemove==nil)
+						indicesToRemove = [[NSMutableIndexSet alloc] init];
+					[indicesToRemove addIndex:tmpIndex];
+				}
+				else
+					[spritePtr mouseDown:p];
+				++tmpIndex;
+			}
+			if (indicesToRemove != nil)	{
+				//	if all the sprites in use are 'dropFromMultiSpriteActions', i need to "save" one and tell it to do the relevant action
+				if ([indicesToRemove count] == [spritesInUse count])	{
+					long			firstIndex = [indicesToRemove firstIndex];
+					if (firstIndex != NSNotFound)	{
+						[indicesToRemove removeIndex:firstIndex];
+						VVSprite	*firstSprite = [spritesInUse objectAtIndex:firstIndex];
+						if (firstSprite != nil)
+							[firstSprite mouseDown:p];
+					}
+				}
+				//	remove the dropped sprites
+				[spritesInUse removeObjectsAtIndexes:indicesToRemove];
+			}
+			[spritesInUse unlock];
+		}
+		//	else 'spritesInuse' only has 0 or 1 items in it- i can just down the mousedown.
+		else	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr mouseDown:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	//	else this is a single-sprite interaction
+	else	{
+		VVSprite		*foundSprite = nil;
+		[spriteArray rdlock];
+			for (VVSprite *spritePtr in [spriteArray array])	{
+				if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+					foundSprite = spritePtr;
+					break;
+				}
+			}
+		[spriteArray unlock];
+		if (foundSprite!=nil)	{
+			spriteInUse = foundSprite;
+			[foundSprite mouseDown:p];
+			returnMe = YES;
+		}
+	}
+	return returnMe;
+	/*
 	VVSprite		*spritePtr = nil;
 	VVSprite		*foundSprite = nil;
 	[spriteArray rdlock];
@@ -59,13 +133,6 @@
 				break;
 			}
 		}
-		/*
-		it = [spriteArray objectEnumerator];
-		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
-				foundSprite = spritePtr;
-		}
-		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -75,11 +142,87 @@
 	}
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
+	*/
 }
 - (BOOL) localVisibleMouseDown:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
+	BOOL			returnMe = NO;
+	//	if i'm doing multi-sprite interaction
+	if (allowMultiSpriteInteraction)	{
+		[spritesInUse lockRemoveAllObjects];
+		[spriteArray rdlock];
+		for (VVSprite *spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				[spritesInUse lockAddObject:spritePtr];
+				returnMe = YES;
+			}
+		}
+		[spriteArray unlock];
+		
+		//	if 'spritesInUse' has more than one item, i may have to ignore some of them (because 'dropFromMultipleSpriteActions' may be YES)
+		if ([spritesInUse count]>1)	{
+			//	run through 'spritesInUse'- do mousedowns, and remove any sprites that have 'dropFromMultiSpriteActions' set to YES
+			[spritesInUse wrlock];
+			NSMutableIndexSet	*indicesToRemove = nil;
+			int					tmpIndex = 0;
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				if ([spritePtr dropFromMultiSpriteActions])	{
+					if (indicesToRemove==nil)
+						indicesToRemove = [[NSMutableIndexSet alloc] init];
+					[indicesToRemove addIndex:tmpIndex];
+				}
+				else
+					[spritePtr mouseDown:p];
+				++tmpIndex;
+			}
+			if (indicesToRemove != nil)	{
+				//	if all the sprites in use are 'dropFromMultiSpriteActions', i need to "save" one and tell it to do the relevant action
+				if ([indicesToRemove count] == [spritesInUse count])	{
+					long			firstIndex = [indicesToRemove firstIndex];
+					if (firstIndex != NSNotFound)	{
+						[indicesToRemove removeIndex:firstIndex];
+						VVSprite	*firstSprite = [spritesInUse objectAtIndex:firstIndex];
+						if (firstSprite != nil)
+							[firstSprite mouseDown:p];
+					}
+				}
+				//	remove the dropped sprites
+				[spritesInUse removeObjectsAtIndexes:indicesToRemove];
+			}
+			[spritesInUse unlock];
+		}
+		//	else 'spritesInuse' only has 0 or 1 items in it- i can just down the mousedown.
+		else	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr mouseDown:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	//	else this is a single-sprite interaction
+	else	{
+		VVSprite		*foundSprite = nil;
+		[spriteArray rdlock];
+			for (VVSprite *spritePtr in [spriteArray array])	{
+				if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+					foundSprite = spritePtr;
+					break;
+				}
+			}
+		[spriteArray unlock];
+		if (foundSprite!=nil)	{
+			spriteInUse = foundSprite;
+			[foundSprite mouseDown:p];
+			returnMe = YES;
+		}
+	}
+	return returnMe;
+	/*
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
 	//	determine if there's a sprite which intersects the mousedown coords
 	//NSEnumerator		*it;
 	VVSprite		*spritePtr = nil;
@@ -91,13 +234,6 @@
 				break;
 			}
 		}
-		/*
-		it = [spriteArray objectEnumerator];
-		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
-				foundSprite = spritePtr;
-		}
-		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -107,8 +243,85 @@
 	}
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
+	*/
 }
 - (BOOL) localRightMouseDown:(NSPoint)p	{
+	//NSLog(@"%s",__func__);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
+	BOOL			returnMe = NO;
+	//	if i'm doing multi-sprite interaction
+	if (allowMultiSpriteInteraction)	{
+		[spritesInUse lockRemoveAllObjects];
+		[spriteArray rdlock];
+		for (VVSprite *spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				[spritesInUse lockAddObject:spritePtr];
+				returnMe = YES;
+			}
+		}
+		[spriteArray unlock];
+		
+		//	if 'spritesInUse' has more than one item, i may have to ignore some of them (because 'dropFromMultipleSpriteActions' may be YES)
+		if ([spritesInUse count]>1)	{
+			//	run through 'spritesInUse'- do mousedowns, and remove any sprites that have 'dropFromMultiSpriteActions' set to YES
+			[spritesInUse wrlock];
+			NSMutableIndexSet	*indicesToRemove = nil;
+			int					tmpIndex = 0;
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				if ([spritePtr dropFromMultiSpriteActions])	{
+					if (indicesToRemove==nil)
+						indicesToRemove = [[NSMutableIndexSet alloc] init];
+					[indicesToRemove addIndex:tmpIndex];
+				}
+				else
+					[spritePtr rightMouseDown:p];
+				++tmpIndex;
+			}
+			if (indicesToRemove != nil)	{
+				//	if all the sprites in use are 'dropFromMultiSpriteActions', i need to "save" one and tell it to do the relevant action
+				if ([indicesToRemove count] == [spritesInUse count])	{
+					long			firstIndex = [indicesToRemove firstIndex];
+					if (firstIndex != NSNotFound)	{
+						[indicesToRemove removeIndex:firstIndex];
+						VVSprite	*firstSprite = [spritesInUse objectAtIndex:firstIndex];
+						if (firstSprite != nil)
+							[firstSprite rightMouseDown:p];
+					}
+				}
+				//	remove the dropped sprites
+				[spritesInUse removeObjectsAtIndexes:indicesToRemove];
+			}
+			[spritesInUse unlock];
+		}
+		//	else 'spritesInuse' only has 0 or 1 items in it- i can just down the mousedown.
+		else	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr rightMouseDown:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	//	else this is a single-sprite interaction
+	else	{
+		VVSprite		*foundSprite = nil;
+		[spriteArray rdlock];
+			for (VVSprite *spritePtr in [spriteArray array])	{
+				if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+					foundSprite = spritePtr;
+					break;
+				}
+			}
+		[spriteArray unlock];
+		if (foundSprite!=nil)	{
+			spriteInUse = foundSprite;
+			[foundSprite rightMouseDown:p];
+			returnMe = YES;
+		}
+	}
+	return returnMe;
+	/*
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
 	//	determine if there's a sprite which intersects the mousedown coords
@@ -122,13 +335,6 @@
 				break;
 			}
 		}
-		/*
-		it = [spriteArray objectEnumerator];
-		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
-				foundSprite = spritePtr;
-		}
-		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -138,8 +344,85 @@
 	}
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
+	*/
 }
 - (BOOL) localVisibleRightMouseDown:(NSPoint)p	{
+	//NSLog(@"%s",__func__);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return NO;
+	BOOL			returnMe = NO;
+	//	if i'm doing multi-sprite interaction
+	if (allowMultiSpriteInteraction)	{
+		[spritesInUse lockRemoveAllObjects];
+		[spriteArray rdlock];
+		for (VVSprite *spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				[spritesInUse lockAddObject:spritePtr];
+				returnMe = YES;
+			}
+		}
+		[spriteArray unlock];
+		
+		//	if 'spritesInUse' has more than one item, i may have to ignore some of them (because 'dropFromMultipleSpriteActions' may be YES)
+		if ([spritesInUse count]>1)	{
+			//	run through 'spritesInUse'- do mousedowns, and remove any sprites that have 'dropFromMultiSpriteActions' set to YES
+			[spritesInUse wrlock];
+			NSMutableIndexSet	*indicesToRemove = nil;
+			int					tmpIndex = 0;
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				if ([spritePtr dropFromMultiSpriteActions])	{
+					if (indicesToRemove==nil)
+						indicesToRemove = [[NSMutableIndexSet alloc] init];
+					[indicesToRemove addIndex:tmpIndex];
+				}
+				else
+					[spritePtr rightMouseDown:p];
+				++tmpIndex;
+			}
+			if (indicesToRemove != nil)	{
+				//	if all the sprites in use are 'dropFromMultiSpriteActions', i need to "save" one and tell it to do the relevant action
+				if ([indicesToRemove count] == [spritesInUse count])	{
+					long			firstIndex = [indicesToRemove firstIndex];
+					if (firstIndex != NSNotFound)	{
+						[indicesToRemove removeIndex:firstIndex];
+						VVSprite	*firstSprite = [spritesInUse objectAtIndex:firstIndex];
+						if (firstSprite != nil)
+							[firstSprite rightMouseDown:p];
+					}
+				}
+				//	remove the dropped sprites
+				[spritesInUse removeObjectsAtIndexes:indicesToRemove];
+			}
+			[spritesInUse unlock];
+		}
+		//	else 'spritesInuse' only has 0 or 1 items in it- i can just down the mousedown.
+		else	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr rightMouseDown:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	//	else this is a single-sprite interaction
+	else	{
+		VVSprite		*foundSprite = nil;
+		[spriteArray rdlock];
+			for (VVSprite *spritePtr in [spriteArray array])	{
+				if ((![spritePtr locked]) && (![spritePtr hidden]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+					foundSprite = spritePtr;
+					break;
+				}
+			}
+		[spriteArray unlock];
+		if (foundSprite!=nil)	{
+			spriteInUse = foundSprite;
+			[foundSprite rightMouseDown:p];
+			returnMe = YES;
+		}
+	}
+	return returnMe;
+	/*
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return NO;
 	//	determine if there's a sprite which intersects the mousedown coords
@@ -153,13 +436,6 @@
 				break;
 			}
 		}
-		/*
-		it = [spriteArray objectEnumerator];
-		while ((spritePtr = [it nextObject]) && (foundSprite==nil))	{
-			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]))
-				foundSprite = spritePtr;
-		}
-		*/
 	[spriteArray unlock];
 	//	if i found a sprite which contains the mousedown loc
 	if (foundSprite!=nil)	{
@@ -169,25 +445,80 @@
 	}
 	//	if i'm here, i didn't find a sprite- return NO
 	return NO;
+	*/
 }
 - (void) localRightMouseUp:(NSPoint)p	{
+	if (deleted || spriteArray==nil || [spriteArray count]<1)
+		return;
+	if (allowMultiSpriteInteraction)	{
+		if (spritesInUse != nil)	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr rightMouseUp:p];
+			}
+			[spritesInUse unlock];
+			[spritesInUse lockRemoveAllObjects];
+		}
+	}
+	else	{
+		if (spriteInUse != nil)	{
+			[spriteInUse rightMouseUp:p];
+			spriteInUse = nil;
+		}
+	}
+	/*
 	if ((deleted)||(spriteInUse==nil))
 		return;
 	[spriteInUse rightMouseUp:p];
 	spriteInUse = nil;
+	*/
 }
 - (void) localMouseDragged:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
+	if (deleted || spriteArray==nil || [spriteArray count]<1)
+		return;
+	if (allowMultiSpriteInteraction)	{
+		if (spritesInUse != nil)	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr mouseDragged:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	else	{
+		if (spriteInUse != nil)
+			[spriteInUse mouseDragged:p];
+	}
+	/*
 	if ((deleted)||(spriteInUse==nil))
 		return;
 	[spriteInUse mouseDragged:p];
+	*/
 }
 - (void) localMouseUp:(NSPoint)p	{
 	//NSLog(@"%s",__func__);
+	if (deleted || spriteArray==nil || [spriteArray count]<1)
+		return;
+	if (allowMultiSpriteInteraction)	{
+		if (spritesInUse != nil)	{
+			[spritesInUse rdlock];
+			for (VVSprite *spritePtr in [spritesInUse array])	{
+				[spritePtr mouseUp:p];
+			}
+			[spritesInUse unlock];
+		}
+	}
+	else	{
+		if (spriteInUse != nil)
+			[spriteInUse mouseUp:p];
+	}
+	/*
 	if ((deleted)||(spriteInUse==nil))
 		return;
 	[spriteInUse mouseUp:p];
 	spriteInUse = nil;
+	*/
 }
 
 /*===================================================================================*/
@@ -274,20 +605,12 @@
 			break;
 		}
 	}
-	/*
-	it = [spriteArray objectEnumerator];
-	while ((spritePtr = [it nextObject]) && (returnMe == nil))	{
-		if ([spritePtr spriteIndex] == i)
-			returnMe = spritePtr;
-	}
-	*/
 	[spriteArray unlock];
 	return returnMe;
 }
 - (void) removeSpriteForIndex:(long)i	{
 	if (deleted)
 		return;
-	//NSEnumerator		*it;
 	int				tmpIndex = 0;
 	VVSprite		*spritePtr;
 	VVSprite		*foundSprite = nil;
@@ -302,35 +625,30 @@
 		++tmpIndex;
 	}
 	if (foundSprite != nil)	{
-		if (spriteInUse == foundSprite)
-			spriteInUse = nil;
+		if (allowMultiSpriteInteraction)	{
+			[spritesInUse lockRemoveIdenticalPtr:foundSprite];
+		}
+		else	{
+			if (spriteInUse == foundSprite)
+				spriteInUse = nil;
+		}
 		[spriteArray removeObjectAtIndex:tmpIndex];
 	}
-	/*
-	it = [spriteArray objectEnumerator];
-	while ((spritePtr=[it nextObject])&&(foundSprite==nil))	{
-		if ([spritePtr spriteIndex]==i)
-			foundSprite = spritePtr;
-	}
-	if (foundSprite!=nil)
-		[spriteArray removeObject:foundSprite];
-	*/
 	[spriteArray unlock];
-	/*
-	//	find & remove sprite in sprites in use array
-	if (spriteInUse == foundSprite)
-		spriteInUse = nil;
-	*/
 }
 - (void) removeSprite:(id)z	{
 	if (deleted || z==nil)
 		return;
 	if ((spriteArray!=nil)&&([spriteArray count]>0))	{
-		//[spriteArray lockRemoveObject:z];
 		[spriteArray lockRemoveIdenticalPtr:z];
 	}
-	if (spriteInUse == z)
-		spriteInUse = nil;
+	if (allowMultiSpriteInteraction)	{
+		[spritesInUse lockRemoveIdenticalPtr:z];
+	}
+	else	{
+		if (spriteInUse == z)
+			spriteInUse = nil;
+	}
 }
 - (void) removeSpritesFromArray:(NSArray *)array	{
 	if (deleted || array==nil)
@@ -347,6 +665,8 @@
 	//	remove everything from the sprites in use array
 	if (spriteArray != nil)
 		[spriteArray lockRemoveAllObjects];
+	if (spritesInUse != nil)
+		[spritesInUse lockRemoveAllObjects];
 }
 /*
 - (void) moveSpriteToFront:(VVSprite *)z	{
@@ -395,12 +715,25 @@
 - (VVSprite *) spriteInUse	{
 	if (deleted)
 		return nil;
-	return spriteInUse;
+	if (allowMultiSpriteInteraction)
+		return nil;
+	else
+		return spriteInUse;
 }
 - (void) setSpriteInUse:(VVSprite *)z	{
 	if (deleted)
 		return;
 	spriteInUse = z;
+}
+- (void) setAllowMultiSpriteInteraction:(BOOL)n	{
+	if (n && spritesInUse==nil)
+		spritesInUse = [[MutLockArray alloc] init];
+	else if (!n && spritesInUse!=nil)
+		VVRELEASE(spritesInUse);
+	allowMultiSpriteInteraction = n;
+}
+- (BOOL) allowMultiSpriteInteraction	{
+	return allowMultiSpriteInteraction;
 }
 - (MutLockArray *) spriteArray	{
 	return spriteArray;

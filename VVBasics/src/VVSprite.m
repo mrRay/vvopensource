@@ -26,6 +26,8 @@
 	if (self = [super init])	{
 		deleted = NO;
 		locked = NO;
+		hidden = NO;
+		dropFromMultiSpriteActions = NO;
 		spriteIndex = -1;
 		manager = m;
 		spriteIndex = [manager getUniqueSpriteIndex];
@@ -252,6 +254,12 @@
 }
 - (BOOL) hidden	{
 	return hidden;
+}
+- (void) setDropFromMultiSpriteActions:(BOOL)n	{
+	dropFromMultiSpriteActions = n;
+}
+- (BOOL) dropFromMultiSpriteActions	{
+	return dropFromMultiSpriteActions;
 }
 - (long) spriteIndex	{
 	return spriteIndex;

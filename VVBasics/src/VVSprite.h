@@ -30,6 +30,7 @@ typedef enum _VVSpriteEventType	{
 	BOOL			deleted;
 	BOOL			locked;				//	whether or not i should respond to mouse input.  DOESN'T AFFECT ANYTHING IN THIS CLASS!  variable exists for the user's convenience, and is otherwise superfluous!
 	BOOL			hidden;				//	whether or not the sprite should draw.  DOESN'T AFFECT ANYTHING IN THIS CLASS!  variable exists for the user's convenience, and is otherwise superfluous!
+	BOOL			dropFromMultiSpriteActions;	//	only valid if sprite manager's allowMultiSpriteInteraction' is YES.  NO by default.  if YES, then if you mousedown on this and any other sprite, this sprite gets dropped from the mousedown.  used for allowing multi-sprite interaction to prevent clicks from hitting "background" sprites (which have this set to YES)
 	long			spriteIndex;
 	id				manager;			//	the VVSpriteManager i exist within- NOT retained!
 	id				delegate;			//	NOT retained!
@@ -69,6 +70,7 @@ typedef enum _VVSpriteEventType	{
 
 @property (assign, readwrite) BOOL locked;
 @property (assign, readwrite) BOOL hidden;
+@property (assign, readwrite) BOOL dropFromMultiSpriteActions;
 @property (readonly) long spriteIndex;
 @property (readonly) id manager;
 @property (assign, readwrite) id delegate;
