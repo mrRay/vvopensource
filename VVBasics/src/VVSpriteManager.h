@@ -46,5 +46,6 @@
 
 @property (assign,readwrite) BOOL allowMultiSpriteInteraction;
 @property (readonly) MutLockArray *spriteArray;
+@property (readonly) MutLockArray *spritesInUse;
 
 @end

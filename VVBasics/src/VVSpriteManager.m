@@ -738,6 +738,9 @@
 - (MutLockArray *) spriteArray	{
 	return spriteArray;
 }
+- (MutLockArray *) spritesInUse	{
+	return spritesInUse;
+}
 
 
 @end
