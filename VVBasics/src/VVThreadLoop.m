@@ -14,6 +14,7 @@
 	if (self = [super init])	{
 		[self generalInit];
 		interval = i;
+		maxInterval = 1.0;
 		targetObj = t;
 		targetSel = s;
 		return self;
@@ -134,8 +135,8 @@
 			
 			//	only sleep if duration's > 0, sleep for a max of 1 sec
 			if (sleepDuration > 0)	{
-				if (sleepDuration > MAXTIME)
-					sleepDuration = MAXTIME;
+				if (sleepDuration > maxInterval)
+					sleepDuration = maxInterval;
 				[NSThread sleepForTimeInterval:sleepDuration];
 			}
 			
@@ -218,7 +219,7 @@
 	return interval;
 }
 - (void) setInterval:(double)i	{
-	interval = (i > MAXTIME) ? MAXTIME : i;
+	interval = (i > maxInterval) ? maxInterval : i;
 }
 - (BOOL) running	{
 	BOOL		returnMe = NO;
@@ -227,6 +228,9 @@
 	OSSpinLockUnlock(&valLock);
 	return returnMe;
 }
+
+
+@synthesize maxInterval;
 
 
 @end

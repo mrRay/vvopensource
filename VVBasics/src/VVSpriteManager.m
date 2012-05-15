@@ -736,9 +736,13 @@
 	return allowMultiSpriteInteraction;
 }
 - (MutLockArray *) spriteArray	{
+	if (deleted)
+		return nil;
 	return spriteArray;
 }
 - (MutLockArray *) spritesInUse	{
+	if (deleted)
+		return nil;
 	return spritesInUse;
 }
 

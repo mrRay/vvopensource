@@ -11,11 +11,6 @@
 
 
 
-//	this macro sets the max time interval; default is 1 second (can't go slower than 1 proc/sec)
-#define MAXTIME 1.0
-
-
-
 ///	Simple class for spawning a thread which executes at a specified interval- simpler and easier to work with than NSThread/NSTimer in multi-threaded programming environments.
 /*!
 When started, an instance of this class will spawn a thread and repeatedly execute a method on that thread.  If it was passed a target and selector on creation, the selector will be called on the target every time the thread executes.  If it's more convenient to subclass VVThreadLoop and work with your custom subclass, leave the target/selector nil and VVThreadLoop will call "threadProc" on itself- just override this method (it's empty anyway) in your subclass and do whatever you want in there.
@@ -25,8 +20,10 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 
 
 
+
 @interface VVThreadLoop : NSObject {
 	double				interval;
+	double				maxInterval;
 	BOOL				running;
 	BOOL				bail;
 	BOOL				paused;
@@ -60,5 +57,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 - (void) setInterval:(double)i;
 ///	Whether or not the thread loop is running.
 - (BOOL) running;
+
+@property (assign,readwrite) double maxInterval;
 
 @end
