@@ -36,6 +36,8 @@
 		actionCallback = nil;
 		
 		rect = r;
+		bezierPath = nil;
+		pathLock = OS_SPINLOCK_INIT;
 		lastActionType = VVSpriteEventNULL;
 		lastActionCoords = NSMakePoint(NSNotFound,NSNotFound);
 		lastActionInBounds = NO;
@@ -64,6 +66,7 @@
 	manager = nil;
 	VVRELEASE(userInfo);
 	VVRELEASE(safeString);
+	VVRELEASE(bezierPath);
 	[super dealloc];
 }
 
@@ -75,9 +78,30 @@
 	//NSLog(@"%s",__func__);
 	//NSPointLog(@"\t\tchecking point",p);
 	//NSRectLog(@"\t\tagainst rect",rect);
-	if (NSPointInRect(p,rect))
-		return YES;
-	return NO;
+	BOOL		returnMe = NO;
+	OSSpinLockLock(&pathLock);
+	if (bezierPath==nil)	{
+		OSSpinLockUnlock(&pathLock);
+		returnMe = NSPointInRect(p,rect);
+	}
+	else	{
+		returnMe = [bezierPath containsPoint:p];
+		OSSpinLockUnlock(&pathLock);
+	}
+	return returnMe;
+}
+- (BOOL) checkRect:(NSRect)r	{
+	BOOL		returnMe = NO;
+	OSSpinLockLock(&pathLock);
+	if (bezierPath==nil)	{
+		OSSpinLockUnlock(&pathLock);
+		returnMe = NSIntersectsRect(rect,r);
+	}
+	else	{
+		returnMe = NSIntersectsRect([bezierPath bounds],r);
+		OSSpinLockUnlock(&pathLock);
+	}
+	return returnMe;
 }
 
 
@@ -87,7 +111,7 @@
 		return;
 	lastActionType = VVSpriteEventDown;
 	lastActionCoords = p;
-	if (NSPointInRect(p,rect))
+	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
@@ -105,7 +129,7 @@
 		return;
 	lastActionType = VVSpriteEventRightDown;
 	lastActionCoords = p;
-	if (NSPointInRect(p,rect))
+	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
@@ -132,7 +156,7 @@
 	//	update the action type and coords
 	lastActionType = VVSpriteEventRightUp;
 	lastActionCoords = p;
-	if (NSPointInRect(p,rect))
+	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
@@ -157,7 +181,7 @@
 	//	update the action type and coords
 	lastActionType = VVSpriteEventDrag;
 	lastActionCoords = p;
-	if (NSPointInRect(p,rect))
+	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
@@ -181,7 +205,7 @@
 	//	update the action type and coords
 	lastActionType = VVSpriteEventUp;
 	lastActionCoords = p;
-	if (NSPointInRect(p,rect))
+	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
@@ -295,9 +319,38 @@
 	rect = n;
 	lastActionCoords = NSMakePoint(lastActionCoords.x+delta.x, lastActionCoords.y+delta.y);
 	mouseDownCoords = NSMakePoint(mouseDownCoords.x+delta.x, mouseDownCoords.y+delta.y);
+	
+	OSSpinLockLock(&pathLock);
+	VVRELEASE(bezierPath);
+	OSSpinLockUnlock(&pathLock);
 }
 - (NSRect) rect	{
 	return rect;
+}
+- (void) setBezierPath:(NSBezierPath *)n	{
+	OSSpinLockLock(&pathLock);
+	VVRELEASE(bezierPath);
+	if (n != nil)
+		bezierPath = [n retain];
+	OSSpinLockUnlock(&pathLock);
+}
+- (NSBezierPath *) safelyGetBezierPath	{
+	NSBezierPath		*returnMe = nil;
+	OSSpinLockLock(&pathLock);
+	if (bezierPath != nil)
+		returnMe = [bezierPath copy];
+	OSSpinLockUnlock(&pathLock);
+	return returnMe;
+}
+- (NSRect) spriteBounds	{
+	NSRect		returnMe = NSZeroRect;
+	OSSpinLockLock(&pathLock);
+	if (bezierPath==nil)
+		returnMe = rect;
+	else
+		returnMe = [bezierPath bounds];
+	OSSpinLockUnlock(&pathLock);
+	return returnMe;
 }
 - (VVSpriteEventType) lastActionType	{
 	return lastActionType;

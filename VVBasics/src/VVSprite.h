@@ -9,6 +9,7 @@
 		ORIGIN Middle English : alteration of sprit, a contraction of spirit .			*/
 
 #import <Cocoa/Cocoa.h>
+#include <libkern/OSAtomic.h>
 
 
 
@@ -38,6 +39,8 @@ typedef enum _VVSpriteEventType	{
 	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
 	
 	NSRect			rect;				//	the sprite i'm tracking
+	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
+	OSSpinLock		pathLock;
 	int				lastActionType;		//	updated whenever an action is received
 	NSPoint			lastActionCoords;	//	coords at which last action took place
 	BOOL			lastActionInBounds;	//	whether or not the last action was within my bounds
@@ -57,6 +60,7 @@ typedef enum _VVSpriteEventType	{
 - (void) prepareToBeDeleted;
 
 - (BOOL) checkPoint:(NSPoint)p;
+- (BOOL) checkRect:(NSRect)r;
 
 - (void) mouseDown:(NSPoint)p;
 - (void) rightMouseDown:(NSPoint)p;
@@ -78,6 +82,10 @@ typedef enum _VVSpriteEventType	{
 @property (assign, readwrite) SEL actionCallback;
 
 @property (assign, readwrite) NSRect rect;
+//@property (retain,readwrite) NSBezierPath *path;
+- (void) setBezierPath:(NSBezierPath *)n;
+- (NSBezierPath *) safelyGetBezierPath;
+- (NSRect) spriteBounds;	//	special method- either returns "rect" or (if path is non-nil) the bounds of the bezier path!
 @property (readonly) VVSpriteEventType lastActionType;
 @property (readonly) NSPoint lastActionCoords;
 @property (readonly) BOOL lastActionInBounds;

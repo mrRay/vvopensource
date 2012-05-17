@@ -702,12 +702,16 @@
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
 		while (spritePtr = [it nextObject])	{
+			if ([spritePtr checkRect:r])
+				[spritePtr draw];
+			/*
 			//NSRect		tmp = [spritePtr rect];
 			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
 			//if (![spritePtr hidden])	{
 				if (NSIntersectsRect([spritePtr rect],r))
 					[spritePtr draw];
 			//}
+			*/
 		}
 	[spriteArray unlock];
 }
