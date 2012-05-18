@@ -45,6 +45,7 @@
 		mouseDownCoords = NSMakePoint(NSNotFound,NSNotFound);
 		lastActionDelta = NSMakePoint(NSNotFound,NSNotFound);
 		mouseDownDelta = NSMakePoint(NSNotFound,NSNotFound);
+		mouseDownModifierFlags = 0;
 		
 		userInfo = nil;
 		NRUserInfo = nil;
@@ -105,115 +106,69 @@
 }
 
 
-- (void) mouseDown:(NSPoint)p	{
-	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
+- (void) receivedEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m	{
 	if (deleted)
 		return;
-	lastActionType = VVSpriteEventDown;
+	
+	switch (e)	{
+		case VVSpriteEventUp:
+		case VVSpriteEventRightUp:
+			trackingFlag = NO;
+		case VVSpriteEventDrag:
+			//	calculate the deltas
+			if (lastActionType == VVSpriteEventDown)	{
+				lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+				mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+			}
+			else	{
+				lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
+				mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+			}
+			break;
+		case VVSpriteEventDown:
+		case VVSpriteEventDouble:
+		case VVSpriteEventRightDown:
+			trackingFlag = NO;
+			mouseDownCoords = p;
+			lastActionDelta = NSMakePoint(0,0);
+			mouseDownDelta = NSMakePoint(0,0);
+			mouseDownModifierFlags = m;
+			break;
+	}
+	
+	if (e == VVSpriteEventDown)
+		trackingFlag = YES;
+	
+	//	update the action type and coords
+	lastActionType = e;
 	lastActionCoords = p;
+	
 	if ([self checkPoint:p])
 		lastActionInBounds = YES;
 	else
 		lastActionInBounds = NO;
-	trackingFlag = YES;
-	mouseDownCoords = p;
-	lastActionDelta = NSMakePoint(0,0);
-	mouseDownDelta = NSMakePoint(0,0);
-	if ((delegate==nil)||(actionCallback==nil)||(![delegate respondsToSelector:actionCallback]))
-		return;
-	[delegate performSelector:actionCallback withObject:self];
+	
+	//	if there's a delegate and it has an action callback, call it
+	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
+		[delegate performSelector:actionCallback withObject:self];
 }
-- (void) rightMouseDown:(NSPoint)p	{
-	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted)
-		return;
-	lastActionType = VVSpriteEventRightDown;
-	lastActionCoords = p;
-	if ([self checkPoint:p])
-		lastActionInBounds = YES;
-	else
-		lastActionInBounds = NO;
-	trackingFlag = NO;
-	mouseDownCoords = p;
-	lastActionDelta = NSMakePoint(0,0);
-	mouseDownDelta = NSMakePoint(0,0);
-	if ((delegate==nil)||(actionCallback==nil)||(![delegate respondsToSelector:actionCallback]))
-		return;
-	[delegate performSelector:actionCallback withObject:self];
+- (void) mouseDown:(NSPoint)p modifierFlag:(long)m	{
+	[self receivedEvent:VVSpriteEventDown atPoint:p withModifierFlag:m];
+}
+- (void) rightMouseDown:(NSPoint)p modifierFlag:(long)m	{
+	[self receivedEvent:VVSpriteEventRightDown atPoint:p withModifierFlag:m];
 }
 - (void) rightMouseUp:(NSPoint)p	{
-	if (deleted)
-		return;
-	//	calculate the deltas
-	if (lastActionType == VVSpriteEventRightDown)	{
-		lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	else	{
-		lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	//	update the action type and coords
-	lastActionType = VVSpriteEventRightUp;
-	lastActionCoords = p;
-	if ([self checkPoint:p])
-		lastActionInBounds = YES;
-	else
-		lastActionInBounds = NO;
-	trackingFlag = NO;
-	//	if there's a delegate and it has an action callback, call it
-	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
-		[delegate performSelector:actionCallback withObject:self];
+	[self receivedEvent:VVSpriteEventRightUp atPoint:p withModifierFlag:0];
 }
 - (void) mouseDragged:(NSPoint)p	{
-	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted)
-		return;
-	//	calculate the deltas
-	if (lastActionType == VVSpriteEventDown)	{
-		lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	else	{
-		lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	//	update the action type and coords
-	lastActionType = VVSpriteEventDrag;
-	lastActionCoords = p;
-	if ([self checkPoint:p])
-		lastActionInBounds = YES;
-	else
-		lastActionInBounds = NO;
-	//	if there's a delegate and it has an action callback, call it
-	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
-		[delegate performSelector:actionCallback withObject:self];
+	[self receivedEvent:VVSpriteEventDrag atPoint:p withModifierFlag:0];
 }
 - (void) mouseUp:(NSPoint)p	{
-	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted)
-		return;
-	//	calculate the deltas
-	if (lastActionType == VVSpriteEventDown)	{
-		lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	else	{
-		lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
-		mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-	}
-	//	update the action type and coords
-	lastActionType = VVSpriteEventUp;
-	lastActionCoords = p;
-	if ([self checkPoint:p])
-		lastActionInBounds = YES;
-	else
-		lastActionInBounds = NO;
-	trackingFlag = NO;
-	//	if there's a delegate and it has an action callback, call it
-	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
-		[delegate performSelector:actionCallback withObject:self];
+	[self receivedEvent:VVSpriteEventUp atPoint:p withModifierFlag:0];
 }
+
+
 - (void) draw	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
@@ -373,6 +328,7 @@
 - (NSPoint) mouseDownDelta	{
 	return mouseDownDelta;
 }
+@synthesize mouseDownModifierFlags;
 - (void) setUserInfo:(id)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	VVRELEASE(userInfo);

@@ -9,6 +9,7 @@
 @interface VVSpriteManager : NSObject {
 	BOOL					deleted;
 	BOOL					allowMultiSpriteInteraction;	//	NO by default- if YES, clicking/dragging/etc works with multiple sprites!
+	BOOL					multiSpriteExecutesOnMultipleSprites;	//	only relevant if multi-sprite interaction is YES.  this is NO by default- if it's YES all sprites in "spritesInUse" will receive an action callback when any of them get an action method.  if this is NO then only the sprite that "caught" the interaction will receive an action callback!
 	MutLockArray			*spriteArray;	//	searched from beginning to end, so order is like z-index!
 	VVSprite				*spriteInUse;	//	array of VVSprite objects currently tracking drag info
 	MutLockArray			*spritesInUse;	//	ONLY VALID IF MULTI SPRITE INTERACTION IS YES! array of VVSprite o
@@ -17,10 +18,13 @@
 
 - (void) prepareToBeDeleted;
 
-- (BOOL) localMouseDown:(NSPoint)p;
-- (BOOL) localVisibleMouseDown:(NSPoint)p;
-- (BOOL) localRightMouseDown:(NSPoint)p;
-- (BOOL) localVisibleRightMouseDown:(NSPoint)p;
+//	return YES if the mousedown occurred on one or more sprites
+- (BOOL) receivedMouseDownEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m visibleOnly:(BOOL)v;
+- (void) receivedOtherEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m;
+- (BOOL) localMouseDown:(NSPoint)p modifierFlag:(long)m;
+- (BOOL) localVisibleMouseDown:(NSPoint)p modifierFlag:(long)m;
+- (BOOL) localRightMouseDown:(NSPoint)p modifierFlag:(long)m;
+- (BOOL) localVisibleRightMouseDown:(NSPoint)p modifierFlag:(long)m;
 - (void) localRightMouseUp:(NSPoint)p;
 - (void) localMouseDragged:(NSPoint)p;
 - (void) localMouseUp:(NSPoint)p;
@@ -45,6 +49,7 @@
 - (void) setSpriteInUse:(VVSprite *)z;
 
 @property (assign,readwrite) BOOL allowMultiSpriteInteraction;
+@property (assign,readwrite) BOOL multiSpriteExecutesOnMultipleSprites;
 @property (readonly) MutLockArray *spriteArray;
 @property (readonly) MutLockArray *spritesInUse;
 

@@ -41,6 +41,7 @@ typedef enum _VVSpriteEventType	{
 	NSRect			rect;				//	the sprite i'm tracking
 	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
 	OSSpinLock		pathLock;
+	
 	int				lastActionType;		//	updated whenever an action is received
 	NSPoint			lastActionCoords;	//	coords at which last action took place
 	BOOL			lastActionInBounds;	//	whether or not the last action was within my bounds
@@ -48,6 +49,7 @@ typedef enum _VVSpriteEventType	{
 	NSPoint			mouseDownCoords;	//	absolute coords of mousedown
 	NSPoint			lastActionDelta;	//	change between most-recently-received action coords and last received coords
 	NSPoint			mouseDownDelta;		//	change between mousedown loc and most-recently received coords
+	long			mouseDownModifierFlags;
 	
 	id				userInfo;		//	RETAINED!  for storing a random thing...
 	id				NRUserInfo;		//	NOT RETAINED!  for storing something that *shouldn't* be retained...
@@ -62,8 +64,9 @@ typedef enum _VVSpriteEventType	{
 - (BOOL) checkPoint:(NSPoint)p;
 - (BOOL) checkRect:(NSRect)r;
 
-- (void) mouseDown:(NSPoint)p;
-- (void) rightMouseDown:(NSPoint)p;
+- (void) receivedEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m;
+- (void) mouseDown:(NSPoint)p modifierFlag:(long)m;
+- (void) rightMouseDown:(NSPoint)p modifierFlag:(long)m;
 - (void) rightMouseUp:(NSPoint)p;
 - (void) mouseDragged:(NSPoint)p;
 - (void) mouseUp:(NSPoint)p;
@@ -93,6 +96,7 @@ typedef enum _VVSpriteEventType	{
 @property (readonly) NSPoint mouseDownCoords;
 @property (readonly) NSPoint lastActionDelta;
 @property (readonly) NSPoint mouseDownDelta;
+@property (readonly) long mouseDownModifierFlags;
 @property (assign,readwrite) id userInfo;
 @property (assign,readwrite) id NRUserInfo;
 @property (assign,readwrite) id safeString;

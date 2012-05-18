@@ -168,9 +168,9 @@ int					_spriteControlCount;
 	*/
 	mouseDownModifierFlags = [e modifierFlags];
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
-		[spriteManager localRightMouseDown:localPoint];
+		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	else
-		[spriteManager localMouseDown:localPoint];
+		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) rightMouseDown:(NSEvent *)e	{
 	if (deleted)
@@ -197,7 +197,7 @@ int					_spriteControlCount;
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	*/
-	[spriteManager localRightMouseDown:localPoint];
+	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)

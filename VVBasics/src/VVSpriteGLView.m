@@ -225,9 +225,9 @@
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	mouseDownModifierFlags = [e modifierFlags];
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
-		[spriteManager localRightMouseDown:localPoint];
+		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	else
-		[spriteManager localMouseDown:localPoint];
+		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) rightMouseDown:(NSEvent *)e	{
 	if (deleted)
@@ -248,7 +248,7 @@
 		}
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
-	[spriteManager localRightMouseDown:localPoint];
+	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) rightMouseUp:(NSEvent *)e	{
 	if (deleted)
