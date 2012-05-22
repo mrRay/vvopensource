@@ -181,6 +181,10 @@
 - (void) localMouseUp:(NSPoint)p	{
 	[self receivedOtherEvent:VVSpriteEventUp atPoint:p withModifierFlag:0];
 }
+- (void) terminatePresentMouseSession	{
+	spriteInUse = nil;
+	[spritesInUse lockRemoveAllObjects];
+}
 
 
 /*===================================================================================*/

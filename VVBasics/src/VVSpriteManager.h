@@ -28,6 +28,7 @@
 - (void) localRightMouseUp:(NSPoint)p;
 - (void) localMouseDragged:(NSPoint)p;
 - (void) localMouseUp:(NSPoint)p;
+- (void) terminatePresentMouseSession;	//	call this and sprites will stop responding to the mouse until it is clicked again
 
 - (id) newSpriteAtBottomForRect:(NSRect)r;
 - (id) newSpriteAtTopForRect:(NSRect)r;
