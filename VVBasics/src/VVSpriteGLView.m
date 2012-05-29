@@ -485,12 +485,13 @@
 	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
 	
+	
 	//	from http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_designstrategies/opengl_designstrategies.html%23//apple_ref/doc/uid/TP40001987-CH2-SW17
-	glDisable(GL_DITHER);
-	glDisable(GL_ALPHA_TEST);
-	glDisable(GL_STENCIL_TEST);
-	glDisable(GL_FOG);
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_DITHER);
+	//glDisable(GL_ALPHA_TEST);
+	//glDisable(GL_STENCIL_TEST);
+	//glDisable(GL_FOG);
+	//glDisable(GL_TEXTURE_2D);
 	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
 	//	moved in from drawRect:
@@ -503,7 +504,7 @@
 	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
 	
 	//	always here!
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	
 	initialized = YES;

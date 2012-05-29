@@ -10,6 +10,11 @@
 }}
 
 
+//	macros for calculating rect coords
+#define VVMINX(r) (r.origin.x)
+#define VVMAXX(r) (r.origin.x+r.size.width)
+#define VVMINY(r) (r.origin.y)
+#define VVMAXY(r) (r.origin.y+r.size.height)
 
 //	macros for making a CGRect from an NSRect
 #define NSMAKECGRECT(n) CGRectMake(n.origin.x, n.origin.y, n.size.width, n.size.height)
@@ -149,7 +154,35 @@
 	glDrawArrays(GL_LINE_LOOP,0,8);							\
 }
 
-
+//	NOTE: this macro will not function correctly if you forget to glEnable(texTarget) or glEnableClientState() for GL_VERTEX_ARRAY and GL_TEXTURE_COORD_ARRAY.
+//	'texName' is the texture name (from glGenTextures())
+//	'texTarget' is the target (GL_TEXTURE_RECTANGLE_EXT or GL_TEXTURE_2D
+//	'texFlipped' is BOOL- whether or not tex is flipped vertically
+//	'srcRect' is the coords of the tex to draw.  REMEMBER: GL_TEXTURE_2D coords are NORMALIZED!
+//	'dstRect' are the coords of the rect to draw the tex in.
+#define GLDRAWTEXQUADMACRO(texName,texTarget,texFlipped,src,dst)										\
+{																										\
+	GLuint		localMacroTexTarget=texTarget;															\
+	NSRect		localMacroSrc=src;																		\
+	NSRect		localMacroDst=dst;																		\
+	BOOL		localMacroFlip=texFlipped;																\
+	GLfloat		vvMacroVerts[]={																		\
+		VVMINX(localMacroDst), VVMINY(localMacroDst), 0.0,												\
+		VVMAXX(localMacroDst), VVMINY(localMacroDst), 0.0,												\
+		VVMAXX(localMacroDst), VVMAXY(localMacroDst), 0.0,												\
+		VVMINX(localMacroDst), VVMAXY(localMacroDst), 0.0};												\
+	GLfloat		vvMacroTexs[]={																			\
+		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc)),		\
+		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc))};		\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVerts);															\
+	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexs);														\
+	glBindTexture(localMacroTexTarget,texName);															\
+	glDrawArrays(GL_QUADS,0,4);																			\
+	glBindTexture(localMacroTexTarget,0);																\
+}
+/*
 //	this is a macro for drawing a texture of a specified size in a rect
 #define GLDRAWTEXSIZEDINRECT(t,s,r)											\
 {																			\
@@ -226,4 +259,4 @@
 	glDrawArrays(GL_QUADS,0,4);												\
 	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,0);								\
 }
-
+*/
