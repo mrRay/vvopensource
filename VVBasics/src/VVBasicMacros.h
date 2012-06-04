@@ -31,6 +31,7 @@
 
 //	macros for quickly making numbers and values
 #define NUMINT(i) [NSNumber numberWithInt:i]
+#define NUMUINT(i) [NSNumber numberWithUnsignedInteger:i]
 #define NUMFLOAT(f) [NSNumber numberWithFloat:f]
 #define NUMBOOL(b) [NSNumber numberWithBool:b]
 #define NUMDOUBLE(d) [NSNumber numberWithDouble:d]
@@ -172,91 +173,14 @@
 		VVMAXX(localMacroDst), VVMAXY(localMacroDst), 0.0,												\
 		VVMINX(localMacroDst), VVMAXY(localMacroDst), 0.0};												\
 	GLfloat		vvMacroTexs[]={																			\
-		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
-		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc)),		\
 		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc)),		\
-		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc))};		\
+		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc))};		\
 	glVertexPointer(3,GL_FLOAT,0,vvMacroVerts);															\
 	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexs);														\
 	glBindTexture(localMacroTexTarget,texName);															\
 	glDrawArrays(GL_QUADS,0,4);																			\
 	glBindTexture(localMacroTexTarget,0);																\
 }
-/*
-//	this is a macro for drawing a texture of a specified size in a rect
-#define GLDRAWTEXSIZEDINRECT(t,s,r)											\
-{																			\
-	GLfloat			vvMacroVertices[]={										\
-		r.origin.x, r.origin.y, 0.0,										\
-		r.origin.x+r.size.width, r.origin.y, 0.0,							\
-		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
-		r.origin.x, r.origin.y+r.size.height, 0.0};							\
-	GLfloat			vvMacroTexCoords[]={									\
-		0.0,s.height,														\
-		s.width,s.height,													\
-		s.width,0.0,														\
-		0.0,0.0};															\
-	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
-	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexCoords);						\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,t);								\
-	glDrawArrays(GL_QUADS,0,4);												\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,0);								\
-}
 
-#define GLDRAWFLIPPEDTEXSIZEDINRECT(t,s,r)									\
-{																			\
-	GLfloat			vvMacroVertices[]={										\
-		r.origin.x, r.origin.y, 0.0,										\
-		r.origin.x+r.size.width, r.origin.y, 0.0,							\
-		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
-		r.origin.x, r.origin.y+r.size.height, 0.0};							\
-	GLfloat			vvMacroTexCoords[]={									\
-		0.0, 0.0,															\
-		s.width, 0.0,														\
-		s.width, s.height,													\
-		0.0, s.height};														\
-	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
-	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexCoords);						\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,t);								\
-	glDrawArrays(GL_QUADS,0,4);												\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,0);								\
-}
-
-#define GLDRAWTEXSIZEDINRECTATZ(t,s,r,z)									\
-{																			\
-	GLfloat			vvMacroVertices[]={										\
-		r.origin.x, r.origin.y, z,											\
-		r.origin.x+r.size.width, r.origin.y, z,								\
-		r.origin.x+r.size.width, r.origin.y+r.size.height, z,				\
-		r.origin.x, r.origin.y+r.size.height, z};							\
-	GLfloat			vvMacroTexCoords[]={									\
-		0.0,s.height,														\
-		s.width,s.height,													\
-		s.width,0.0,														\
-		0.0,0.0};															\
-	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
-	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexCoords);						\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,t);								\
-	glDrawArrays(GL_QUADS,0,4);												\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,0);								\
-}
-
-#define GLDRAWFLIPPEDTEXSIZEDINRECTATZ(t,s,r,z)								\
-{																			\
-	GLfloat			vvMacroVertices[]={										\
-		r.origin.x, r.origin.y, z,											\
-		r.origin.x+r.size.width, r.origin.y, z,								\
-		r.origin.x+r.size.width, r.origin.y+r.size.height, z,				\
-		r.origin.x, r.origin.y+r.size.height, z};							\
-	GLfloat			vvMacroTexCoords[]={									\
-		0.0, 0.0,															\
-		s.width, 0.0,														\
-		s.width, s.height,													\
-		0.0, s.height};														\
-	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
-	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexCoords);						\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,t);								\
-	glDrawArrays(GL_QUADS,0,4);												\
-	glBindTexture(GL_TEXTURE_RECTANGLE_EXT,0);								\
-}
-*/
