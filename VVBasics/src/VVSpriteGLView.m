@@ -32,6 +32,7 @@
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
 	initialized = NO;
+	flipped = NO;
 	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
@@ -501,7 +502,10 @@
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
+	if (flipped)
+		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, 1.0, -1.0);
+	else
+		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y+bounds.size.height, bounds.origin.y, 1.0, -1.0);
 	
 	//	always here!
 	//glDisable(GL_DEPTH_TEST);
@@ -519,6 +523,7 @@
 
 @synthesize deleted;
 @synthesize initialized;
+@synthesize flipped;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
 }

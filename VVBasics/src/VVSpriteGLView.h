@@ -32,6 +32,7 @@ typedef enum	{
 	BOOL					initialized;
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;
+	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
 	
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
@@ -69,6 +70,7 @@ typedef enum	{
 
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
+@property (assign,readwrite) BOOL flipped;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
