@@ -15,6 +15,8 @@
 #define VVMAXX(r) (r.origin.x+r.size.width)
 #define VVMINY(r) (r.origin.y)
 #define VVMAXY(r) (r.origin.y+r.size.height)
+#define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
+#define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
 
 //	macros for making a CGRect from an NSRect
 #define NSMAKECGRECT(n) CGRectMake(n.origin.x, n.origin.y, n.size.width, n.size.height)
