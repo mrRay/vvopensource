@@ -616,6 +616,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 }
 
 void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
+	//NSLog(@"%s",__func__);
 	/*
 		NOTE: this method will be called on whatever thread this node's clientRef was created on!
 		the VVMIDIManager class attempts to ensure that this always happens on the main thread, 

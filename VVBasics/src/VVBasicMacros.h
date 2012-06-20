@@ -11,10 +11,18 @@
 
 
 //	macros for calculating rect coords
+/*
 #define VVMINX(r) (r.origin.x)
 #define VVMAXX(r) (r.origin.x+r.size.width)
 #define VVMINY(r) (r.origin.y)
 #define VVMAXY(r) (r.origin.y+r.size.height)
+#define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
+#define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
+*/
+#define VVMINX(r) (fmin(r.origin.x,(r.origin.x+r.size.width)))
+#define VVMAXX(r) (fmax(r.origin.x,(r.origin.x+r.size.width)))
+#define VVMINY(r) (fmin(r.origin.y,(r.origin.y+r.size.height)))
+#define VVMAXY(r) (fmax(r.origin.y,(r.origin.y+r.size.height)))
 #define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
 #define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
 
