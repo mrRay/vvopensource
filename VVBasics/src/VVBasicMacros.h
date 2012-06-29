@@ -18,13 +18,31 @@
 #define VVMAXY(r) (r.origin.y+r.size.height)
 #define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
 #define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
-*/
+
 #define VVMINX(r) (fmin(r.origin.x,(r.origin.x+r.size.width)))
 #define VVMAXX(r) (fmax(r.origin.x,(r.origin.x+r.size.width)))
 #define VVMINY(r) (fmin(r.origin.y,(r.origin.y+r.size.height)))
 #define VVMAXY(r) (fmax(r.origin.y,(r.origin.y+r.size.height)))
+*/
+#define VVMINX(r) ((r.size.width>=0) ? (r.origin.x) : (r.origin.x+r.size.width))
+#define VVMAXX(r) ((r.size.width>=0) ? (r.origin.x+r.size.width) : (r.origin.x))
+#define VVMINY(r) ((r.size.height>=0) ? (r.origin.y) : (r.origin.y+r.size.height))
+#define VVMAXY(r) ((r.size.height>=0) ? (r.origin.y+r.size.height) : (r.origin.y))
 #define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
 #define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
+#define VVTOPLEFT(r) (NSMakePoint(VVMINX(r),VVMAXY(r)))
+#define VVTOPRIGHT(r) (NSMakePoint(VVMAXX(r),VVMAXY(r)))
+#define VVBOTLEFT(r) (NSMakePoint(VVMINX(r),VVMINY(r)))
+#define VVBOTRIGHT(r) (NSMakePoint(VVMAXX(r),VVMINY(r)))
+#define VVCENTER(r) (NSMakePoint(VVMIDX(r),VVMIDY(r)))
+#define VVADDPOINT(a,b) (NSMakePoint((a.x+b.x),(a.y+b.y)))
+#define VVSUBPOINT(a,b) (NSMakePoint((a.x-b.x),(a.y-b.y)))
+
+
+
+
+
+
 
 //	macros for making a CGRect from an NSRect
 #define NSMAKECGRECT(n) CGRectMake(n.origin.x, n.origin.y, n.size.width, n.size.height)
