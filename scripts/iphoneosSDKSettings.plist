@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>AlternateSDK</key>
-	<string>vvosciphonesimulator4.3</string>
+	<string>vvosciphonesimulator5.0</string>
 	<key>CanonicalName</key>
-	<string>vvosciphoneos4.3</string>
+	<string>vvosciphoneos5.0</string>
 	<key>CustomProperties</key>
 	<dict/>
 	<key>DefaultProperties</key>
@@ -30,7 +30,7 @@
 		<string>iphoneos</string>
 	</dict>
 	<key>DisplayName</key>
-	<string>Device - iPhone OS 4.3</string>
+	<string>Device - iPhone OS 5.0</string>
 	<key>FamilyIdentifier</key>
 	<string>iphoneos</string>
 	<key>FamilyName</key>
@@ -38,7 +38,7 @@
 	<key>IsBaseSDK</key>
 	<string>NO</string>
 	<key>MaximumOSDeploymentTarget</key>
-	<string>10.8</string>
+	<string>10.9</string>
 	<key>MinimalDisplayName</key>
 	<string>Device</string>
 	<key>MinimumSupportedToolsVersion</key>

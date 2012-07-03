@@ -1,4 +1,3 @@
-
 #	an SDK is really just a folder, with sub-folders for the different static libs for each platform
 #	the SDKs in this case look something like this
 #
@@ -30,7 +29,7 @@ mkdir -p "${BUILD_DIR}/${PRODUCT_NAME}/${PLATFORM_NAME}.sdk/usr/local/lib/"
 
 
 #	move the library i compiled to the lib folder
-mv -f "${BUILT_PRODUCTS_DIR}/lib${PRODUCT_NAME}.a" "${BUILD_DIR}/${PRODUCT_NAME}/${PLATFORM_NAME}.sdk/usr/local/lib/lib${PRODUCT_NAME}.a"
+mv -f "${TARGET_BUILD_DIR}/lib${PRODUCT_NAME}.a" "${BUILD_DIR}/${PRODUCT_NAME}/${PLATFORM_NAME}.sdk/usr/local/lib/lib${PRODUCT_NAME}.a"
 
 #	these are just some environment variables (you can show these in the settings for the run script build phase)
 #			${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}

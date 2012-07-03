@@ -23,7 +23,7 @@
 	<key>FamilyName</key>
 	<string>Mac OS X</string>
 	<key>MaximumDeploymentTarget</key>
-	<string>10.7</string>
+	<string>10.9</string>
 	<key>MinimalDisplayName</key>
 	<string>10.6</string>
 	<key>MinimumSupportedToolsVersion</key>
