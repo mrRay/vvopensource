@@ -134,6 +134,8 @@
 			mouseDownDelta = NSMakePoint(0,0);
 			mouseDownModifierFlags = m;
 			break;
+		case VVSpriteEventNULL:
+			break;
 	}
 	
 	if (e == VVSpriteEventDown)

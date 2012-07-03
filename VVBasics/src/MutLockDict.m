@@ -10,7 +10,7 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockDict: %@>",dict];
 }
-+ (id) dictionaryWithCapacity:(NSUInteger)c	{
++ (id) dictionaryWithCapacity:(NSInteger)c	{
 	MutLockDict		*returnMe = [[MutLockDict alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;
@@ -24,7 +24,7 @@
 		[[returnMe dict] addEntriesFromDictionary:d];
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
+- (id) initWithCapacity:(NSInteger)c	{
 	if (c < 0)	{
 		[self release];
 		return nil;
@@ -236,13 +236,13 @@
 		[self addEntriesFromDictionary:otherDictionary];
 	pthread_rwlock_unlock(&dictLock);	
 }
-- (NSUInteger) count	{
+- (NSInteger) count	{
 	if (dict!=nil)
 		return [dict count];
 	return 0;
 }
-- (NSUInteger) lockCount	{
-	NSUInteger	returnMe = 0;
+- (NSInteger) lockCount	{
+	NSInteger	returnMe = 0;
 	pthread_rwlock_rdlock(&dictLock);
 		returnMe = [self count];
 	pthread_rwlock_unlock(&dictLock);

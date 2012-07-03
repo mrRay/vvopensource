@@ -99,6 +99,17 @@
 			myNode = [OSCNode createWithName:a];
 			[myNode setNodeType:OSCNodeTypeFloat];
 			break;
+		case OSCValBlob:
+		case OSCVal64Int:
+		case OSCValChar:
+		case OSCValColor:
+		case OSCValDouble:
+		case OSCValInfinity:
+		case OSCValInt:
+		case OSCValMIDI:
+		case OSCValNil:
+		case OSCValTimeTag:
+			break;
 	}
 	
 	
