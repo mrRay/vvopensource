@@ -28,21 +28,21 @@
 	//	create MIDIClientRef- this will receive the incoming midi data
 	err = MIDIClientCreate((CFStringRef)@"clientName", NULL, NULL, &clientRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate() A",err);
+		NSLog(@"\t\terror %ld at MIDIClientCreate() A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIInputPort- the client owns the port
 	err = MIDIInputPortCreate(clientRef,(CFStringRef)@"portName",myMIDIReadProc,self,&portRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIInputPortCreate() A",err);
+		NSLog(@"\t\terror %ld at MIDIInputPortCreate() A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	connect the MIDIInputPort to the endpoint (the port connects the client to the source)
 	err = MIDIPortConnectSource(portRef,endpointRef,NULL);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIPortConnectSource() A",err);
+		NSLog(@"\t\terror %ld at MIDIPortConnectSource() A",(long)err);
 		[self release];
 		return nil;
 	}
@@ -62,21 +62,21 @@
 	//	create a midi client which will receive incoming midi data
 	err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,self,&clientRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate B",err);
+		NSLog(@"\t\terror %ld at MIDIClientCreate B",(long)err);
 		[self release];
 		return nil;
 	}
 	//	make a new destination, attach it to the client
 	err = MIDIDestinationCreate(clientRef,(CFStringRef)n,myMIDIReadProc,self,&endpointRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIDestinationCreate() A",err);
+		NSLog(@"\t\terror %ld at MIDIDestinationCreate() A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIInputPort- the client owns the port
 	err = MIDIInputPortCreate(clientRef,(CFStringRef)n,myMIDIReadProc,self,&portRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIInputPortCreate B",err);
+		NSLog(@"\t\terror %ld at MIDIInputPortCreate B",(long)err);
 		[self release];
 		return nil;
 	}
@@ -99,14 +99,14 @@
 	//	create a MIDIClientRef- this will handle the midi data
 	err = MIDIClientCreate((CFStringRef)@"clientName",NULL,NULL,&clientRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terr %ld at MIDIClientCreate C",err);
+		NSLog(@"\t\terr %ld at MIDIClientCreate C",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIOutputPort- the client owns the port
 	err = MIDIOutputPortCreate(clientRef,(CFStringRef)@"portName",&portRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terr %ld at MIDIOutputPortCreate A",err);
+		NSLog(@"\t\terr %ld at MIDIOutputPortCreate A",(long)err);
 		[self release];
 		return nil;
 	}
@@ -133,21 +133,21 @@
 	//	create a midi client which will receive midi data to work with
 	err = MIDIClientCreate((CFStringRef)n,NULL,NULL,&clientRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate D",err);
+		NSLog(@"\t\terror %ld at MIDIClientCreate D",(long)err);
 		[self release];
 		return nil;
 	}
 	//	make a new destination, so other apps know i'm here
 	err = MIDISourceCreate(clientRef,(CFStringRef)n,&endpointRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDISourceCreate A",err);
+		NSLog(@"\t\terror %ld at MIDISourceCreate A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIOutputPort- the client owns the port
 	err = MIDIOutputPortCreate(clientRef,(CFStringRef)n,&portRef);
 	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIOutputPortCreate B",err);
+		NSLog(@"\t\terror %ld at MIDIOutputPortCreate B",(long)err);
 		[self release];
 		return nil;
 	}
@@ -237,7 +237,7 @@
 	//	get the midi source name
 	err = MIDIObjectGetStringProperty(endpointRef, kMIDIPropertyName, &localName);
 	if (err != noErr)
-		NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty()",err);
+		NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty()",(long)err);
 	else	{
 		if (localName != NULL)	{
 			name = [[NSString stringWithString:(NSString *)localName] retain];
@@ -248,7 +248,7 @@
 	//	get the midi unique identifier
 	err = MIDIObjectGetIntegerProperty(endpointRef,kMIDIPropertyUniqueID, &uniqueID);
 	if (err != noErr)
-		NSLog(@"\t\terror %ld at MIDIObjectGetIntegerProperty()",err);
+		NSLog(@"\t\terror %ld at MIDIObjectGetIntegerProperty()",(long)err);
 	else
 		[properties setValue:[NSNumber numberWithLong:uniqueID] forKey:@"uniqueID"];
 	//NSLog(@"\t\t%@",properties);
@@ -365,14 +365,14 @@
 	if (virtualSender)	{
 		err = MIDIReceived(endpointRef,packetList);
 		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDIReceived A",err);
+			NSLog(@"\t\terr %ld at MIDIReceived A",(long)err);
 		}
 	}
 	//	if this isn't a virtual sender, something else is managing the source- call 'MIDISend'
 	else	{
 		err = MIDISend(portRef,endpointRef,packetList);
 		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDISend A",err);
+			NSLog(@"\t\terr %ld at MIDISend A",(long)err);
 			goto BAIL;
 		}
 	}
@@ -411,14 +411,14 @@
 	if (virtualSender)	{
 		err = MIDIReceived(endpointRef,packetList);
 		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDIReceived A",err);
+			NSLog(@"\t\terr %ld at MIDIReceived A",(long)err);
 		}
 	}
 	//	if this isn't a virtual sender, something else is managing the source- call 'MIDISend'
 	else	{
 		err = MIDISend(portRef,endpointRef,packetList);
 		if (err != noErr)	{
-			NSLog(@"\t\terr %ld at MIDISend A",err);
+			NSLog(@"\t\terr %ld at MIDISend A",(long)err);
 			return;
 		}
 	}

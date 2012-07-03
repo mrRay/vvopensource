@@ -554,6 +554,7 @@
 	OSCMessage			*reply = nil;
 	
 	switch (mType)	{
+		case OSCMessageTypeUnknown:
 		case OSCMessageTypeControl:
 			
 			tmpCopy = [delegateArray lockCreateArrayCopyFromObjects];
@@ -669,6 +670,9 @@
 					break;
 				case OSCQueryTypeReturnTypeString:
 					//	ask the delegate for the return type strig, if it returns nil make my own answer
+					break;
+				case OSCQueryTypeUnknown:
+					//	dunno!
 					break;
 			}
 			break;

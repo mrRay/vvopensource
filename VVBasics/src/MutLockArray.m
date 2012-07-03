@@ -24,13 +24,13 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutLockArray: %@>",array];
 }
-+ (id) arrayWithCapacity:(NSUInteger)c	{
++ (id) arrayWithCapacity:(NSInteger)c	{
 	MutLockArray		*returnMe = [[MutLockArray alloc] initWithCapacity:c];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithCapacity:(NSUInteger)c	{
+- (id) initWithCapacity:(NSInteger)c	{
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
@@ -184,7 +184,7 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}	
 }
-- (void) insertObject:(id)o atIndex:(NSUInteger)i	{
+- (void) insertObject:(id)o atIndex:(NSInteger)i	{
 	if ((array != nil) && (o != nil) && (i<=[array count]))	{
 		//@try	{
 			[array insertObject:o atIndex:i];
@@ -194,7 +194,7 @@
 		//}
 	}
 }
-- (void) lockInsertObject:(id)o atIndex:(NSUInteger)i	{
+- (void) lockInsertObject:(id)o atIndex:(NSInteger)i	{
 	if ((array != nil) && (o != nil))	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self insertObject:o atIndex:i];
@@ -297,7 +297,7 @@
 		[self removeObject:o];
 	pthread_rwlock_unlock(&arrayLock);
 }
-- (void) removeObjectAtIndex:(NSUInteger)i	{
+- (void) removeObjectAtIndex:(NSInteger)i	{
 	if ((array!=nil) && ([array count]>0) && (i<[array count]) && (i>=0))	{
 		//@try	{
 			[array removeObjectAtIndex:i];
@@ -307,7 +307,7 @@
 		//}
 	}
 }
-- (void) lockRemoveObjectAtIndex:(NSUInteger)i	{
+- (void) lockRemoveObjectAtIndex:(NSInteger)i	{
 	if (array != nil)	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self removeObjectAtIndex:i];
@@ -410,7 +410,7 @@
 }
 
 
-- (id) objectAtIndex:(NSUInteger)i	{
+- (id) objectAtIndex:(NSInteger)i	{
 	if ((array != nil) && (i>=0) && (i<[array count]))	{
 		id			returnMe = nil;
 		//@try	{
@@ -423,7 +423,7 @@
 	}
 	return nil;
 }
-- (id) lockObjectAtIndex:(NSUInteger)i	{
+- (id) lockObjectAtIndex:(NSInteger)i	{
 	id		returnMe = nil;
 	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [self objectAtIndex:i];
@@ -450,8 +450,8 @@
 	
 	return returnMe;
 }
-- (NSUInteger) indexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (NSInteger) indexOfObject:(id)o	{
+	NSInteger returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			returnMe = [array indexOfObject:o];
@@ -462,8 +462,8 @@
 	}
 	return returnMe;	
 }
-- (NSUInteger) lockIndexOfObject:(id)o	{
-	NSUInteger returnMe = -1;
+- (NSInteger) lockIndexOfObject:(id)o	{
+	NSInteger returnMe = -1;
 	if ((array != nil) && (o != nil))	{
 		//@try	{
 			pthread_rwlock_rdlock(&arrayLock);

@@ -144,7 +144,7 @@
 	
 	long			bufSize = 65506;
 	if (setsockopt(sock,SOL_SOCKET,SO_RCVBUF,&bufSize,sizeof(long)) != 0)	{
-		NSLog(@"\t\terr %ld at setsockopt() in %s",errno,__func__);
+		NSLog(@"\t\terr %d at setsockopt() in %s",errno,__func__);
 	}
 	
 	OSSpinLockUnlock(&socketLock);

@@ -10,7 +10,7 @@
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<MutNRLockArray: %@>",array];
 }
-+ (id) arrayWithCapacity:(NSUInteger)c	{
++ (id) arrayWithCapacity:(NSInteger)c	{
 	MutNRLockArray	*returnMe = [[MutNRLockArray alloc] initWithCapacity:0];
 	if (returnMe == nil)
 		return nil;
@@ -97,7 +97,7 @@
 		//}
 	}
 }
-- (void) insertObject:(id)o atIndex:(NSUInteger)i	{
+- (void) insertObject:(id)o atIndex:(NSInteger)i	{
 	ObjectHolder		*tmpHolder = [ObjectHolder createWithObject:o];
 	[super insertObject:tmpHolder atIndex:i];
 }
@@ -116,7 +116,7 @@
 		return NO;
 	return YES;
 }
-- (id) objectAtIndex:(NSUInteger)i	{
+- (id) objectAtIndex:(NSInteger)i	{
 	ObjectHolder	*returnMe = [super objectAtIndex:i];
 	if (returnMe == nil)
 		return nil;
@@ -136,10 +136,10 @@
 	}
 	return returnMe;
 }
-- (NSUInteger) indexOfObject:(id)o	{
+- (NSInteger) indexOfObject:(id)o	{
 	if ((array==nil) || (o==nil) || ([array count]<1))
 		return NSNotFound;
-	NSUInteger			foundIndex = NSNotFound;
+	NSInteger			foundIndex = NSNotFound;
 	long				tmpIndex = 0;
 	//	run through the array of object holders
 	for (id objHolder in array)	{
@@ -189,7 +189,7 @@
 - (long) indexOfIdenticalPtr:(id)o	{
 	if ((array==nil) || (o==nil) || ([array count]<1))
 		return NSNotFound;
-	NSUInteger			foundIndex = NSNotFound;
+	NSInteger			foundIndex = NSNotFound;
 	long				tmpIndex = 0;
 	//	run through the array of object holders
 	for (id objHolder in array)	{

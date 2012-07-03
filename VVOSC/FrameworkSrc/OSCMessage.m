@@ -43,6 +43,11 @@
 				return [NSString stringWithFormat:@"<OSCMsg Err %@>",value];
 			else
 				return [NSString stringWithFormat:@"<OSCMsg Err %@>",valueArray];
+		case OSCMessageTypeUnknown:
+			if (valueCount < 2)
+				return [NSString stringWithFormat:@"<OSCMsg ? %@>",value];
+			else
+				return [NSString stringWithFormat:@"<OSCMsg ? %@>",valueArray];
 	}
 	return [NSString stringWithFormat:@"<OSCMessage %@>",baseDescription];
 }

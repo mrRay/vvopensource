@@ -18,9 +18,9 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 	pthread_rwlock_t		dictLock;
 }
 
-+ (id) dictionaryWithCapacity:(NSUInteger)c;
++ (id) dictionaryWithCapacity:(NSInteger)c;
 + (id) dictionaryWithDict:(NSDictionary *)d;
-- (id) initWithCapacity:(NSUInteger)c;
+- (id) initWithCapacity:(NSInteger)c;
 
 - (void) rdlock;
 - (void) wrlock;
@@ -50,7 +50,7 @@ This class exists because NSMutableDictionary is not thread-safe by default: if 
 - (void) lockMakeObjectsPerformSelector:(SEL)s;
 - (void) makeObjectsPerformSelector:(SEL)s;
 
-- (NSUInteger) count;
-- (NSUInteger) lockCount;
+- (NSInteger) count;
+- (NSInteger) lockCount;
 
 @end

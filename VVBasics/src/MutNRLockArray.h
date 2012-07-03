@@ -21,7 +21,7 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 
 }
 
-+ (id) arrayWithCapacity:(NSUInteger)c;
++ (id) arrayWithCapacity:(NSInteger)c;
 
 - (NSMutableArray *) createArrayCopy;
 - (NSMutableArray *) lockCreateArrayCopyFromObjects;
@@ -29,13 +29,13 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 - (void) addObject:(id)o;
 - (void) addObjectsFromArray:(id)a;
 - (void) replaceWithObjectsFromArray:(id)a;
-- (void) insertObject:(id)o atIndex:(NSUInteger)i;
+- (void) insertObject:(id)o atIndex:(NSInteger)i;
 - (id) lastObject;
 - (void) removeObject:(id)o;
 - (BOOL) containsObject:(id)o;
-- (id) objectAtIndex:(NSUInteger)i;
+- (id) objectAtIndex:(NSInteger)i;
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes;
-- (NSUInteger) indexOfObject:(id)o;
+- (NSInteger) indexOfObject:(id)o;
 - (BOOL) containsIdenticalPtr:(id)o;
 - (long) indexOfIdenticalPtr:(id)o;
 - (void) removeIdenticalPtr:(id)o;
