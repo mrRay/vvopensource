@@ -6,6 +6,12 @@
 
 
 
+extern BOOL			_spriteManagerInitialized;
+MutLockArray		*_spriteManagerArray;
+
+
+
+
 @interface VVSpriteManager : NSObject {
 	BOOL					deleted;
 	BOOL					allowMultiSpriteInteraction;	//	NO by default- if YES, clicking/dragging/etc works with multiple sprites!

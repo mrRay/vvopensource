@@ -5,16 +5,35 @@
 
 
 
+BOOL			_spriteManagerInitialized;
+
+
+
+
 @implementation VVSpriteManager
+
+
++ (void) load	{
+	//_spriteManagerInitialized = YES;
+	_spriteManagerInitialized = NO;
+}
++ (void) initialize	{
+	if (_spriteManagerInitialized)
+		return;
+	_spriteManagerInitialized = YES;
+	_spriteManagerArray = [[MutLockArray alloc] init];
+}
 
 
 /*===================================================================================*/
 #pragma mark --------------------- create/destroy
 /*------------------------------------*/
+
+
 - (id) init	{
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
-		deleted = NO;
+		deleted = !_spriteManagerInitialized;
 		allowMultiSpriteInteraction = NO;
 		multiSpriteExecutesOnMultipleSprites = NO;
 		spriteArray = [[MutLockArray alloc] initWithCapacity:0];
@@ -48,7 +67,7 @@
 
 
 - (BOOL) receivedMouseDownEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m visibleOnly:(BOOL)v	{
-	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1)||(!_spriteManagerInitialized))
 		return NO;
 	BOOL			returnMe = NO;
 	//	if i'm doing multi-sprite interaction
@@ -134,7 +153,7 @@
 	return returnMe;
 }
 - (void) receivedOtherEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m	{
-	if (deleted || spriteArray==nil || [spriteArray count]<1)
+	if (deleted || spriteArray==nil || [spriteArray count]<1 || !_spriteManagerInitialized)
 		return;
 	if (allowMultiSpriteInteraction)	{
 		if (spritesInUse != nil)	{
@@ -193,7 +212,7 @@
 
 - (VVSprite *) spriteAtPoint:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted)
+	if (deleted || !_spriteManagerInitialized)
 		return nil;
 		
 	id	returnMe = nil;
@@ -213,7 +232,7 @@
 }
 - (VVSprite *) visibleSpriteAtPoint:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted)
+	if (deleted || !_spriteManagerInitialized)
 		return nil;
 		
 	id	returnMe = nil;
