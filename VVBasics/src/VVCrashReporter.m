@@ -435,7 +435,16 @@
 	
 	//	fill 'crashLogArray' with the paths of all the crash logs found on this machine
 	NSFileManager		*fm = [NSFileManager defaultManager];
-	NSString			*pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
+	NSString			*pathToLogFolder = nil;
+	SInt32 version = 0;
+	Gestalt( gestaltSystemVersion, &version );
+	if (version >= 0x1080)	{
+		pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/DiagnosticReports"] stringByExpandingTildeInPath];
+	}
+	else	{
+		pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
+	}
+	
 	NSArray				*logFolderArray = [fm contentsOfDirectoryAtPath:pathToLogFolder error:nil];
 	if ((logFolderArray!=nil)&&([logFolderArray count]>0))	{
 		NSString		*appNameString = nil;
