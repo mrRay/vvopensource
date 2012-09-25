@@ -42,6 +42,7 @@ typedef enum	{
 	GLfloat					borderColor[4];
 	
 	long					mouseDownModifierFlags;
+	long					modifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
 	
@@ -78,6 +79,8 @@ typedef enum	{
 @property (assign,readwrite) BOOL drawBorder;
 @property (retain,readwrite) NSColor *borderColor;
 @property (readonly) VVSpriteManager *spriteManager;
+@property (readonly) long mouseDownModifierFlags;
+@property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
 @property (assign, readwrite) VVFlushMode flushMode;
 

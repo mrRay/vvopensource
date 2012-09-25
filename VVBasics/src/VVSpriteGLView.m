@@ -43,6 +43,7 @@
 		borderColor[i] = (GLfloat)0.0;
 	}
 	mouseDownModifierFlags = 0;
+	modifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
 	
@@ -225,6 +226,7 @@
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	mouseDownModifierFlags = [e modifierFlags];
+	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	else
@@ -271,6 +273,8 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 		lastMouseEvent = [e retain];
+	
+	modifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
@@ -284,6 +288,8 @@
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
+	
+	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
@@ -572,6 +578,8 @@
 		return nil;
 	return [NSColor colorWithDeviceRed:borderColor[0] green:borderColor[1] blue:borderColor[2] alpha:borderColor[3]];
 }
+@synthesize mouseDownModifierFlags;
+@synthesize modifierFlags;
 @synthesize mouseIsDown;
 @synthesize flushMode;
 

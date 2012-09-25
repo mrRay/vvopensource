@@ -15,7 +15,7 @@ BOOL			_spriteManagerInitialized;
 
 + (void) load	{
 	//_spriteManagerInitialized = YES;
-	_spriteManagerInitialized = NO;
+	_spriteManagerInitialized = YES;
 }
 + (void) initialize	{
 	if (_spriteManagerInitialized)

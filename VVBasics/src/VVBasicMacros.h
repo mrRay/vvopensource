@@ -63,6 +63,7 @@
 //	macros for quickly making numbers and values
 #define NUMINT(i) [NSNumber numberWithInt:i]
 #define NUMUINT(i) [NSNumber numberWithUnsignedInteger:i]
+#define NUMLONG(i) [NSNumber numberWithLong:i]
 #define NUMFLOAT(f) [NSNumber numberWithFloat:f]
 #define NUMBOOL(b) [NSNumber numberWithBool:b]
 #define NUMDOUBLE(d) [NSNumber numberWithDouble:d]
