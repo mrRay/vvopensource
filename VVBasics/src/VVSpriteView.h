@@ -23,6 +23,7 @@ extern int				_spriteViewCount;
 	NSColor					*borderColor;
 	
 	long					mouseDownModifierFlags;
+	long					modifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
 }
@@ -43,6 +44,8 @@ extern int				_spriteViewCount;
 @property (retain,readwrite) NSColor *clearColor;
 @property (assign,readwrite) BOOL drawBorder;
 @property (retain,readwrite) NSColor *borderColor;
+@property (readonly) long mouseDownModifierFlags;
+@property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
 
 @end
