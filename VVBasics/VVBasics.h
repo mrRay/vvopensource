@@ -9,7 +9,6 @@
 #import "MutLockDict.h"
 #import "MutNRLockArray.h"
 #import "MutNRLockDict.h"
-#import "NamedMutLockArray.h"
 
 #if !IPHONE
 	#import "VVCURLDL.h"

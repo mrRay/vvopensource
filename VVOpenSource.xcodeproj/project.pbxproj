@@ -77,8 +77,6 @@
 		961EA960100E8834007E6C25 /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		961EA961100E8834007E6C25 /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
 		961EA962100E8834007E6C25 /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA963100E8834007E6C25 /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
-		961EA964100E8834007E6C25 /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
 		961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9621356714C7086C00E76C81 /* VVAssertionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -189,6 +187,8 @@
 		9628D189100E8B7C00C3944E /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D181100E8B7C00C3944E /* AppController.m */; };
 		9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */; };
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
+		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; };
+		9645131B16499BAF006370F8 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
 		9656D90F100F89ED0064EEA6 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -207,8 +207,6 @@
 		9666944A10304CB200DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
 		9666944B10304CB300DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
 		9666944C10304CB300DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
-		9666944D10304CB400DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
-		9666944E10304CB400DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
 		9666944F10304CB500DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
 		9666945010304CB600DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
 		9666945110304CB600DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
@@ -223,8 +221,6 @@
 		9666945A10304CC200DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
 		9666945B10304CC200DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
 		9666945C10304CC300DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
-		9666945D10304CC400DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
-		9666945E10304CC400DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
 		9666945F10304CC500DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
 		9666946010304CC500DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
 		9666946110304CC600DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
@@ -239,8 +235,6 @@
 		9666946A10304CCE00DB5FDF /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
 		9666946B10304CCF00DB5FDF /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; };
 		9666946C10304CD000DB5FDF /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
-		9666946D10304CD100DB5FDF /* NamedMutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA954100E8834007E6C25 /* NamedMutLockArray.h */; };
-		9666946E10304CD100DB5FDF /* NamedMutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA953100E8834007E6C25 /* NamedMutLockArray.m */; };
 		9666946F10304CD200DB5FDF /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; };
 		9666947010304CD200DB5FDF /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
 		9666947110304CD200DB5FDF /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
@@ -701,8 +695,6 @@
 		961EA950100E8834007E6C25 /* VVBasicMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasicMacros.h; path = VVBasics/src/VVBasicMacros.h; sourceTree = "<group>"; };
 		961EA951100E8834007E6C25 /* ObjectHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectHolder.m; path = VVBasics/src/ObjectHolder.m; sourceTree = "<group>"; };
 		961EA952100E8834007E6C25 /* ObjectHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectHolder.h; path = VVBasics/src/ObjectHolder.h; sourceTree = "<group>"; };
-		961EA953100E8834007E6C25 /* NamedMutLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NamedMutLockArray.m; path = VVBasics/src/NamedMutLockArray.m; sourceTree = "<group>"; };
-		961EA954100E8834007E6C25 /* NamedMutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NamedMutLockArray.h; path = VVBasics/src/NamedMutLockArray.h; sourceTree = "<group>"; };
 		961EA955100E8834007E6C25 /* MutNRLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockArray.m; path = VVBasics/src/MutNRLockArray.m; sourceTree = "<group>"; };
 		961EA956100E8834007E6C25 /* MutNRLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockArray.h; path = VVBasics/src/MutNRLockArray.h; sourceTree = "<group>"; };
 		9621356714C7086C00E76C81 /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVAssertionHandler.h; path = VVBasics/src/VVAssertionHandler.h; sourceTree = "<group>"; };
@@ -744,6 +736,8 @@
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
 		9628D187100E8B7C00C3944E /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVOSC/AppSrc/AppController.h; sourceTree = "<group>"; };
+		9645130E16494057006370F8 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVView.h; path = VVBasics/src/VVView.h; sourceTree = "<group>"; };
+		9645130F16494057006370F8 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVView.m; path = VVBasics/src/VVView.m; sourceTree = "<group>"; };
 		9652676F108C29AC00A2906D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		9656D900100F89BA0064EEA6 /* MIDITestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDITestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9656D904100F89BA0064EEA6 /* MIDITestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDITestApp-Info.plist"; path = "VVMIDI/AppSrc/MIDITestApp-Info.plist"; sourceTree = "<group>"; };
@@ -1146,8 +1140,6 @@
 				961EA948100E8834007E6C25 /* MutLockDict.m */,
 				961EA947100E8834007E6C25 /* MutLockArray.h */,
 				961EA94C100E8834007E6C25 /* MutLockArray.m */,
-				961EA954100E8834007E6C25 /* NamedMutLockArray.h */,
-				961EA953100E8834007E6C25 /* NamedMutLockArray.m */,
 				961EA952100E8834007E6C25 /* ObjectHolder.h */,
 				961EA951100E8834007E6C25 /* ObjectHolder.m */,
 				961EA956100E8834007E6C25 /* MutNRLockArray.h */,
@@ -1173,6 +1165,8 @@
 				96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */,
 				96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */,
 				96F2AF601271147900AF86DD /* VVSpriteControlCell.m */,
+				9645130E16494057006370F8 /* VVView.h */,
+				9645130F16494057006370F8 /* VVView.m */,
 			);
 			name = Sprites;
 			sourceTree = "<group>";
@@ -1246,7 +1240,6 @@
 				961EA95E100E8834007E6C25 /* VVStopwatch.h in Headers */,
 				961EA960100E8834007E6C25 /* VVBasicMacros.h in Headers */,
 				961EA962100E8834007E6C25 /* ObjectHolder.h in Headers */,
-				961EA964100E8834007E6C25 /* NamedMutLockArray.h in Headers */,
 				961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */,
 				96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */,
 				96ED419910628A5500D8373F /* VVCURLDL.h in Headers */,
@@ -1261,6 +1254,7 @@
 				96F2AEFF127106AB00AF86DD /* VVSpriteControl.h in Headers */,
 				96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */,
 				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
+				9645131016494057006370F8 /* VVView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1360,7 +1354,6 @@
 				9666944710304CB000DB5FDF /* MutLockArray.h in Headers */,
 				9666944910304CB100DB5FDF /* MutLockDict.h in Headers */,
 				9666944B10304CB300DB5FDF /* MutNRLockArray.h in Headers */,
-				9666944D10304CB400DB5FDF /* NamedMutLockArray.h in Headers */,
 				9666944F10304CB500DB5FDF /* ObjectHolder.h in Headers */,
 				9666945110304CB600DB5FDF /* VVBasicMacros.h in Headers */,
 				9666945210304CB800DB5FDF /* VVBasics.h in Headers */,
@@ -1378,7 +1371,6 @@
 				9666945710304CC000DB5FDF /* MutLockArray.h in Headers */,
 				9666945910304CC100DB5FDF /* MutLockDict.h in Headers */,
 				9666945B10304CC200DB5FDF /* MutNRLockArray.h in Headers */,
-				9666945D10304CC400DB5FDF /* NamedMutLockArray.h in Headers */,
 				9666945F10304CC500DB5FDF /* ObjectHolder.h in Headers */,
 				9666946110304CC600DB5FDF /* VVBasicMacros.h in Headers */,
 				9666946210304CC700DB5FDF /* VVBasics.h in Headers */,
@@ -1396,7 +1388,6 @@
 				9666946710304CCD00DB5FDF /* MutLockArray.h in Headers */,
 				9666946910304CCE00DB5FDF /* MutLockDict.h in Headers */,
 				9666946B10304CCF00DB5FDF /* MutNRLockArray.h in Headers */,
-				9666946D10304CD100DB5FDF /* NamedMutLockArray.h in Headers */,
 				9666946F10304CD200DB5FDF /* ObjectHolder.h in Headers */,
 				9666947110304CD200DB5FDF /* VVBasicMacros.h in Headers */,
 				9666947210304CD300DB5FDF /* VVBasics.h in Headers */,
@@ -1942,7 +1933,6 @@
 				961EA95C100E8834007E6C25 /* MutLockArray.m in Sources */,
 				961EA95D100E8834007E6C25 /* VVStopwatch.m in Sources */,
 				961EA961100E8834007E6C25 /* ObjectHolder.m in Sources */,
-				961EA963100E8834007E6C25 /* NamedMutLockArray.m in Sources */,
 				961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */,
 				96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */,
 				96F07F371072A1B7007C66E2 /* VVSprite.m in Sources */,
@@ -1956,6 +1946,7 @@
 				96F2AF00127106AB00AF86DD /* VVSpriteControl.m in Sources */,
 				96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */,
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
+				9645131B16499BAF006370F8 /* VVView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2065,7 +2056,6 @@
 				9666944810304CB100DB5FDF /* MutLockArray.m in Sources */,
 				9666944A10304CB200DB5FDF /* MutLockDict.m in Sources */,
 				9666944C10304CB300DB5FDF /* MutNRLockArray.m in Sources */,
-				9666944E10304CB400DB5FDF /* NamedMutLockArray.m in Sources */,
 				9666945010304CB600DB5FDF /* ObjectHolder.m in Sources */,
 				9666945410304CBA00DB5FDF /* VVStopwatch.m in Sources */,
 				9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */,
@@ -2081,7 +2071,6 @@
 				9666945810304CC100DB5FDF /* MutLockArray.m in Sources */,
 				9666945A10304CC200DB5FDF /* MutLockDict.m in Sources */,
 				9666945C10304CC300DB5FDF /* MutNRLockArray.m in Sources */,
-				9666945E10304CC400DB5FDF /* NamedMutLockArray.m in Sources */,
 				9666946010304CC500DB5FDF /* ObjectHolder.m in Sources */,
 				9666946410304CC800DB5FDF /* VVStopwatch.m in Sources */,
 				9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */,
@@ -2097,7 +2086,6 @@
 				9666946810304CCD00DB5FDF /* MutLockArray.m in Sources */,
 				9666946A10304CCE00DB5FDF /* MutLockDict.m in Sources */,
 				9666946C10304CD000DB5FDF /* MutNRLockArray.m in Sources */,
-				9666946E10304CD100DB5FDF /* NamedMutLockArray.m in Sources */,
 				9666947010304CD200DB5FDF /* ObjectHolder.m in Sources */,
 				9666947410304CD500DB5FDF /* VVStopwatch.m in Sources */,
 				9666947610304CD600DB5FDF /* VVThreadLoop.m in Sources */,
