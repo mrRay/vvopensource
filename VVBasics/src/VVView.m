@@ -12,6 +12,12 @@
 
 
 
+//	macro for performing a bitmask and returning a BOOL
+#define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+
+
+
+
 @implementation VVView
 
 
@@ -38,6 +44,7 @@
 	autoresizingMask = VVViewResizeNone;
 	propertyLock = OS_SPINLOCK_INIT;
 	lastMouseEvent = nil;
+	isOpaque = YES;
 	for (int i=0;i<4;++i)	{
 		clearColor[i] = 0.0;
 		borderColor[i] = 0.0;
@@ -58,6 +65,7 @@
 		[subCopy release];
 		subCopy = nil;
 	}
+	
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
@@ -157,21 +165,36 @@
 
 
 - (NSPoint) convertPoint:(NSPoint)pointInWindow fromView:(id)view	{
-	
+	//NSLog(@"%s - ERR, returning bad val",__func__);
+	NSPoint		returnMe = pointInWindow;
+	id			tmpSuperview = superview;
+	if (tmpSuperview != nil)	{
+		do	{
+			NSRect		superviewFrame = [tmpSuperview frame];
+			tmpSuperview = [tmpSuperview superview];
+			returnMe.x += superviewFrame.origin.x;
+			returnMe.y += superviewFrame.origin.y;
+		} while (tmpSuperview != nil);
+	}
+	return returnMe;
 }
 - (id) hitTest:(NSPoint)p	{
 	NSLog(@"%s ... %@- %f, %f",__func__,self,p.x,p.y);
 	//	convert the point to coords local to me
-	NSPoint			convertedPoint = [self convertPoint:p fromView:[[self window] contentView]];
+	//NSPoint			convertedPoint = [self convertPoint:p fromView:[[self window] contentView]];
 	NSRect			localBounds = [self bounds];
-	if (convertedPoint.x<0 || convertedPoint.y<0 || convertedPoint.x>localBounds.size.width || convertedPoint.y>localBounds.size.height)
+	if (p.x<0 || p.y<0 || p.x>localBounds.size.width || p.y>localBounds.size.height)
 		return nil;
 	id				returnMe = nil;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
-		returnMe = [viewPtr hitTest:p];
-		if (returnMe != nil)
-			break;
+		NSRect		tmpFrame = [viewPtr frame];
+		if (NSPointInRect(p,tmpFrame))	{
+			NSPoint		tmpPoint = NSMakePoint(p.x-tmpFrame.origin.x,p.y-tmpFrame.origin.y);
+			returnMe = [viewPtr hitTest:tmpPoint];
+			if (returnMe != nil)
+				break;
+		}
 	}
 	[subviews unlock];
 	if (returnMe == nil)
@@ -181,47 +204,94 @@
 
 
 - (NSRect) frame	{
-	
+	return frame;
 }
 - (void) setFrame:(NSRect)n	{
-	
+	NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
+	if (NSEqualRects(n,frame))
+		return;
+	[self setFrameSize:n.size];
+	frame.origin = n.origin;
 }
 - (void) setFrameSize:(NSSize)n	{
+	NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
+	if (autoresizesSubviews)	{
+		double		widthDelta = n.width - frame.size.width;
+		double		heightDelta = n.height - frame.size.height;
+		[subviews rdlock];
+		for (VVView *viewPtr in [subviews array])	{
+			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
+			NSRect				viewNewFrame = [viewPtr frame];
+			int					hSubDivs = 0;
+			int					vSubDivs = 0;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+				++hSubDivs;
+			
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+				++vSubDivs;
+			
+			if (hSubDivs>0 || vSubDivs>0)	{
+				viewNewFrame.size.width += widthDelta/hSubDivs;
+				viewNewFrame.size.height += heightDelta/vSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+					viewNewFrame.origin.x += widthDelta/hSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+					viewNewFrame.origin.y += heightDelta/vSubDivs;
+			}
+			[viewPtr setFrame:viewNewFrame];
+		}
+		[subviews unlock];
+	}
 	
+	frame.size = n;
+	bounds = NSMakeRect(0,0,frame.size.width,frame.size.height);
+	
+	NSLog(@"\t\tneed to be updating the bounds here! %s",__func__);
 }
 - (NSRect) bounds	{
-	
+	return bounds;
 }
 - (void) setBounds:(NSRect)n	{
-	
+	bounds = n;	
 }
 - (NSRect) visibleRect	{
-	
+	return NSZeroRect;
 }
 
 
 @synthesize autoresizesSubviews;
 @synthesize autoresizingMask;
 - (void) addSubview:(id)n	{
-	
+	if (deleted || n==nil || subviews==nil)
+		return;
+	[subviews wrlock];
+	if (![subviews containsIdenticalPtr:n])
+		[subviews addObject:n];
+	[subviews unlock];
 }
 - (void) removeSubview:(id)n	{
-	
+	if (deleted || n==nil || subviews==nil)
+		return;
+	[subviews lockRemoveIdenticalPtr:n];
 }
 - (void) removeFromSuperview	{
+	if (deleted)
+		return;
 	
 }
 - (MutLockArray *) subviews	{
-	
+	return subviews;
 }
 - (id) window	{
-	
-}
-- (id) nearestFormatSupplier	{
-	
-}
-- (void) formatSupplierMayHaveChanged	{
-	
+	return nil;
 }
 
 
@@ -232,20 +302,20 @@
 		[self updateSprites];
 	
 	OSSpinLockLock(&propertyLock);
-	if (clearColor != nil)	{
-		[clearColor set];
-		NSRectFill(r);
-	}
+	//if (clearColor != nil)	{
+	//	[clearColor set];
+	//	NSRectFill(r);
+	//}
 	OSSpinLockUnlock(&propertyLock);
 	
 	if (spriteManager != nil)
 		[spriteManager drawRect:r];
 	
 	OSSpinLockLock(&propertyLock);
-	if (drawBorder && borderColor!=nil)	{
-		[borderColor set];
-		NSFrameRect([self bounds]);
-	}
+	//if (drawBorder && borderColor!=nil)	{
+	//	[borderColor set];
+	//	NSFrameRect([self bounds]);
+	//}
 	OSSpinLockUnlock(&propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
@@ -261,7 +331,7 @@
 	}
 }
 - (BOOL) isOpaque	{
-	
+	return isOpaque;
 }
 - (void) finishedDrawing	{
 	
@@ -286,6 +356,9 @@
 }
 - (void) setNeedsRender	{
 	[self setNeedsDisplay:YES];
+}
+- (BOOL) needsRender	{
+	return needsDisplay;
 }
 @synthesize lastMouseEvent;
 - (void) setClearColor:(NSColor *)n	{
