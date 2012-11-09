@@ -48,6 +48,7 @@ typedef enum	{
 	
 	OSSpinLock			propertyLock;	//	locks the items below it (mouse event, clear color stuff)
 	NSEvent				*lastMouseEvent;
+	BOOL				isOpaque;
 	GLfloat				clearColor[4];
 	BOOL				drawBorder;
 	GLfloat				borderColor[4];
@@ -88,8 +89,6 @@ typedef enum	{
 - (void) removeFromSuperview;
 - (MutLockArray *) subviews;
 - (id) window;
-- (id) nearestFormatSupplier;
-- (void) formatSupplierMayHaveChanged;
 
 - (void) drawRect:(NSRect)r;
 - (BOOL) isOpaque;
