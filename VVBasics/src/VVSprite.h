@@ -37,6 +37,7 @@ typedef enum _VVSpriteEventType	{
 	id				delegate;			//	NOT retained!
 	SEL				drawCallback;		//	delegate method; passed a ptr to this sprite!
 	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
+	CGLContextObj	glDrawContext;		//	NOT retained! if "drawInContext:" is called, this is set to the passed context- so my delegate can retrieve it and use it for GL drawing!
 	
 	NSRect			rect;				//	the sprite i'm tracking
 	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
@@ -71,6 +72,7 @@ typedef enum _VVSpriteEventType	{
 - (void) mouseDragged:(NSPoint)p;
 - (void) mouseUp:(NSPoint)p;
 - (void) draw;
+- (void) drawInContext:(CGLContextObj)cgl_ctx;
 
 - (void) bringToFront;
 - (void) sendToBack;
@@ -83,6 +85,7 @@ typedef enum _VVSpriteEventType	{
 @property (assign, readwrite) id delegate;
 @property (assign, readwrite) SEL drawCallback;
 @property (assign, readwrite) SEL actionCallback;
+@property (readonly) CGLContextObj glDrawContext;
 
 @property (assign, readwrite) NSRect rect;
 //@property (retain,readwrite) NSBezierPath *path;

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "VVSpriteManager.h"
 #include <libkern/OSAtomic.h>
+#import <OpenGL/OpenGL.h>
+#import <OpenGL/CGLMacro.h>
 
 
 
@@ -41,7 +43,8 @@ typedef enum	{
 
 	NSRect				frame;
 	NSRect				bounds;
-	id					superview;	//	NOT RETAINED
+	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
+	id					containerView;	//	NOT RETAINED- only NON-nil if "superview" is nil.  if non-nil, points to the NSView subclass that contains me!
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
@@ -90,7 +93,7 @@ typedef enum	{
 - (MutLockArray *) subviews;
 - (id) window;
 
-- (void) drawRect:(NSRect)r;
+- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 - (BOOL) isOpaque;
 - (void) finishedDrawing;
 - (void) updateSprites;

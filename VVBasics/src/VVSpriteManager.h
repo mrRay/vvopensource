@@ -51,6 +51,7 @@ MutLockArray		*_spriteManagerArray;
 
 - (void) draw;
 - (void) drawRect:(NSRect)r;
+- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 
 - (VVSprite *) spriteInUse;
 - (void) setSpriteInUse:(VVSprite *)z;

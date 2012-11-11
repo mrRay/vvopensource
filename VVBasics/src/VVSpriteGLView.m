@@ -34,7 +34,7 @@
 	deleted = NO;
 	initialized = NO;
 	flipped = NO;
-	subviews = [[MutLockArray alloc] init];
+	vvSubviews = [[MutLockArray alloc] init];
 	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
@@ -73,11 +73,11 @@
 	spritesNeedUpdate = YES;
 }
 - (void) prepareToBeDeleted	{
-	NSMutableArray		*subCopy = [subviews lockCreateArrayCopy];
+	NSMutableArray		*subCopy = [vvSubviews lockCreateArrayCopy];
 	if (subCopy != nil)	{
 		[subCopy retain];
 		for (id subview in subCopy)
-			[self removeSubview:subview];
+			[self removeVVSubview:subview];
 		[subCopy removeAllObjects];
 		[subCopy release];
 		subCopy = nil;
@@ -107,7 +107,7 @@
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	VVRELEASE(lastMouseEvent);
-	VVRELEASE(subviews);
+	VVRELEASE(vvSubviews);
 	pthread_mutex_destroy(&glLock);
 	[super dealloc];
 }
@@ -163,21 +163,23 @@
 	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
 }
-- (void) addSubview:(id)n	{
+
+- (void) addVVSubview:(id)n	{
 	NSLog(@"%s",__func__);
 	if (deleted || n==nil)
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
-	[subviews lockAddObject:n];
+	[vvSubviews lockAddObject:n];
 }
-- (void) removeSubview:(id)n	{
+- (void) removeVVSubview:(id)n	{
+	NSLog(@"%s",__func__);
 	if (deleted || n==nil)
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
 	[n retain];
-	[subviews lockRemoveIdenticalPtr:n];
+	[vvSubviews lockRemoveIdenticalPtr:n];
 	[n release];
 }
 /*
@@ -246,7 +248,7 @@
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
-	if ([[self subviews] count]>0)	{
+	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self hitTest:locationInWindow];
 		if (clickedSubview == self) clickedSubview = nil;
 		if (clickedSubview != nil)	{
@@ -272,7 +274,7 @@
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
-	if ([[self subviews] count]>0)	{
+	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self hitTest:locationInWindow];
 		if (clickedSubview == self) clickedSubview = nil;
 		if (clickedSubview != nil)	{
@@ -560,6 +562,7 @@
 @synthesize deleted;
 @synthesize initialized;
 @synthesize flipped;
+@synthesize vvSubviews;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
 }

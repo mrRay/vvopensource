@@ -1,6 +1,7 @@
 
 #import "VVSpriteManager.h"
 #import "VVBasicMacros.h"
+#import <OpenGL/CGLMacro.h>
 
 
 
@@ -400,7 +401,26 @@ BOOL			_spriteManagerInitialized;
 		}
 	[spriteArray unlock];
 }
-
+- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return;
+	[spriteArray rdlock];
+		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
+		VVSprite	*spritePtr;
+		while (spritePtr = [it nextObject])	{
+			if ([spritePtr checkRect:r])
+				[spritePtr drawInContext:cgl_ctx];
+			/*
+			//NSRect		tmp = [spritePtr rect];
+			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
+			//if (![spritePtr hidden])	{
+				if (NSIntersectsRect([spritePtr rect],r))
+					[spritePtr draw];
+			//}
+			*/
+		}
+	[spriteArray unlock];
+}
 - (VVSprite *) spriteInUse	{
 	if (deleted)
 		return nil;

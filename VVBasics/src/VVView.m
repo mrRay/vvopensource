@@ -302,13 +302,16 @@ glPopMatrix();
 
 
 - (void) drawRect:(NSRect)r	{
+	NSLog(@"%s",__func__);
+}
+- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
 	if (deleted)
 		return;
 	
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	
-	GLPUSHORIGIN
+	//GLPUSHORIGIN
 	
 	OSSpinLockLock(&propertyLock);
 	//if (clearColor != nil)	{
@@ -339,7 +342,7 @@ glPopMatrix();
 		[subviews unlock];
 	}
 	
-	GLPOPORIGIN
+	//GLPOPORIGIN
 }
 - (BOOL) isOpaque	{
 	return isOpaque;

@@ -34,6 +34,7 @@
 		delegate = nil;
 		drawCallback = nil;
 		actionCallback = nil;
+		glDrawContext = NULL;
 		
 		rect = r;
 		bezierPath = nil;
@@ -175,7 +176,15 @@
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
+	glDrawContext = NULL;
 	[delegate performSelector:drawCallback withObject:self];
+}
+- (void) drawInContext:(CGLContextObj)cgl_ctx	{
+	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
+		return;
+	glDrawContext = cgl_ctx;
+	[delegate performSelector:drawCallback withObject:self];
+	glDrawContext = NULL;
 }
 - (void) bringToFront	{
 	//NSLog(@"%s",__func__);
@@ -265,6 +274,9 @@
 }
 - (SEL) actionCallback	{
 	return actionCallback;
+}
+- (CGLContextObj) glDrawContext	{
+	return glDrawContext;
 }
 
 
