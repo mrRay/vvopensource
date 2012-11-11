@@ -33,6 +33,7 @@ typedef enum	{
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
+	MutLockArray			*subviews;
 	
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
@@ -68,6 +69,7 @@ typedef enum	{
 - (void) _lock;
 - (void) _unlock;
 //- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
+- (void) removeSubview:(id)n;
 
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;

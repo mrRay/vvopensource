@@ -14,6 +14,12 @@
 
 //	macro for performing a bitmask and returning a BOOL
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+//	macro for translating a view's origin so drawing's easier.  MUST BE FOLLOWED BY POPORIGIN!
+#define GLPUSHORIGIN glMarixMode(GL_MODELVIEW);			\
+glPushMatrix();											\
+glTranslatef(frame.origin.x,frame.origin.y,0);
+#define GLPOPORIGIN glMatrixMode(GL_MODELVIEW);			\
+glPopMatrix();
 
 
 
@@ -298,8 +304,11 @@
 - (void) drawRect:(NSRect)r	{
 	if (deleted)
 		return;
+	
 	if (spritesNeedUpdate)
 		[self updateSprites];
+	
+	GLPUSHORIGIN
 	
 	OSSpinLockLock(&propertyLock);
 	//if (clearColor != nil)	{
@@ -329,6 +338,8 @@
 		}
 		[subviews unlock];
 	}
+	
+	GLPOPORIGIN
 }
 - (BOOL) isOpaque	{
 	return isOpaque;
@@ -337,14 +348,14 @@
 	
 }
 - (void) updateSprites	{
-	
+	spritesNeedUpdate = NO;
 }
 
 @synthesize deleted;
 @synthesize spriteManager;
 @synthesize spritesNeedUpdate;
 - (void) setSpritesNeedUpdate	{
-	[self setSpritesNeedUpdate:YES];
+	spritesNeedUpdate = YES;
 }
 @synthesize needsDisplay;
 - (void) setNeedsDisplay	{

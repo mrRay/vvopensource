@@ -3,6 +3,7 @@
 #import <OpenGL/CGLMacro.h>
 #import "VVBasicMacros.h"
 //#import "VVControl.h"
+#import "VVView.h"
 
 
 
@@ -33,6 +34,7 @@
 	deleted = NO;
 	initialized = NO;
 	flipped = NO;
+	subviews = [[MutLockArray alloc] init];
 	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
@@ -71,6 +73,16 @@
 	spritesNeedUpdate = YES;
 }
 - (void) prepareToBeDeleted	{
+	NSMutableArray		*subCopy = [subviews lockCreateArrayCopy];
+	if (subCopy != nil)	{
+		[subCopy retain];
+		for (id subview in subCopy)
+			[self removeSubview:subview];
+		[subCopy removeAllObjects];
+		[subCopy release];
+		subCopy = nil;
+	}
+	
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
@@ -95,6 +107,7 @@
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	VVRELEASE(lastMouseEvent);
+	VVRELEASE(subviews);
 	pthread_mutex_destroy(&glLock);
 	[super dealloc];
 }
@@ -149,6 +162,23 @@
 	pthread_mutex_lock(&glLock);
 	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
+}
+- (void) addSubview:(id)n	{
+	NSLog(@"%s",__func__);
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	[subviews lockAddObject:n];
+}
+- (void) removeSubview:(id)n	{
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	[n retain];
+	[subviews lockRemoveIdenticalPtr:n];
+	[n release];
 }
 /*
 - (void) keyDown:(NSEvent *)event	{
