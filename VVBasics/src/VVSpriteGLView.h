@@ -71,6 +71,7 @@ typedef enum	{
 //- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
 - (void) addVVSubview:(id)n;
 - (void) removeVVSubview:(id)n;
+- (id) vvSubviewHitTest:(NSPoint)p;
 
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;

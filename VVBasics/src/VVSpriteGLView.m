@@ -8,6 +8,11 @@
 
 
 
+#define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+
+
+
+
 @implementation VVSpriteGLView
 
 
@@ -163,25 +168,26 @@
 	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
 }
+/*
+- (NSView *) hitTest:(NSPoint)p	{
+	NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
+	if (deleted || vvSubviews==nil)
+		return nil;
+	id			tmpSubview = nil;
+	if ([vvSubviews count]>0)	{
+		[vvSubviews rdlock];
+		for (VVView *viewPtr in [vvSubviews array])	{
+			tmpSubview = [viewPtr hitTest:p];
+			if (tmpSubview != nil)
+				break;
+		}
+		[vvSubviews unlock];
+	}
+	NSLog(@"\t\ti appear to have clicked on %@",tmpSubview);
+	return tmpSubview;
+}
+*/
 
-- (void) addVVSubview:(id)n	{
-	NSLog(@"%s",__func__);
-	if (deleted || n==nil)
-		return;
-	if (![n isKindOfClass:[VVView class]])
-		return;
-	[vvSubviews lockAddObject:n];
-}
-- (void) removeVVSubview:(id)n	{
-	NSLog(@"%s",__func__);
-	if (deleted || n==nil)
-		return;
-	if (![n isKindOfClass:[VVView class]])
-		return;
-	[n retain];
-	[vvSubviews lockRemoveIdenticalPtr:n];
-	[n release];
-}
 /*
 - (void) keyDown:(NSEvent *)event	{
 	//NSLog(@"%s",__func__);
@@ -195,13 +201,58 @@
 }
 */
 
+
+/*===================================================================================*/
+#pragma mark --------------------- subview-related
+/*------------------------------------*/
+
+
+- (void) addVVSubview:(id)n	{
+	//NSLog(@"%s",__func__);
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	[vvSubviews lockAddObject:n];
+	[n setContainerView:self];
+}
+- (void) removeVVSubview:(id)n	{
+	//NSLog(@"%s",__func__);
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	[n retain];
+	[vvSubviews lockRemoveIdenticalPtr:n];
+	[n setContainerView:nil];
+	[n release];
+}
+- (id) vvSubviewHitTest:(NSPoint)p	{
+	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
+	if (deleted || vvSubviews==nil)
+		return nil;
+	id			tmpSubview = nil;
+	if ([vvSubviews count]>0)	{
+		[vvSubviews rdlock];
+		for (VVView *viewPtr in [vvSubviews array])	{
+			tmpSubview = [viewPtr vvSubviewHitTest:p];
+			if (tmpSubview != nil)
+				break;
+		}
+		[vvSubviews unlock];
+	}
+	//NSLog(@"\t\ti appear to have clicked on %@",tmpSubview);
+	return tmpSubview;
+}
+
+
 /*===================================================================================*/
 #pragma mark --------------------- frame-related
 /*------------------------------------*/
 
 
 - (void) setFrame:(NSRect)f	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@, (%0.2f, %0.2f) %0.2f x %0.2f",__func__, self, f.origin.x, f.origin.y, f.size.width, f.size.height);
 	pthread_mutex_lock(&glLock);
 		[super setFrame:f];
 		[self updateSprites];
@@ -211,6 +262,58 @@
 	pthread_mutex_unlock(&glLock);
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
+/*
+- (void) setFrameSize:(NSSize)n	{
+	NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
+	NSSize			oldSize = [self frame].size;
+	NSLog(@"\t\toldSize is %f x %f",oldSize.width,oldSize.height);
+	NSLog(@"\t\tnewSize is %f x %f",n.width,n.height);
+	[super setFrameSize:n];
+	
+	if ([self autoresizesSubviews])	{
+		double		widthDelta = n.width - oldSize.width;
+		double		heightDelta = n.height - oldSize.height;
+		[vvSubviews rdlock];
+		for (VVView *viewPtr in [vvSubviews array])	{
+			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
+			NSRect				viewNewFrame = [viewPtr frame];
+			int					hSubDivs = 0;
+			int					vSubDivs = 0;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+				++hSubDivs;
+			
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+				++vSubDivs;
+			
+			if (hSubDivs>0 || vSubDivs>0)	{
+				viewNewFrame.size.width += widthDelta/hSubDivs;
+				viewNewFrame.size.height += heightDelta/vSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+					viewNewFrame.origin.x += widthDelta/hSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+					viewNewFrame.origin.y += heightDelta/vSubDivs;
+			}
+			[viewPtr setFrame:viewNewFrame];
+		}
+		[vvSubviews unlock];
+	}
+	
+	if (!NSEqualSizes(oldSize,n))	{
+		NSLog(@"\t\tsized changed!");
+		pthread_mutex_lock(&glLock);
+		initialized = NO;
+		pthread_mutex_unlock(&glLock);
+	}
+}
+*/
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
 }
@@ -249,7 +352,7 @@
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
-		clickedSubview = [self hitTest:locationInWindow];
+		clickedSubview = [self vvSubviewHitTest:localPoint];
 		if (clickedSubview == self) clickedSubview = nil;
 		if (clickedSubview != nil)	{
 			[clickedSubview mouseDown:e];
@@ -427,16 +530,6 @@
 		
 		
 		if (proceedWithRender)	{
-			/*
-			//	set up the view to draw
-			NSRect				bounds = [self bounds];
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-			glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, -1.0, 1.0);
-			*/
 			
 			//	clear the view
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -444,12 +537,28 @@
 			//	tell the sprite manager to start drawing the sprites
 			if (spriteManager != nil)
 				[spriteManager drawRect:r];
+			
+			
+			[vvSubviews rdlock];
+				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
+				VVView				*viewPtr;
+				while (viewPtr = [it nextObject])	{
+					NSRect				tmpFrame = [viewPtr frame];
+					if (NSIntersectsRect(r,tmpFrame))	{
+						tmpFrame.origin = NSMakePoint(0,0);
+						[viewPtr drawRect:tmpFrame inContext:cgl_ctx];
+					}
+				}
+			[vvSubviews unlock];
+			
+			
 			if (drawBorder)	{
 				glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				GLSTROKERECT([self bounds]);
 			}
+			
 			//	flush!
 			switch (flushMode)	{
 				case VVFlushModeGL:
@@ -561,7 +670,15 @@
 
 @synthesize deleted;
 @synthesize initialized;
-@synthesize flipped;
+- (void) setFlipped:(BOOL)n	{
+	BOOL		changing = (n==flipped) ? NO : YES;
+	flipped = n;
+	if (changing)
+		initialized = NO;
+}
+- (BOOL) flipped	{
+	return flipped;
+}
 @synthesize vvSubviews;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
@@ -585,7 +702,10 @@
 	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 	pthread_mutex_lock(&glLock);
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	[calibratedColor getComponents:(CGFloat *)clearColor];
+	CGFloat			tmpVals[4];
+	[calibratedColor getComponents:(CGFloat *)tmpVals];
+	for (int i=0;i<4;++i)
+		clearColor[i] = tmpVals[i];
 	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	pthread_mutex_unlock(&glLock);
 }

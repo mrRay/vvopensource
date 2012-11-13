@@ -98,6 +98,19 @@
 #define POINTDISTANCE(a,b) fabs(sqrtf((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y)))
 
 
+
+
+//	macro for translating a view's origin so drawing's easier.  MUST BE FOLLOWED BY POPORIGIN!
+#define GLPUSHORIGIN glMatrixMode(GL_MODELVIEW);		\
+glPushMatrix();											\
+glTranslatef(frame.origin.x,frame.origin.y,0);
+//	macro for un-translating a view's origin to make drawing easier.
+#define GLPOPORIGIN glMatrixMode(GL_MODELVIEW);			\
+glPopMatrix();
+
+
+
+
 //	this is a macro for drawing an NSRect in opengl
 #define GLDRAWRECT(r)														\
 {																			\

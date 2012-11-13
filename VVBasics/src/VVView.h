@@ -39,12 +39,12 @@ typedef enum	{
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
-	BOOL				needsDisplay;
-
+	//BOOL				needsDisplay;
+	
 	NSRect				frame;
 	NSRect				bounds;
 	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
-	id					containerView;	//	NOT RETAINED- only NON-nil if "superview" is nil.  if non-nil, points to the NSView subclass that contains me!
+	id					containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
@@ -75,7 +75,9 @@ typedef enum	{
 - (void) keyUp:(NSEvent *)e;
 
 - (NSPoint) convertPoint:(NSPoint)pointInWindow fromView:(id)view;
-- (id) hitTest:(NSPoint)n;
+//- (id) hitTest:(NSPoint)n;	//	the point it's passed is in coords local to self!
+- (id) vvSubviewHitTest:(NSPoint)p;	//	the point it's passed is in coords local to self!
+- (BOOL) checkRect:(NSRect)n;
 
 - (NSRect) frame;
 - (void) setFrame:(NSRect)n;
@@ -90,6 +92,8 @@ typedef enum	{
 - (void) addSubview:(id)n;
 - (void) removeSubview:(id)n;
 - (void) removeFromSuperview;
+- (void) setContainerView:(id)n;
+- (id) containerView;
 - (MutLockArray *) subviews;
 - (id) window;
 
@@ -102,10 +106,10 @@ typedef enum	{
 @property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
-@property (assign,readwrite) BOOL needsDisplay;
-- (void) setNeedsDisplay;
-@property (assign,readwrite) BOOL needsRender;	//	does same thing as needsDisplay
-- (void) setNeedsRender;
+//@property (assign,readwrite) BOOL needsDisplay;
+//- (void) setNeedsDisplay;
+//@property (assign,readwrite) BOOL needsRender;	//	does same thing as needsDisplay
+//- (void) setNeedsRender;
 @property (readonly) NSEvent *lastMouseEvent;
 - (void) setClearColor:(NSColor *)n;
 - (void) setClearColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a;

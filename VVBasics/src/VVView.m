@@ -14,12 +14,6 @@
 
 //	macro for performing a bitmask and returning a BOOL
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
-//	macro for translating a view's origin so drawing's easier.  MUST BE FOLLOWED BY POPORIGIN!
-#define GLPUSHORIGIN glMarixMode(GL_MODELVIEW);			\
-glPushMatrix();											\
-glTranslatef(frame.origin.x,frame.origin.y,0);
-#define GLPOPORIGIN glMatrixMode(GL_MODELVIEW);			\
-glPopMatrix();
 
 
 
@@ -41,10 +35,11 @@ glPopMatrix();
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
-	needsDisplay = YES;
+	//needsDisplay = YES;
 	frame = NSMakeRect(0,0,1,1);
 	bounds = frame;
 	superview = nil;
+	containerView = nil;
 	subviews = [[MutLockArray alloc] init];
 	autoresizesSubviews = YES;
 	autoresizingMask = VVViewResizeNone;
@@ -89,6 +84,7 @@ glPopMatrix();
 
 
 - (void) mouseDown:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	OSSpinLockLock(&propertyLock);
@@ -171,8 +167,11 @@ glPopMatrix();
 
 
 - (NSPoint) convertPoint:(NSPoint)pointInWindow fromView:(id)view	{
-	//NSLog(@"%s - ERR, returning bad val",__func__);
-	NSPoint		returnMe = pointInWindow;
+	if (deleted || containerView==nil)
+		return pointInWindow;
+	//	"containerView" points to the NSView-subclass that "owns" me- convert the passed point to coords local to "containerView", then convert them further to coords local to this view
+	NSPoint		returnMe = [containerView convertPoint:pointInWindow fromView:nil];
+	//	...now run up through my superviews, modifying the point to account for frame offsets!
 	id			tmpSuperview = superview;
 	if (tmpSuperview != nil)	{
 		do	{
@@ -184,8 +183,32 @@ glPopMatrix();
 	}
 	return returnMe;
 }
-- (id) hitTest:(NSPoint)p	{
-	NSLog(@"%s ... %@- %f, %f",__func__,self,p.x,p.y);
+//	the point it's passed is in coords local to self!
+- (id) vvSubviewHitTest:(NSPoint)p	{
+	//NSLog(@"%s ... %@- %f, %f",__func__,self,p.x,p.y);
+	//	convert the point so its coords are local to the container view
+	//NSPoint				p = [self convertPoint:pointInWindow fromView:nil];
+	//NSLog(@"\t\tconverted point is (%f, %f)",p.x,p.y);
+	NSRect				localFrame = [self frame];
+	//NSRectLog(@"\t\tmy frame is",localFrame);
+	if (!NSPointInRect(p,localFrame))
+		return nil;
+	id					returnMe = nil;
+	[subviews rdlock];
+	for (VVView *viewPtr in [subviews array])	{
+		NSRect				tmpFrame = [viewPtr frame];
+		if (NSPointInRect(p,tmpFrame))	{
+			returnMe = [viewPtr vvSubviewHitTest:p];
+			if (returnMe != nil)
+				break;
+		}
+	}
+	[subviews unlock];
+	if (returnMe == nil)
+		returnMe = self;
+	return returnMe;
+	
+	/*
 	//	convert the point to coords local to me
 	//NSPoint			convertedPoint = [self convertPoint:p fromView:[[self window] contentView]];
 	NSRect			localBounds = [self bounds];
@@ -206,6 +229,10 @@ glPopMatrix();
 	if (returnMe == nil)
 		returnMe = self;
 	return returnMe;
+	*/
+}
+- (BOOL) checkRect:(NSRect)n	{
+	return NSIntersectsRect(n,frame);
 }
 
 
@@ -213,14 +240,14 @@ glPopMatrix();
 	return frame;
 }
 - (void) setFrame:(NSRect)n	{
-	NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
+	//NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
 	if (NSEqualRects(n,frame))
 		return;
 	[self setFrameSize:n.size];
 	frame.origin = n.origin;
 }
 - (void) setFrameSize:(NSSize)n	{
-	NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
+	//NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
 	if (autoresizesSubviews)	{
 		double		widthDelta = n.width - frame.size.width;
 		double		heightDelta = n.height - frame.size.height;
@@ -279,8 +306,12 @@ glPopMatrix();
 	if (deleted || n==nil || subviews==nil)
 		return;
 	[subviews wrlock];
-	if (![subviews containsIdenticalPtr:n])
+	if (![subviews containsIdenticalPtr:n])	{
 		[subviews addObject:n];
+		[n setContainerView:containerView];
+		if (containerView != nil)
+			[containerView setNeedsDisplay:YES];
+	}
 	[subviews unlock];
 }
 - (void) removeSubview:(id)n	{
@@ -292,6 +323,15 @@ glPopMatrix();
 	if (deleted)
 		return;
 	
+}
+- (void) setContainerView:(id)n	{
+	containerView = n;
+	if (subviews!=nil && [subviews count]>0)	{
+		[subviews lockMakeObjectsPerformSelector:@selector(setContainerView:) withObject:n];
+	}
+}
+- (id) containerView	{
+	return containerView;
 }
 - (MutLockArray *) subviews	{
 	return subviews;
@@ -360,20 +400,20 @@ glPopMatrix();
 - (void) setSpritesNeedUpdate	{
 	spritesNeedUpdate = YES;
 }
-@synthesize needsDisplay;
-- (void) setNeedsDisplay	{
-	[self setNeedsDisplay:YES];
-}
-- (void) setNeedsRender:(BOOL)n	{
-	if (n)
-		[self setNeedsDisplay:YES];
-}
-- (void) setNeedsRender	{
-	[self setNeedsDisplay:YES];
-}
-- (BOOL) needsRender	{
-	return needsDisplay;
-}
+//@synthesize needsDisplay;
+//- (void) setNeedsDisplay	{
+//	[self setNeedsDisplay:YES];
+//}
+//- (void) setNeedsRender:(BOOL)n	{
+//	if (n)
+//		[self setNeedsDisplay:YES];
+//}
+//- (void) setNeedsRender	{
+//	[self setNeedsDisplay:YES];
+//}
+//- (BOOL) needsRender	{
+//	return needsDisplay;
+//}
 @synthesize lastMouseEvent;
 - (void) setClearColor:(NSColor *)n	{
 
