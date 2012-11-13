@@ -248,6 +248,7 @@
 }
 - (void) setFrameSize:(NSSize)n	{
 	//NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
+	/*
 	if (autoresizesSubviews)	{
 		double		widthDelta = n.width - frame.size.width;
 		double		heightDelta = n.height - frame.size.height;
@@ -283,11 +284,9 @@
 		}
 		[subviews unlock];
 	}
-	
+	*/
 	frame.size = n;
 	bounds = NSMakeRect(0,0,frame.size.width,frame.size.height);
-	
-	NSLog(@"\t\tneed to be updating the bounds here! %s",__func__);
 }
 - (NSRect) bounds	{
 	return bounds;

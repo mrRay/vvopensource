@@ -262,7 +262,6 @@
 	pthread_mutex_unlock(&glLock);
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
-/*
 - (void) setFrameSize:(NSSize)n	{
 	NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
 	NSSize			oldSize = [self frame].size;
@@ -277,6 +276,7 @@
 		for (VVView *viewPtr in [vvSubviews array])	{
 			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
 			NSRect				viewNewFrame = [viewPtr frame];
+			NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
 			int					hSubDivs = 0;
 			int					vSubDivs = 0;
 			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
@@ -294,13 +294,16 @@
 				++vSubDivs;
 			
 			if (hSubDivs>0 || vSubDivs>0)	{
-				viewNewFrame.size.width += widthDelta/hSubDivs;
-				viewNewFrame.size.height += heightDelta/vSubDivs;
+				if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+					viewNewFrame.size.width += widthDelta/hSubDivs;
+				if (vSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+					viewNewFrame.size.height += heightDelta/vSubDivs;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
 					viewNewFrame.origin.x += widthDelta/hSubDivs;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
 					viewNewFrame.origin.y += heightDelta/vSubDivs;
 			}
+			NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
 			[viewPtr setFrame:viewNewFrame];
 		}
 		[vvSubviews unlock];
@@ -313,7 +316,6 @@
 		pthread_mutex_unlock(&glLock);
 	}
 }
-*/
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
 }
