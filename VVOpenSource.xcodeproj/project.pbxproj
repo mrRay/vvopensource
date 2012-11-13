@@ -187,7 +187,7 @@
 		9628D189100E8B7C00C3944E /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D181100E8B7C00C3944E /* AppController.m */; };
 		9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */; };
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
-		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; };
+		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9645131B16499BAF006370F8 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
