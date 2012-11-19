@@ -2526,7 +2526,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -2543,7 +2543,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};
