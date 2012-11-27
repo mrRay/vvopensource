@@ -188,18 +188,17 @@
 }
 */
 
-/*
+
 - (void) keyDown:(NSEvent *)event	{
-	//NSLog(@"%s",__func__);
-	[VVControl keyPressed:event];
+	NSLog(@"%s",__func__);
+	//[VVControl keyPressed:event];
 	//[super keyDown:event];
 }
 - (void) keyUp:(NSEvent *)event	{
-	//NSLog(@"%s",__func__);
-	[VVControl keyPressed:event];
+	NSLog(@"%s",__func__);
+	//[VVControl keyPressed:event];
 	//[super keyUp:event];
 }
-*/
 
 
 /*===================================================================================*/
@@ -263,10 +262,8 @@
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) setFrameSize:(NSSize)n	{
-	NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
+	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
 	NSSize			oldSize = [self frame].size;
-	NSLog(@"\t\toldSize is %f x %f",oldSize.width,oldSize.height);
-	NSLog(@"\t\tnewSize is %f x %f",n.width,n.height);
 	[super setFrameSize:n];
 	
 	if ([self autoresizesSubviews])	{
@@ -276,7 +273,7 @@
 		for (VVView *viewPtr in [vvSubviews array])	{
 			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
 			NSRect				viewNewFrame = [viewPtr frame];
-			NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
+			//NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
 			int					hSubDivs = 0;
 			int					vSubDivs = 0;
 			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
@@ -303,14 +300,14 @@
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
 					viewNewFrame.origin.y += heightDelta/vSubDivs;
 			}
-			NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
+			//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
 			[viewPtr setFrame:viewNewFrame];
 		}
 		[vvSubviews unlock];
 	}
 	
 	if (!NSEqualSizes(oldSize,n))	{
-		NSLog(@"\t\tsized changed!");
+		//NSLog(@"\t\tsized changed!");
 		pthread_mutex_lock(&glLock);
 		initialized = NO;
 		pthread_mutex_unlock(&glLock);

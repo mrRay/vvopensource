@@ -25,10 +25,14 @@
 	
 	blueView = [[BlueView alloc] initWithFrame:NSMakeRect(80,60,160,120)];
 	[spriteView addVVSubview:blueView];
-	[blueView setAutoresizingMask:VVViewResizeMaxYMargin];
+	//[blueView setAutoresizingMask:VVViewResizeMinYMargin|VVViewResizeMinXMargin];
+	//[blueView setAutoresizingMask:VVViewResizeWidth|VVViewResizeHeight];
+	//[blueView setAutoresizingMask:VVViewResizeMinXMargin|VVViewResizeMaxXMargin|VVViewResizeWidth|VVViewResizeMinYMargin|VVViewResizeMaxYMargin];
 	
-	//greenView = [[GreenView alloc] initWithFrame:NSMakeRect(10,10,10,10)];
-	//[spriteView addVVSubview:greenView];
+	greenView = [[GreenView alloc] initWithFrame:NSMakeRect(10,10,10,10)];
+	[spriteView addVVSubview:greenView];
+	//[greenView setAutoresizingMask:VVViewResizeMinYMargin|VVViewResizeMinXMargin];
+	//[greenView setAutoresizingMask:VVViewResizeWidth|VVViewResizeHeight];
 	
 	[spriteView setNeedsDisplay:YES];
 	

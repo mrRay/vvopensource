@@ -37,12 +37,13 @@
 	spritesNeedUpdate = YES;
 	//needsDisplay = YES;
 	frame = NSMakeRect(0,0,1,1);
+	minFrameSize = NSMakeSize(1.0,1.0);
 	bounds = frame;
 	superview = nil;
 	containerView = nil;
 	subviews = [[MutLockArray alloc] init];
 	autoresizesSubviews = YES;
-	autoresizingMask = VVViewResizeNone;
+	autoresizingMask = VVViewResizeMaxXMargin | VVViewResizeMinYMargin;
 	propertyLock = OS_SPINLOCK_INIT;
 	lastMouseEvent = nil;
 	isOpaque = YES;
@@ -84,7 +85,7 @@
 
 
 - (void) mouseDown:(NSEvent *)e	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	OSSpinLockLock(&propertyLock);
@@ -246,16 +247,19 @@
 	[self setFrameSize:n.size];
 	frame.origin = n.origin;
 }
-- (void) setFrameSize:(NSSize)n	{
+- (void) setFrameSize:(NSSize)proposedSize	{
 	//NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
-	/*
-	if (autoresizesSubviews)	{
-		double		widthDelta = n.width - frame.size.width;
-		double		heightDelta = n.height - frame.size.height;
+	NSSize			oldSize = frame.size;
+	NSSize			n = NSMakeSize(fmax(minFrameSize.width,proposedSize.width),fmax(minFrameSize.height,proposedSize.height));
+	
+	if ([self autoresizesSubviews])	{
+		double		widthDelta = n.width - oldSize.width;
+		double		heightDelta = n.height - oldSize.height;
 		[subviews rdlock];
 		for (VVView *viewPtr in [subviews array])	{
 			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
 			NSRect				viewNewFrame = [viewPtr frame];
+			//NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
 			int					hSubDivs = 0;
 			int					vSubDivs = 0;
 			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
@@ -273,18 +277,21 @@
 				++vSubDivs;
 			
 			if (hSubDivs>0 || vSubDivs>0)	{
-				viewNewFrame.size.width += widthDelta/hSubDivs;
-				viewNewFrame.size.height += heightDelta/vSubDivs;
+				if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+					viewNewFrame.size.width += widthDelta/hSubDivs;
+				if (vSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+					viewNewFrame.size.height += heightDelta/vSubDivs;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
 					viewNewFrame.origin.x += widthDelta/hSubDivs;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
 					viewNewFrame.origin.y += heightDelta/vSubDivs;
 			}
+			//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
 			[viewPtr setFrame:viewNewFrame];
 		}
 		[subviews unlock];
 	}
-	*/
+	
 	frame.size = n;
 	bounds = NSMakeRect(0,0,frame.size.width,frame.size.height);
 }
@@ -317,11 +324,14 @@
 	if (deleted || n==nil || subviews==nil)
 		return;
 	[subviews lockRemoveIdenticalPtr:n];
+	[n setContainerView:nil];
+	if (containerView != nil)
+		[containerView setNeedsDisplay:YES];
 }
 - (void) removeFromSuperview	{
 	if (deleted)
 		return;
-	
+	NSLog(@"%s - ERR",__func__);
 }
 - (void) setContainerView:(id)n	{
 	containerView = n;
