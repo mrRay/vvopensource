@@ -310,7 +310,7 @@
 		/*
 		//	just dump the contents of the buffer i'm about to send- for debugging...
 		for (int i=0;i<[msgSysexArray count]+2;++i)	{
-			NSLog(@"\t%X",bufferPtr[i]);
+			//NSLog(@"\t%X",bufferPtr[i]);
 		}
 		*/
 		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,[msgSysexArray count]+2,bufferPtr);

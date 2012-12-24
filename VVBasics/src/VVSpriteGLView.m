@@ -369,10 +369,12 @@
 						proceedWithRender = glTestFenceAPPLE(fenceA);
 						fenceADeployed = (proceedWithRender)?NO:YES;
 					}
-					//if (proceedWithRender)
-					//	NSLog(@"\t\tfenceA executed- clear to render");
-					//else
-					//	NSLog(@"\t\tfenceA hasn't executed yet");
+					//if (proceedWithRender)	{
+					//	//NSLog(@"\t\tfenceA executed- clear to render");
+					//}
+					//else	{
+					//	//NSLog(@"\t\tfenceA hasn't executed yet");
+					//}
 					
 				}
 				//	if i'm in DB skip mode and i'm not waiting for fence A...
@@ -384,10 +386,12 @@
 						proceedWithRender = glTestFenceAPPLE(fenceB);
 						fenceBDeployed = (proceedWithRender)?NO:YES;
 					}
-					//if (proceedWithRender)
-					//	NSLog(@"\t\tfenceB executed- clear to render");
-					//else
-					//	NSLog(@"\t\tfenceB hasn't executed yet");
+					//if (proceedWithRender)	{
+					//	//NSLog(@"\t\tfenceB executed- clear to render");
+					//}
+					//else	{
+					//	//NSLog(@"\t\tfenceB hasn't executed yet");
+					//}
 				}
 			}
 		}
