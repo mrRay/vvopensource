@@ -39,8 +39,8 @@
 #define VVSUBPOINT(a,b) (NSMakePoint((a.x-b.x),(a.y-b.y)))
 
 //	macro for clipping a val to the normalized range (0.0 - 1.0)
-#define CLIPNORM(n) ((n<0.0)?0.0:((n>1.0)?1.0:n))
-#define CLIPTORANGE(n,l,h) ((n<l)?l:((n>h)?h:n))
+#define CLIPNORM(n) (((n)<0.0)?0.0:(((n)>1.0)?1.0:(n)))
+#define CLIPTORANGE(n,l,h) (((n)<(l))?(l):(((n)>(h))?(h):(n)))
 
 
 

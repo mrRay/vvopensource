@@ -230,7 +230,7 @@ BOOL			_spriteManagerInitialized;
 	
 	return returnMe;
 }
-- (NSMutableArray *) spritesAtPoint:(NSpoint)p	{
+- (NSMutableArray *) spritesAtPoint:(NSPoint)p	{
 	if (deleted || !_spriteManagerInitialized)
 		return nil;
 	NSMutableArray		*returnMe = nil;
