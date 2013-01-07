@@ -41,6 +41,7 @@ MutLockArray		*_spriteManagerArray;
 - (long) getUniqueSpriteIndex;
 
 - (VVSprite *) spriteAtPoint:(NSPoint)p;
+- (NSMutableArray *) spritesAtPoint:(NSPoint)p;
 - (VVSprite *) visibleSpriteAtPoint:(NSPoint)p;
 - (VVSprite *) spriteForIndex:(long)i;
 - (void) removeSpriteForIndex:(long)i;

@@ -231,6 +231,21 @@ BOOL			_spriteManagerInitialized;
 	
 	return returnMe;
 }
+- (NSMutableArray *) spritesAtPoint:(NSpoint)p	{
+	if (deleted || !_spriteManagerInitialized)
+		return nil;
+	NSMutableArray		*returnMe = nil;
+	[spriteArray rdlock];
+	for (VVSprite *tmpSprite in [spriteArray array])	{
+		if ((![tmpSprite locked]) && ([tmpSprite checkPoint:p]))	{
+			if (returnMe == nil)
+				returnMe = MUTARRAY;
+			[returnMe addObject:tmpSprite];
+		}
+	}
+	[spriteArray unlock];
+	return returnMe;
+}
 - (VVSprite *) visibleSpriteAtPoint:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || !_spriteManagerInitialized)
