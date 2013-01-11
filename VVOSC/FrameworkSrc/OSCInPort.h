@@ -34,7 +34,7 @@ the documentation here only covers the basics, the header file for this class is
 	int						sock;		//	socket file descriptor.  remember, everything in unix is files!
 	struct sockaddr_in		addr;		//	struct that describes *my* address (this is an in port)
 	unsigned short			port;		//	the port number i'm receiving from
-	unsigned char			buf[65506];	//	the socket gets data and dumps it here immediately
+	unsigned char			*buf;	//	the socket gets data and dumps it here immediately
 	
 	OSSpinLock				scratchLock;
 	NSThread				*thread;
