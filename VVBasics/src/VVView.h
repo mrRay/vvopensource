@@ -39,7 +39,7 @@ typedef enum	{
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
-	//BOOL				needsDisplay;
+	BOOL				needsDisplay;
 	
 	NSRect				frame;
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this

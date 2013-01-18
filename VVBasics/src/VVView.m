@@ -35,7 +35,7 @@
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
-	//needsDisplay = YES;
+	needsDisplay = YES;
 	frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
 	bounds = frame;
@@ -427,20 +427,31 @@
 - (void) setSpritesNeedUpdate	{
 	spritesNeedUpdate = YES;
 }
-//@synthesize needsDisplay;
-//- (void) setNeedsDisplay	{
-//	[self setNeedsDisplay:YES];
-//}
-//- (void) setNeedsRender:(BOOL)n	{
-//	if (n)
-//		[self setNeedsDisplay:YES];
-//}
-//- (void) setNeedsRender	{
-//	[self setNeedsDisplay:YES];
-//}
-//- (BOOL) needsRender	{
-//	return needsDisplay;
-//}
+- (void) setNeedsDisplay:(BOOL)n	{
+	needsDisplay = n;
+	if (needsDisplay)	{
+		if (superview != nil)
+			[superview setNeedsDisplay:YES];
+		else if (containerView != nil)
+			[containerView setNeedsDisplay:YES];
+	}
+}
+- (BOOL) needsDisplay	{
+	return needsDisplay;
+}
+- (void) setNeedsDisplay	{
+	[self setNeedsDisplay:YES];
+}
+- (void) setNeedsRender:(BOOL)n	{
+	if (n)
+		[self setNeedsDisplay:YES];
+}
+- (void) setNeedsRender	{
+	[self setNeedsDisplay:YES];
+}
+- (BOOL) needsRender	{
+	return needsDisplay;
+}
 @synthesize lastMouseEvent;
 - (void) setClearColor:(NSColor *)n	{
 
