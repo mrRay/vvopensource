@@ -234,7 +234,9 @@
 	if ([vvSubviews count]>0)	{
 		[vvSubviews rdlock];
 		for (VVView *viewPtr in [vvSubviews array])	{
-			tmpSubview = [viewPtr vvSubviewHitTest:p];
+			NSRect		tmpFrame = [viewPtr frame];
+			NSPoint		localPoint = NSMakePoint(p.x-tmpFrame.origin.x, p.y-tmpFrame.origin.y);
+			tmpSubview = [viewPtr vvSubviewHitTest:localPoint];
 			if (tmpSubview != nil)
 				break;
 		}
@@ -450,7 +452,7 @@
 	pthread_mutex_unlock(&glLock);
 }
 - (void) drawRect:(NSRect)r	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	
@@ -541,20 +543,25 @@
 			if (spriteManager != nil)
 				[spriteManager drawRect:r];
 			
-			
+			//	tell the subviews to draw
 			[vvSubviews rdlock];
 				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
 				VVView				*viewPtr;
 				while (viewPtr = [it nextObject])	{
 					NSRect				tmpFrame = [viewPtr frame];
 					if (NSIntersectsRect(r,tmpFrame))	{
+						glPushMatrix();
+						glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
+						
 						tmpFrame.origin = NSMakePoint(0,0);
-						[viewPtr drawRect:tmpFrame inContext:cgl_ctx];
+						[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
+						
+						glPopMatrix();
 					}
 				}
 			[vvSubviews unlock];
 			
-			
+			//	if appropriate, draw the border
 			if (drawBorder)	{
 				glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
 				glEnableClientState(GL_VERTEX_ARRAY);

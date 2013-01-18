@@ -98,6 +98,7 @@ typedef enum	{
 - (MutLockArray *) subviews;
 - (id) window;
 
+- (void) _drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 - (BOOL) isOpaque;
 - (void) finishedDrawing;

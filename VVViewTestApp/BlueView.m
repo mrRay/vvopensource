@@ -18,11 +18,11 @@
 
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s",__func__);
+	
 	//NSRectLog(@"\t\tpassed rect is",r);
-	GLPUSHORIGIN
 	glColor4f(0,0,1,1);
 	GLDRAWRECT(bounds);
-	GLPOPORIGIN
+	
 }
 
 

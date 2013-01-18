@@ -46,7 +46,7 @@
 	autoresizingMask = VVViewResizeMaxXMargin | VVViewResizeMinYMargin;
 	propertyLock = OS_SPINLOCK_INIT;
 	lastMouseEvent = nil;
-	isOpaque = YES;
+	isOpaque = NO;
 	for (int i=0;i<4;++i)	{
 		clearColor[i] = 0.0;
 		borderColor[i] = 0.0;
@@ -190,16 +190,17 @@
 	//	convert the point so its coords are local to the container view
 	//NSPoint				p = [self convertPoint:pointInWindow fromView:nil];
 	//NSLog(@"\t\tconverted point is (%f, %f)",p.x,p.y);
-	NSRect				localFrame = [self frame];
+	NSRect				localBounds = [self bounds];
 	//NSRectLog(@"\t\tmy frame is",localFrame);
-	if (!NSPointInRect(p,localFrame))
+	if (!NSPointInRect(p,localBounds))
 		return nil;
 	id					returnMe = nil;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
-		NSRect				tmpFrame = [viewPtr frame];
+		NSRect			tmpFrame = [viewPtr frame];
+		NSPoint			viewLocalPoint = NSMakePoint(p.x-tmpFrame.origin.x, p.y-tmpFrame.origin.y);
 		if (NSPointInRect(p,tmpFrame))	{
-			returnMe = [viewPtr vvSubviewHitTest:p];
+			returnMe = [viewPtr vvSubviewHitTest:viewLocalPoint];
 			if (returnMe != nil)
 				break;
 		}
@@ -351,32 +352,38 @@
 
 
 - (void) drawRect:(NSRect)r	{
-	NSLog(@"%s",__func__);
+	NSLog(@"ERR: %s",__func__);
+	/*		this method should never be called or used, ever.		*/
 }
-- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+- (void) _drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	
-	//GLPUSHORIGIN
-	
+	//	if i'm opaque, fill my bounds
 	OSSpinLockLock(&propertyLock);
-	//if (clearColor != nil)	{
-	//	[clearColor set];
-	//	NSRectFill(r);
-	//}
+	if (isOpaque)	{
+		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
+		GLDRAWRECT(bounds);
+	}
 	OSSpinLockUnlock(&propertyLock);
 	
+	//	tell the sprite manager to draw
 	if (spriteManager != nil)
 		[spriteManager drawRect:r];
 	
+	//	...now call the "meat" of my drawing method (where most drawing code will be handled)
+	[self drawRect:r inContext:cgl_ctx];
+	
+	//	if there's a border, draw it now
 	OSSpinLockLock(&propertyLock);
-	//if (drawBorder && borderColor!=nil)	{
-	//	[borderColor set];
-	//	NSFrameRect([self bounds]);
-	//}
+	if (drawBorder)	{
+		glColor4f(borderColor[0], borderColor[1], borderColor[2], borderColor[3]);
+		GLSTROKERECT(bounds);
+	}
 	OSSpinLockUnlock(&propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
@@ -386,12 +393,23 @@
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews rdlock];
 		for (VVView *viewPtr in [[subviews array] reverseObjectEnumerator])	{
-			//[viewPtr drawRect
+			NSRect		tmpFrame = [viewPtr frame];
+			if (NSIntersectsRect(r, tmpFrame))	{
+				glPushMatrix();
+				glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
+				
+				tmpFrame.origin = NSMakePoint(0,0);
+				[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
+				
+				glPopMatrix();
+			}
 		}
 		[subviews unlock];
 	}
-	
-	//GLPOPORIGIN
+}
+- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+	NSLog(@"ERR: %s",__func__);
+	/*		this method should be used by subclasses.  put the simple drawing code in here.		*/
 }
 - (BOOL) isOpaque	{
 	return isOpaque;
