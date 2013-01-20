@@ -44,6 +44,7 @@ typedef enum	{
 	NSRect				frame;
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
 	NSRect				bounds;
+	GLfloat				boundsRotation;
 	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
@@ -87,6 +88,7 @@ typedef enum	{
 - (void) setBounds:(NSRect)n;
 - (NSRect) visibleRect;
 
+@property (readonly) id superview;
 @property (assign,readwrite) BOOL autoresizesSubviews;
 @property (assign,readwrite) VVViewResizeMask autoresizingMask;
 
@@ -108,10 +110,10 @@ typedef enum	{
 @property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
-//@property (assign,readwrite) BOOL needsDisplay;
-//- (void) setNeedsDisplay;
-//@property (assign,readwrite) BOOL needsRender;	//	does same thing as needsDisplay
-//- (void) setNeedsRender;
+@property (assign,readwrite) BOOL needsDisplay;
+- (void) setNeedsDisplay;
+@property (assign,readwrite) BOOL needsRender;	//	does same thing as needsDisplay
+- (void) setNeedsRender;
 @property (readonly) NSEvent *lastMouseEvent;
 - (void) setClearColor:(NSColor *)n;
 - (void) setClearColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a;

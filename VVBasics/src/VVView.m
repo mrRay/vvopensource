@@ -39,6 +39,7 @@
 	frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
 	bounds = frame;
+	boundsRotation = 0.0;
 	superview = nil;
 	containerView = nil;
 	subviews = [[MutLockArray alloc] init];
@@ -307,6 +308,7 @@
 }
 
 
+@synthesize superview;
 @synthesize autoresizesSubviews;
 @synthesize autoresizingMask;
 - (void) addSubview:(id)n	{
@@ -409,7 +411,7 @@
 }
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
 	NSLog(@"ERR: %s",__func__);
-	/*		this method should be used by subclasses.  put the simple drawing code in here.		*/
+	/*		this method should be used by subclasses.  put the simple drawing code in here (origin is the bottom-left corner of me!)		*/
 }
 - (BOOL) isOpaque	{
 	return isOpaque;
