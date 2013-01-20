@@ -17,11 +17,11 @@
 
 
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	
 	//NSRectLog(@"\t\tpassed rect is",r);
 	glColor4f(0,0,1,1);
-	GLDRAWRECT(bounds);
+	GLDRAWRECT(NSMakeRect(0,0,_bounds.size.width,_bounds.size.height));
 	
 }
 

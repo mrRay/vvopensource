@@ -24,8 +24,8 @@
 - (id) initWithFrame:(NSRect)n	{
 	if (self = [super init])	{
 		[self generalInit];
-		frame = n;
-		bounds = NSMakeRect(0,0,frame.size.width,frame.size.height);
+		_frame = n;
+		_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 		return self;
 	}
 	[self release];
@@ -36,10 +36,10 @@
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	needsDisplay = YES;
-	frame = NSMakeRect(0,0,1,1);
+	_frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
-	bounds = frame;
-	boundsRotation = 0.0;
+	_bounds = _frame;
+	_boundsRotation = 0.0;
 	superview = nil;
 	containerView = nil;
 	subviews = [[MutLockArray alloc] init];
@@ -235,23 +235,23 @@
 	*/
 }
 - (BOOL) checkRect:(NSRect)n	{
-	return NSIntersectsRect(n,frame);
+	return NSIntersectsRect(n,_frame);
 }
 
 
 - (NSRect) frame	{
-	return frame;
+	return _frame;
 }
 - (void) setFrame:(NSRect)n	{
 	//NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
-	if (NSEqualRects(n,frame))
+	if (NSEqualRects(n,_frame))
 		return;
 	[self setFrameSize:n.size];
-	frame.origin = n.origin;
+	_frame.origin = n.origin;
 }
 - (void) setFrameSize:(NSSize)proposedSize	{
 	//NSLog(@"%s ... (%f x %f)",__func__,n.width,n.height);
-	NSSize			oldSize = frame.size;
+	NSSize			oldSize = _frame.size;
 	NSSize			n = NSMakeSize(fmax(minFrameSize.width,proposedSize.width),fmax(minFrameSize.height,proposedSize.height));
 	
 	if ([self autoresizesSubviews])	{
@@ -294,14 +294,27 @@
 		[subviews unlock];
 	}
 	
-	frame.size = n;
-	bounds = NSMakeRect(0,0,frame.size.width,frame.size.height);
+	_frame.size = n;
+	_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+}
+- (void) setFrameOrigin:(NSPoint)n	{
+	_frame.origin = n;
+	[self setNeedsDisplay:YES];
 }
 - (NSRect) bounds	{
-	return bounds;
+	return _bounds;
 }
 - (void) setBounds:(NSRect)n	{
-	bounds = n;	
+	_bounds = n;	
+}
+- (void) setBoundsOrigin:(NSPoint)n	{
+	_bounds.origin = n;
+}
+- (void) setBoundsRotation:(GLfloat)n	{
+	_boundsRotation = n;
+}
+- (GLfloat) boundsRotation	{
+	return _boundsRotation;
 }
 - (NSRect) visibleRect	{
 	return NSZeroRect;
@@ -316,7 +329,7 @@
 		return;
 	[subviews wrlock];
 	if (![subviews containsIdenticalPtr:n])	{
-		[subviews addObject:n];
+		[subviews insertObject:n atIndex:0];
 		[n setContainerView:containerView];
 		if (containerView != nil)
 			[containerView setNeedsDisplay:YES];
@@ -369,7 +382,7 @@
 	OSSpinLockLock(&propertyLock);
 	if (isOpaque)	{
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
-		GLDRAWRECT(bounds);
+		GLDRAWRECT(_bounds);
 	}
 	OSSpinLockUnlock(&propertyLock);
 	
@@ -384,7 +397,7 @@
 	OSSpinLockLock(&propertyLock);
 	if (drawBorder)	{
 		glColor4f(borderColor[0], borderColor[1], borderColor[2], borderColor[3]);
-		GLSTROKERECT(bounds);
+		GLSTROKERECT(_bounds);
 	}
 	OSSpinLockUnlock(&propertyLock);
 	
@@ -395,10 +408,14 @@
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews rdlock];
 		for (VVView *viewPtr in [[subviews array] reverseObjectEnumerator])	{
-			NSRect		tmpFrame = [viewPtr frame];
+			NSRect				tmpFrame = [viewPtr frame];
+			GLfloat				tmpRotation = [viewPtr boundsRotation];
+			NSRect				tmpBounds = [viewPtr bounds];
 			if (NSIntersectsRect(r, tmpFrame))	{
 				glPushMatrix();
 				glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
+				glRotatef(tmpRotation, 0.0, 0.0, 1.0);
+				glTranslatef(tmpBounds.origin.x, -1.0*tmpBounds.origin.y, 0.0);
 				
 				tmpFrame.origin = NSMakePoint(0,0);
 				[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];

@@ -41,10 +41,10 @@ typedef enum	{
 	BOOL				spritesNeedUpdate;
 	BOOL				needsDisplay;
 	
-	NSRect				frame;
+	NSRect				_frame;
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
-	NSRect				bounds;
-	GLfloat				boundsRotation;
+	NSRect				_bounds;
+	GLfloat				_boundsRotation;
 	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
@@ -84,8 +84,12 @@ typedef enum	{
 - (NSRect) frame;
 - (void) setFrame:(NSRect)n;
 - (void) setFrameSize:(NSSize)n;
+- (void) setFrameOrigin:(NSPoint)n;
 - (NSRect) bounds;
 - (void) setBounds:(NSRect)n;
+- (void) setBoundsOrigin:(NSPoint)n;
+- (void) setBoundsRotation:(GLfloat)n;
+- (GLfloat) boundsRotation;
 - (NSRect) visibleRect;
 
 @property (readonly) id superview;

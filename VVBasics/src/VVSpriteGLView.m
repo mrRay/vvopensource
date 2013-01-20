@@ -212,8 +212,14 @@
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
-	[vvSubviews lockAddObject:n];
-	[n setContainerView:self];
+	
+	[vvSubviews wrlock];
+	if (![vvSubviews containsIdenticalPtr:n])	{
+		[vvSubviews insertObject:n atIndex:0];
+		[n setContainerView:self];
+	}
+	[vvSubviews unlock];
+	[self setNeedsDisplay:YES];
 }
 - (void) removeVVSubview:(id)n	{
 	//NSLog(@"%s",__func__);
@@ -549,9 +555,13 @@
 				VVView				*viewPtr;
 				while (viewPtr = [it nextObject])	{
 					NSRect				tmpFrame = [viewPtr frame];
+					GLfloat				tmpRotation = [viewPtr boundsRotation];
+					NSRect				tmpBounds = [viewPtr bounds];
 					if (NSIntersectsRect(r,tmpFrame))	{
 						glPushMatrix();
 						glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
+						glRotatef(tmpRotation, 0.0, 0.0, 1.0);
+						glTranslatef(tmpBounds.origin.x, -1.0*tmpBounds.origin.y, 0.0);
 						
 						tmpFrame.origin = NSMakePoint(0,0);
 						[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
