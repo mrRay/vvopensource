@@ -458,7 +458,7 @@
 	pthread_mutex_unlock(&glLock);
 }
 - (void) drawRect:(NSRect)r	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	

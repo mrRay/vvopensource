@@ -39,6 +39,7 @@ typedef enum	{
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
+	CGLContextObj		spriteCtx;	//	NOT RETAINED! only NON-nil during draw callback, var exists so stuff with draw callbacks can get the GL context w/o having to pass it in methods (which would require discrete code paths)
 	BOOL				needsDisplay;
 	
 	NSRect				_frame;

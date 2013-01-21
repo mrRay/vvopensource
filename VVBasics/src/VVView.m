@@ -35,6 +35,7 @@
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
+	spriteCtx = NULL;
 	needsDisplay = YES;
 	_frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
@@ -375,6 +376,8 @@
 	if (deleted)
 		return;
 	
+	spriteCtx = cgl_ctx;
+	
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	
@@ -425,6 +428,8 @@
 		}
 		[subviews unlock];
 	}
+	
+	spriteCtx = NULL;
 }
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
 	NSLog(@"ERR: %s",__func__);
