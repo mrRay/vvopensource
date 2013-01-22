@@ -40,6 +40,7 @@
 	_frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
 	_bounds = _frame;
+	_boundsOrigin = NSMakePoint(0.0, 0.0);
 	_boundsRotation = 0.0;
 	superview = nil;
 	containerView = nil;
@@ -309,7 +310,10 @@
 	_bounds = n;	
 }
 - (void) setBoundsOrigin:(NSPoint)n	{
-	_bounds.origin = n;
+	_boundsOrigin = n;
+}
+- (NSPoint) boundsOrigin	{
+	return _boundsOrigin;
 }
 - (void) setBoundsRotation:(GLfloat)n	{
 	_boundsRotation = n;
@@ -318,6 +322,7 @@
 	return _boundsRotation;
 }
 - (NSRect) visibleRect	{
+	NSLog(@"%s - ERR",__func__);
 	return NSZeroRect;
 }
 
@@ -331,6 +336,7 @@
 	[subviews wrlock];
 	if (![subviews containsIdenticalPtr:n])	{
 		[subviews insertObject:n atIndex:0];
+		[n setSuperview:self];
 		[n setContainerView:containerView];
 		if (containerView != nil)
 			[containerView setNeedsDisplay:YES];
@@ -349,6 +355,12 @@
 	if (deleted)
 		return;
 	NSLog(@"%s - ERR",__func__);
+}
+- (void) setSuperview:(id)n	{
+	superview = n;
+}
+- (id) superview	{
+	return superview;
 }
 - (void) setContainerView:(id)n	{
 	containerView = n;
@@ -413,12 +425,14 @@
 		for (VVView *viewPtr in [[subviews array] reverseObjectEnumerator])	{
 			NSRect				tmpFrame = [viewPtr frame];
 			GLfloat				tmpRotation = [viewPtr boundsRotation];
-			NSRect				tmpBounds = [viewPtr bounds];
-			if (NSIntersectsRect(r, tmpFrame))	{
+			NSPoint				tmpOrigin = [viewPtr boundsOrigin];
+			if (NSIntersectsRect(r,tmpFrame))	{
 				glPushMatrix();
 				glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
-				glRotatef(tmpRotation, 0.0, 0.0, 1.0);
-				glTranslatef(tmpBounds.origin.x, -1.0*tmpBounds.origin.y, 0.0);
+				if (tmpRotation != 0.0)
+					glRotatef(tmpRotation, 0.0, 0.0, 1.0);
+				if (tmpOrigin.x!=0.0 || tmpOrigin.y!=0.0)
+					glTranslatef(tmpOrigin.x, -1.0*tmpOrigin.y, 0.0);
 				
 				tmpFrame.origin = NSMakePoint(0,0);
 				[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];

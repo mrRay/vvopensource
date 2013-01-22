@@ -129,14 +129,14 @@ glPopMatrix();
 #define GLSTROKERECT(r)														\
 {																			\
 	GLfloat 	vvMacroVertices[]={											\
-		r.origin.x-0.5, r.origin.y-0.5, 0.0,								\
-		r.origin.x+r.size.width+0.5, r.origin.y-0.5, 0.0,					\
-		r.origin.x+r.size.width+0.5, r.origin.y-0.5, 0.0,					\
-		r.origin.x+r.size.width+0.5, r.origin.y+r.size.height-0.5, 0.0,		\
-		r.origin.x+r.size.width+0.5, r.origin.y+r.size.height-0.5, 0.0,		\
-		r.origin.x-0.5, r.origin.y+r.size.height-0.5, 0.0,					\
-		r.origin.x-0.5, r.origin.y+r.size.height-0.5, 0.0,					\
-		r.origin.x-0.5, r.origin.y-0.5, 0.0};								\
+		r.origin.x+0.5, r.origin.y+0.5, 0.0,								\
+		r.origin.x+r.size.width-0.5, r.origin.y+0.5, 0.0,					\
+		r.origin.x+r.size.width-0.5, r.origin.y+0.5, 0.0,					\
+		r.origin.x+r.size.width-0.5, r.origin.y+r.size.height-0.5, 0.0,		\
+		r.origin.x+r.size.width-0.5, r.origin.y+r.size.height-0.5, 0.0,		\
+		r.origin.x+0.5, r.origin.y+r.size.height-0.5, 0.0,					\
+		r.origin.x+0.5, r.origin.y+r.size.height-0.5, 0.0,					\
+		r.origin.x+0.5, r.origin.y+0.5, 0.0};								\
 	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
 	glDrawArrays(GL_LINES,0,8);												\
 }

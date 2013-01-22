@@ -46,6 +46,7 @@ typedef enum	{
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
 	NSRect				_bounds;
 	GLfloat				_boundsRotation;
+	NSPoint				_boundsOrigin;	//	the bounds origin offset is kept as a separate var so i can quickly refer to "bounds" w/o having to worry about compensating for a non-zero origin.
 	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
@@ -89,6 +90,7 @@ typedef enum	{
 - (NSRect) bounds;
 - (void) setBounds:(NSRect)n;
 - (void) setBoundsOrigin:(NSPoint)n;
+- (NSPoint) boundsOrigin;
 - (void) setBoundsRotation:(GLfloat)n;
 - (GLfloat) boundsRotation;
 - (NSRect) visibleRect;
@@ -100,6 +102,8 @@ typedef enum	{
 - (void) addSubview:(id)n;
 - (void) removeSubview:(id)n;
 - (void) removeFromSuperview;
+- (void) setSuperview:(id)n;
+- (id) superview;
 - (void) setContainerView:(id)n;
 - (id) containerView;
 - (MutLockArray *) subviews;

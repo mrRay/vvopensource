@@ -556,12 +556,14 @@
 				while (viewPtr = [it nextObject])	{
 					NSRect				tmpFrame = [viewPtr frame];
 					GLfloat				tmpRotation = [viewPtr boundsRotation];
-					NSRect				tmpBounds = [viewPtr bounds];
+					NSPoint				tmpOrigin = [viewPtr boundsOrigin];
 					if (NSIntersectsRect(r,tmpFrame))	{
 						glPushMatrix();
 						glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
-						glRotatef(tmpRotation, 0.0, 0.0, 1.0);
-						glTranslatef(tmpBounds.origin.x, -1.0*tmpBounds.origin.y, 0.0);
+						if (tmpRotation != 0.0)
+							glRotatef(tmpRotation, 0.0, 0.0, 1.0);
+						if (tmpOrigin.x!=0.0 || tmpOrigin.y!=0.0)
+							glTranslatef(tmpOrigin.x, -1.0*tmpOrigin.y, 0.0);
 						
 						tmpFrame.origin = NSMakePoint(0,0);
 						[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
