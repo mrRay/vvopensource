@@ -88,7 +88,7 @@
 
 
 - (void) mouseDown:(NSEvent *)e	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted)
 		return;
 	OSSpinLockLock(&propertyLock);
@@ -108,6 +108,7 @@
 		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) rightMouseDown:(NSEvent *)e	{
+	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted)
 		return;
 	OSSpinLockLock(&propertyLock);
@@ -171,20 +172,25 @@
 
 
 - (NSPoint) convertPoint:(NSPoint)pointInWindow fromView:(id)view	{
+	//NSLog(@"%s ... %f, %f- %@",__func__,pointInWindow.x,pointInWindow.y,view);
 	if (deleted || containerView==nil)
 		return pointInWindow;
 	//	"containerView" points to the NSView-subclass that "owns" me- convert the passed point to coords local to "containerView", then convert them further to coords local to this view
 	NSPoint		returnMe = [containerView convertPoint:pointInWindow fromView:nil];
+	//	modify "returnme" for my frame offset
+	returnMe.x -= _frame.origin.x;
+	returnMe.y -= _frame.origin.y;
 	//	...now run up through my superviews, modifying the point to account for frame offsets!
 	id			tmpSuperview = superview;
 	if (tmpSuperview != nil)	{
 		do	{
 			NSRect		superviewFrame = [tmpSuperview frame];
 			tmpSuperview = [tmpSuperview superview];
-			returnMe.x += superviewFrame.origin.x;
-			returnMe.y += superviewFrame.origin.y;
+			returnMe.x -= superviewFrame.origin.x;
+			returnMe.y -= superviewFrame.origin.y;
 		} while (tmpSuperview != nil);
 	}
+	
 	return returnMe;
 }
 //	the point it's passed is in coords local to self!

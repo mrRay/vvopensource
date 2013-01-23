@@ -177,7 +177,7 @@
 	if ([vvSubviews count]>0)	{
 		[vvSubviews rdlock];
 		for (VVView *viewPtr in [vvSubviews array])	{
-			tmpSubview = [viewPtr hitTest:p];
+			tmpSubview = [viewPtr vvSubviewHitTest:p];
 			if (tmpSubview != nil)
 				break;
 		}
@@ -187,8 +187,6 @@
 	return tmpSubview;
 }
 */
-
-
 - (void) keyDown:(NSEvent *)event	{
 	NSLog(@"%s",__func__);
 	//[VVControl keyPressed:event];
@@ -349,6 +347,7 @@
 
 
 - (void) mouseDown:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	VVRELEASE(lastMouseEvent);
@@ -375,6 +374,7 @@
 		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) rightMouseDown:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
 	VVRELEASE(lastMouseEvent);
@@ -383,12 +383,14 @@
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//NSPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
-		clickedSubview = [self hitTest:locationInWindow];
+		clickedSubview = [self vvSubviewHitTest:localPoint];
+		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
 		if (clickedSubview == self) clickedSubview = nil;
 		if (clickedSubview != nil)	{
-			[clickedSubview mouseDown:e];
+			[clickedSubview rightMouseDown:e];
 			return;
 		}
 	}
