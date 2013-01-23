@@ -549,29 +549,46 @@
 			if (spriteManager != nil)
 				[spriteManager drawRect:r];
 			
+			
+			
 			//	tell the subviews to draw
 			[vvSubviews rdlock];
-				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
-				VVView				*viewPtr;
-				while (viewPtr = [it nextObject])	{
-					NSRect				tmpFrame = [viewPtr frame];
-					GLfloat				tmpRotation = [viewPtr boundsRotation];
-					NSPoint				tmpOrigin = [viewPtr boundsOrigin];
-					if (NSIntersectsRect(r,tmpFrame))	{
-						glPushMatrix();
-						glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
-						if (tmpRotation != 0.0)
-							glRotatef(tmpRotation, 0.0, 0.0, 1.0);
-						if (tmpOrigin.x!=0.0 || tmpOrigin.y!=0.0)
-							glTranslatef(tmpOrigin.x, -1.0*tmpOrigin.y, 0.0);
-						
-						tmpFrame.origin = NSMakePoint(0,0);
-						[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
-						
-						glPopMatrix();
+				if ([vvSubviews count]>0)	{
+					//	before i begin, enable the scissor test and get my bounds
+					NSRect		bounds = [self bounds];
+					glEnable(GL_SCISSOR_TEST);
+					//	run through all the subviews (last to first), drawing them
+					NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
+					VVView				*viewPtr;
+					while (viewPtr = [it nextObject])	{
+						NSRect				tmpFrame = [viewPtr frame];
+						GLfloat				tmpRotation = [viewPtr boundsRotation];
+						NSPoint				tmpOrigin = [viewPtr boundsOrigin];
+						if (NSIntersectsRect(r,tmpFrame))	{
+							//	use scissor to clip drawing
+							glScissor(tmpFrame.origin.x, tmpFrame.origin.y, tmpFrame.size.width, tmpFrame.size.height);
+							//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
+							glPushMatrix();
+							glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
+							if (tmpRotation != 0.0)
+								glRotatef(tmpRotation, 0.0, 0.0, 1.0);
+							if (tmpOrigin.x!=0.0 || tmpOrigin.y!=0.0)
+								glTranslatef(tmpOrigin.x, -1.0*tmpOrigin.y, 0.0);
+							
+							//	now tell the view to do its drawing!
+							tmpFrame.origin = NSMakePoint(0,0);
+							[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
+							
+							glPopMatrix();
+						}
 					}
+					//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
+					glScissor(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+					glDisable(GL_SCISSOR_TEST);
 				}
 			[vvSubviews unlock];
+			
+			
 			
 			//	if appropriate, draw the border
 			if (drawBorder)	{
