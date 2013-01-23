@@ -22,6 +22,8 @@
 	NSLog(@"%s",__func__);
 	[spriteView setClearColor:[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0]];
 	[spriteView setFlipped:YES];
+	[spriteView setDrawBorder:YES];
+	[spriteView setBorderColor:[NSColor colorWithDeviceRed:0 green:0 blue:1.0 alpha:1.0]];
 	
 	redView = [[RedView alloc] initWithFrame:NSMakeRect(0,0,160,120)];
 	[spriteView addVVSubview:redView];
@@ -31,6 +33,8 @@
 	[redView setAutoresizingMask:VVViewResizeWidth|VVViewResizeHeight];
 	//[redView setFrameOrigin:NSMakePoint(10,10)];
 	
+	
+	/*
 	blueView = [[BlueView alloc] initWithFrame:NSMakeRect(80,60,80,60)];
 	[redView addSubview:blueView];
 	[blueView release];
@@ -43,6 +47,7 @@
 	[greenView release];
 	//[greenView setAutoresizingMask:VVViewResizeMinYMargin|VVViewResizeMinXMargin];
 	//[greenView setAutoresizingMask:VVViewResizeWidth|VVViewResizeHeight];
+	*/
 	
 	[spriteView setNeedsDisplay:YES];
 	

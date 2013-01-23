@@ -664,13 +664,14 @@
 	//glDisable(GL_TEXTURE_2D);
 	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
-	//	moved in from drawRect:
 	NSRect				bounds = [self bounds];
+	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
+	
+	//	moved in from drawRect:
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
 	if (flipped)
 		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, 1.0, -1.0);
 	else
