@@ -405,6 +405,10 @@
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
 		GLDRAWRECT(_bounds);
 	}
+	else if (clearColor[3]!=0.0)	{
+		glColor4f(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+		GLDRAWRECT(_bounds);
+	}
 	OSSpinLockUnlock(&propertyLock);
 	
 	//	tell the sprite manager to draw
@@ -498,16 +502,30 @@
 }
 @synthesize lastMouseEvent;
 - (void) setClearColor:(NSColor *)n	{
-
+	NSColor				*devColor = nil;
+	NSColorSpace		*devCS = [NSColorSpace deviceRGBColorSpace];
+	devColor = ([n colorSpace]==devCS) ? n : [n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if (devColor != nil)
+		[devColor getComponents:(CGFloat *)clearColor];
 }
 - (void) setClearColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
-
+	clearColor[0] = r;
+	clearColor[1] = g;
+	clearColor[2] = b;
+	clearColor[3] = a;
 }
 - (void) setBorderColor:(NSColor *)n	{
-
+	NSColor				*devColor = nil;
+	NSColorSpace		*devCS = [NSColorSpace deviceRGBColorSpace];
+	devColor = ([n colorSpace]==devCS) ? n : [n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if (devColor != nil)
+		[devColor getComponents:(CGFloat *)borderColor];
 }
 - (void) setBorderColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
-
+	borderColor[0] = r;
+	borderColor[1] = g;
+	borderColor[2] = b;
+	borderColor[3] = a;
 }
 @synthesize drawBorder;
 @synthesize mouseDownModifierFlags;

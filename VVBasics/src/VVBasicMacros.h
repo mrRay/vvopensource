@@ -218,3 +218,22 @@
 	glBindTexture(localMacroTexTarget,0);																\
 }
 
+
+
+
+//	this is a macro for using an NSColor to set a GL color!
+#define NSTOGLCLEARCOLOR(c)	{			\
+	if (c!=nil)	{						\
+		CGFloat		comps[4];			\
+		[c getComponents:comps];		\
+		glClearColor(comps[0],comps[1],comps[2],comps[3]);		\
+	}									\
+}
+#define NSTOGLCOLOR(c)	{				\
+	if (c!=nil)	{						\
+		CGFloat		comps[4];			\
+		[c getComponents:comps];		\
+		glColor4f(comps[0],comps[1],comps[2],comps[3]);		\
+	}									\
+}
+
