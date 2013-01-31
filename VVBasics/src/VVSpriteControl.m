@@ -57,6 +57,7 @@ int					_spriteControlCount;
 	drawBorder = NO;
 	borderColor = nil;
 	mouseDownModifierFlags = 0;
+	modifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
 }
@@ -167,6 +168,7 @@ int					_spriteControlCount;
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	*/
 	mouseDownModifierFlags = [e modifierFlags];
+	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	else
@@ -197,6 +199,8 @@ int					_spriteControlCount;
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	*/
+	mouseDownModifierFlags = [e modifierFlags];
+	modifierFlags = mouseDownModifierFlags;
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
@@ -209,6 +213,7 @@ int					_spriteControlCount;
 		lastMouseEvent = [e retain];
 	OSSpinLockUnlock(&propertyLock);
 	
+	modifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
@@ -226,6 +231,7 @@ int					_spriteControlCount;
 		lastMouseEvent = [e retain];
 	OSSpinLockUnlock(&propertyLock);
 	
+	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
@@ -378,7 +384,12 @@ int					_spriteControlCount;
 	
 	return returnMe;
 }
+@synthesize mouseDownModifierFlags;
+@synthesize modifierFlags;
 @synthesize mouseIsDown;
+- (void) _setMouseIsDown:(BOOL)n	{
+	mouseIsDown = n;
+}
 
 
 @end

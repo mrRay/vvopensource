@@ -250,6 +250,8 @@
 			return;
 		}
 	}
+	mouseDownModifierFlags = [e modifierFlags];
+	modifierFlags = mouseDownModifierFlags;
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
