@@ -124,7 +124,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 	NSString		*tmpString = nil;
 	for (NSString *pathComponent in pathArray)	{
 		if (tmpString == nil)
-			tmpString = [NSString stringWithString:@""];
+			tmpString = @"";
 		else
 			tmpString = [NSString stringWithFormat:@"%@/%@",tmpString,pathComponent];
 	}

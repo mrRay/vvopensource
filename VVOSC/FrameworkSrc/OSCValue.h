@@ -48,6 +48,9 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 + (id) createWithInfinity;
 ///	Creates & returns an auto-released instance of OSCValue with an NSData blob
 + (id) createWithNSDataBlob:(NSData *)d;
+///	Creates & returns an auto-released instance of OSCValue with an SMPTE timecode
++ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f;
++ (id) createWithSMPTEChunk:(int)n;
 
 - (NSString *) lengthyDescription;
 
@@ -64,6 +67,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (id) initWithNil;
 - (id) initWithInfinity;
 - (id) initWithNSDataBlob:(NSData *)d;
+- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f;
+- (id) initWithSMPTEChunk:(int)n;
 
 ///	Returns an int value corresponding to the instance's value
 - (int) intValue;
@@ -95,6 +100,9 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (BOOL) boolValue;
 ///	Returns an auto-released NSData instance containing the "blob" data
 - (NSData *) blobNSData;
+///	Returns a 32-bit value representing the SMPTE time.
+- (int) SMPTEValue;
+- (NSString *) SMPTEString;
 
 ///	Returns a float value, regardless as to the type of the OSCValue
 - (float) calculateFloatValue;

@@ -18,11 +18,13 @@
 	//	make sure processing sysex can happen across multiple iterations of the callback loop
 	BOOL					processingSysex;
 	int						processingSysexIterationCount;
-	NSMutableArray			*sysexArray;
+	NSMutableArray			*sysexArray;	//	received sysex data is added to this array.  array is instance in node because a sysex dump may be split up across several MIDI packets, so we need something persistent...
 	//	the node will always *process* midi, but it will only send/receive midi if 'enabled' is YES
 	BOOL					enabled;
 	
-	//	this mutex makes sure multiple threads sending to this node simultaneously don't collid
+	Byte					*partialMTCQuarterFrameSMPTE;	//	simple 5 Byte array. fps mode (0=24, 1=25, 2=30-drop, 3=30), hours, minutes, seconds, frames.
+	Byte					*cachedMTCQuarterFrameSMPTE;	//	same as above- every 4 quarter-frames, the partialMTCQuarterFrameSMPTE gets pushed here!
+	//	this mutex makes sure multiple threads sending to this node simultaneously don't collide
 	pthread_mutex_t			sendingLock;
 	
 	//	if i'm a sender, these variables are used to store a packet list
@@ -59,9 +61,15 @@
 - (NSMutableArray *) sysexArray;
 - (BOOL) enabled;
 - (void) setEnabled:(BOOL)n;
+//	pass it an array of 5 Bytes!
+- (void) _getPartialMTCSMPTEArray:(Byte *)array;
+- (void) _setPartialMTCSMPTEArray:(Byte *)array;
+- (void) _pushPartialMTCSMPTEArrayToCachedVal;
+- (double) MTCQuarterFrameSMPTEAsDouble;
 
 @end
 
+double MTCSMPTEByteArrayToSeconds(Byte *byteArray);
 void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon);
 void myMIDINotificationProc(const MIDINotification *msg, void *refCon);
 void senderReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon);

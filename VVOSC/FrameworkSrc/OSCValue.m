@@ -10,7 +10,7 @@
 - (NSString *) description	{
 	switch (type)	{
 		case OSCValInt:
-			return [NSString stringWithFormat:@"<OSCVal i %ld>",*(int *)value];
+			return [NSString stringWithFormat:@"<OSCVal i %d>",*(int *)value];
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"<OSCVal f %f>",*(float *)value];
 		case OSCValString:
@@ -23,22 +23,24 @@
 		case OSCValDouble:
 			return [NSString stringWithFormat:@"<OSCVal d: %f>",*(double *)value];
 		case OSCValChar:
-			return [NSString stringWithFormat:@"<OSCVal c: %c>",(char *)value];
+			return [NSString stringWithFormat:@"<OSCVal c: %s>",(char *)value];
 		case OSCValColor:
 			return [NSString stringWithFormat:@"<OSCVal r %@>",(id)value];
 		case OSCValMIDI:
-			return [NSString stringWithFormat:@"<OSCVal m %ld-%ld-%ld-%ld>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+			return [NSString stringWithFormat:@"<OSCVal m %hhd-%hhd-%hhd-%hhd>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
 			if (*(BOOL *)value)
-				return [NSString stringWithString:@"<OSCVal T>"];
+				return @"<OSCVal T>";
 			else
-				return [NSString stringWithString:@"<OSCVal F>"];
+				return @"<OSCVal F>";
 		case OSCValNil:
 			return [NSString stringWithFormat:@"<OSCVal N>"];
 		case OSCValInfinity:
 			return [NSString stringWithFormat:@"<OSCVal I>"];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<OSCVal b: %@>",value];
+		case OSCValSMPTE:
+			return [NSString stringWithFormat:@"<OSCVal E: %d>",*(int *)value];
 	}
 	return [NSString stringWithFormat:@"<OSCValue ?>"];
 }
@@ -48,7 +50,7 @@
 #endif
 	switch (type)	{
 		case OSCValInt:
-			return [NSString stringWithFormat:@"integer %ld",*(int *)value];
+			return [NSString stringWithFormat:@"integer %d",*(int *)value];
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"float %f",*(float *)value];
 		case OSCValString:
@@ -60,7 +62,7 @@
 		case OSCValDouble:
 			return [NSString stringWithFormat:@"64-bit Float %f",*(double *)value];
 		case OSCValChar:
-			return [NSString stringWithFormat:@"Character \"%c\"",(char *)value];
+			return [NSString stringWithFormat:@"Character \"%s\"",(char *)value];
 		case OSCValColor:
 #if IPHONE
 			return [NSString stringWithFormat:@"color %@",(id)value];
@@ -70,18 +72,20 @@
 #endif
 			
 		case OSCValMIDI:
-			return [NSString stringWithFormat:@"MIDI %ld-%ld-%ld-%ld>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+			return [NSString stringWithFormat:@"MIDI %hhd-%hhd-%hhd-%hhd>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
 			if (*(BOOL *)value)
-				return [NSString stringWithString:@"True"];
+				return @"True";
 			else
-				return [NSString stringWithString:@"False"];
+				return @"False";
 		case OSCValNil:
 			return [NSString stringWithFormat:@"nil"];
 		case OSCValInfinity:
 			return [NSString stringWithFormat:@"infinity"];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<Data Blob>"];
+		case OSCValSMPTE:
+			return [NSString stringWithFormat:@"<SMPTE %@>",[self SMPTEString]];
 	}
 	return [NSString stringWithFormat:@"?"];
 }
@@ -161,6 +165,18 @@
 }
 + (id) createWithNSDataBlob:(NSData *)d	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithNSDataBlob:d];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithSMPTEVals:fps:d:h:m:s:f];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithSMPTEChunk:(int)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithSMPTEChunk:n];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
@@ -323,6 +339,47 @@
 	[self release];
 	return nil;
 }
+- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f	{
+	//NSLog(@"%s ... %d, %d, %d, %d, %d",__func__,fps,d,h,m,s,f);
+	if (self = [super init])	{
+		UInt32		tmpVal = 0x00000000;
+		//	first 4 bits are the FPS mode (OSCSMPTEFPS)
+		tmpVal = tmpVal | (fps & 0x0F);
+		tmpVal = tmpVal << 4;
+		//	next 3 bits are days
+		tmpVal = tmpVal | (d & 0x07);
+		tmpVal = tmpVal << 3;
+		//	next 5 bits are hours
+		tmpVal = tmpVal | (d & 0x1F);
+		tmpVal = tmpVal << 5;
+		//	next 6 bits are minutes
+		tmpVal = tmpVal | (d & 0x3F);
+		tmpVal = tmpVal << 6;
+		//	next 6 bits are seconds
+		tmpVal = tmpVal | (d & 0x3F);
+		tmpVal = tmpVal << 6;
+		//	next 8 bits are frames
+		tmpVal = tmpVal | (d & 0xFF);
+		
+		value = malloc(sizeof(int));
+		*(int *)value = tmpVal;
+		type = OSCValSMPTE;
+		//NSLog(@"\t\tchecking: %@",[self SMPTEString]);
+		return self;
+	}
+	[self release];
+	return nil;
+}
+- (id) initWithSMPTEChunk:(int)n	{
+	if (self = [super init])	{
+		value = malloc(sizeof(int));
+		*(int *)value = n;
+		type = OSCValSMPTE;
+		return self;
+	}
+	[self release];
+	return nil;
+}
 - (id) copyWithZone:(NSZone *)z	{
 	OSCValue		*returnMe = nil;
 	switch (type)	{
@@ -370,6 +427,9 @@
 		case OSCValBlob:
 			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:value];
 			break;
+		case OSCValSMPTE:
+			returnMe = [[OSCValue allocWithZone:z] initWithSMPTEChunk:*((int *)value)];
+			break;
 	}
 	return returnMe;
 }
@@ -385,6 +445,7 @@
 		case OSCValChar:
 		case OSCValMIDI:
 		case OSCValBool:
+		case OSCValSMPTE:
 			if (value != nil)
 				free(value);
 			value = nil;
@@ -469,6 +530,49 @@
 }
 - (NSData *) blobNSData	{
 	return (NSData *)value;
+}
+- (int) SMPTEValue	{
+	return *(int *)value;
+}
+- (NSString *) SMPTEString	{
+	/*	first 4 bits define FPS (OSCSMPTEFPS). 
+		next 3 bits define days. 
+		next 5 bits define hours. 
+		next 6 bits define minutes. 
+		next 6 bits define seconds. 
+		last 8 bits define frame.		*/
+	
+	UInt32		tmpVal = *(int *)value;
+	int			vals[6];	//	mode, days, hours, minutes, seconds, frames
+	vals[0] = (tmpVal >> 28);
+	vals[1] = (tmpVal >> 25) & 0x07;
+	vals[2] = (tmpVal >> 20) & 0x1F;
+	vals[3] = (tmpVal >> 14) & 0x3F;
+	vals[4] = (tmpVal >> 8) & 0x3F;
+	vals[5] = tmpVal & 0xFF;
+	
+	NSString	*returnMe = nil;
+	int			leadingZeroCount = 1;
+	while (vals[leadingZeroCount] == 0)	{
+		++leadingZeroCount;
+	}
+	--leadingZeroCount;
+	switch (leadingZeroCount)	{
+		case 0:
+			returnMe = [NSString stringWithFormat:@"%d:%d:%d:%d.%d",vals[1],vals[2],vals[3],vals[4],vals[5]];
+			break;
+		case 1:
+			returnMe = [NSString stringWithFormat:@"%d:%d:%d.%d",vals[2],vals[3],vals[4],vals[5]];
+			break;
+		case 2:
+			returnMe = [NSString stringWithFormat:@"%d:%d.%d",vals[3],vals[4],vals[5]];
+			break;
+		case 3:
+		case 4:
+			returnMe = [NSString stringWithFormat:@"%d.%d",vals[4],vals[5]];
+			break;
+	}
+	return returnMe;
 }
 
 
@@ -561,6 +665,40 @@
 		case OSCValBlob:
 			returnMe = (float)1.0;
 			break;
+		case OSCValSMPTE:
+			returnMe = 0.0;
+			//	switching the "osc smpte fps mode", so i can convert frames into a double/seconds
+			switch ((*(int *)value) >> 28)	{
+				case OSCSMPTEFPS24:
+					returnMe += (float)((*(int *)value) & 0xFF)/24.0;
+					break;
+				case OSCSMPTEFPS25:
+					returnMe += (float)((*(int *)value) & 0xFF)/25.0;
+					break;
+				case OSCSMPTEFPS30:
+					returnMe += (float)((*(int *)value) & 0xFF)/30.0;
+					break;
+				case OSCSMPTEFPS48:
+					returnMe += (float)((*(int *)value) & 0xFF)/48.0;
+					break;
+				case OSCSMPTEFPS50:
+					returnMe += (float)((*(int *)value) & 0xFF)/50.0;
+					break;
+				case OSCSMPTEFPS60:
+					returnMe += (float)((*(int *)value) & 0xFF)/60.0;
+					break;
+				case OSCSMPTEFPS120:
+					returnMe += (float)((*(int *)value) & 0xFF)/120.0;
+					break;
+				case OSCSMPTEFPSUnknown:
+				default:
+					break;
+			}
+			returnMe += (float)(((*(int *)value) >> 8) & 0x3F);	//	seconds
+			returnMe += (float)(((*(int *)value) >> 14) & 0x3F) * 60.0;	//	minutes
+			returnMe += (float)(((*(int *)value) >> 20) & 0x1F) * 60.0 * 60.0;	//	hours
+			returnMe += (float)(((*(int *)value) >> 25) & 0x07) * 60.0 * 60.0 * 24.0;	//	days
+			break;
 	}
 	return returnMe;
 }
@@ -580,6 +718,7 @@
 		case OSCValChar:
 		case OSCValColor:
 		case OSCValMIDI:
+		case OSCValSMPTE:
 			return 4;
 			break;
 		case OSCVal64Int:
@@ -754,6 +893,13 @@
 			*d = *d + (int)tmpLong;
 			*d = ROUNDUP4(*d);
 			b[*t] = 'b';
+			++*t;
+			break;
+		case OSCValSMPTE:	//	AD-HOC DATA TYPE!  ONLY SUPPORTED BY THIS FRAMEWORK!
+			*((unsigned int *)(b+*d)) = NSSwapHostIntToBig(*((unsigned int *)(value)));
+			*d += 4;
+			
+			b[*t] = 'E';
 			++*t;
 			break;
 	}

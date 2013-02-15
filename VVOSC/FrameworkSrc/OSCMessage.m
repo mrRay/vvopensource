@@ -382,6 +382,11 @@
 				break;
 			case 'I':			//	Infinitum.  no bytes are allocated in the argument data!
 				break;
+			case 'E':			//	SMPTE timecode. AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK!
+				oscValue = [OSCValue createWithSMPTEChunk:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
+				tmpIndex += 4;
+				break;
 		}
 	}
 	//	return the msg- the bundle that parsed it will add an execution date (if appropriate) and send it to the port

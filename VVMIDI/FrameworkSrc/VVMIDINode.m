@@ -183,10 +183,16 @@
 	processingSysexIterationCount = 0;
 	sysexArray = [[NSMutableArray arrayWithCapacity:0] retain];
 	enabled = YES;
+	partialMTCQuarterFrameSMPTE = malloc(sizeof(Byte)*5);
+	cachedMTCQuarterFrameSMPTE = malloc(sizeof(Byte)*5);
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
 	pthread_mutex_init(&sendingLock,&attr);
 	pthread_mutexattr_destroy(&attr);
+	for (int i=0; i<5; ++i)	{
+		partialMTCQuarterFrameSMPTE[i] = 0;
+		cachedMTCQuarterFrameSMPTE[i] = 0;
+	}
 	packetList = NULL;
 	currentPacket = NULL;
 	return self;
@@ -211,6 +217,16 @@
 	if (sysexArray != nil)	{
 		[sysexArray release];
 		sysexArray = nil;
+	}
+	
+	if (partialMTCQuarterFrameSMPTE != nil)	{
+		free(partialMTCQuarterFrameSMPTE);
+		partialMTCQuarterFrameSMPTE = nil;
+	}
+	
+	if (cachedMTCQuarterFrameSMPTE != nil)	{
+		free(cachedMTCQuarterFrameSMPTE);
+		cachedMTCQuarterFrameSMPTE = nil;
 	}
 	
 	if (packetList != NULL)	{
@@ -467,11 +483,73 @@
 - (void) setEnabled:(BOOL)n	{
 	enabled = n;
 }
+- (void) _getPartialMTCSMPTEArray:(Byte *)array	{
+	if (array==nil)
+		return;
+	for (int i=0; i<5; ++i)
+		*((Byte *)(array + i)) = partialMTCQuarterFrameSMPTE[i];
+}
+- (void) _setPartialMTCSMPTEArray:(Byte *)array	{
+	if (array==nil)
+		return;
+	for (int i=0; i<5; ++i)
+		partialMTCQuarterFrameSMPTE[i] = *((Byte *)(array + i));
+}
+- (void) _pushPartialMTCSMPTEArrayToCachedVal	{
+	//NSLog(@"%s",__func__);
+	for (int i=0; i<5; ++i)
+		cachedMTCQuarterFrameSMPTE[i] = partialMTCQuarterFrameSMPTE[i];
+}
+- (double) MTCQuarterFrameSMPTEAsDouble	{
+	//NSLog(@"%s: %d - %d - %d - %d - %d",__func__,cachedMTCQuarterFrameSMPTE[0],cachedMTCQuarterFrameSMPTE[1],cachedMTCQuarterFrameSMPTE[2],cachedMTCQuarterFrameSMPTE[3],cachedMTCQuarterFrameSMPTE[4]);
+	double			returnMe = MTCSMPTEByteArrayToSeconds(cachedMTCQuarterFrameSMPTE);
+	return returnMe;
+}
 
 
 @end
 
 
+
+
+double MTCSMPTEByteArrayToSeconds(Byte *byteArray)	{
+	double		returnMe = 0.0;
+	double		baseFPS = 0.0;
+	int			byteArrayVal = 0;
+	for (int i=0; i<5; ++i)	{
+		byteArrayVal = *((Byte *)(byteArray+i));
+		switch (i)	{
+			case 0:	//	the first byte is the FPS mode
+				switch (byteArrayVal)	{
+					case 0:	//	24
+						baseFPS = 24.0;
+						break;
+					case 1:	//	25
+						baseFPS = 24.0;
+						break;
+					case 2:	//	drop-30
+					case 3:	//	30
+						baseFPS = 30.0;
+						break;
+				}
+				break;
+			case 1:	//	hours
+				returnMe += (byteArrayVal) * 60.0 * 60.0;
+				break;
+			case 2:	//	minutes
+				returnMe += (byteArrayVal) * 60.0;
+				break;
+			case 3:	//	seconds
+				returnMe += (byteArrayVal);
+				break;
+			case 4:	//	frames
+				returnMe += ((double)byteArrayVal/baseFPS);
+				break;
+		}
+	}
+	
+	return returnMe;
+}
 void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
 	MIDIPacket				*packet = nil;
@@ -494,6 +572,8 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 		processingSysex = NO;
 	}
 	
+	Byte					MTCSMPTE[5];
+	BOOL					quarterFrameVal = NO;
 	
 	//	run through all the packets in the passed list of packets
 	packet = (MIDIPacket *)&pktList->packet[0];
@@ -504,8 +584,9 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 			//	check to see what kind of byte it is
 			//	if it's in the range 0x80 - 0xFF, it's a status byte- the first byte of a message
 			if ((currByte >= 0x80) && (currByte <= 0xFF))	{
-				//	what kind of status byte is it?
-				switch(currByte & 0xF0)	{
+				
+				quarterFrameVal = NO;
+				switch((currByte & 0xF0))	{
 					case VVMIDINoteOffVal:
 					case VVMIDINoteOnVal:
 					case VVMIDIAfterTouchVal:
@@ -524,6 +605,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 						switch (currByte)	{
 							//	common messages- insert leisurely
 							case VVMIDIMTCQuarterFrameVal:
+								quarterFrameVal = YES;
 							case VVMIDISongPosPointerVal:
 							case VVMIDISongSelectVal:
 							case VVMIDIUndefinedCommon1Val:
@@ -593,6 +675,81 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 									[newMsg setType:VVMIDINoteOffVal];
 								++msgElementCount;
 								break;
+						}
+						
+						/*	if the last midi message was a MTC quarter-frame message, i need to pass it to the 
+						node now (the node maintains a full SMPTE value as it must be assembed from multiple 
+						packets, and if i don't pass it now the node may not get another chance to parse this 
+						data). the node maintains a partial SMPTE value, which is pushed to a cached value...	*/
+						if (quarterFrameVal)	{
+							if (newMsg != nil)	{
+								//	get the individual SMPTE values as an array of Bytes
+								[(VVMIDINode *)readProcRefCon _getPartialMTCSMPTEArray:MTCSMPTE];
+								//NSLog(@"\t\tbefore: %d - %d - %d - %d - %d",MTCSMPTE[0],MTCSMPTE[1],MTCSMPTE[2],MTCSMPTE[3],MTCSMPTE[4]);
+								//	update the SMPTE values from the message
+								Byte		mtcVal = [newMsg data1];
+								int			highNibble = ((mtcVal >> 4) & 0x0F);
+								int			lowNibble = (mtcVal & 0x0F);
+								//NSLog(@"\t\tval is %hhd, high is %d low is %d",mtcVal,highNibble,lowNibble);
+								int			tmpVal = 0;
+								switch (highNibble)	{
+									case 0:	//	current frames low nibble
+										tmpVal = MTCSMPTE[4];
+										tmpVal = (tmpVal & 0xF0) | lowNibble;
+										MTCSMPTE[4] = tmpVal;
+										break;
+									case 1:	//	current frames high nibble
+										tmpVal = MTCSMPTE[4];
+										tmpVal = (tmpVal & 0x0F) | (lowNibble << 4);
+										MTCSMPTE[4] = tmpVal;
+										break;
+									case 2:	//	current seconds low nibble
+										tmpVal = MTCSMPTE[3];
+										tmpVal = (tmpVal & 0xF0) | lowNibble;
+										MTCSMPTE[3] = tmpVal;
+										break;
+									case 3:	//	current seconds high nibble
+										tmpVal = MTCSMPTE[3];
+										tmpVal = (tmpVal & 0x0F) | (lowNibble << 4);
+										MTCSMPTE[3] = tmpVal;
+										break;
+									case 4:	//	current minutes low nibble
+										tmpVal = MTCSMPTE[2];
+										tmpVal = (tmpVal & 0xF0) | lowNibble;
+										MTCSMPTE[2] = tmpVal;
+										break;
+									case 5:	//	current minutes high nibble
+										tmpVal = MTCSMPTE[2];
+										tmpVal = (tmpVal & 0x0F) | (lowNibble << 4);
+										MTCSMPTE[2] = tmpVal;
+										break;
+									case 6:	//	current hours low nibble
+										tmpVal = MTCSMPTE[1];
+										tmpVal = (tmpVal & 0xF0) | lowNibble;
+										MTCSMPTE[1] = tmpVal;
+										break;
+									case 7:	//	current hours high nibble & SMPTE type. here, the low nibble describes two values:
+										//	the highest bit is unused, and set to 0
+										//	the next two bits describes the SMPTE type: 0=24, 1=25, 2=30-drop, 3=30
+										//	the last bit is bit 4 (the fifth bit- the only bit in the high nibble) of "hours".
+										tmpVal = MTCSMPTE[1];
+										tmpVal = (tmpVal & 0x0F) | ((lowNibble & 0x01) << 4);
+										MTCSMPTE[1] = tmpVal;
+										MTCSMPTE[0] = ((lowNibble >> 1) & 0x03);
+										break;
+								}
+								//	push the (modified) SMPTE values back to the node
+								//NSLog(@"\t\tafter: %d - %d - %d - %d - %d",MTCSMPTE[0],MTCSMPTE[1],MTCSMPTE[2],MTCSMPTE[3],MTCSMPTE[4]);
+								[(VVMIDINode *)readProcRefCon _setPartialMTCSMPTEArray:MTCSMPTE];
+								
+								//	if this was the first or last piece in an SMTPE message (if the high nibble is 0 or 7), i need to push the node's partial SMPTE val to the cached val.
+								if (/*highNibble==0 || */highNibble==7)	{
+									[(VVMIDINode *)readProcRefCon _pushPartialMTCSMPTEArrayToCachedVal];
+								}
+								//	if this was 0xF1 0x0n or 0xF1 0x4n, update the cached SMPTE value on the node (push the array to the value)
+								//if (highNibble==0 || highNibble==4)
+								//	[(VVMIDINode *)readProcRefCon _pushPartialMTCSMPTEArrayToCachedVal];
+							}
 						}
 					}
 				}
