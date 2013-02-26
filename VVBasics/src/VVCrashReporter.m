@@ -38,8 +38,8 @@
 		theTask = [[NSTask alloc] init];
 		[theTask setLaunchPath:@"/usr/sbin/system_profiler"];
 		[theTask setArguments:[NSArray arrayWithObjects:
-			[NSString stringWithString:@"-detailLevel"],
-			[NSString stringWithString:@"mini"],
+			@"-detailLevel",
+			@"mini",
 			t,
 			nil]	];
 		//	create a pipe, attach it to stdout of the task, get a file handle to the pipe
@@ -103,7 +103,11 @@
 		if (theNib == nil)
 			goto BAIL;
 		//	unpack the nib, instantiating its contents
+#if (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1080))
+		[theNib instantiateWithOwner:self topLevelObjects:&nibTopLevelObjects];
+#else
 		[theNib instantiateNibWithOwner:self topLevelObjects:&nibTopLevelObjects];
+#endif
 		//	retain the array of top-level objects (they have to be explicitly freed)
 		[nibTopLevelObjects retain];
 		return self;
@@ -293,7 +297,7 @@
 		currentCrashLogTimer = nil;
 	}
 	//	update the label so it displays which log is being sent
-	[submittingLabel setStringValue:[NSString stringWithFormat:@"Sending log %ld/%ld",jobCurrentIndex,jobSize]];
+	[submittingLabel setStringValue:[NSString stringWithFormat:@"Sending log %d/%d",jobCurrentIndex,jobSize]];
 	//	update the progress indicator, too
 	[progressIndicator setDoubleValue:(long)jobCurrentIndex/(long)jobSize];
 	
@@ -314,7 +318,7 @@
 		[transmitString appendString:@"description=OLDERLOGVVAMPERSANDVV"];
 	//	add the crash log string
 	tmpString = [NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil];
-	[transmitString appendFormat:@"crash=Host Name: %@\n",CSCopyMachineName()];
+	[transmitString appendFormat:@"crash=Host Name: %@\n",SCDynamicStoreCopyComputerName(NULL, NULL)];
 	if (tmpString!=nil)
 		[transmitString appendFormat:@"%@VVAMPERSANDVV",tmpString];
 	else
@@ -418,7 +422,7 @@
 
 //	this method exists so i can specify an alternate nib via a subclass (nibs get loaded on init, so i can't do this with a variable- there's no opportunity to set it)
 - (NSString *) _nibName	{
-	return [NSString stringWithString:@"VVCrashReporter"];
+	return @"VVCrashReporter";
 }
 //	assembles the array of crash logs, returns a YES if logs were found and have to be sent in
 - (BOOL) _assembleCrashLogs	{
@@ -439,10 +443,10 @@
 	SInt32 version = 0;
 	Gestalt( gestaltSystemVersion, &version );
 	if (version >= 0x1080)	{
-		pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/DiagnosticReports"] stringByExpandingTildeInPath];
+		pathToLogFolder = [@"~/Library/Logs/DiagnosticReports" stringByExpandingTildeInPath];
 	}
 	else	{
-		pathToLogFolder = [[NSString stringWithString:@"~/Library/Logs/CrashReporter"] stringByExpandingTildeInPath];
+		pathToLogFolder = [@"~/Library/Logs/CrashReporter" stringByExpandingTildeInPath];
 	}
 	
 	NSArray				*logFolderArray = [fm contentsOfDirectoryAtPath:pathToLogFolder error:nil];
@@ -564,7 +568,7 @@
 - (void) updateCrashLogTimeout:(NSTimer *)t	{
 	//NSLog(@"%s",__func__);
 	//	update the countdown label
-	[countdownLabel setStringValue:[NSString stringWithFormat:@"%ld",currentCrashLogTimeout]];
+	[countdownLabel setStringValue:[NSString stringWithFormat:@"%d",currentCrashLogTimeout]];
 	//	update the countdown
 	--currentCrashLogTimeout;
 	//	if the timeout's run out, invalidate the timer
@@ -614,10 +618,10 @@
 		[def synchronize];
 		//	 throw up an alert that describes the error
 		if (developerEmail == nil)
-			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.",@"OK",nil,nil,networkErr);
+			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.",@"OK",nil,nil,networkErr);
 		else	{
 			//NSLog(@"\t\tfound dev email!");
-			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %ld occurred.\n\n%@",@"OK",nil,nil,networkErr,developerEmail);
+			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.\n\n%@",@"OK",nil,nil,networkErr,developerEmail);
 		}
 		//	close the window
 		[self closeCrashReporter];

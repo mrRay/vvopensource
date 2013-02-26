@@ -1,6 +1,7 @@
 
 #import "OSCInPort.h"
 #import "VVOSC.h"
+#import <SystemConfiguration/SystemConfiguration.h>
 
 
 
@@ -188,7 +189,7 @@
 #if IPHONE
 			name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
 #else
-			name:[NSString stringWithFormat:@"%@ %@",CSCopyMachineName(),portLabel]
+			name:[NSString stringWithFormat:@"%@ %@",SCDynamicStoreCopyComputerName(NULL, NULL),portLabel]
 #endif
 			port:port];
 		[zeroConfDest publish];

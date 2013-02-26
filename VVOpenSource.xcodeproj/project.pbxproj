@@ -189,6 +189,7 @@
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
 		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9645131B16499BAF006370F8 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
+		9647274316D41BF400888157 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9652676F108C29AC00A2906D /* SystemConfiguration.framework */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
 		9656D90F100F89ED0064EEA6 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -831,6 +832,7 @@
 				9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */,
 				96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */,
 				96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */,
+				9647274316D41BF400888157 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2342,13 +2344,13 @@
 				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2359,12 +2361,12 @@
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2521,7 +2523,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 			};
 			name = Debug;
 		};
@@ -2537,7 +2539,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2555,7 +2557,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 			};
 			name = Debug;
 		};
@@ -2572,7 +2574,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2600,7 +2602,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2624,7 +2626,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2728,7 +2730,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 			};
 			name = Debug;
 		};
@@ -2741,7 +2743,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2757,7 +2759,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 			};
 			name = Debug;
 		};
@@ -2771,7 +2773,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2801,7 +2803,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2827,7 +2829,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3010,7 +3012,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -3034,7 +3036,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;

@@ -501,6 +501,8 @@
 }
 - (IBAction) blobTest:(id)sender	{
 	NSLog(@"%s",__func__);
+	[manager deleteAllInputs];
+	return;
 	/*
 	int				rawBufferSize = 5;
 	void			*rawBuffer = malloc(rawBufferSize);
