@@ -31,10 +31,10 @@
 	if (inPort == nil)
 		return;
 	NSArray			*addressArray = [OSCManager hostIPv4Addresses];
-	[myIPField setStringValue:(addressArray!=nil && [addressArray count]>0) ? [addressArray objectAtIndex:0] : [NSString stringWithString:@"127.0.0.1"]];
+	[myIPField setStringValue:(addressArray!=nil && [addressArray count]>0) ? [addressArray objectAtIndex:0] : @"127.0.0.1"];
 	[myPortField setIntValue:[inPort port]];
 	//	create the manual output port, the only port that will actually send data.  by default, it should be pointing at my input port (loopback!)
-	NSString		*tmpLabel = [NSString stringWithString:@"ManualOutput"];
+	NSString		*tmpLabel = @"ManualOutput";
 	[oscManager removeOutputWithLabel:tmpLabel];
 	[oscManager createNewOutputToAddress:@"127.0.0.1" atPort:[inPort port] withLabel:tmpLabel];
 	//	populate the pop-up button with the list of detected OSC destinations

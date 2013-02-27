@@ -59,10 +59,10 @@
 	[def synchronize];
 }
 - (NSString *) receivingNodeName	{
-	return [NSString stringWithString:@"To 'MIDI via OSC'"];
+	return @"To 'MIDI via OSC'";
 }
 - (NSString *) sendingNodeName	{
-	return [NSString stringWithString:@"From 'MIDI via OSC'"];
+	return @"From 'MIDI via OSC'";
 }
 - (void) receivedOSCMessage:(OSCMessage *)m	{
 	//NSLog(@"%s",__func__);
