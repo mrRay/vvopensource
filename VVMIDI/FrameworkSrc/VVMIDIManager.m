@@ -327,10 +327,10 @@
 }
 //	these methods exist so subclasses of me can override them to change the name of the default midi destinations/receivers
 - (NSString *) receivingNodeName	{
-	return [NSString stringWithString:@"To VVMIDI"];
+	return @"To VVMIDI";
 }
 - (NSString *) sendingNodeName	{
-	return [NSString stringWithString:@"From VVMIDI"];
+	return @"From VVMIDI";
 }
 
 - (MutLockArray *) sourceArray	{

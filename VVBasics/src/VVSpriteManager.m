@@ -11,6 +11,11 @@ BOOL			_spriteManagerInitialized;
 
 
 
+BOOL			_spriteManagerInitialized;
+
+
+
+
 @implementation VVSpriteManager
 
 

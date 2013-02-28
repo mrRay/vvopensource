@@ -92,9 +92,9 @@
 }
 - (NSString *)description	{	
 	if (object != nil)
-		return [NSString stringWithFormat:@"ObjectHolder: %ld : %@",self,object];
-	else 
-		return [NSString stringWithFormat:@"ObjectHolder: %ld",self];
+		return [NSString stringWithFormat:@"ObjectHolder: %p : %@",self,object];
+	else
+		return [NSString stringWithFormat:@"ObjectHolder: %p",self];
 	
 
 }

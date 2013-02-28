@@ -189,6 +189,7 @@
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
 		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9645131B16499BAF006370F8 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
+		9647274316D41BF400888157 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9652676F108C29AC00A2906D /* SystemConfiguration.framework */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
 		9656D90F100F89ED0064EEA6 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -254,7 +255,6 @@
 		96765969100F818900E02974 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9676596A100F818F00E02974 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
-		967775D6165039FC00F9DA33 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		968FAA92108B6178000E470D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		968FAA94108B617C000E470D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
@@ -293,17 +293,9 @@
 		96BF10B0100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96C5233D1650158B0043FC39 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96C5233B1650158B0043FC39 /* InfoPlist.strings */; };
-		96C5233F1650158B0043FC39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C5233E1650158B0043FC39 /* main.m */; };
-		96C523431650158B0043FC39 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96C523411650158B0043FC39 /* Credits.rtf */; };
-		96C523461650158B0043FC39 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C523451650158B0043FC39 /* AppDelegate.m */; };
-		96C523491650158B0043FC39 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96C523471650158B0043FC39 /* MainMenu.xib */; };
-		96C5235516502F680043FC39 /* BlueView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C5235416502F680043FC39 /* BlueView.m */; };
-		96C5235816502F710043FC39 /* GreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C5235716502F710043FC39 /* GreenView.m */; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
 		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96D0E32D16AC966E001EF757 /* RedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D0E32C16AC966E001EF757 /* RedView.m */; };
 		96E26B35106C319700C5B418 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96E26B34106C319700C5B418 /* Credits.rtf */; };
 		96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -569,13 +561,6 @@
 			remoteGlobalIDString = 9666943710304C2E00DB5FDF;
 			remoteInfo = "VVBasics-os x SDK";
 		};
-		96C5234E165015D00043FC39 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
-			remoteInfo = VVBasics;
-		};
 		96E7ED68106BF7F400B90822 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -651,16 +636,6 @@
 			files = (
 				966CCC0214320797006D580F /* VVBasics.framework in CopyFiles */,
 				966CCC0314320797006D580F /* VVOSC.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96C52351165028920043FC39 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9643299216518D4E00285D1F /* VVBasics.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,8 +737,6 @@
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
 		9628D187100E8B7C00C3944E /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVOSC/AppSrc/AppController.h; sourceTree = "<group>"; };
-		9643298E165183EC00285D1F /* TestGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestGLView.h; sourceTree = "<group>"; };
-		9643298F165183EC00285D1F /* TestGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestGLView.m; sourceTree = "<group>"; };
 		9645130E16494057006370F8 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVView.h; path = VVBasics/src/VVView.h; sourceTree = "<group>"; };
 		9645130F16494057006370F8 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVView.m; path = VVBasics/src/VVView.m; sourceTree = "<group>"; };
 		9652676F108C29AC00A2906D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
@@ -809,29 +782,10 @@
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
-		96C5232F1650158B0043FC39 /* VVViewTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VVViewTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		96C523321650158B0043FC39 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		96C523351650158B0043FC39 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		96C523361650158B0043FC39 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		96C523371650158B0043FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		96C5233A1650158B0043FC39 /* VVViewTestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VVViewTestApp-Info.plist"; sourceTree = "<group>"; };
-		96C5233C1650158B0043FC39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		96C5233E1650158B0043FC39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		96C523401650158B0043FC39 /* VVViewTestApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VVViewTestApp-Prefix.pch"; sourceTree = "<group>"; };
-		96C523421650158B0043FC39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		96C523441650158B0043FC39 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		96C523451650158B0043FC39 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		96C523481650158B0043FC39 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		96C5235316502F680043FC39 /* BlueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlueView.h; sourceTree = "<group>"; };
-		96C5235416502F680043FC39 /* BlueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlueView.m; sourceTree = "<group>"; };
-		96C5235616502F710043FC39 /* GreenView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GreenView.h; sourceTree = "<group>"; };
-		96C5235716502F710043FC39 /* GreenView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GreenView.m; sourceTree = "<group>"; };
 		96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOMIDIManager.h; path = MIDIviaOSC/MVOMIDIManager.h; sourceTree = "<group>"; };
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
 		96C9DAF6106B0335006DD331 /* MVOOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOOSCManager.m; path = MIDIviaOSC/MVOOSCManager.m; sourceTree = "<group>"; };
-		96D0E32B16AC966E001EF757 /* RedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedView.h; sourceTree = "<group>"; };
-		96D0E32C16AC966E001EF757 /* RedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RedView.m; sourceTree = "<group>"; };
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
@@ -878,6 +832,7 @@
 				9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */,
 				96A24EB5100F7E5800F21F0F /* VVBasics.framework in Frameworks */,
 				96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */,
+				9647274316D41BF400888157 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -970,14 +925,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96C5232C1650158B0043FC39 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				967775D6165039FC00F9DA33 /* VVBasics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96EF5A34122AF2D900F40F69 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1006,7 +953,6 @@
 				968FAA86108B6141000E470D /* CrashReporterTestApp.app */,
 				96EF5A39122AF2D900F40F69 /* libVVMIDI.a */,
 				966CCBD81431EFB9006D580F /* OSCQueryTest.app */,
-				96C5232F1650158B0043FC39 /* VVViewTestApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1024,8 +970,6 @@
 				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
-				96C523381650158B0043FC39 /* VVViewTestApp */,
-				96C523311650158B0043FC39 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
@@ -1270,56 +1214,6 @@
 				96C9DAF6106B0335006DD331 /* MVOOSCManager.m */,
 			);
 			name = "MIDI via OSC app";
-			sourceTree = "<group>";
-		};
-		96C523311650158B0043FC39 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				96C523321650158B0043FC39 /* Cocoa.framework */,
-				96C523341650158B0043FC39 /* Other Frameworks */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		96C523341650158B0043FC39 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				96C523351650158B0043FC39 /* AppKit.framework */,
-				96C523361650158B0043FC39 /* CoreData.framework */,
-				96C523371650158B0043FC39 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		96C523381650158B0043FC39 /* VVViewTestApp */ = {
-			isa = PBXGroup;
-			children = (
-				96C523441650158B0043FC39 /* AppDelegate.h */,
-				96C523451650158B0043FC39 /* AppDelegate.m */,
-				96C523471650158B0043FC39 /* MainMenu.xib */,
-				96C523391650158B0043FC39 /* Supporting Files */,
-				96C5235316502F680043FC39 /* BlueView.h */,
-				96C5235416502F680043FC39 /* BlueView.m */,
-				96C5235616502F710043FC39 /* GreenView.h */,
-				96C5235716502F710043FC39 /* GreenView.m */,
-				9643298E165183EC00285D1F /* TestGLView.h */,
-				9643298F165183EC00285D1F /* TestGLView.m */,
-				96D0E32B16AC966E001EF757 /* RedView.h */,
-				96D0E32C16AC966E001EF757 /* RedView.m */,
-			);
-			path = VVViewTestApp;
-			sourceTree = "<group>";
-		};
-		96C523391650158B0043FC39 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				96C5233A1650158B0043FC39 /* VVViewTestApp-Info.plist */,
-				96C5233B1650158B0043FC39 /* InfoPlist.strings */,
-				96C5233E1650158B0043FC39 /* main.m */,
-				96C523401650158B0043FC39 /* VVViewTestApp-Prefix.pch */,
-				96C523411650158B0043FC39 /* Credits.rtf */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1798,25 +1692,6 @@
 			productReference = 96B49302106AEB4C008FB26E /* MIDIviaOSC.app */;
 			productType = "com.apple.product-type.application";
 		};
-		96C5232E1650158B0043FC39 /* VVViewTestApp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 96C5234C1650158B0043FC39 /* Build configuration list for PBXNativeTarget "VVViewTestApp" */;
-			buildPhases = (
-				96C52351165028920043FC39 /* CopyFiles */,
-				96C5232D1650158B0043FC39 /* Resources */,
-				96C5232B1650158B0043FC39 /* Sources */,
-				96C5232C1650158B0043FC39 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				96C5234F165015D00043FC39 /* PBXTargetDependency */,
-			);
-			name = VVViewTestApp;
-			productName = VVViewTestApp;
-			productReference = 96C5232F1650158B0043FC39 /* VVViewTestApp.app */;
-			productType = "com.apple.product-type.application";
-		};
 		96EF5A0D122AF2D900F40F69 /* VVMIDI-os x SDK */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96EF5A36122AF2D900F40F69 /* Build configuration list for PBXNativeTarget "VVMIDI-os x SDK" */;
@@ -1853,7 +1728,6 @@
 				Japanese,
 				French,
 				German,
-				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* VVOpenSource */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1877,7 +1751,6 @@
 				9666942610304C1F00DB5FDF /* VVBasics-iPhone dev SDK */,
 				9666943710304C2E00DB5FDF /* VVBasics-os x SDK */,
 				96EF5A0D122AF2D900F40F69 /* VVMIDI-os x SDK */,
-				96C5232E1650158B0043FC39 /* VVViewTestApp */,
 			);
 		};
 /* End PBXProject section */
@@ -1943,16 +1816,6 @@
 			files = (
 				96B49325106AEC32008FB26E /* MainMenu.xib in Resources */,
 				96E26B35106C319700C5B418 /* Credits.rtf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96C5232D1650158B0043FC39 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C5233D1650158B0043FC39 /* InfoPlist.strings in Resources */,
-				96C523431650158B0043FC39 /* Credits.rtf in Resources */,
-				96C523491650158B0043FC39 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2272,19 +2135,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96C5232B1650158B0043FC39 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C5233F1650158B0043FC39 /* main.m in Sources */,
-				96C523461650158B0043FC39 /* AppDelegate.m in Sources */,
-				96C5235516502F680043FC39 /* BlueView.m in Sources */,
-				96C5235816502F710043FC39 /* GreenView.m in Sources */,
-				96432990165183EC00285D1F /* TestGLView.m in Sources */,
-				96D0E32D16AC966E001EF757 /* RedView.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96EF5A23122AF2D900F40F69 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2453,11 +2303,6 @@
 			target = 9666943710304C2E00DB5FDF /* VVBasics-os x SDK */;
 			targetProxy = 96AB37CA10305046005F2577 /* PBXContainerItemProxy */;
 		};
-		96C5234F165015D00043FC39 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
-			targetProxy = 96C5234E165015D00043FC39 /* PBXContainerItemProxy */;
-		};
 		96E7ED69106BF7F400B90822 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
@@ -2490,33 +2335,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		96C5233B1650158B0043FC39 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96C5233C1650158B0043FC39 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		96C523411650158B0043FC39 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96C523421650158B0043FC39 /* en */,
-			);
-			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		96C523471650158B0043FC39 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96C523481650158B0043FC39 /* en */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2525,14 +2343,14 @@
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_OPTIMIZATION_LEVEL = 1;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2543,13 +2361,12 @@
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_OPTIMIZATION_LEVEL = 1;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2706,7 +2523,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 			};
 			name = Debug;
 		};
@@ -2722,7 +2539,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2740,7 +2557,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 			};
 			name = Debug;
 		};
@@ -2757,7 +2574,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2785,7 +2602,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2809,7 +2626,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2913,7 +2730,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 			};
 			name = Debug;
 		};
@@ -2926,7 +2743,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator5.1;
+				SDKROOT = iphonesimulator6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2942,7 +2759,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 			};
 			name = Debug;
 		};
@@ -2956,7 +2773,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos5.1;
+				SDKROOT = iphoneos6.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2986,7 +2803,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -3012,7 +2829,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3172,58 +2989,6 @@
 			};
 			name = Release;
 		};
-		96C5234A1650158B0043FC39 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VVViewTestApp/VVViewTestApp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "VVViewTestApp/VVViewTestApp-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
-				OTHER_LDFLAGS = (
-					"-framework",
-					AppKit,
-					"-framework",
-					Foundation,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		96C5234B1650158B0043FC39 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VVViewTestApp/VVViewTestApp-Prefix.pch";
-				INFOPLIST_FILE = "VVViewTestApp/VVViewTestApp-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @executable_path/../Frameworks";
-				OTHER_LDFLAGS = (
-					"-framework",
-					AppKit,
-					"-framework",
-					Foundation,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		96EF5A37122AF2D900F40F69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3247,7 +3012,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -3271,7 +3036,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = VVMIDI;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3428,15 +3193,6 @@
 			buildConfigurations = (
 				96B49305106AEB4E008FB26E /* Debug */,
 				96B49306106AEB4E008FB26E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		96C5234C1650158B0043FC39 /* Build configuration list for PBXNativeTarget "VVViewTestApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				96C5234A1650158B0043FC39 /* Debug */,
-				96C5234B1650158B0043FC39 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

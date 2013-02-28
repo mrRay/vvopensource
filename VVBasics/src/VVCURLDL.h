@@ -31,6 +31,9 @@
 	NSString				*urlString;
 	CURL					*curlHandle;
 	
+	NSString				*log;
+	NSString				*pass;
+	
 	NSMutableData			*responseData;
 	
 	struct curl_slist		*headerList;	//	nil by default- if non-nil, supplied to the handle as CURLOPT_HTTPHEADER
@@ -56,6 +59,7 @@
 //- (struct curl_httppost *) lastFormPtr;
 - (void) appendDataToPOST:(NSData *)d;
 - (void) appendStringToPOST:(NSString *)s;
+- (void) setLogin:(NSString *)user password:(NSString *)pass;
 
 - (void) writePtr:(void *)ptr size:(size_t)s;
 

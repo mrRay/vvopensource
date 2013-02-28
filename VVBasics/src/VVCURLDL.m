@@ -20,6 +20,8 @@
 	if (self = [super init])	{
 		urlString = [a retain];
 		curlHandle = nil;
+		log = nil;
+		pass = nil;
 		postData = nil;
 		//headerArray = nil;
 		responseData = nil;
@@ -39,6 +41,8 @@
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
 	VVRELEASE(urlString);
+	VVRELEASE(log);
+	VVRELEASE(pass);
 	VVRELEASE(postData);
 	//VVRELEASE(headerArray);
 	VVRELEASE(responseData);
@@ -90,6 +94,11 @@
 			curl_easy_setopt(curlHandle,CURLOPT_HTTPHEADER,headers);
 		}
 		*/
+		//	if there's a log/pass, set them up
+		if (log!=nil && pass!=nil)	{
+			NSString		*tmpString = [NSString stringWithFormat:@"%@:%@",log,pass];
+			curl_easy_setopt(curlHandle,CURLOPT_USERPWD,[tmpString UTF8String]);
+		}
 		
 		//	if there's post data, set up the handle to use it
 		if (postData != nil)	{
@@ -164,6 +173,14 @@
 	if (s == nil)
 		return;
 	[self appendDataToPOST:[s dataUsingEncoding:NSUTF8StringEncoding]];
+}
+- (void) setLogin:(NSString *)u password:(NSString *)p	{
+	if (u==nil || p==nil)
+		return;
+	VVRELEASE(log);
+	log = [u retain];
+	VVRELEASE(pass);
+	pass = [p retain];
 }
 /*
 - (void) appendHeaderString:(NSString *)n	{

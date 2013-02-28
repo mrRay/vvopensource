@@ -382,6 +382,11 @@
 				break;
 			case 'I':			//	Infinitum.  no bytes are allocated in the argument data!
 				break;
+			case 'E':			//	SMPTE timecode. AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK!
+				oscValue = [OSCValue createWithSMPTEChunk:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				[returnMe addValue:oscValue];
+				tmpIndex += 4;
+				break;
 		}
 	}
 	//	return the msg- the bundle that parsed it will add an execution date (if appropriate) and send it to the port
@@ -715,31 +720,31 @@
 					break;
 				case OSCQueryTypeDocumentation:
 					if ([address isEqualToString:@"/"])
-						return [NSString stringWithString:@"/#documentation"];
+						return @"/#documentation";
 					return [NSString stringWithFormat:@"%@/#documentation",address];
 					break;
 				case OSCQueryTypeTypeSignature:
 					if ([address isEqualToString:@"/"])
-						return [NSString stringWithString:@"/#type-signature"];
+						return @"/#type-signature";
 					return [NSString stringWithFormat:@"%@/#type-signature",address];
 					break;
 				case OSCQueryTypeCurrentValue:
 					if ([address isEqualToString:@"/"])
-						return [NSString stringWithString:@"/#current-value"];
+						return @"/#current-value";
 					return [NSString stringWithFormat:@"%@/#current-value",address];
 					break;
 				case OSCQueryTypeReturnTypeString:
 					if ([address isEqualToString:@"/"])
-						return [NSString stringWithString:@"/#return-type-string"];
+						return @"/#return-type-string";
 					return [NSString stringWithFormat:@"%@/#return-type-string",address];
 					break;
 			}
 			break;
 		case OSCMessageTypeReply:
-			return [NSString stringWithString:@"#reply"];
+			return @"#reply";
 			break;
 		case OSCMessageTypeError:
-			return [NSString stringWithString:@"#error"];
+			return @"#error";
 			break;
 	}
 	return address;

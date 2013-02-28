@@ -109,6 +109,7 @@
 		case OSCValMIDI:
 		case OSCValNil:
 		case OSCValTimeTag:
+		case OSCValSMPTE:
 			break;
 	}
 	

@@ -15,44 +15,44 @@
 	switch (type)	{
 		//	status byte
 		case VVMIDINoteOffVal:
-			return [NSString stringWithFormat:@"NoteOff, ch.%ld, note.%ld, val.%ld",channel,data1,data2];
+			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDINoteOnVal:
-			return [NSString stringWithFormat:@"NoteOn, ch.%ld, note.%ld, val.%ld",channel,data1,data2];
+			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIAfterTouchVal:
-			return [NSString stringWithFormat:@"AfterTouch, ch.%ld, note.%ld, val.%ld",channel,data1,data2];
+			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIControlChangeVal:
-			return [NSString stringWithFormat:@"Ctrl, ch.%ld, ctrl.%ld, val.%ld",channel,data1,data2];
+			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIProgramChangeVal:
-			return [NSString stringWithFormat:@"PgmChange, ch.%ld, pgm.%ld",channel,data1];
+			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd",channel,data1];
 			break;
 		case VVMIDIChannelPressureVal:
-			return [NSString stringWithFormat:@"ChannelPressure, ch.%ld, val.%ld",channel,data1];
+			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd",channel,data1];
 			break;
 		case VVMIDIPitchWheelVal:
-			return [NSString stringWithFormat:@"PitchWheel, ch.%ld, val.%ld",channel,(data2<<7)|data1];
+			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d",channel,(data2<<7)|data1];
 			break;
 		//	common messages
 		case VVMIDIMTCQuarterFrameVal:
-			return [NSString stringWithFormat:@"Quarter-Frame: %ld",data1];
+			return [NSString stringWithFormat:@"Quarter-Frame: %hhd",data1];
 			break;
 		case VVMIDISongPosPointerVal:
-			return [NSString stringWithFormat:@"Song Pos'n ptr: %ld",(data2 << 7) | data1];
+			return [NSString stringWithFormat:@"Song Pos'n ptr: %d",(data2 << 7) | data1];
 			break;
 		case VVMIDISongSelectVal:
-			return [NSString stringWithFormat:@"Song Select: %ld",data1];
+			return [NSString stringWithFormat:@"Song Select: %hhd",data1];
 			break;
 		case VVMIDIUndefinedCommon1Val:
-			return [NSString stringWithString:@"Undefined common"];
+			return @"Undefined common";
 			break;
 		case VVMIDIUndefinedCommon2Val:
-			return [NSString stringWithString:@"Undefined common 2"];
+			return @"Undefined common 2";
 			break;
 		case VVMIDITuneRequestVal:
-			return [NSString stringWithString:@"Tune Request"];
+			return @"Tune Request";
 			break;
 		//	sysex!
 		case VVMIDIBeginSysexDumpVal:
@@ -60,28 +60,28 @@
 			break;
 		//	realtime messages- insert these immediately
 		case VVMIDIClockVal:
-			return [NSString stringWithString:@"Clock"];
+			return @"Clock";
 			break;
 		case VVMIDITickVal:
-			return [NSString stringWithString:@"Tick"];
+			return @"Tick";
 			break;
 		case VVMIDIStartVal:
-			return [NSString stringWithString:@"Start"];
+			return @"Start";
 			break;
 		case VVMIDIContinueVal:
-			return [NSString stringWithString:@"Continue"];
+			return @"Continue";
 			break;
 		case VVMIDIStopVal:
-			return [NSString stringWithString:@"Stop"];
+			return @"Stop";
 			break;
 		case VVMIDIUndefinedRealtime1Val:
-			return [NSString stringWithString:@"Undefined Realtime"];
+			return @"Undefined Realtime";
 			break;
 		case VVMIDIActiveSenseVal:
-			return [NSString stringWithString:@"Active Sense"];
+			return @"Active Sense";
 			break;
 		case VVMIDIResetVal:
-			return [NSString stringWithString:@"MIDI Reset"];
+			return @"MIDI Reset";
 			break;
 	}
 	return nil;

@@ -102,19 +102,19 @@
 	//	figure out what kind of string i'm going to be assembling
 	switch ([displayTypeRadioGroup selectedColumn])	{
 		case 0:		//	parsed
-			localKey = [NSString stringWithString:@"serial"];
+			localKey = @"serial";
 			break;
 		//case 1:
 		//	localKey = [NSString stringWithString:@"coalesced"];
 		//	break;
 		case 1:		//	char
-			localKey = [NSString stringWithString:@"char"];
+			localKey = @"char";
 			break;
 		case 2:		//	dec
-			localKey = [NSString stringWithString:@"dec"];
+			localKey = @"dec";
 			break;
 		case 3:		//	hex
-			localKey = [NSString stringWithString:@"hex"];
+			localKey = @"hex";
 			break;
 	}
 	//	assemble a string from the custom osc in port
@@ -483,7 +483,7 @@
 - (IBAction) lengthTest:(id)sender	{
 	//NSLog(@"%s",__func__);
 	OSCBundle		*mainBundle = [OSCBundle create];
-	NSString		*addressPath = [NSString stringWithString:@"/aSingleButFairlyLongAddressPath"];
+	NSString		*addressPath = @"/aSingleButFairlyLongAddressPath";
 	OSCMessage		*msgPtr;
 	int				i;
 	OSCPacket		*pack;
@@ -501,6 +501,8 @@
 }
 - (IBAction) blobTest:(id)sender	{
 	NSLog(@"%s",__func__);
+	[manager deleteAllInputs];
+	return;
 	/*
 	int				rawBufferSize = 5;
 	void			*rawBuffer = malloc(rawBufferSize);

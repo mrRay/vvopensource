@@ -9,7 +9,7 @@
 
 - (void) _generalInit	{
 	[super _generalInit];
-	[self setInPortLabelBase:[NSString stringWithString:@"MIDI via OSC"]];
+	[self setInPortLabelBase:@"MIDI via OSC"];
 	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
 	receivedMIDIStringArray = [[MutLockArray alloc] init];
 	outgoingBuffer = [[MutLockArray alloc] init];
@@ -36,7 +36,7 @@
 	
 	
 	//	populate the text field with the IP address & port of this machine
-	[networkAddressField setStringValue:[NSString stringWithFormat:@"%@, port %ld",[[self ipAddressArray] objectAtIndex:0],[inPort port]]];
+	[networkAddressField setStringValue:[NSString stringWithFormat:@"%@, port %hd",[[self ipAddressArray] objectAtIndex:0],[inPort port]]];
 	//	fake an outputs-changed notification to make sure my list of destinations updates (in case it refreshes before i'm awake)
 	[self oscOutputsChangedNotification:nil];
 	//	register to receive notifications that the list of osc outputs has changed
@@ -141,7 +141,7 @@
 	//	get an array of the out port labels
 	portLabelArray = [[[self outPortLabelArray] mutableCopy] autorelease];
 	//	remove the output corresponding to my out port
-	[portLabelArray removeObject:[NSString stringWithString:@"MIDI via OSC"]];
+	[portLabelArray removeObject:@"MIDI via OSC"];
 	//	push the labels to the pop-up button of destinations
 	[outputDestinationButton addItemsWithTitles:portLabelArray];
 	

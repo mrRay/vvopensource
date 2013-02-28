@@ -77,7 +77,7 @@
 	outPortArray = [[MutLockArray arrayWithCapacity:0] retain];
 	delegate = nil;
 	inPortClass = [OSCInPort class];
-	inPortLabelBase = [[NSString stringWithString:@"VVOSC"] retain];
+	inPortLabelBase = [@"VVOSC" retain];
 	outPortClass = [OSCOutPort class];
 }
 
@@ -381,7 +381,7 @@
 	
 	[inPortArray rdlock];
 		while (!found)	{
-			tmpString = [NSString stringWithFormat:@"%@ %ld",[self inPortLabelBase],index];
+			tmpString = [NSString stringWithFormat:@"%@ %d",[self inPortLabelBase],index];
 			
 			alreadyInUse = NO;
 			it = [[inPortArray array] objectEnumerator];
@@ -411,7 +411,7 @@
 	
 	[outPortArray rdlock];
 		while (!found)	{
-			tmpString = [NSString stringWithFormat:@"OSC Out Port %ld",index];
+			tmpString = [NSString stringWithFormat:@"OSC Out Port %d",index];
 			
 			alreadyInUse = NO;
 			it = [[outPortArray array] objectEnumerator];

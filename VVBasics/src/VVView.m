@@ -428,7 +428,6 @@
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
-	
 	//	if i have subviews, tell them to draw now- back to front...
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews rdlock];

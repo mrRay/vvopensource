@@ -21,8 +21,25 @@ typedef enum	{
 	OSCValBool = 10,	//!<BOOL
 	OSCValNil = 11,	//!<nil/NULL
 	OSCValInfinity = 12,	//!<Infinity
-	OSCValBlob = 13	//!<Blob- random binary data
+	OSCValBlob = 13,	//!<Blob- random binary data
+	OSCValSMPTE = 14	//!<SMPTE time- AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK! 32-bit value, max time is "7:23:59:59.255". first 4 bits define FPS (OSCSMPTEFPS). next 3 bits define days. next 5 bits define hours. next 6 bits define minutes. next 6 bits define seconds. last 8 bits define frame.
 } OSCValueType;
+
+
+///	OSCSMPTEFPS
+/*!
+OSCValues of type OSCValSMPTE have 4 bits used to describe the timecode fps.  This enum lists the various timecode framerates.  Note that OSC describes values- this is timecode, and framerates of 29.97 etc. are typically achieved in a number of means completely independent of the timecode, which is just a means of referring to frames.
+*/
+typedef enum	{
+	OSCSMPTEFPSUnknown = 0,
+	OSCSMPTEFPS24 = 1,	//	24fps
+	OSCSMPTEFPS25 = 2,	//	25fps
+	OSCSMPTEFPS30 = 3,	//	30fps
+	OSCSMPTEFPS48 = 4,	//	48fps
+	OSCSMPTEFPS50 = 5,	//	50fps
+	OSCSMPTEFPS60 = 6,	//	60fps
+	OSCSMPTEFPS120 = 7	//	120fps
+} OSCSMPTEFPS;
 
 
 ///	OSCMIDIType
