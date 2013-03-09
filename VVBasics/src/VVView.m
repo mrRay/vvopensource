@@ -364,13 +364,13 @@
 - (void) setClearColor:(NSColor *)n	{
 
 }
-- (void) setClearColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
+- (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{
 
 }
 - (void) setBorderColor:(NSColor *)n	{
 
 }
-- (void) setBorderColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
+- (void) setBorderColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{
 
 }
 @synthesize drawBorder;

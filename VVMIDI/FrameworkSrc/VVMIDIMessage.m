@@ -89,7 +89,7 @@
 + (id) createWithType:(Byte)t channel:(Byte)c	{
 	return [[[VVMIDIMessage alloc] initWithType:t channel:c] autorelease];
 }
-+ (id) createFromVals:(Byte)t:(Byte)c:(Byte)d1:(Byte)d2	{
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2	{
 	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2] autorelease];
 }
 + (id) createWithSysexArray:(NSMutableArray *)s	{
@@ -110,7 +110,7 @@
 	[self release];
 	return nil;
 }
-- (id) initFromVals:(Byte)t:(Byte)c:(Byte)d1:(Byte)d2	{
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2	{
 	if (self = [super init])	{
 		type = t;
 		channel = c;
