@@ -15,10 +15,10 @@
 }
 
 + (id) createWithType:(Byte)t channel:(Byte)c;
-+ (id) createFromVals:(Byte)t:(Byte)c:(Byte)d1:(Byte)d2;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
 + (id) createWithSysexArray:(NSMutableArray *)s;
 - (id) initWithType:(Byte)t channel:(Byte)c;
-- (id) initFromVals:(Byte)t:(Byte)c:(Byte)d1:(Byte)d2;
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
 - (id) initWithSysexArray:(NSMutableArray *)s;
 
 - (NSString *) description;

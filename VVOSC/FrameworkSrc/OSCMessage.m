@@ -553,7 +553,7 @@
 	return nil;
 }
 //	DOES NO CHECKING WHATSOEVER.  MEANT TO BE FAST, NOT SAFE.  USE OTHER CREATE/INIT METHODS.
-- (id) _fastInit:(NSString *)addr:(BOOL)addrHasWildcards:(OSCMessageType)mType:(OSCQueryType)qType:(unsigned int)qTxAddr:(unsigned short)qTxPort	{
+- (id) _fastInit:(NSString *)addr :(BOOL)addrHasWildcards :(OSCMessageType)mType :(OSCQueryType)qType :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
 	if (self = [super init])	{
 		address = (addr==nil)?nil:[addr retain];
 		valueCount = 0;

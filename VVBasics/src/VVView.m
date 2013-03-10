@@ -507,7 +507,7 @@
 	if (devColor != nil)
 		[devColor getComponents:(CGFloat *)clearColor];
 }
-- (void) setClearColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
+- (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{
 	clearColor[0] = r;
 	clearColor[1] = g;
 	clearColor[2] = b;
@@ -520,7 +520,7 @@
 	if (devColor != nil)
 		[devColor getComponents:(CGFloat *)borderColor];
 }
-- (void) setBorderColors:(GLfloat)r:(GLfloat)g:(GLfloat)b:(GLfloat)a	{
+- (void) setBorderColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{
 	borderColor[0] = r;
 	borderColor[1] = g;
 	borderColor[2] = b;

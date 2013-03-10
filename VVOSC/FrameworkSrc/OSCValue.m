@@ -169,7 +169,7 @@
 		return nil;
 	return [returnMe autorelease];
 }
-+ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f	{
++ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithSMPTEVals:fps:d:h:m:s:f];
 	if (returnMe == nil)
 		return nil;
@@ -339,7 +339,7 @@
 	[self release];
 	return nil;
 }
-- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps:(int)d:(int)h:(int)m:(int)s:(int)f	{
+- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
 	//NSLog(@"%s ... %d, %d, %d, %d, %d",__func__,fps,d,h,m,s,f);
 	if (self = [super init])	{
 		UInt32		tmpVal = 0x00000000;
