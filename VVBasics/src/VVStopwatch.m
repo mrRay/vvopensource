@@ -47,6 +47,24 @@
 	OSSpinLockUnlock(&timeLock);
 	return returnMe;
 }
+- (void) getFullTimeSinceStart:(struct timeval *)dst	{
+	if (dst == nil)
+		return;
+	struct timeval		stopTime;
+	OSSpinLockLock(&timeLock);
+		//	get the current time of day
+		gettimeofday(&stopTime,NULL);
+		/*	make sure that the start time's microseconds component is less than
+			the stop time's microseconds component so we can subtract evenly		*/
+		while (stopTime.tv_usec < startTime.tv_usec)	{
+			--stopTime.tv_sec;
+			stopTime.tv_usec += 1000000;
+		}
+		
+		(*(dst)).tv_sec = stopTime.tv_sec - startTime.tv_sec;
+		(*(dst)).tv_usec = stopTime.tv_usec - startTime.tv_usec;
+	OSSpinLockUnlock(&timeLock);
+}
 - (void) startInTimeInterval:(NSTimeInterval)t	{
 	//NSLog(@"%s ... %f",__func__,t);
 	struct timeval		tmpStartTime;

@@ -23,6 +23,8 @@
 - (void) start;
 ///	Returns a float representing the time (in seconds) since the stopwatch was started
 - (double) timeSinceStart;
+///	Populates the passed timeval struct with the full time vals since start (usec-level accuracy, no rounding)
+- (void) getFullTimeSinceStart:(struct timeval *)dst;
 ///	Sets the stopwatch's starting time as an offset to the current time
 - (void) startInTimeInterval:(NSTimeInterval)t;
 ///	Populates the passed timeval struct with the current timeval
