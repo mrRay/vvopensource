@@ -64,6 +64,7 @@
 #define NUMINT(i) [NSNumber numberWithInt:i]
 #define NUMUINT(i) [NSNumber numberWithUnsignedInteger:i]
 #define NUMLONG(i) [NSNumber numberWithLong:i]
+#define NUMU64(i) [NSNumber numberWithLongLong:i]
 #define NUMFLOAT(f) [NSNumber numberWithFloat:f]
 #define NUMBOOL(b) [NSNumber numberWithBool:b]
 #define NUMDOUBLE(d) [NSNumber numberWithDouble:d]

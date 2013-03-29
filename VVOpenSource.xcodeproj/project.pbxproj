@@ -41,6 +41,7 @@
 				96A24ECC100F7EE300F21F0F /* PBXTargetDependency */,
 				96E7ED85106C03D200B90822 /* PBXTargetDependency */,
 				966CCBE01431F019006D580F /* PBXTargetDependency */,
+				96ACD748170641C000138AE6 /* PBXTargetDependency */,
 			);
 			name = "Build Mac Fmwks & Apps";
 			productName = Untitled;
@@ -285,6 +286,17 @@
 		96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A9911A108D668700895DC1 /* VVCrashReporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96A9911E108D668700895DC1 /* VVCrashReporter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96A9911B108D668700895DC1 /* VVCrashReporter.xib */; };
 		96A99138108D674400895DC1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9652676F108C29AC00A2906D /* SystemConfiguration.framework */; };
+		96ACD7241706416300138AE6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96ACD7231706416300138AE6 /* Cocoa.framework */; };
+		96ACD72E1706416400138AE6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96ACD72C1706416400138AE6 /* InfoPlist.strings */; };
+		96ACD7301706416400138AE6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD72F1706416400138AE6 /* main.m */; };
+		96ACD7341706416400138AE6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96ACD7321706416400138AE6 /* Credits.rtf */; };
+		96ACD7371706416400138AE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7361706416400138AE6 /* AppDelegate.m */; };
+		96ACD73A1706416400138AE6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96ACD7381706416400138AE6 /* MainMenu.xib */; };
+		96ACD73F170641A100138AE6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96ACD740170641A300138AE6 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96ACD741170641A700138AE6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96ACD742170641AA00138AE6 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */; };
 		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -561,6 +573,27 @@
 			remoteGlobalIDString = 9666943710304C2E00DB5FDF;
 			remoteInfo = "VVBasics-os x SDK";
 		};
+		96ACD743170641B300138AE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
+			remoteInfo = VVBasics;
+		};
+		96ACD745170641B600138AE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9628D0C4100E89F700C3944E;
+			remoteInfo = VVOSC;
+		};
+		96ACD747170641C000138AE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96ACD7201706416300138AE6;
+			remoteInfo = OSCPingTester;
+		};
 		96E7ED68106BF7F400B90822 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -636,6 +669,17 @@
 			files = (
 				966CCC0214320797006D580F /* VVBasics.framework in CopyFiles */,
 				966CCC0314320797006D580F /* VVOSC.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96ACD73E1706419A00138AE6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				96ACD73F170641A100138AE6 /* VVBasics.framework in CopyFiles */,
+				96ACD740170641A300138AE6 /* VVOSC.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +819,21 @@
 		96A9911B108D668700895DC1 /* VVCrashReporter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = VVCrashReporter.xib; path = VVBasics/src/VVCrashReporter.xib; sourceTree = "<group>"; };
 		96A99144108D68AD00895DC1 /* serverSideCrashReporter.php */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.php; name = serverSideCrashReporter.php; path = CrashReporterTestApp/serverSideCrashReporter.php; sourceTree = "<group>"; };
 		96A99158108D6B8100895DC1 /* READ ME.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "READ ME.txt"; path = "CrashReporterTestApp/READ ME.txt"; sourceTree = "<group>"; };
+		96ACD7211706416300138AE6 /* OSCPingTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSCPingTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		96ACD7231706416300138AE6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		96ACD7261706416400138AE6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		96ACD7271706416400138AE6 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		96ACD7281706416400138AE6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		96ACD72B1706416400138AE6 /* OSCPingTester-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OSCPingTester-Info.plist"; sourceTree = "<group>"; };
+		96ACD72D1706416400138AE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		96ACD72F1706416400138AE6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		96ACD7311706416400138AE6 /* OSCPingTester-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OSCPingTester-Prefix.pch"; sourceTree = "<group>"; };
+		96ACD7331706416400138AE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		96ACD7351706416400138AE6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		96ACD7361706416400138AE6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		96ACD7391706416400138AE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		96ACD7491706422D00138AE6 /* PingTestOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingTestOSCManager.h; sourceTree = "<group>"; };
+		96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PingTestOSCManager.m; sourceTree = "<group>"; };
 		96B49302106AEB4C008FB26E /* MIDIviaOSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDIviaOSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
 		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
@@ -915,6 +974,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96ACD71E1706416300138AE6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96ACD7241706416300138AE6 /* Cocoa.framework in Frameworks */,
+				96ACD741170641A700138AE6 /* VVBasics.framework in Frameworks */,
+				96ACD742170641AA00138AE6 /* VVOSC.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96B49300106AEB4C008FB26E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -953,6 +1022,7 @@
 				968FAA86108B6141000E470D /* CrashReporterTestApp.app */,
 				96EF5A39122AF2D900F40F69 /* libVVMIDI.a */,
 				966CCBD81431EFB9006D580F /* OSCQueryTest.app */,
+				96ACD7211706416300138AE6 /* OSCPingTester.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -970,6 +1040,8 @@
 				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				96ACD7291706416400138AE6 /* OSCPingTester */,
+				96ACD7221706416300138AE6 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
@@ -1199,6 +1271,50 @@
 				9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */,
 			);
 			name = VVCrashReporter;
+			sourceTree = "<group>";
+		};
+		96ACD7221706416300138AE6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				96ACD7231706416300138AE6 /* Cocoa.framework */,
+				96ACD7251706416300138AE6 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		96ACD7251706416300138AE6 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				96ACD7261706416400138AE6 /* AppKit.framework */,
+				96ACD7271706416400138AE6 /* CoreData.framework */,
+				96ACD7281706416400138AE6 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		96ACD7291706416400138AE6 /* OSCPingTester */ = {
+			isa = PBXGroup;
+			children = (
+				96ACD7351706416400138AE6 /* AppDelegate.h */,
+				96ACD7361706416400138AE6 /* AppDelegate.m */,
+				96ACD7491706422D00138AE6 /* PingTestOSCManager.h */,
+				96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */,
+				96ACD7381706416400138AE6 /* MainMenu.xib */,
+				96ACD72A1706416400138AE6 /* Supporting Files */,
+			);
+			path = OSCPingTester;
+			sourceTree = "<group>";
+		};
+		96ACD72A1706416400138AE6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				96ACD72B1706416400138AE6 /* OSCPingTester-Info.plist */,
+				96ACD72C1706416400138AE6 /* InfoPlist.strings */,
+				96ACD72F1706416400138AE6 /* main.m */,
+				96ACD7311706416400138AE6 /* OSCPingTester-Prefix.pch */,
+				96ACD7321706416400138AE6 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		96B4931F106AEB8A008FB26E /* MIDI via OSC app */ = {
@@ -1671,6 +1787,26 @@
 			productReference = 968FAA86108B6141000E470D /* CrashReporterTestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		96ACD7201706416300138AE6 /* OSCPingTester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96ACD73D1706416400138AE6 /* Build configuration list for PBXNativeTarget "OSCPingTester" */;
+			buildPhases = (
+				96ACD71D1706416300138AE6 /* Sources */,
+				96ACD71E1706416300138AE6 /* Frameworks */,
+				96ACD71F1706416300138AE6 /* Resources */,
+				96ACD73E1706419A00138AE6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96ACD746170641B600138AE6 /* PBXTargetDependency */,
+				96ACD744170641B300138AE6 /* PBXTargetDependency */,
+			);
+			name = OSCPingTester;
+			productName = OSCPingTester;
+			productReference = 96ACD7211706416300138AE6 /* OSCPingTester.app */;
+			productType = "com.apple.product-type.application";
+		};
 		96B49301106AEB4C008FB26E /* MIDIviaOSC */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */;
@@ -1728,6 +1864,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* VVOpenSource */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1743,6 +1880,7 @@
 				9628D178100E8B4D00C3944E /* OSCTestApp */,
 				96B49301106AEB4C008FB26E /* MIDIviaOSC */,
 				966CCBD71431EFB9006D580F /* OSCQueryTest */,
+				96ACD7201706416300138AE6 /* OSCPingTester */,
 				9612861D100F845400C9C833 /* Build/Install VVOSC iPhone SDK */,
 				9628D0D8100E8A1600C3944E /* VVOSC-iPhone sim SDK */,
 				9628D0E1100E8A1F00C3944E /* VVOSC-iPhone dev SDK */,
@@ -1807,6 +1945,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96ACD71F1706416300138AE6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96ACD72E1706416400138AE6 /* InfoPlist.strings in Resources */,
+				96ACD7341706416400138AE6 /* Credits.rtf in Resources */,
+				96ACD73A1706416400138AE6 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2125,6 +2273,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96ACD71D1706416300138AE6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96ACD7301706416400138AE6 /* main.m in Sources */,
+				96ACD7371706416400138AE6 /* AppDelegate.m in Sources */,
+				96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96B492FF106AEB4C008FB26E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2303,6 +2461,21 @@
 			target = 9666943710304C2E00DB5FDF /* VVBasics-os x SDK */;
 			targetProxy = 96AB37CA10305046005F2577 /* PBXContainerItemProxy */;
 		};
+		96ACD744170641B300138AE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
+			targetProxy = 96ACD743170641B300138AE6 /* PBXContainerItemProxy */;
+		};
+		96ACD746170641B600138AE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9628D0C4100E89F700C3944E /* VVOSC */;
+			targetProxy = 96ACD745170641B600138AE6 /* PBXContainerItemProxy */;
+		};
+		96ACD748170641C000138AE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96ACD7201706416300138AE6 /* OSCPingTester */;
+			targetProxy = 96ACD747170641C000138AE6 /* PBXContainerItemProxy */;
+		};
 		96E7ED69106BF7F400B90822 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
@@ -2334,6 +2507,33 @@
 			targetProxy = 96EF5A4B122AF3AA00F40F69 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		96ACD72C1706416400138AE6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				96ACD72D1706416400138AE6 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		96ACD7321706416400138AE6 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				96ACD7331706416400138AE6 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		96ACD7381706416400138AE6 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				96ACD7391706416400138AE6 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB91B208733DA50010E9CD /* Debug */ = {
@@ -2944,6 +3144,69 @@
 			};
 			name = Release;
 		};
+		96ACD73B1706416400138AE6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OSCPingTester/OSCPingTester-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "OSCPingTester/OSCPingTester-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		96ACD73C1706416400138AE6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OSCPingTester/OSCPingTester-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "OSCPingTester/OSCPingTester-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		96B49305106AEB4E008FB26E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3187,6 +3450,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		96ACD73D1706416400138AE6 /* Build configuration list for PBXNativeTarget "OSCPingTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96ACD73B1706416400138AE6 /* Debug */,
+				96ACD73C1706416400138AE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */ = {
 			isa = XCConfigurationList;
