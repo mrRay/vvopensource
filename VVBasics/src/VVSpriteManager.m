@@ -7,11 +7,7 @@
 
 
 BOOL			_spriteManagerInitialized;
-
-
-
-
-BOOL			_spriteManagerInitialized;
+MutLockArray		*_spriteManagerArray;
 
 
 

@@ -7,7 +7,7 @@
 
 
 extern BOOL			_spriteManagerInitialized;
-MutLockArray		*_spriteManagerArray;
+extern MutLockArray		*_spriteManagerArray;
 
 
 
