@@ -62,6 +62,9 @@
 - (void) setLogin:(NSString *)user password:(NSString *)pass;
 
 - (void) writePtr:(void *)ptr size:(size_t)s;
+- (void) appendStringToHeader:(NSString *)s;
+- (void) addFormNSString:(NSString *)s forName:(NSString *)n;
+- (void) addFormZipData:(NSData *)d forName:(NSString *)n;
 
 @property (assign,readwrite) struct curl_slist *headerList;
 @property (assign,readwrite) struct curl_httppost *firstFormPtr;

@@ -43,6 +43,7 @@ HOW TO USE THIS CLASS:
 */
 
 @interface VVCrashReporter : NSObject <VVCURLDLDelegate> {
+	NSString						*domainToCheck;
 	NSString						*uploadURL;	//	does NOT includes http://
 	NSString						*developerEmail;
 	id								delegate;	//	must respond to VVCrashReporterDelegate protocol
@@ -87,6 +88,9 @@ HOW TO USE THIS CLASS:
 //	VVCURLDLDelegate method- this class will be the delegate of multiple VVCURLDL instances
 - (void) dlFinished:(id)h;
 
+///	Optional.  Sets the domain to check, expects something like "vidvox.com"- if used, the domain is looked up first (pretty sure the SCNetwork stuff tries to send a UDP packet to this domain) to ensure that it exists: if it doesn't, the crash reporter window simply isn't displayed.
+- (void) setDomainToCheck:(NSString *)n;
+- (NSString *) domainToCheck;
 ///	Sets the developer email address; this is displayed if the user has a problem connecting to the internet/the server the crash reporter is supposed to be connecting to
 - (void) setDeveloperEmail:(NSString *)n;
 - (NSString *) developerEmail;

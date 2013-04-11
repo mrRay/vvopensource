@@ -88,6 +88,7 @@
 - (id) init	{
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
+		domainToCheck = nil;
 		uploadURL = nil;
 		developerEmail = nil;
 		delegate = nil;
@@ -119,6 +120,7 @@
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
+	VVRELEASE(domainToCheck);
 	VVRELEASE(uploadURL);
 	VVRELEASE(developerEmail);
 	VVRELEASE(crashLogArray);
@@ -152,32 +154,19 @@
 	if (![self _assembleCrashLogs] || [crashLogArray count]<1)
 		goto BAIL;
 	
-	//	extract the domain from the upload url
-	NSArray				*pathComponents = [uploadURL pathComponents];
-	if ((pathComponents==nil)||([pathComponents count]<1))
-		goto BAIL;
-	NSString			*domainString = nil;
-	domainString = [NSString stringWithFormat:@"http://%@",[pathComponents objectAtIndex:0]];
 	//	check to see if the domain's reachable with the given network configuration
-	#if (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED <= 1050))
-		//	this has to execute if i'm compiling against 10.5
-		BOOL						foundServer = NO;
-		SCNetworkConnectionFlags	status;
-		foundServer = SCNetworkCheckReachabilityByName([domainString UTF8String],&status);
-		BOOL						reachable = NO;
-		reachable = foundServer && (status & kSCNetworkFlagsReachable) && !(status & kSCNetworkFlagsConnectionRequired);
-	#else
+	if (domainToCheck != nil)	{
 		SCNetworkReachabilityRef	target;
 		SCNetworkConnectionFlags	flags = 0;
-		target = SCNetworkReachabilityCreateWithName(NULL,[domainString UTF8String]);
+		target = SCNetworkReachabilityCreateWithName(NULL,[domainToCheck UTF8String]);
 		BOOL						foundServer = (target==NULL)?NO:SCNetworkReachabilityGetFlags(target,&flags);
 		CFRelease(target);
 		BOOL						reachable = foundServer && (flags & kSCNetworkReachabilityFlagsReachable) && !(flags & kSCNetworkReachabilityFlagsConnectionRequired);
-	#endif
-	
-	//	if it's not reachable, bail
-	if (!reachable)
-		goto BAIL;
+		
+		//	if it's not reachable, bail
+		if (!reachable)
+			goto BAIL;
+	}
 	
 	//	if i'm here, there are logs which need to be sent and the server's available- open the reporter!
 	[self openCrashReporter];
@@ -672,6 +661,13 @@
 
 
 
+- (void) setDomainToCheck:(NSString *)n	{
+	VVRELEASE(domainToCheck);
+	domainToCheck = (n==nil) ? nil : [n retain];
+}
+- (NSString *) domainToCheck	{
+	return domainToCheck;
+}
 - (void) setDeveloperEmail:(NSString *)n	{
 	VVRELEASE(developerEmail);
 	if (n != nil)

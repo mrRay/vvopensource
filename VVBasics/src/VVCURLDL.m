@@ -200,6 +200,30 @@
 		responseData = [[NSMutableData dataWithCapacity:0] retain];
 	[responseData appendBytes:ptr length:s];
 }
+- (void) appendStringToHeader:(NSString *)s	{
+	if (s == nil)
+		return;
+	curl_slist_append(headerList,[s UTF8String]);
+}
+- (void) addFormNSString:(NSString *)s forName:(NSString *)n	{
+	if (s==nil || n==nil)
+		return;
+	curl_formadd(&firstFormPtr,&lastFormPtr,
+		CURLFORM_COPYNAME, [n UTF8String],
+		CURLFORM_COPYCONTENTS, [s UTF8String],
+		CURLFORM_END);
+}
+- (void) addFormZipData:(NSData *)d forName:(NSString *)n	{
+	if (d==nil || n==nil)
+		return;
+	curl_formadd(&firstFormPtr,&lastFormPtr,
+			CURLFORM_CONTENTTYPE,"application/zip",
+			CURLFORM_COPYNAME,[n UTF8String],
+			CURLFORM_BUFFER,[n UTF8String],
+			CURLFORM_BUFFERPTR,[d bytes],
+			CURLFORM_BUFFERLENGTH,[d length],
+			CURLFORM_END);
+}
 
 @synthesize headerList;
 @synthesize firstFormPtr;
