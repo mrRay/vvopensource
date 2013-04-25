@@ -565,6 +565,7 @@
 		queryType = qType;
 		queryTXAddress = qTxAddr;
 		queryTXPort = qTxPort;
+		msgInfo = nil;
 		return self;
 	}
 	BAIL:
@@ -583,7 +584,8 @@
 	}
 	if (timeTag != nil)
 		[returnMe setTimeTag:timeTag];
-	
+	if (msgInfo != nil)
+		[returnMe setMsgInfo:msgInfo];
 	return returnMe;
 }
 - (void) dealloc	{
@@ -601,6 +603,10 @@
 	if (timeTag != nil)	{
 		[timeTag release];
 		timeTag = nil;
+	}
+	if (msgInfo != nil)	{
+		[msgInfo release];
+		msgInfo = nil;
 	}
 	[super dealloc];
 }
@@ -904,6 +910,16 @@
 }
 - (void) _setQueryType:(OSCQueryType)n	{
 	queryType = n;
+}
+
+
+- (void) setMsgInfo:(id)n	{
+	if (msgInfo != nil)
+		[msgInfo release];
+	msgInfo = (n==nil) ? nil : [n retain];
+}
+- (id) msgInfo	{
+	return msgInfo;
 }
 
 

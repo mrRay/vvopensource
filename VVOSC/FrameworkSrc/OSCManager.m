@@ -503,6 +503,18 @@
 	[outPortArray unlock];
 	return foundPort;
 }
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a	{
+	OSCOutPort		*foundPort = nil;
+	[outPortArray rdlock];
+	for (OSCOutPort *outPortPtr in [outPortArray array])	{
+		if ([outPortPtr _matchesRawAddress:a])	{
+			foundPort = outPortPtr;
+			break;
+		}
+	}
+	[outPortArray unlock];
+	return foundPort;
+}
 - (OSCOutPort *) findOutputForIndex:(int)i	{
 	if ((i<0) || (i>=[outPortArray count]))
 		return nil;

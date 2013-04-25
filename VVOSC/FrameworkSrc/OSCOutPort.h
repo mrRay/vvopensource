@@ -58,6 +58,7 @@ the documentation here only covers the basics, the header file for this class is
 - (void) setAddressString:(NSString *)n andPort:(unsigned short)p;
 
 - (BOOL) _matchesRawAddress:(unsigned int)a andPort:(unsigned short)p;
+- (BOOL) _matchesRawAddress:(unsigned int)a;
 
 ///	the label used to distinguish this output from other outputs in my manager
 - (NSString *) portLabel;

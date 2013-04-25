@@ -241,8 +241,8 @@
 
 - (void) loadProperties	{
 	OSStatus		err = noErr;
-	CFStringRef		localName;
-	SInt32			uniqueID;
+	CFStringRef		tmpString;
+	SInt32			tmpInt;
 	//CFDataRef		uids;
 	
 	//	make sure there's a "properties" dict, and that it's empty
@@ -251,22 +251,43 @@
 	else
 		[properties removeAllObjects];
 	//	get the midi source name
-	err = MIDIObjectGetStringProperty(endpointRef, kMIDIPropertyName, &localName);
+	err = MIDIObjectGetStringProperty(endpointRef, kMIDIPropertyName, &tmpString);
 	if (err != noErr)
-		NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty()",(long)err);
+		NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty() a",(long)err);
 	else	{
-		if (localName != NULL)	{
-			name = [[NSString stringWithString:(NSString *)localName] retain];
+		if (tmpString != NULL)	{
+			name = [[NSString stringWithString:(NSString *)tmpString] retain];
 			[properties setValue:name forKey:@"name"];
-			CFRelease(localName);
+			CFRelease(tmpString);
 		}
 	}
 	//	get the midi unique identifier
-	err = MIDIObjectGetIntegerProperty(endpointRef,kMIDIPropertyUniqueID, &uniqueID);
+	err = MIDIObjectGetIntegerProperty(endpointRef,kMIDIPropertyUniqueID, &tmpInt);
 	if (err != noErr)
-		NSLog(@"\t\terror %ld at MIDIObjectGetIntegerProperty()",(long)err);
+		NSLog(@"\t\terror %ld at MIDIObjectGetIntegerProperty() b",(long)err);
 	else
-		[properties setValue:[NSNumber numberWithLong:uniqueID] forKey:@"uniqueID"];
+		[properties setValue:[NSNumber numberWithLong:tmpInt] forKey:@"uniqueID"];
+	/*
+	//	device id
+	err = MIDIObjectGetIntegerProperty(endpointRef,kMIDIPropertyDeviceID, &tmpInt);
+	if (err != noErr)
+		NSLog(@"\t\terror %ld at MIDIObjectGetIntegerProperty() c",(long)err);
+	else
+		[properties setValue:[NSNumber numberWithLong:tmpInt] forKey:@"deviceID"];
+	*/
+	
+	//	model
+	err = MIDIObjectGetStringProperty(endpointRef, kMIDIPropertyModel, &tmpString);
+	if (err != noErr)	{
+		//NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty() d",(long)err);
+	}
+	else	{
+		if (tmpString != NULL)	{
+			[properties setValue:(NSString *)tmpString forKey:@"model"];
+			CFRelease(tmpString);
+		}
+	}
+	
 	//NSLog(@"\t\t%@",properties);
 }
 
@@ -452,6 +473,9 @@
 
 - (MIDIEndpointRef) endpointRef	{
 	return endpointRef;
+}
+- (NSMutableDictionary *) properties	{
+	return properties;
 }
 - (NSString *) name	{
 	return name;

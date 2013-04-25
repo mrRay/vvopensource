@@ -217,6 +217,12 @@
 		returnMe = YES;
 	return returnMe;
 }
+- (BOOL) _matchesRawAddress:(unsigned int)a	{
+	BOOL		returnMe = NO;
+	if ((unsigned int)addr.sin_addr.s_addr == a)
+		returnMe = YES;
+	return returnMe;
+}
 
 
 - (NSString *) portLabel	{

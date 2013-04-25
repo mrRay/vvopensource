@@ -40,7 +40,7 @@
  
  
  
- 
+/*
  //	these are all STATUS MESSAGES: all status mesages have bit 7 set.  ONLY status msgs have bit 7 set to 1!
 //	these status messages go to a specific channel (these are voice messages)
 #define VVMIDINoteOffVal 0x80			//	+2 data bytes
@@ -69,6 +69,39 @@
 #define VVMIDIUndefinedRealtime1Val 0xFD
 #define VVMIDIActiveSenseVal 0xFE		//	no data bytes! sent every 300 ms. to make sure device is active
 #define VVMIDIResetVal	 0xFF			//	no data bytes! never received/don't send!
+*/
+
+typedef enum	{
+	VVMIDIMsgUnknown = 0x00,
+	//	these are all STATUS MESSAGES: all status mesages have bit 7 set.  ONLY status msgs have bit 7 set to 1!
+	//	these status messages go to a specific channel (these are voice messages)
+	VVMIDINoteOffVal = 0x80,			//	+2 data bytes
+	VVMIDINoteOnVal = 0x90,			//	+2 data bytes
+	VVMIDIAfterTouchVal = 0xA0,		//	+2 data bytes
+	VVMIDIControlChangeVal = 0xB0,		//	+2 data bytes
+	VVMIDIProgramChangeVal = 0xC0,		//	+1 data byte
+	VVMIDIChannelPressureVal = 0xD0,	//	+1 data byte
+	VVMIDIPitchWheelVal = 0xE0,		//	+2 data bytes
+	//	these status messages go anywhere/everywhere
+	//	0xF0 - 0xF7		system common messages
+	VVMIDIBeginSysexDumpVal = 0xF0,	//	signals the start of a sysex dump; unknown amount of data to follow
+	VVMIDIMTCQuarterFrameVal = 0xF1,	//	+1 data byte, rep. time code; 0-127
+	VVMIDISongPosPointerVal = 0xF2,	//	+ 2 data bytes, rep. 14-bit val; this is MIDI beat on which to start song.
+	VVMIDISongSelectVal = 0xF3,		//	+1 data byte, rep. song number; 0-127
+	VVMIDIUndefinedCommon1Val = 0xF4,
+	VVMIDIUndefinedCommon2Val = 0xF5,
+	VVMIDITuneRequestVal = 0xF6,		//	no data bytes!
+	VVMIDIEndSysexDumpVal = 0xF7,		//	signals the end of a sysex dump
+	//	0xF8 - 0xFF		system realtime messages
+	VVMIDIClockVal = 0xF8,			//	no data bytes! 24 of these per. quarter note/96 per. measure.
+	VVMIDITickVal = 0xF9,				//	no data bytes! when master clock playing back, sends 1 tick every 10ms.
+	VVMIDIStartVal = 0xFA,				//	no data bytes!
+	VVMIDIContinueVal = 0xFB,			//	no data bytes!
+	VVMIDIStopVal = 0xFC,				//	no data bytes!
+	VVMIDIUndefinedRealtime1Val = 0xFD,
+	VVMIDIActiveSenseVal = 0xFE,		//	no data bytes! sent every 300 ms. to make sure device is active
+	VVMIDIResetVal  = 0xFF,			//	no data bytes! never received/don't send!
+} VVMIDIMsgType;
 
 
 

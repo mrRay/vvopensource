@@ -27,6 +27,8 @@ According to the OSC spec, a message consists of an address path (where the mess
 	OSCQueryType		queryType;	//!<OSCQueryTypeUnknown by default
 	unsigned int		queryTXAddress;	//!<0 by default, set when parsing received data- NETWORK BYTE ORDER.  technically, it's a 'struct in_addr'- this is the IP address from which the message was received.  queries need to send their replies back somewhere!
 	unsigned short		queryTXPort;	//!<0 by default, set when parsing received data- NETWORK BYTE ORDER.  this is the port from which the UDP message that created this message was received
+	
+	id					msgInfo;	//	a RETAINED var that isn't used by this class at all- this is open for use by users/subclasses
 }
 
 + (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
@@ -99,5 +101,8 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (void) _setMessageType:(OSCMessageType)n;
 - (void) _setQueryType:(OSCQueryType)n;
 - (NSString *) _description;
+
+- (void) setMsgInfo:(id)n;
+- (id) msgInfo;
 
 @end

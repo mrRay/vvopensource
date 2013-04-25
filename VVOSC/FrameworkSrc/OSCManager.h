@@ -92,6 +92,9 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 - (OSCOutPort *) findOutputWithAddress:(NSString *)a andPort:(int)p;
 //	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address expressed as an int) and port.  Returns nil if not found.
 - (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a andPort:(unsigned short)p;
+//	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address as an int).  returns nil if not found.
+- (OSCOutPort *) findOutputWithRawAddress:(unsigned int)a;
+
 //	Returns the output at the provided index in outPortArray
 - (OSCOutPort *) findOutputForIndex:(int)i;
 //	Finds and returns the input whose zero conf name matches the passed string (returns nil if not found)

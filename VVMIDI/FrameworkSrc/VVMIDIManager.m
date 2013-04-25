@@ -258,7 +258,6 @@
 - (VVMIDINode *) findDestNodeNamed:(NSString *)n	{
 	if ((n==nil)||([n length]<1))
 		return nil;
-	
 	VVMIDINode			*returnMe = nil;
 	NSEnumerator		*nodeIt = nil;
 	VVMIDINode			*nodePtr = nil;
@@ -269,6 +268,25 @@
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
+	[destArray unlock];
+	return returnMe;
+}
+- (VVMIDINode *) findDestNodeWithModelName:(NSString *)n	{
+	if (n==nil || [n length]<1)
+		return nil;
+	VVMIDINode		*returnMe = nil;
+	NSDictionary	*props = nil;
+	NSString		*tmpString = nil;
+	
+	[destArray rdlock];
+	for (VVMIDINode *nodePtr in [destArray array])	{
+		props = [nodePtr properties];
+		tmpString = (props==nil) ? nil : [props objectForKey:@"model"];
+		if (tmpString!=nil && [tmpString isEqualToString:n])	{
+			returnMe = nodePtr;
+			break;
+		}
+	}
 	[destArray unlock];
 	return returnMe;
 }
@@ -287,6 +305,25 @@
 			if ([[nodePtr name] isEqualToString:n])
 				returnMe = nodePtr;
 		}
+	[sourceArray unlock];
+	return returnMe;
+}
+- (VVMIDINode *) findSourceNodeWithModelName:(NSString *)n	{
+	if (n==nil || [n length]<1)
+		return nil;
+	VVMIDINode		*returnMe = nil;
+	NSDictionary	*props = nil;
+	NSString		*tmpString = nil;
+	
+	[sourceArray rdlock];
+	for (VVMIDINode *nodePtr in [sourceArray array])	{
+		props = [nodePtr properties];
+		tmpString = (props==nil) ? nil : [props objectForKey:@"model"];
+		if (tmpString!=nil && [tmpString isEqualToString:n])	{
+			returnMe = nodePtr;
+			break;
+		}
+	}
 	[sourceArray unlock];
 	return returnMe;
 }

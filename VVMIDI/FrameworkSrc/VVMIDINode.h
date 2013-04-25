@@ -51,6 +51,7 @@
 - (BOOL) receiver;
 
 - (MIDIEndpointRef) endpointRef;
+- (NSMutableDictionary *) properties;
 - (NSString *) name;
 - (id) delegate;
 - (void) setDelegate:(id)n;

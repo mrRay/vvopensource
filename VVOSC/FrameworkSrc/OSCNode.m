@@ -557,6 +557,14 @@
 		case OSCMessageTypeUnknown:
 		case OSCMessageTypeControl:
 			
+			OSSpinLockLock(&lastReceivedMessageLock);
+				if (lastReceivedMessage != nil)
+					[lastReceivedMessage release];
+				lastReceivedMessage = m;
+				if (lastReceivedMessage != nil)
+					[lastReceivedMessage retain];
+			OSSpinLockUnlock(&lastReceivedMessageLock);
+			
 			tmpCopy = [delegateArray lockCreateArrayCopyFromObjects];
 			if (tmpCopy != nil)	{
 				for (id delegate in tmpCopy)	{
@@ -574,13 +582,7 @@
 				}
 			}
 			*/
-			OSSpinLockLock(&lastReceivedMessageLock);
-				if (lastReceivedMessage != nil)
-					[lastReceivedMessage release];
-				lastReceivedMessage = m;
-				if (lastReceivedMessage != nil)
-					[lastReceivedMessage retain];
-			OSSpinLockUnlock(&lastReceivedMessageLock);
+			
 			break;
 		case OSCMessageTypeQuery:
 			qType = [m queryType];

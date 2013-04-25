@@ -43,7 +43,9 @@
 - (void) sendMsgs:(NSArray *)a;
 
 - (VVMIDINode *) findDestNodeNamed:(NSString *)n;	//	finds a destination node with a given name
+- (VVMIDINode *) findDestNodeWithModelName:(NSString *)n;
 - (VVMIDINode *) findSourceNodeNamed:(NSString *)n;	//	finds a source node with a given name
+- (VVMIDINode *) findSourceNodeWithModelName:(NSString *)n;
 
 //	Generates and returns an array of strings which correspond to the labels of this manager's out ports
 - (NSArray *) destNodeNameArray;

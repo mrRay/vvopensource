@@ -96,8 +96,12 @@ typedef enum	{
 //	this is the name of the notification that gets posted whenever the address space is told to refresh its menu
 #define AddressSpaceUpdateMenus @"AddressSpaceUpdateMenus"
 
+///	This notification gets fired whenever the input ports in an OSC manager are about to be changed
+#define OSCInPortsAboutToChangeNotification @"OSCInPortsAboutToChangeNotification"
 ///	This notification gets fired whenever the input ports in an OSC manager get changed
 #define OSCInPortsChangedNotification @"OSCInPortsChangedNotification"
+///	This notification gets fired whenever the output ports in an OSC manager are about to be changed
+#define OSCOutPortsAboutToChangeNotification @"OSCOutPortsAboutToChangeNotification"
 ///	This notification gets fired whenever the output ports in an OSC manager get changed
 #define OSCOutPortsChangedNotification @"OSCOutPortsChangedNotification"
 
