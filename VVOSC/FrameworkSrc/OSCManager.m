@@ -115,16 +115,18 @@
 	*/
 }
 - (void) deleteAllOutputs	{
-	BOOL			postNotification = NO;
+	//BOOL			postNotification = NO;
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
+	
 	[outPortArray wrlock];
-		if ([outPortArray count]>0)
-			postNotification = YES;
+		//if ([outPortArray count]>0)
+		//	postNotification = YES;
 		[outPortArray makeObjectsPerformSelector:@selector(prepareToBeDeleted)];
 		[outPortArray removeAllObjects];
 	[outPortArray unlock];
 	
-	if (postNotification)
-		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -254,6 +256,8 @@
 	OSCOutPort			*portPtr;
 	BOOL				foundNameConflict = NO;
 	
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
+	
 	[outPortArray wrlock];
 		//	check for name conflicts
 		it = [[outPortArray array] objectEnumerator];
@@ -272,14 +276,14 @@
 		}
 	[outPortArray unlock];
 	//	if i made an output, i need to tell the delegate that stuff changed
-	if (returnMe != nil)	{
+	//if (returnMe != nil)	{
 		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 		/*
 		//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 		if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
 			[delegate setupChanged];
 		*/
-	}
+	//}
 	
 	return returnMe;
 }
@@ -571,14 +575,17 @@
 		return;
 	BOOL				postNotification = NO;
 	int					origCount;
+	//NSLog(@"\t\tfiring about-to-change notification");
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
+	
 	[outPortArray wrlock];
 		origCount = [outPortArray count];
 		[outPortArray removeObject:p];
 		if (origCount != [outPortArray count])
 			postNotification = YES;
 	[outPortArray unlock];
-	if (postNotification)
-		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	//NSLog(@"\t\tfiring done-changing notification");
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 	/*
 	//	if there's a delegate and it responds to the setupChanged method, let it know that stuff changed
 	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(setupChanged)]))
@@ -588,10 +595,12 @@
 - (void) removeOutputWithLabel:(NSString *)n	{
 	if (n==nil)
 		return;
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
+	
 	[outPortArray wrlock];
 	int			indexToRemove = -1;
 	int			tmpIndex = 0;
-	BOOL		postNote = NO;
+	//BOOL		postNote = NO;
 	for (OSCOutPort *outPort in [outPortArray array])	{
 		NSString		*tmpLabel = [outPort portLabel];
 		if (tmpLabel!=nil && [tmpLabel isEqualToString:n])	{
@@ -600,17 +609,18 @@
 		}
 	}
 	if (indexToRemove >= 0)	{
-		postNote = YES;
+		//postNote = YES;
 		[outPortArray removeObjectAtIndex:indexToRemove];
 	}
 	[outPortArray unlock];
-	if (postNote)
-		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 }
 - (void) removeAllOutputs	{
-	BOOL			postNote = ([outPortArray count]>0)?YES:NO;
+	//BOOL			postNote = ([outPortArray count]>0)?YES:NO;
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
 	[outPortArray lockRemoveAllObjects];
-	if (postNote)
+	//if (postNote)
 		[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];
 }
 - (NSArray *) outPortLabelArray	{
