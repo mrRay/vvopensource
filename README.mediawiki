@@ -35,35 +35,35 @@ Did you check the "Downloads" section?
 
 The general idea is to compile the framework/frameworks you want to use, add them to your XCode project so you may link against them, and then set up a build phase to copy the framework into your application bundle.  This is fairly important: most of the time when you link against a framework, the framework is expected to be installed on your OS.  VVOSC, VVBasics, and VVMIDI are different: your application will include a compiled copy of the relevant framework(s), so you're guaranteed that the framework won't change outside of your control (which means you won't inherit bugs or have to deal with changed APIs until you're ready to do so).  Here's the exact procedure:
 
-  # Open the VVOpenSource project in XCode
-  # In XCode, make the framework you need your active target.  Make sure the build mode is set to "Release"!  If your framework links against other frameworks (for example, VVOSC requries VVBasics), the other frameworks will be compiled automatically- you don't need to worry about them.
-  # Build the target.  Your compiled framework(s) may be found in "./build/Release/".  You may now close the VVOpenSource project you opened in XCode.
-  # Open your application's project file in XCode, and drag the compiled framework(s) into your XCode project so you can link against it/them.  If more than one framework was compiled in the last step, you need to add all of them to your XCode project!
-  # From XCode's "Project" menu, add a new "Copy Files" build phase to your application/target.  You only need to do this once.
-  # Change the destination of the "Copy Files" build phase you just created so the files are being copied into the 'Frameworks' folder within your app bundle.
-  # Expand your application/target, and drag all of the frameworks you just added to your project into the copy files build phase you created in the last step.  Be sure to drag the frameworks *from your project* into the copy files build phase- you're not dragging from the Finder to XCode, you should be dragging from XCode to XCode!
-  # Double-click your application/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Runpath Search Paths" setting, and add the following paths: "@loader_path/../Frameworks" and "@executable_path/../Frameworks".
-  # That's it- you're done now.  You can import/include objects from the framework in your source just as you normally would.
+  * Open the VVOpenSource project in XCode
+  * In XCode, make the framework you need your active target.  Make sure the build mode is set to "Release"!  If your framework links against other frameworks (for example, VVOSC requries VVBasics), the other frameworks will be compiled automatically- you don't need to worry about them.
+  * Build the target.  Your compiled framework(s) may be found in "./build/Release/".  You may now close the VVOpenSource project you opened in XCode.
+  * Open your application's project file in XCode, and drag the compiled framework(s) into your XCode project so you can link against it/them.  If more than one framework was compiled in the last step, you need to add all of them to your XCode project!
+  * From XCode's "Project" menu, add a new "Copy Files" build phase to your application/target.  You only need to do this once.
+  * Change the destination of the "Copy Files" build phase you just created so the files are being copied into the 'Frameworks' folder within your app bundle.
+  * Expand your application/target, and drag all of the frameworks you just added to your project into the copy files build phase you created in the last step.  Be sure to drag the frameworks *from your project* into the copy files build phase- you're not dragging from the Finder to XCode, you should be dragging from XCode to XCode!
+  * Double-click your application/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Runpath Search Paths" setting, and add the following paths: "@loader_path/../Frameworks" and "@executable_path/../Frameworks".
+  * That's it- you're done now.  You can import/include objects from the framework in your source just as you normally would.
 
 == How to use these frameworks in a plugin ==
 
 If you're writing a plugin, you need to weak-link against these frameworks.  If you don't do this and the host app which loads your plugin has a different version of these frameworks installed, you won't know which version of the framework will get used- which usually means a crash and/or generally confusing and buggy behavior.  You can prevent this by weak-linking against the frameworks: your plugin will still contain its own copy of the framework, but if the host app has already loaded a different version of the framework that will be used instead.
 
-  # Follow the steps listed above for using these frameworks in a Mac application- you're going to be embedding a copy of these frameworks in your plugin just as you would for a mac app.
-  # Double-click your plugin/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Other Linker Flags" setting, and add the following flags: "-weak_framework VVBasics", "-weak_framework VVOSC", "-weak_framework VVMIDI".
+  * Follow the steps listed above for using these frameworks in a Mac application- you're going to be embedding a copy of these frameworks in your plugin just as you would for a mac app.
+  * Double-click your plugin/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Other Linker Flags" setting, and add the following flags: "-weak_framework VVBasics", "-weak_framework VVOSC", "-weak_framework VVMIDI".
 
 == How to use VVOSC in your iPhone application ==
 
 To the best of my knowledge, Apple doesn't allow you to use external libraries in iPhone apps, so the workaround is to compile VVOSC as a static library, install it on your dev machine as an SDK, and compile against it.  This entire process has been automated: here's all you need to do:
 
-  # Open the VVOpenSource project in XCode
-  # In XCode, make "Build/Install VVOSC iPhone SDK" your active target.  Make sure the build mode is set to "Release", and build the target.  Each of the static libraries (iPhone, iPhone sim, and OS X) executes a shellscript which installs it as an SDK in ~/Library/SDKs/.
-  # When it's done building, quit XCode, and then open your application's XCode project.
-  # Double-click your application/target in the left-hand list in your project window (or select it and get its info).  Click on the "Build" tab.
-  # Find the "Additional SDKs" option, and add "$HOME/Library/SDKs/VVOSC/$(PLATFORM_NAME).sdk"
-  # Still in the "Additional SDKs" option, add "$HOME/Library/SDKs/VVBasics/$(PLATFORM_NAME).sdk"
-  # Find the "Other Linker Flags" option, and add "-ObjC -lVVOSC -lVVBasics"
-  # That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import <VVOSC/VVOSC.h>).
+  * Open the VVOpenSource project in XCode
+  * In XCode, make "Build/Install VVOSC iPhone SDK" your active target.  Make sure the build mode is set to "Release", and build the target.  Each of the static libraries (iPhone, iPhone sim, and OS X) executes a shellscript which installs it as an SDK in ~/Library/SDKs/.
+  * When it's done building, quit XCode, and then open your application's XCode project.
+  * Double-click your application/target in the left-hand list in your project window (or select it and get its info).  Click on the "Build" tab.
+  * Find the "Additional SDKs" option, and add "$HOME/Library/SDKs/VVOSC/$(PLATFORM_NAME).sdk"
+  * Still in the "Additional SDKs" option, add "$HOME/Library/SDKs/VVBasics/$(PLATFORM_NAME).sdk"
+  * Find the "Other Linker Flags" option, and add "-ObjC -lVVOSC -lVVBasics"
+  * That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import <VVOSC/VVOSC.h>).
 
 == Using VVBasics/VVOSC/etc. in closed-source iOS applications ==
 
