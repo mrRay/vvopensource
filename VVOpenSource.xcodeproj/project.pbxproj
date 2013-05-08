@@ -2723,7 +2723,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator6.0;
+				SDKROOT = iphonesimulator6.1;
 			};
 			name = Debug;
 		};
@@ -2739,7 +2739,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphonesimulator6.0;
+				SDKROOT = iphonesimulator6.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2757,7 +2757,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos6.0;
+				SDKROOT = iphoneos6.1;
 			};
 			name = Debug;
 		};
@@ -2774,7 +2774,7 @@
 					"-DIPHONE",
 				);
 				PRODUCT_NAME = VVOSC;
-				SDKROOT = iphoneos6.0;
+				SDKROOT = iphoneos6.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2930,7 +2930,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator6.0;
+				SDKROOT = iphonesimulator6.1;
 			};
 			name = Debug;
 		};
@@ -2943,7 +2943,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphonesimulator6.0;
+				SDKROOT = iphonesimulator6.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2959,7 +2959,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos6.0;
+				SDKROOT = iphoneos6.1;
 			};
 			name = Debug;
 		};
@@ -2973,7 +2973,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = "-DIPHONE";
 				PRODUCT_NAME = VVBasics;
-				SDKROOT = iphoneos6.0;
+				SDKROOT = iphoneos6.1;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3458,6 +3458,7 @@
 				96ACD73C1706416400138AE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */ = {
 			isa = XCConfigurationList;

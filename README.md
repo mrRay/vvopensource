@@ -62,16 +62,23 @@ If you're writing a plugin, you need to weak-link against these frameworks.  If 
 How to use VVOSC in your iPhone application
 -------------------------------------------
 
-To the best of my knowledge, Apple doesn't allow you to use external libraries in iPhone apps, so the workaround is to compile VVOSC as a static library, install it on your dev machine as an SDK, and compile against it.  This entire process has been automated: here's all you need to do:
+To the best of my knowledge, Apple doesn't allow you to use external libraries in iPhone apps, so the workaround is to compile VVOSC as a static library, install it on your dev machine as an SDK, and compile against it.  This process has been largely automated: here's what you need to do:
 
   1.  Open the VVOpenSource project in XCode
-  2.  In XCode, make "Build/Install VVOSC iPhone SDK" your active target.  Make sure the build mode is set to "Release", and build the target.  Each of the static libraries (iPhone, iPhone sim, and OS X) executes a shellscript which installs it as an SDK in ~/Library/SDKs/.
+  2.  In XCode, make "Build/Install VVOSC iPhone SDK" your active target.  Make sure the build mode is set to "Release", and build the target.  Each of the static libraries (iPhone, iPhone sim, and OS X) executes a shellscript which installs it as an SDK in ~/Library/SDKs/.  If you have a problem- if the compile fails- please watch this video, which will probably explain how to fix your problem: http://vidvox.com/rays_oddsnends/UpdatingVVOSC.mov
   3.  When it's done building, quit XCode, and then open your application's XCode project.
   4.  Double-click your application/target in the left-hand list in your project window (or select it and get its info).  Click on the "Build" tab.
   5.  Find the "Additional SDKs" option, and add "$HOME/Library/SDKs/VVOSC/$(PLATFORM_NAME).sdk"
   6.  Still in the "Additional SDKs" option, add "$HOME/Library/SDKs/VVBasics/$(PLATFORM_NAME).sdk"
   7.  Find the "Other Linker Flags" option, and add "-ObjC -lVVOSC -lVVBasics"
   8.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import <VVOSC/VVOSC.h>).
+
+Compiling the SDKs failed, there are a bunch of warnings about missing SDKS!  What do I do?!?
+---------------------------------------------------------------------------------------------
+
+Some targets in this project (the VVOSC/VVBasics SDKs for iOS) explicitly reference a certain version of the iOS SDKs.  If you don't have that version of the iOS SDK installed, compiling the VVOSC/VVBasics iOS SDKs will fail- the solution is to update your project so it uses whatever version of the iOS SDKs you installed.  Here's how:
+
+http://vidvox.com/rays_oddsnends/UpdatingVVOSC.mov
 
 Using VVBasics/VVOSC/etc. in closed-source iOS applications
 -----------------------------------------------------------
