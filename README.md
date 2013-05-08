@@ -9,10 +9,12 @@ I write software for a living.  The more I write, the more I find myself using a
 
 All of these frameworks are contained in a single XCode project- as I write more frameworks, I link against code in other frameworks, so collecting everything together in a single project ensures that you can get everything necessary to compile all of these frameworks in one go- there are no external dependencies.  All of the code is always being worked on, and you should never assume that anything is "finished"- I would recommend updating the trunk whenever you get a chance.  Get in touch with me if you bump into an unfinished method or other oddity/problem- the code posted here is used in any number of other applications, and I'm always willing to fix or work on it.
 
+
 How to get help
 ---------------
 
 You could create a new issue or you can email me directly- I'm the project owner, so my address is listed to the right.  If I'm really busy- a frequent occurrence- it will take me a while to respond to you.
+
 
 What does this project include/do/make?
 ---------------------------------------
@@ -31,10 +33,19 @@ What does this project include/do/make?
 
   * the CrashReporterTestApp is a Cocoa application (created using VVBasics) which demonstrates the use of the VVCrashReporter class and can also be used to test your server-side implementation
 
+
 I'm not a programmer, I just want to download a MIDI/OSC test application!
 --------------------------------------------------------------------------
 
-Did you check the "Downloads" section?
+Here's an OSC test application:
+http://vidvox.com/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.4.zip
+
+Here's an application that sends MIDI input on one computer to another computer over the network/internet using OSC:
+http://vidvox.com/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.3.zip
+
+Here's an extremely crude MIDI test application ("MIDIMonitor" from snoize is much more comprehensive and fully-featured!):
+http://vidvox.com/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.5.zip
+
 
 How to use these frameworks in your Mac application
 ---------------------------------------------------
@@ -51,6 +62,7 @@ The general idea is to compile the framework/frameworks you want to use, add the
   7.  Double-click your application/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Runpath Search Paths" setting, and add the following paths: "@loader_path/../Frameworks" and "@executable_path/../Frameworks".
   8.  That's it- you're done now.  You can import/include objects from the framework in your source just as you normally would.
 
+
 How to use these frameworks in a plugin
 ---------------------------------------
 
@@ -58,6 +70,7 @@ If you're writing a plugin, you need to weak-link against these frameworks.  If 
 
   1.  Follow the steps listed above for using these frameworks in a Mac application- you're going to be embedding a copy of these frameworks in your plugin just as you would for a mac app.
   2.  Double-click your plugin/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Other Linker Flags" setting, and add the following flags: "-weak_framework VVBasics", "-weak_framework VVOSC", "-weak_framework VVMIDI".
+
 
 How to use VVOSC in your iPhone application
 -------------------------------------------
@@ -73,6 +86,7 @@ To the best of my knowledge, Apple doesn't allow you to use external libraries i
   7.  Find the "Other Linker Flags" option, and add "-ObjC -lVVOSC -lVVBasics"
   8.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import <VVOSC/VVOSC.h>).
 
+
 Compiling the SDKs failed, there are a bunch of warnings about missing SDKS!  What do I do?!?
 ---------------------------------------------------------------------------------------------
 
@@ -80,10 +94,12 @@ Some targets in this project (the VVOSC/VVBasics SDKs for iOS) explicitly refere
 
 http://vidvox.com/rays_oddsnends/UpdatingVVOSC.mov
 
+
 Using VVBasics/VVOSC/etc. in closed-source iOS applications
 -----------------------------------------------------------
 
 Apple doesn't permit dynamic libraries to be used on iOS devices; as a result of this, the VVOSC SDK created by this project is a static library (you compile it, and then use the static lib to compile your iOS applications).  Recently it's been brought to my attention that the LGPL doesn't cover static libraries, so I hereby grant permission to treat the static lib compiled by this project as if it were a dynamic lib with respect to the terms of the LGPL.  All the terms and provisions which apply to dynamic libs are conferred to the VVOSC SDK.  If you have a question about this, feel free to either email me directly or open an issue in the project for clarification.
+
 
 Documentation and sample code
 -----------------------------
