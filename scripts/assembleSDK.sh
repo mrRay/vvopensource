@@ -48,7 +48,10 @@ cp -RfH "${BUILD_DIR}/Release/${PRODUCT_NAME}.framework/Headers" "${BUILD_DIR}/$
 cp -RfH "lgpl-3.0.txt" "${BUILD_DIR}/${PRODUCT_NAME}/${PLATFORM_NAME}.sdk/usr/local/include/${PRODUCT_NAME}"
 
 #	modify the header files for the iphone SDKs
-echo "#define IPHONE 1" > "${BUILD_DIR}/tmpFile-${PLATFORM_NAME}.txt"
+if [["${PLATFORM_NAME}" == *mac*]]
+then
+	echo "#define IPHONE 1" > "${BUILD_DIR}/tmpFile-${PLATFORM_NAME}.txt"
+fi
 cat "${PRODUCT_NAME}/${PRODUCT_NAME}.h" >> "${BUILD_DIR}/tmpFile-${PLATFORM_NAME}.txt"
 mv "${BUILD_DIR}/tmpFile-${PLATFORM_NAME}.txt" "${BUILD_DIR}/${PRODUCT_NAME}/${PLATFORM_NAME}.sdk/usr/local/include/${PRODUCT_NAME}/${PRODUCT_NAME}.h"
 

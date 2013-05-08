@@ -256,6 +256,7 @@
 		96765969100F818900E02974 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9676596A100F818F00E02974 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		967B47E2173ADE5A00B89FCD /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
 		968FAA92108B6178000E470D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		968FAA94108B617C000E470D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
@@ -308,6 +309,11 @@
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
 		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96DB1036173ADF0E00DD325D /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
+		96DB1037173ADF1500DD325D /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
+		96DB1038173ADF2E00DD325D /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96DB103C173ADF5100DD325D /* VVSpriteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96DB103D173ADF5100DD325D /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96E26B35106C319700C5B418 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96E26B34106C319700C5B418 /* Credits.rtf */; };
 		96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
@@ -337,22 +343,14 @@
 		96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
 		96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A99011108CEA2600895DC1 /* Foundation.framework */; };
-		96F98FF01072C635004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; };
+		96F98FF01072C635004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F98FF11072C635004D5EDE /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
-		96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; };
+		96F98FF21072C636004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F98FF31072C636004D5EDE /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
-		96F98FF41072C637004D5EDE /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; };
+		96F98FF41072C637004D5EDE /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F98FF51072C637004D5EDE /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
-		96F98FF61072C638004D5EDE /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; };
+		96F98FF61072C638004D5EDE /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F98FF71072C638004D5EDE /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
-		96F98FF81072C63D004D5EDE /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; };
-		96F98FF91072C63D004D5EDE /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
-		96F98FFA1072C63E004D5EDE /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; };
-		96F98FFB1072C63E004D5EDE /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
-		96F98FFC1072C63F004D5EDE /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; };
-		96F98FFD1072C63F004D5EDE /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
-		96F98FFE1072C640004D5EDE /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; };
-		96F98FFF1072C640004D5EDE /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1458,10 +1456,6 @@
 				9628D16E100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */,
 				9666944610304CA700DB5FDF /* OSCConstants.h in Headers */,
-				96F98FF81072C63D004D5EDE /* VVSprite.h in Headers */,
-				96F98FFA1072C63E004D5EDE /* VVSpriteGLView.h in Headers */,
-				96F98FFC1072C63F004D5EDE /* VVSpriteManager.h in Headers */,
-				96F98FFE1072C640004D5EDE /* VVSpriteView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1521,6 +1515,9 @@
 				969E5A3D11FD9605006391BD /* VVCrashReporterEmailField.h in Headers */,
 				969E5A4011FD9608006391BD /* VVCURLDL.h in Headers */,
 				9621356F14C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
+				96DB1038173ADF2E00DD325D /* VVView.h in Headers */,
+				96DB103C173ADF5100DD325D /* VVSpriteControl.h in Headers */,
+				96DB103D173ADF5100DD325D /* VVSpriteControlCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2173,10 +2170,6 @@
 				9628D168100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D169100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D16D100E8A6700C3944E /* OSCInPort.m in Sources */,
-				96F98FF91072C63D004D5EDE /* VVSprite.m in Sources */,
-				96F98FFB1072C63E004D5EDE /* VVSpriteGLView.m in Sources */,
-				96F98FFD1072C63F004D5EDE /* VVSpriteManager.m in Sources */,
-				96F98FFF1072C640004D5EDE /* VVSpriteView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2249,6 +2242,9 @@
 				969E5A3F11FD9607006391BD /* VVCrashReporterEmailField.m in Sources */,
 				969E5A4111FD9608006391BD /* VVCURLDL.m in Sources */,
 				9621357014C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
+				967B47E2173ADE5A00B89FCD /* VVView.m in Sources */,
+				96DB1036173ADF0E00DD325D /* VVSpriteControl.m in Sources */,
+				96DB1037173ADF1500DD325D /* VVSpriteControlCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
