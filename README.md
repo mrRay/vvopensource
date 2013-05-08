@@ -13,7 +13,7 @@ All of these frameworks are contained in a single XCode project- as I write more
 How to get help
 ---------------
 
-You could create a new issue or you can email me directly- I'm the project owner, so my address is listed to the right.  If I'm really busy- a frequent occurrence- it will take me a while to respond to you.
+Please open an "issue".  If i'm really busy (a frequent occurrence) it may take a while for me to get back to you- sorry in advance!
 
 
 What does this project include/do/make?
@@ -111,3 +111,9 @@ VVBasics uses Doxygen; a copy of the generated documentation is hosted here:
 VVOSC uses Doxygen; a copy of the generated documentation is hosted here:
 
 [http://vidvox.com/rays_oddsnends/vvosc_doc/index.html]
+
+
+Licensing
+---------
+
+This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html
