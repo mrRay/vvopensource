@@ -29,7 +29,7 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 - (void) addObject:(id)o;
 - (void) addObjectsFromArray:(id)a;
 - (void) replaceWithObjectsFromArray:(id)a;
-- (void) insertObject:(id)o atIndex:(NSInteger)i;
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i;
 - (id) lastObject;
 - (void) removeObject:(id)o;
 - (BOOL) containsObject:(id)o;

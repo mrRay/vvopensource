@@ -56,9 +56,9 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ///	Establishes a write-lock, then calls "replaceWithObjectsFromArray" on self; threadsafe.
 - (void) lockReplaceWithObjectsFromArray:(id)a;
 ///	Calls "insertObject:atIndex:" on my array; not threadsafe.
-- (void) insertObject:(id)o atIndex:(NSInteger)i;
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i;
 ///	Establishes a write-lock, then calls "insertObject:atIndex:" on self; threadsafe.
-- (void) lockInsertObject:(id)o atIndex:(NSInteger)i;
+- (BOOL) lockInsertObject:(id)o atIndex:(NSInteger)i;
 ///	Calls "removeAllObjects" on my array; not threadsafe.
 - (void) removeAllObjects;
 ///	Establishes a write-lock, then calls "removeAllObjects" on self; threadsafe.

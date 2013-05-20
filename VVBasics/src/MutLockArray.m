@@ -184,22 +184,27 @@
 		pthread_rwlock_unlock(&arrayLock);
 	}	
 }
-- (void) insertObject:(id)o atIndex:(NSInteger)i	{
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i	{
+	BOOL		returnMe = NO;
 	if ((array != nil) && (o != nil) && (i<=[array count]))	{
 		//@try	{
 			[array insertObject:o atIndex:i];
+			returnMe = YES;
 		//}
 		//@catch (NSException *err)	{
 		//	NSLog(@"\t\t%s - %@",__func__,err);
 		//}
 	}
+	return returnMe;
 }
-- (void) lockInsertObject:(id)o atIndex:(NSInteger)i	{
+- (BOOL) lockInsertObject:(id)o atIndex:(NSInteger)i	{
+	BOOL		returnMe = NO;
 	if ((array != nil) && (o != nil))	{
 		pthread_rwlock_wrlock(&arrayLock);
-			[self insertObject:o atIndex:i];
+			returnMe = [self insertObject:o atIndex:i];
 		pthread_rwlock_unlock(&arrayLock);
 	}
+	return returnMe;
 }
 
 

@@ -97,9 +97,11 @@
 		//}
 	}
 }
-- (void) insertObject:(id)o atIndex:(NSInteger)i	{
+- (BOOL) insertObject:(id)o atIndex:(NSInteger)i	{
 	ObjectHolder		*tmpHolder = [ObjectHolder createWithObject:o];
-	[super insertObject:tmpHolder atIndex:i];
+	BOOL				returnMe = NO;
+	returnMe = [super insertObject:tmpHolder atIndex:i];
+	return returnMe;
 }
 - (id) lastObject	{
 	ObjectHolder		*objHolder = [super lastObject];
