@@ -24,6 +24,7 @@ extern int					_spriteControlCount;
 	NSColor					*borderColor;
 	
 	long					mouseDownModifierFlags;
+	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
 	NSView					*clickedSubview;	//	NOT RETAINED
@@ -46,6 +47,7 @@ extern int					_spriteControlCount;
 @property (assign,readwrite) BOOL drawBorder;
 @property (retain,readwrite) NSColor *borderColor;
 @property (readonly) long mouseDownModifierFlags;
+@property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
 - (void) _setMouseIsDown:(BOOL)n;

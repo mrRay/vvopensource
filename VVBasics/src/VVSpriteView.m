@@ -51,6 +51,7 @@ int				_spriteViewCount;
 	drawBorder = NO;
 	borderColor = nil;
 	mouseDownModifierFlags = 0;
+	mouseDownEventType = VVSpriteEventNULL;
 	modifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
@@ -161,10 +162,14 @@ int				_spriteViewCount;
 	*/
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
-	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
+	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
+		mouseDownEventType = VVSpriteEventRightDown;
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
-	else
+	}
+	else	{
+		mouseDownEventType = VVSpriteEventDown;
 		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
+	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
 	if (deleted)
@@ -189,8 +194,11 @@ int				_spriteViewCount;
 			return;
 		}
 	}
-	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	*/
+	mouseDownModifierFlags = [e modifierFlags];
+	mouseDownEventType = VVSpriteEventRightDown;
+	modifierFlags = mouseDownModifierFlags;
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
@@ -210,6 +218,9 @@ int				_spriteViewCount;
 		[clickedSubview mouseDragged:e];
 	else
 		[spriteManager localMouseDragged:localPoint];
+}
+- (void) rightMouseDragged:(NSEvent *)e	{
+	[self mouseDragged:e];
 }
 - (void) mouseUp:(NSEvent *)e	{
 	if (deleted)
@@ -376,6 +387,7 @@ int				_spriteViewCount;
 	return returnMe;
 }
 @synthesize mouseDownModifierFlags;
+@synthesize mouseDownEventType;
 @synthesize modifierFlags;
 @synthesize mouseIsDown;
 
