@@ -9,7 +9,7 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d>",type,channel,data1,data2];
+	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d : %d>",type,channel,data1,data2,data3];
 }
 - (NSString *) lengthyDescription	{
 	switch (type)	{
@@ -92,6 +92,9 @@
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2	{
 	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2] autorelease];
 }
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3	{
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3] autorelease];
+}
 + (id) createWithSysexArray:(NSMutableArray *)s	{
 	id			returnMe = [[VVMIDIMessage alloc] initWithSysexArray:s];
 	if (returnMe == nil)
@@ -103,7 +106,8 @@
 		type = t;
 		channel = c;
 		data1 = -1;
-		data2 = -2;
+		data2 = -1;
+		data3 = -1;
 		sysexArray = nil;
 		return self;
 	}
@@ -116,6 +120,20 @@
 		channel = c;
 		data1 = d1;
 		data2 = d2;
+		data3 = -1;
+		sysexArray = nil;
+		return self;
+	}
+	[self release];
+	return nil;
+}
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3	{
+	if (self = [super init])	{
+		type = t;
+		channel = c;
+		data1 = d1;
+		data2 = d2;
+		data3 = d3;
 		sysexArray = nil;
 		return self;
 	}
@@ -138,8 +156,8 @@
 		channel = -1;
 		data1 = -1;
 		data2 = -1;
+		data3 = -1;
 		sysexArray = [s retain];
-		
 		return self;
 	}
 	BAIL:
@@ -153,7 +171,7 @@
 	if (type == VVMIDIBeginSysexDumpVal)
 		copy = [[[self class] allocWithZone:z] initWithSysexArray:sysexArray];
 	else
-		copy = [[[self class] allocWithZone:z] initFromVals:type:channel:data1:data2];
+		copy = [[[self class] allocWithZone:z] initFromVals:type:channel:data1:data2:data3];
 	return copy;
 	/*
 	VVMIDIMessage		*copy = [[[self class] allocWithZone:z] initWithType:type channel:channel];
@@ -195,8 +213,24 @@
 - (Byte) data2	{
 	return data2;
 }
+- (void) setData3:(Byte)newData	{
+	data3 = newData;
+}
+- (Byte) data3	{
+	return data3;
+}
 - (NSMutableArray *) sysexArray	{
 	return sysexArray;
+}
+- (double) doubleValue	{
+	if (data3<0 || data3>127)	{
+		//NSLog(@"\t\t7-bit, %d",data2);
+		return ((double)data2/127.0);
+	}
+	else	{
+		//NSLog(@"\t\t14-bit, %d / %d, %f",data2,data3,((double)((((long)data2 & 0x7F)<<7) | ((long)data3 & 0x7F))/16383.0));
+		return ((double)((((long)data2 & 0x7F)<<7) | ((long)data3 & 0x7F))/16383.0);
+	}
 }
 
 

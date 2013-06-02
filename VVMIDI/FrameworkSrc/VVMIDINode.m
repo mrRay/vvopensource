@@ -195,6 +195,12 @@
 	}
 	packetList = NULL;
 	currentPacket = NULL;
+	for (int c=0;c<16;++c)	{
+		for (int cc=0;cc<32;++cc)
+			twoPieceCCVals[c][cc] = 0;
+		for (int cc=32;cc<64;++cc)
+			twoPieceCCVals[c][cc] = -1;
+	}
 	return self;
 }
 
@@ -524,6 +530,14 @@
 	for (int i=0; i<5; ++i)
 		cachedMTCQuarterFrameSMPTE[i] = partialMTCQuarterFrameSMPTE[i];
 }
+- (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb	{
+	*msb = twoPieceCCVals[c][cc];
+	*lsb = twoPieceCCVals[c][cc+32];
+}
+- (void) _setValsForCC:(int)cc channel:(int)c fromMSB:(int)msb LSB:(int)lsb	{
+	twoPieceCCVals[c][cc] = msb;
+	twoPieceCCVals[c][cc+32] = lsb;
+}
 - (double) MTCQuarterFrameSMPTEAsDouble	{
 	//NSLog(@"%s: %d - %d - %d - %d - %d",__func__,cachedMTCQuarterFrameSMPTE[0],cachedMTCQuarterFrameSMPTE[1],cachedMTCQuarterFrameSMPTE[2],cachedMTCQuarterFrameSMPTE[3],cachedMTCQuarterFrameSMPTE[4]);
 	double			returnMe = MTCSMPTEByteArrayToSeconds(cachedMTCQuarterFrameSMPTE);
@@ -586,6 +600,10 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 	int						processingSysexIterationCount = [(VVMIDINode *)readProcRefCon processingSysexIterationCount];
 	NSMutableArray			*sysex = [(VVMIDINode *)readProcRefCon sysexArray];
 	NSMutableArray			*msgs = [NSMutableArray arrayWithCapacity:0];
+	VVMIDIMessage			*ccMsgs[32];	//	the first 32 MIDI CCs are 14-bit. this buffer of 32 ptrs is used to prevent the two-part, 14-bit messages from sending as two different values
+	
+	for (int i=0; i<32; ++i)
+		ccMsgs[i] = nil;
 	
 	//	first of all, if i'm processing sysex, bump the iteration count
 	if (processingSysex)
@@ -611,10 +629,19 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 				
 				quarterFrameVal = NO;
 				switch((currByte & 0xF0))	{
+					case VVMIDIControlChangeVal:
+						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F)];
+						if (newMsg == nil)	{
+							break;
+						}
+						/*		NOT A BUG: do NOT add the msg to the array now, the CC may be 14-bit (may require two messages to assemble a single value!
+						[msgs addObject:newMsg];
+						*/
+						msgElementCount = 0;
+						break;
 					case VVMIDINoteOffVal:
 					case VVMIDINoteOnVal:
 					case VVMIDIAfterTouchVal:
-					case VVMIDIControlChangeVal:
 					case VVMIDIProgramChangeVal:
 					case VVMIDIChannelPressureVal:
 					case VVMIDIPitchWheelVal:
@@ -678,14 +705,15 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 						break;
 				}
 			}
-			//	if the byte's in the range 0x00 - 0x7F, it's got some kind of data in it
-			if ((currByte >= 0x00) && (currByte <= 0x7F))	{
+			//	else if the byte's in the range 0x00 - 0x7F, it's not a status byte- instead, it's got some kind of data in it
+			else if ((currByte >= 0x00) && (currByte <= 0x7F))	{
 				//	i'm only going to process this data if i'm not in the midst of a sysex dump and i'm assembling a message
 				if (processingSysex)	{
 					NSNumber		*tmpNum = [NSNumber numberWithInt:currByte];
 					if (tmpNum != nil)
 						[sysex addObject:tmpNum];
 				}
+				//	...else i'm not processing sysex data!
 				else	{
 					if (newMsg != nil)	{
 						switch(msgElementCount)	{
@@ -694,10 +722,60 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 								++msgElementCount;
 								break;
 							case 1:
-								[newMsg setData2:currByte];
-								if (([newMsg type] == VVMIDINoteOnVal) && (currByte == 0x00))
-									[newMsg setType:VVMIDINoteOffVal];
-								++msgElementCount;
+								{
+									int			msgType = [newMsg type];
+									if ((msgType == VVMIDINoteOnVal) && (currByte == 0x00))	{
+										[newMsg setType:VVMIDINoteOffVal];
+										[newMsg setData2:currByte];
+									}
+									//	if it's a control change value, the message may only be the LSB of a CC value!
+									else if (msgType==VVMIDIControlChangeVal)	{
+										int			cc = [newMsg data1];
+										int			channel = [newMsg channel];
+										//	CCs 0-31 are the MSBs of CCs 0-31
+										if (cc>=0 && cc<32)	{
+											//	get current MSB & LSB from node
+											int			msb;
+											int			lsb;
+											[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
+											msb = currByte;
+											//NSLog(@"\t\tMSB.  vals are now %d / %d",msb,lsb);
+											//	push updated MSB & LSB to node & newMsg
+											[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
+											[newMsg setData2:msb];
+											if (lsb>=0 && lsb<=127)
+												[newMsg setData3:lsb];
+											//	add the new msg to the local array!
+											ccMsgs[cc] = newMsg;
+										}
+										//	CCs 32-63 are the LSBs of CCs 0-31
+										else if (cc>=32 && cc<64)	{
+											//	fix channel of newMsg
+											cc -= 32;
+											[newMsg setData1:cc];
+											//	get current MSB & LSB from node
+											int			msb;
+											int			lsb;
+											[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
+											lsb = currByte;
+											//NSLog(@"\t\tLSB.  vals are now %d / %d",msb,lsb);
+											//	push updated MSB & LSB to node & newMsg
+											[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
+											[newMsg setData2:msb];
+											[newMsg setData3:lsb];
+											//	add the new msg to the local array!
+											ccMsgs[cc] = newMsg;
+										}
+										//	else it's a normal MIDI CC!
+										else	{
+											[msgs addObject:newMsg];
+										}
+									}
+									else	{
+										[newMsg setData2:currByte];
+									}
+									++msgElementCount;
+								}
 								break;
 						}
 						
@@ -782,6 +860,15 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 		
 		//	get the next packet
 		packet = MIDIPacketNext(packet);
+	}
+	
+	//	run through the array of cc msgs, adding anything in it to the array of messages to output
+	for (int i=0; i<32; ++i)	{
+		VVMIDIMessage		*tmpMsg = ccMsgs[i];
+		if (tmpMsg != nil)	{
+			[msgs addObject:tmpMsg];
+		}
+		ccMsgs[i] = nil;
 	}
 	
 	//	update the sysex-related flags in the actual VVMIDINode object
