@@ -226,6 +226,11 @@ int				_spriteViewCount;
 	if (deleted)
 		return;
 	
+	if (mouseDownEventType == VVSpriteEventRightDown)	{
+		[self rightMouseUp:e];
+		return;
+	}
+	
 	OSSpinLockLock(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)

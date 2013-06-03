@@ -202,7 +202,6 @@
 		for (int cc=32;cc<64;++cc)
 			twoPieceCCVals[c][cc] = -1;
 	}
-	
 	return self;
 }
 
@@ -532,7 +531,6 @@
 	for (int i=0; i<5; ++i)
 		cachedMTCQuarterFrameSMPTE[i] = partialMTCQuarterFrameSMPTE[i];
 }
-
 - (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb	{
 	*msb = twoPieceCCVals[c][cc];
 	*lsb = twoPieceCCVals[c][cc+32];
@@ -541,7 +539,6 @@
 	twoPieceCCVals[c][cc] = msb;
 	twoPieceCCVals[c][cc+32] = lsb;
 }
-
 - (double) MTCQuarterFrameSMPTEAsDouble	{
 	//NSLog(@"%s: %d - %d - %d - %d - %d",__func__,cachedMTCQuarterFrameSMPTE[0],cachedMTCQuarterFrameSMPTE[1],cachedMTCQuarterFrameSMPTE[2],cachedMTCQuarterFrameSMPTE[3],cachedMTCQuarterFrameSMPTE[4]);
 	double			returnMe = MTCSMPTEByteArrayToSeconds(cachedMTCQuarterFrameSMPTE);
@@ -730,12 +727,6 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 									}
 									//	if it's a control change value, the message may only be the LSB of a CC value!
 									else if (msgType==VVMIDIControlChangeVal)	{
-										/*
-										[newMsg setData2:currByte];
-										[msgs addObject:newMsg];
-										*/
-										
-										
 										int			cc = [newMsg data1];
 										int			channel = [newMsg channel];
 										//	CCs 0-31 are the MSBs of CCs 0-31

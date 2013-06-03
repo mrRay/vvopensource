@@ -440,6 +440,12 @@
 - (void) mouseUp:(NSEvent *)e	{
 	if (deleted)
 		return;
+	
+	if (mouseDownEventType == VVSpriteEventRightDown)	{
+		[self rightMouseUp:e];
+		return;
+	}
+	
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
 		lastMouseEvent = [e retain];
