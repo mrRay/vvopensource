@@ -127,7 +127,7 @@
 		endpointRef = MIDIGetSource(i);
 		newSource = [[[self receivingNodeClass] alloc] initReceiverWithEndpoint:endpointRef];
 		if (newSource != nil)	{
-			if (![[newSource name] isEqualToString:[self sendingNodeName]])	{
+			if ([[newSource name] rangeOfString:[self sendingNodeName]].length<1)	{
 				[newSource setDelegate:self];
 				[sourceArray lockAddObject:newSource];
 			}
@@ -164,7 +164,7 @@
 		endpointRef = MIDIGetDestination(i);
 		newDest = [[[self sendingNodeClass] alloc] initSenderWithEndpoint:endpointRef];
 		if (newDest != nil)	{
-			if (![[newDest name] isEqualToString:[self receivingNodeName]])	{
+			if (![[newDest name] rangeOfString:[self receivingNodeName]].length<1)	{
 				[newDest setDelegate:self];
 				[destArray lockAddObject:newDest];
 			}
