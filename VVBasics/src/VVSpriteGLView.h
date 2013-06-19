@@ -23,6 +23,15 @@ typedef enum	{
 	VVFlushModeFinish = 4	//	glFinish()
 } VVFlushMode;
 
+//	i need a simple (read: fast) var describing which OS this is
+extern long			_spriteGLViewSysVers;
+//	this protocol eliminates warnings- this class is typically compiled against the 10.6 SDK, and this method for NSOpenGLView first appears in the 10.7 SDK.
+@protocol HiddenNSOpenGLViewAdditions
+- (NSRect) convertRectToBacking:(NSRect)n;
+- (void) setWantsBestResolutionOpenGLSurface:(BOOL)n;
+- (BOOL) wantsBestResolutionOpenGLSurface;
+@end
+
 
 
 
@@ -33,6 +42,7 @@ typedef enum	{
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
+	double					boundsToRealBoundsMultiplier;
 	MutLockArray			*vvSubviews;
 	
 	VVSpriteManager			*spriteManager;
@@ -66,6 +76,8 @@ typedef enum	{
 - (void) finishedDrawing;
 //- (void) reshapeGL;
 - (void) updateSprites;
+- (NSRect) realBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
+- (double) boundsToRealBoundsMultiplier;
 
 - (void) _lock;
 - (void) _unlock;
@@ -77,6 +89,7 @@ typedef enum	{
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
 @property (assign,readwrite) BOOL flipped;
+@property (readonly) double boundsToRealBoundsMultiplier;
 @property (readonly) MutLockArray *vvSubviews;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;

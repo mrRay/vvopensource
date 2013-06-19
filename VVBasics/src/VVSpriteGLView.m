@@ -10,12 +10,25 @@
 
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
 
+long			_spriteGLViewSysVers;
 
 
 
 @implementation VVSpriteGLView
 
 
++ (void) initialize	{
+	OSErr			err;
+	SInt32			vers;
+	
+	err = Gestalt(gestaltSystemVersionMinor,&vers);
+	if (err == noErr)
+		_spriteGLViewSysVers = vers;
+	else
+		_spriteGLViewSysVers = 6;
+	
+	//NSLog(@"\t\t_spriteGLViewSysVers = %ld",_spriteGLViewSysVers);
+}
 - (id) initWithFrame:(NSRect)f pixelFormat:(NSOpenGLPixelFormat *)p	{
 	//NSLog(@"%s",__func__);
 	if (self = [super initWithFrame:f pixelFormat:p])	{
@@ -36,6 +49,16 @@
 }
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
+	if (_spriteGLViewSysVers >= 7)	{
+		[(id)self setWantsBestResolutionOpenGLSurface:YES];
+		NSRect		bounds = [self bounds];
+		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
+		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+	}
+	else
+		boundsToRealBoundsMultiplier = 1.0;
+	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+	
 	deleted = NO;
 	initialized = NO;
 	flipped = NO;
@@ -266,6 +289,17 @@
 		//needsReshape = YES;
 		initialized = NO;
 	pthread_mutex_unlock(&glLock);
+	
+	//	update the bounds to real bounds multiplier
+	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
+		NSRect		bounds = [self bounds];
+		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
+		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+	}
+	else
+		boundsToRealBoundsMultiplier = 1.0;
+	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+	
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) setFrameSize:(NSSize)n	{
@@ -315,6 +349,16 @@
 	
 	if (!NSEqualSizes(oldSize,n))	{
 		//NSLog(@"\t\tsized changed!");
+		//	update the bounds to real bounds multiplier
+		if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
+			NSRect		bounds = [self bounds];
+			NSRect		realBounds = [(id)self convertRectToBacking:bounds];
+			boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+		}
+		else
+			boundsToRealBoundsMultiplier = 1.0;
+		//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+		
 		pthread_mutex_lock(&glLock);
 		initialized = NO;
 		pthread_mutex_unlock(&glLock);
@@ -340,6 +384,15 @@
 - (void) _unlock	{
 	pthread_mutex_unlock(&glLock);
 }
+- (NSRect) realBounds	{
+	if (_spriteGLViewSysVers >= 7)
+		return [(id)self convertRectToBacking:[self bounds]];
+	else
+		return [self bounds];
+}
+- (double) boundsToRealBoundsMultiplier	{
+	return boundsToRealBoundsMultiplier;
+}
 
 
 /*===================================================================================*/
@@ -357,10 +410,14 @@
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//NSPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
 		if (clickedSubview == self) clickedSubview = nil;
+		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
+		//NSRectLog(@"\t\tclickedSubview frame is",[clickedSubview frame]);
 		if (clickedSubview != nil)	{
 			[clickedSubview mouseDown:e];
 			return;
@@ -388,6 +445,7 @@
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
 	//NSPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
@@ -413,6 +471,7 @@
 		lastMouseEvent = [e retain];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview rightMouseUp:e];
@@ -428,6 +487,7 @@
 	
 	modifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseDragged:e];
@@ -453,6 +513,7 @@
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseUp:e];
@@ -565,8 +626,12 @@
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			//	tell the sprite manager to start drawing the sprites
-			if (spriteManager != nil)
-				[spriteManager drawRect:r];
+			if (spriteManager != nil)	{
+				if (_spriteGLViewSysVers >= 8)
+					[spriteManager drawRect:[(id)self convertRectToBacking:r]];
+				else
+					[spriteManager drawRect:r];
+			}
 			
 			
 			
@@ -574,7 +639,7 @@
 			[vvSubviews rdlock];
 				if ([vvSubviews count]>0)	{
 					//	before i begin, enable the scissor test and get my bounds
-					NSRect		bounds = [self bounds];
+					NSRect		bounds = [self realBounds];
 					glEnable(GL_SCISSOR_TEST);
 					//	run through all the subviews (last to first), drawing them
 					NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
@@ -614,7 +679,7 @@
 				glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				GLSTROKERECT([self bounds]);
+				GLSTROKERECT([self realBounds]);
 			}
 			
 			//	flush!
@@ -700,7 +765,7 @@
 	//glDisable(GL_TEXTURE_2D);
 	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
-	NSRect				bounds = [self bounds];
+	NSRect		bounds = [self realBounds];
 	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
 	
 	//	moved in from drawRect:
@@ -738,6 +803,7 @@
 - (BOOL) flipped	{
 	return flipped;
 }
+@synthesize boundsToRealBoundsMultiplier;
 @synthesize vvSubviews;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;

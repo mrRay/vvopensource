@@ -99,7 +99,12 @@
 	
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
-	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//NSPointLog(@"\t\tlocationInWindow is",locationInWindow);
+	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:self];
+	//NSPointLog(@"\t\tlocalPoint A is",localPoint);
+	//double		boundsToRealBoundsMultiplier = [containerView boundsToRealBoundsMultiplier];
+	//localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//NSPointLog(@"\t\tlocalPoint B is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)
