@@ -9,7 +9,7 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<VVMIDINode: %@>",name];
+	return [NSString stringWithFormat:@"<VVMIDINode: %@, %@>",name,[properties objectForKey:(NSString *)kMIDIPropertyUniqueID]];
 }
 
 - (id) initReceiverWithEndpoint:(MIDIEndpointRef)e	{
@@ -81,6 +81,9 @@
 		return nil;
 	}
 	
+	//	load the properties for the endpoint
+	[self loadProperties];
+	
 	return self;
 }
 - (id) initSenderWithEndpoint:(MIDIEndpointRef)e	{
@@ -151,6 +154,9 @@
 		[self release];
 		return nil;
 	}
+	
+	//	load the properties for the endpoint
+	[self loadProperties];
 	
 	//	set the 'sender' flag
 	sender = YES;
@@ -247,6 +253,7 @@
 }
 
 - (void) loadProperties	{
+	//NSLog(@"%s",__func__);
 	OSStatus		err = noErr;
 	CFStringRef		tmpString;
 	SInt32			tmpInt;

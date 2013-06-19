@@ -127,7 +127,38 @@
 		endpointRef = MIDIGetSource(i);
 		newSource = [[[self receivingNodeClass] alloc] initReceiverWithEndpoint:endpointRef];
 		if (newSource != nil)	{
-			if ([[newSource name] rangeOfString:[self sendingNodeName]].length<1)	{
+			//NSLog(@"\t\tcreated new tmp source %@",newSource);
+			BOOL			foundMatchingOutput = NO;
+			//	get the new source's unique id
+			NSDictionary	*newSourceProps = [newSource properties];
+			NSNumber		*newSourceID = (newSourceProps==nil) ? nil : [newSourceProps objectForKey:(NSString *)kMIDIPropertyUniqueID];
+			if (newSourceID != nil)	{
+				
+				//	make sure that i'm not trying to create a source for one of my built-in virtual destinations.
+				NSDictionary		*tmpPropDict = [virtualDest properties];
+				NSNumber			*tmpNum = (tmpPropDict==nil) ? nil : [tmpPropDict objectForKey:(NSString *)kMIDIPropertyUniqueID];
+				if (tmpNum!=nil && [tmpNum isEqualTo:newSourceID])	{
+					//NSLog(@"\t\t\ttmp source matches virtualDest");
+					foundMatchingOutput = YES;
+				}
+				
+				//	run through all my destinations, checking for a destination that has the same ID.  if i found one, this is a virtual source- this process created it, and i shouldn't make an input for it!
+				if (!foundMatchingOutput)	{
+					[destArray rdlock];
+					for (VVMIDINode *tmpNode in [destArray array])	{
+						tmpPropDict = [tmpNode properties];
+						tmpNum = (tmpPropDict==nil) ? nil : [tmpPropDict objectForKey:(NSString *)kMIDIPropertyUniqueID];
+						if (tmpNum!=nil && [tmpNum isEqualTo:newSourceID])	{
+							//NSLog(@"\t\t\ttmp source matches dest %@",tmpNode);
+							foundMatchingOutput = YES;
+							break;
+						}
+					}
+					[destArray unlock];
+				}
+			}
+			
+			if (!foundMatchingOutput)	{
 				[newSource setDelegate:self];
 				[sourceArray lockAddObject:newSource];
 			}
