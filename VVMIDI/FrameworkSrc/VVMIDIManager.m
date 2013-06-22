@@ -195,7 +195,7 @@
 		endpointRef = MIDIGetDestination(i);
 		newDest = [[[self sendingNodeClass] alloc] initSenderWithEndpoint:endpointRef];
 		if (newDest != nil)	{
-			if (![[newDest name] rangeOfString:[self receivingNodeName]].length<1)	{
+			if ([[newDest name] rangeOfString:[self receivingNodeName]].length<1)	{
 				[newDest setDelegate:self];
 				[destArray lockAddObject:newDest];
 			}
