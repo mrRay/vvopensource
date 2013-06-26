@@ -58,6 +58,11 @@ long			_spriteGLViewSysVers;
 	else
 		boundsToRealBoundsMultiplier = 1.0;
 	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		selector:@selector(_glContextNeedsRefresh:)
+		name:NSViewGlobalFrameDidChangeNotification
+		object:self];
 	
 	deleted = NO;
 	initialized = NO;
@@ -129,6 +134,11 @@ long			_spriteGLViewSysVers;
 		fenceBDeployed = NO;
 	OSSpinLockUnlock(&fenceLock);
 	pthread_mutex_unlock(&glLock);
+	
+	[[NSNotificationCenter defaultCenter]
+		removeObserver:self
+		name:NSViewGlobalFrameDidChangeNotification
+		object:self];
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -366,6 +376,17 @@ long			_spriteGLViewSysVers;
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
+}
+- (void) _glContextNeedsRefresh:(NSNotification *)note	{
+	[self setSpritesNeedUpdate:YES];
+	//	update the bounds to real bounds multiplier
+	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
+		NSRect		bounds = [self bounds];
+		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
+		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+	}
+	else
+		boundsToRealBoundsMultiplier = 1.0;
 }
 - (void) reshape	{
 	//NSLog(@"%s",__func__);
