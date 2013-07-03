@@ -5,6 +5,11 @@
 
 
 
+BOOL			_VVMIDIFourteenBitCCs = NO;
+
+
+
+
 @implementation VVMIDINode
 
 
@@ -737,7 +742,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 										int			cc = [newMsg data1];
 										int			channel = [newMsg channel];
 										//	CCs 0-31 are the MSBs of CCs 0-31
-										if (cc>=0 && cc<32)	{
+										if (_VVMIDIFourteenBitCCs && cc>=0 && cc<32)	{
 											//	get current MSB & LSB from node
 											int			msb;
 											int			lsb;
@@ -762,7 +767,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 											[msgs addObject:newMsg];
 										}
 										//	CCs 32-63 are the LSBs of CCs 0-31
-										else if (cc>=32 && cc<64)	{
+										else if (_VVMIDIFourteenBitCCs && cc>=32 && cc<64)	{
 											//	fix channel of newMsg
 											cc -= 32;
 											[newMsg setData1:cc];
@@ -790,6 +795,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 										}
 										//	else it's a normal MIDI CC!
 										else	{
+											[newMsg setData2:currByte];
 											[msgs addObject:newMsg];
 										}
 									}
