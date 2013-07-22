@@ -470,7 +470,30 @@
 	
 	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
 		return;
+	//NSLog(@"%s ... %p, %p",__func__,self,d);
 	
+	[delegateArray wrlock];
+	id			foundHolder = nil;
+	int			foundHolderIndex = 0;
+	for (ObjectHolder *holder in [delegateArray array])	{
+		if (holder==d)
+			foundHolder = holder;
+		else	{
+			id		tmpObj = [holder object];
+			if (tmpObj==d)
+				foundHolder = holder;
+		}
+		if (foundHolder != nil)	{
+			[foundHolder setObject:nil];
+			break;
+		}
+		++foundHolderIndex;
+	}
+	if (foundHolder != nil)
+		[[delegateArray array] removeObjectAtIndex:foundHolderIndex];
+	[delegateArray unlock];
+	
+	/*
 	//	find the index of the delegate to delete
 	[delegateArray rdlock];
 	long			foundIndex = [delegateArray indexOfIdenticalPtr:d];
@@ -486,6 +509,7 @@
 		[delegateArray lockRemoveObjectAtIndex:foundIndex];
 	else
 		NSLog(@"\t\terr: couldn't find delegate to remove- %s",__func__);
+	*/
 	
 	/*
 	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
@@ -565,7 +589,9 @@
 					[lastReceivedMessage retain];
 			OSSpinLockUnlock(&lastReceivedMessageLock);
 			
-			tmpCopy = [delegateArray lockCreateArrayCopyFromObjects];
+			[delegateArray wrlock];
+			tmpCopy = [delegateArray createArrayCopyFromObjects];
+			[delegateArray unlock];
 			if (tmpCopy != nil)	{
 				for (id delegate in tmpCopy)	{
 					[delegate node:self receivedOSCMessage:m];

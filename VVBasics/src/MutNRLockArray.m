@@ -40,7 +40,7 @@
 		}
 		else {
 			NSLog(@"\t\terr: object in MutNRLockArray wasn't a holder! %s, %@",__func__,objPtr);
-			[returnMe addObject:objPtr];
+			//[returnMe addObject:objPtr];
 		}
 
 	}
