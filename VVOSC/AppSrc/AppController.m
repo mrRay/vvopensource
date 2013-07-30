@@ -45,9 +45,9 @@
 	
 	
 	//	populate the IP field string with  this machine's IP and the port of my dedicated input
-	NSArray			*ips = [self ipAddressArray];
+	NSArray			*ips = [OSCManager hostIPv4Addresses];
 	if (ips!=nil && [ips count]>0)	{
-		ipFieldString = [NSString stringWithFormat:@"%@, port",[[self ipAddressArray] objectAtIndex:0]];
+		ipFieldString = [NSString stringWithFormat:@"%@, port",[ips objectAtIndex:0]];
 		[receivingAddressField setStringValue:ipFieldString];
 	}
 	//	populate the receiving port field with the in port's port
@@ -275,6 +275,29 @@
 
 - (IBAction) intTest:(id)sender	{
 	//NSLog(@"%s",__func__);
+	OSCValue		*arrayVal = [OSCValue createArray];
+	[arrayVal addValue:[OSCValue createWithInt:0]];
+	[arrayVal addValue:[OSCValue createWithInt:5]];
+	[arrayVal addValue:[OSCValue createWithInt:10]];
+	OSCMessage		*msg = [OSCMessage createWithAddress:@"/destAddress"];
+	[msg addValue:arrayVal];
+	
+	OSCBundle		*bundle = [OSCBundle create];
+	[bundle addElement:msg];
+	
+	arrayVal = [OSCValue createArray];
+	[arrayVal addValue:[OSCValue createWithString:@"a"]];
+	[arrayVal addValue:[OSCValue createWithString:@"s"]];
+	[arrayVal addValue:[OSCValue createWithString:@"d"]];
+	msg = [OSCMessage createWithAddress:@"/destAddress2"];
+	[msg addValue:arrayVal];
+	
+	[bundle addElement:msg];
+	
+	//[msg addValue:[OSCValue createWithFloat:1.0]];
+	[manualOutPort sendThisBundle:bundle];
+	
+	/*
 	OSCBundle		*bundle = nil;
 	OSCBundle		*altBundle = nil;
 	OSCBundle		*mainBundle = nil;
@@ -318,6 +341,7 @@
 	pack = [OSCPacket createWithContent:mainBundle];
 	//	tell the out port to send the packet
 	[manualOutPort sendThisPacket:pack];
+	*/
 }
 - (IBAction) floatTest:(id)sender	{
 	//NSLog(@"%s",__func__);
@@ -533,32 +557,6 @@
 	[tmpMsg addInt:5];
 	[manualOutPort sendThisMessage:tmpMsg];
 	
-}
-
-- (NSArray *) ipAddressArray	{
-	//NSLog(@"%s",__func__);
-	NSArray				*addressArray = [[NSHost currentHost] addresses];
-	NSCharacterSet		*charSet;
-	NSRange				charSetRange;
-	NSEnumerator		*addressIt;
-	NSString			*addressPtr;
-	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
-	
-	charSet = [NSCharacterSet characterSetWithCharactersInString:@"abcdefABCDEF:%"];
-	//	run through the array of addresses
-	addressIt = [addressArray objectEnumerator];
-	while (addressPtr = [addressIt nextObject])	{
-		//	if the address has any alpha-numeric characters, don't add it to the list
-		charSetRange = [addressPtr rangeOfCharacterFromSet:charSet];
-		//NSLog(@"%@, %d %d",addressPtr,charSetRange.location,charSetRange.length);
-		if ((charSetRange.length==0) && (charSetRange.location==NSNotFound))	{
-			//	make sure i'm not adding 127.0.0.1!
-			if (![addressPtr isEqualToString:@"127.0.0.1"])
-				[returnMe addObject:addressPtr];
-		}
-	}
-	//NSLog(@"\t\treturning %@",returnMe);
-	return returnMe;
 }
 
 

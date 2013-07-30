@@ -36,7 +36,9 @@
 	
 	
 	//	populate the text field with the IP address & port of this machine
-	[networkAddressField setStringValue:[NSString stringWithFormat:@"%@, port %hd",[[self ipAddressArray] objectAtIndex:0],[inPort port]]];
+	NSArray			*ips = [OSCManager hostIPv4Addresses];
+	if (ips != nil)
+		[networkAddressField setStringValue:[NSString stringWithFormat:@"%@, port %hd",[ips objectAtIndex:0],[inPort port]]];
 	//	fake an outputs-changed notification to make sure my list of destinations updates (in case it refreshes before i'm awake)
 	[self oscOutputsChangedNotification:nil];
 	//	register to receive notifications that the list of osc outputs has changed
@@ -173,30 +175,6 @@
 	[def setObject:[outPort addressString] forKey:@"IPAddress"];
 	[def setObject:[NSNumber numberWithInt:[outPort port]] forKey:@"Port"];
 	[def synchronize];
-}
-- (NSArray *) ipAddressArray	{
-	NSArray				*addressArray = [[NSHost currentHost] addresses];
-	NSCharacterSet		*charSet;
-	NSRange				charSetRange;
-	NSEnumerator		*addressIt;
-	NSString			*addressPtr;
-	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
-	
-	charSet = [NSCharacterSet characterSetWithCharactersInString:@"abcdefABCDEF:%"];
-	//	run through the array of addresses
-	addressIt = [addressArray objectEnumerator];
-	while (addressPtr = [addressIt nextObject])	{
-		//	if the address has any alpha-numeric characters, don't add it to the list
-		charSetRange = [addressPtr rangeOfCharacterFromSet:charSet];
-		//NSLog(@"%@, %d %d",addressPtr,charSetRange.location,charSetRange.length);
-		if ((charSetRange.length==0) && (charSetRange.location==NSNotFound))	{
-			//	make sure i'm not adding 127.0.0.1!
-			if (![addressPtr isEqualToString:@"127.0.0.1"])
-				[returnMe addObject:addressPtr];
-		}
-	}
-	//NSLog(@"\t\t%@",returnMe);
-	return returnMe;
 }
 
 

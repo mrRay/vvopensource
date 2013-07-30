@@ -14,7 +14,7 @@
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"<OSCVal f %f>",*(float *)value];
 		case OSCValString:
-			return [NSString stringWithFormat:@"<OSCVal s \"%@\">",(id)value];
+			return [NSString stringWithFormat:@"<OSCVal s %@>",(id)value];
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
 			return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(long)(*((long long *)value)>>32),(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
@@ -37,6 +37,8 @@
 			return [NSString stringWithFormat:@"<OSCVal N>"];
 		case OSCValInfinity:
 			return [NSString stringWithFormat:@"<OSCVal I>"];
+		case OSCValArray:
+			return [NSString stringWithFormat:@"<OSCVal [%@]>",value];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<OSCVal b: %@>",value];
 		case OSCValSMPTE:
@@ -82,6 +84,8 @@
 			return [NSString stringWithFormat:@"nil"];
 		case OSCValInfinity:
 			return [NSString stringWithFormat:@"infinity"];
+		case OSCValArray:
+			return [NSString stringWithFormat:@"array %@",value];
 		case OSCValBlob:
 			return [NSString stringWithFormat:@"<Data Blob>"];
 		case OSCValSMPTE:
@@ -159,6 +163,12 @@
 }
 + (id) createWithInfinity	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithInfinity];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createArray	{
+	OSCValue		*returnMe = [[OSCValue alloc] initArray];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
@@ -326,6 +336,15 @@
 	[self release];
 	return nil;
 }
+- (id) initArray	{
+	if (self = [super init])	{
+		value = [[NSMutableArray alloc] initWithCapacity:0];
+		type = OSCValArray;
+		return self;
+	}
+	[self release];
+	return nil;
+}
 - (id) initWithNSDataBlob:(NSData *)d	{
 	if (d == nil)	{
 		[self release];
@@ -424,6 +443,16 @@
 		case OSCValInfinity:
 			returnMe = [[OSCValue allocWithZone:z] initWithInfinity];
 			break;
+		case OSCValArray:
+			returnMe = [[OSCValue allocWithZone:z] initArray];
+			for (OSCValue *valPtr in (NSMutableArray *)value)	{
+				OSCValue		*newVal = [valPtr copy];
+				if (newVal != nil)	{
+					[returnMe addValue:newVal];
+					[newVal release];
+				}
+			}
+			break;
 		case OSCValBlob:
 			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:value];
 			break;
@@ -452,6 +481,7 @@
 			break;
 		case OSCValString:
 		case OSCValColor:
+		case OSCValArray:
 			if (value != nil)
 				[(id)value release];
 			value = nil;
@@ -530,6 +560,16 @@
 }
 - (NSData *) blobNSData	{
 	return (NSData *)value;
+}
+- (void) addValue:(OSCValue *)n	{
+	if (n==nil || type!=OSCValArray || value==nil)
+		return;
+	[(NSMutableArray *)value addObject:n];
+}
+- (NSMutableArray *) valueArray	{
+	if (type!=OSCValArray || value==nil)
+		return nil;
+	return (NSMutableArray *)value;
 }
 - (int) SMPTEValue	{
 	return *(int *)value;
@@ -662,6 +702,9 @@
 		case OSCValInfinity:
 			returnMe = (float)1.0;
 			break;
+		case OSCValArray:
+			returnMe = (float)0.0;
+			break;
 		case OSCValBlob:
 			returnMe = (float)1.0;
 			break;
@@ -734,6 +777,17 @@
 		case OSCValInfinity:
 			return 0;
 			break;
+		case OSCValArray:
+			{
+				int		tmpVal = 0;
+				if (value!=nil)	{
+					for (OSCValue *valPtr in (NSMutableArray *)value)	{
+						tmpVal += [valPtr bufferLength];
+					}
+				}
+				return tmpVal;
+			}
+			break;
 		case OSCValBlob:
 			if (value == nil)
 				return 0;
@@ -743,8 +797,38 @@
 	}
 	return 0;
 }
+- (long) typeSignatureLength	{
+	long		returnMe = 0;
+	switch (type)	{
+		case OSCValInt:
+		case OSCValFloat:
+		case OSCValString:
+		case OSCValTimeTag:
+		case OSCVal64Int:
+		case OSCValDouble:
+		case OSCValChar:
+		case OSCValColor:
+		case OSCValMIDI:
+		case OSCValBool:
+		case OSCValNil:
+		case OSCValInfinity:
+		case OSCValBlob:
+		case OSCValSMPTE:
+			returnMe += 1;
+			break;
+		case OSCValArray:
+			returnMe += 2;
+			if (value != nil)	{
+				for (OSCValue *valPtr in (NSMutableArray *)value)	{
+					returnMe += [valPtr typeSignatureLength];
+				}
+			}
+			break;
+	}
+	return returnMe;
+}
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %d, %d, %@",__func__,*t,*d,self);
 	
 	int					i;
 	long				tmpLong = 0;
@@ -877,6 +961,19 @@
 			break;
 		case OSCValInfinity:
 			b[*t] = 'I';
+			++*t;
+			break;
+		case OSCValArray:
+			b[*t] = '[';
+			++*t;
+			
+			if (value != nil)	{
+				for (OSCValue *tmpVal in (NSMutableArray *)value)	{
+					[tmpVal writeToBuffer:b typeOffset:t dataOffset:d];
+				}
+			}
+			
+			b[*t] = ']';
 			++*t;
 			break;
 		case OSCValBlob:

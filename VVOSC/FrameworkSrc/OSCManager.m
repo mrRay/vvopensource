@@ -21,7 +21,7 @@
 	}
 	//	define a character range with alpha-numeric chars so i can exclude IPv6 addresses!
 	NSCharacterSet		*charSet = [NSCharacterSet characterSetWithCharactersInString:@"abcdefABCDEF:%"];
-	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSMutableArray		*returnMe = nil;
 	
 	//	run through the interfaces
 	struct ifaddrs		*tmpAddr = interfaces;
@@ -33,8 +33,11 @@
 				//	make sure the interface string doesn't have any alpha-numeric/IPv6 chars in it!
 				NSRange				charSetRange = [tmpString rangeOfCharacterFromSet:charSet];
 				if ((charSetRange.length==0) && (charSetRange.location==NSNotFound))	{
-					if (![tmpString isEqualToString:@"127.0.0.1"])
+					if (![tmpString isEqualToString:@"127.0.0.1"])	{
+						if (returnMe == nil)
+							returnMe = [NSMutableArray arrayWithCapacity:0];
 						[returnMe addObject:tmpString];
+					}
 				}
 			}
 		}

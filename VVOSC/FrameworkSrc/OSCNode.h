@@ -75,9 +75,9 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 //	"local" add/remove/find methods for working with my node contents
 - (void) addLocalNode:(OSCNode *)n;
 - (void) addLocalNodes:(NSArray *)n;
-- (void) removeLocalNode:(OSCNode *)n;	//	this just removes the passed node from my 'nodeContents' array- doesn't assume that the passed node will be released!
-- (void) deleteLocalNode:(OSCNode *)n;	//	calls 'prepareToBeDeleted' on the passed node- call this is if you want to make sure that the passed node will stop sending delegate messages/etc!
-- (void) removeFromAddressSpace;	//	tries to remove me from the OSCAddressSpace singleton by setting my fullName to nil
+- (void) removeLocalNode:(OSCNode *)n;	//	call this to remove the passed node from my contents. releases the passed node, but DOESN'T TRY TO KILL IT!  if the node was only retained by the address space, this is equivalent to "deleteLocalNode:".
+- (void) deleteLocalNode:(OSCNode *)n;	//	call this to remove the passed node from my contents.  KILLS THE PASSED NODE- calls "prepareToBeDeleted" so it stops sending delegate methods/responding!
+- (void) removeFromAddressSpace;	//	tries to delete self from the OSCAddressSpace singleton by setting my fullName to nil.
 
 ///	It's assumed that the passed name doesn't have any wildcards/regex.  If the receiver contains a node with the identical name as the passed string, the node will be returned.  This is not a "deep" search, it's restricted to the receiver's nodeContents array.
 - (OSCNode *) findLocalNodeNamed:(NSString *)n;
@@ -88,15 +88,14 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (NSMutableArray *) findLocalNodesMatchingPOSIXRegex:(NSString *)regex;
 - (void) _addLocalNodesMatchingRegex:(NSString *)regex toMutArray:(NSMutableArray *)a;
 
-
 ///	Calls findNodeForAddress:createIfMissing:NO.
-//	these find methods do NOT work with regex!  it is assumed that the passed string is NOT a regex algorithm!
+//	these "findNode" methods DO NOT USE regex!  it is assumed that the passed string is NOT a regex algorithm (the language "findNode" implies a single result, precluding the use of regex)
 - (OSCNode *) findNodeForAddress:(NSString *)p;
 ///	It's assumed that the passed address doesn't have any wildcards/regex (no checking is done).  The receiver tries to locate the node at the passed address (relative to the receiver).  If c is YES, any OSCNodes missing in the passed address are automatically created.  If they have sub-nodes, the auto-created nodes' types are set to OSCNodeDirectory; if not, the auto-created nodes' types are OSCNodeTypeUnknown
 - (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c;
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a;
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
-//	these find methods work with regex!  path components may be regex strings- this returns all the nodes that match every component in the passed address/address array!
+//	THESE METHODS ALWAYS USE REGEX TO FIND MATCHES!  path components may be regex strings- this returns all the nodes that match every component in the passed address/address array!
 - (NSMutableArray *) findNodesMatchingAddress:(NSString *)a;
 - (NSMutableArray *) findNodesMatchingAddressArray:(NSArray *)a;
 
@@ -111,6 +110,9 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 ///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).  If the passed message is a query, this tries to assemble a reply (either from the queryDelegate or automatically if autoQueryReply is enabled) which is sent to the main address space.
 - (void) dispatchMessage:(OSCMessage *)m;
 
+///	Generates a default reply for a query of the passed type.  if "autoQueryReply" is enabled, this is how the reply is generaetd- this is a discrete method so query delegates can quickly generate query replies without having to implement reply methods in every query delegate class!
+- (OSCMessage *) generateAutomaticResponseForQuery:(OSCMessage *)m;
+
 @property (assign, readwrite) id addressSpace;
 @property (assign, readwrite) NSString *nodeName;
 - (void) _setNodeName:(NSString *)n;
@@ -119,7 +121,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (assign, readwrite) OSCNode *parentNode;
 @property (assign, readwrite) int nodeType;
 @property (assign, readwrite) BOOL hiddenInMenu;
-@property (readonly) OSCMessage *lastReceivedMessage;
+@property (retain,readwrite) OSCMessage *lastReceivedMessage;
 @property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
 //@property (readonly) id queryDelegateArray;

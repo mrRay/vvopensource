@@ -308,7 +308,13 @@
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
+		96CD198517A7CEFD001FEB7A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */; };
+		96CD198617A7CEFD001FEB7A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */; };
+		96CD198717A7CEFE001FEB7A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */; };
 		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96D3D342179EB6EB0035A15B /* MAZeroingWeakRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 96D3D33F179EB6EB0035A15B /* MAZeroingWeakRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96D3D343179EB6EB0035A15B /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */; };
+		96D3D344179EB6EB0035A15B /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 96D3D341179EB6EB0035A15B /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96DB1036173ADF0E00DD325D /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
 		96DB1037173ADF1500DD325D /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
 		96DB1038173ADF2E00DD325D /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -843,6 +849,9 @@
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
 		96C9DAF6106B0335006DD331 /* MVOOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOOSCManager.m; path = MIDIviaOSC/MVOOSCManager.m; sourceTree = "<group>"; };
+		96D3D33F179EB6EB0035A15B /* MAZeroingWeakRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAZeroingWeakRef.h; path = VVBasics/external/MAZeroingWeakRef/Source/MAZeroingWeakRef.h; sourceTree = "<group>"; };
+		96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAZeroingWeakRef.m; path = VVBasics/external/MAZeroingWeakRef/Source/MAZeroingWeakRef.m; sourceTree = "<group>"; };
+		96D3D341179EB6EB0035A15B /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAZeroingWeakRefNativeZWRNotAllowedTable.h; path = VVBasics/external/MAZeroingWeakRef/Source/MAZeroingWeakRefNativeZWRNotAllowedTable.h; sourceTree = "<group>"; };
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
@@ -1212,6 +1221,9 @@
 				961EA948100E8834007E6C25 /* MutLockDict.m */,
 				961EA947100E8834007E6C25 /* MutLockArray.h */,
 				961EA94C100E8834007E6C25 /* MutLockArray.m */,
+				96D3D33F179EB6EB0035A15B /* MAZeroingWeakRef.h */,
+				96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */,
+				96D3D341179EB6EB0035A15B /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */,
 				961EA952100E8834007E6C25 /* ObjectHolder.h */,
 				961EA951100E8834007E6C25 /* ObjectHolder.m */,
 				961EA956100E8834007E6C25 /* MutNRLockArray.h */,
@@ -1371,6 +1383,8 @@
 				96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */,
 				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
 				9645131016494057006370F8 /* VVView.h in Headers */,
+				96D3D342179EB6EB0035A15B /* MAZeroingWeakRef.h in Headers */,
+				96D3D344179EB6EB0035A15B /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2094,6 +2108,7 @@
 				96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */,
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
 				9645131B16499BAF006370F8 /* VVView.m in Sources */,
+				96D3D343179EB6EB0035A15B /* MAZeroingWeakRef.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2204,6 +2219,7 @@
 				9666945610304CBB00DB5FDF /* VVThreadLoop.m in Sources */,
 				969E5A3411FD95F0006391BD /* MutNRLockDict.m in Sources */,
 				9621356C14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
+				96CD198517A7CEFD001FEB7A /* MAZeroingWeakRef.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2219,6 +2235,7 @@
 				9666946610304CC900DB5FDF /* VVThreadLoop.m in Sources */,
 				969E5A3611FD95F5006391BD /* MutNRLockDict.m in Sources */,
 				9621356E14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
+				96CD198617A7CEFD001FEB7A /* MAZeroingWeakRef.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2245,6 +2262,7 @@
 				967B47E2173ADE5A00B89FCD /* VVView.m in Sources */,
 				96DB1036173ADF0E00DD325D /* VVSpriteControl.m in Sources */,
 				96DB1037173ADF1500DD325D /* VVSpriteControlCell.m in Sources */,
+				96CD198717A7CEFE001FEB7A /* MAZeroingWeakRef.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,11 +27,11 @@
 				case OSCQueryTypeDocumentation:
 					return [NSString stringWithFormat:@"<OSCMsg doc query %@>",baseDescription];
 				case OSCQueryTypeTypeSignature:
-					return [NSString stringWithFormat:@"<OSCMsg type sig query %@>",baseDescription];
+					return [NSString stringWithFormat:@"<OSCMsg type sig query %@>",address];
 				case OSCQueryTypeCurrentValue:
-					return [NSString stringWithFormat:@"<OSCMsg current val query %@>",baseDescription];
-				case OSCQueryTypeReturnTypeString:
-					return [NSString stringWithFormat:@"<OSCMsg return type query %@>",baseDescription];
+					return [NSString stringWithFormat:@"<OSCMsg current val query %@>",address];
+				case OSCQueryTypeReturnTypeSignature:
+					return [NSString stringWithFormat:@"<OSCMsg return type query %@>",address];
 			}
 		case OSCMessageTypeReply:
 			if (valueCount < 2)
@@ -58,10 +58,20 @@
 		return [NSString stringWithFormat:@"'%@'-'%@'",address,valueArray];
 }
 + (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
-	//NSLog(@"%s ... %s, %ld",__func__,b,l);
+	//NSLog(@"%s",__func__);
 	if ((b == nil) || (l == 0))
 		return nil;
-	
+	/*
+	printf("******************************\n");
+	int				bundleIndexCount;
+	unsigned char	*bufferCharPtr=b;
+	for (bundleIndexCount=0; bundleIndexCount<(l/4); ++bundleIndexCount)	{
+		printf("(%0.2d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
+			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
+			*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
+	}
+	printf("******************************\n");
+	*/
 	OSCMessage			*returnMe = nil;
 	NSString			*address = nil;
 	long				i, j;
@@ -140,38 +150,38 @@
 						switch (b[i+1])	{
 							case 'd':
 								if (strncmp((char *)(b+i),"#documentation",14)==0)	{	//	if the query's recognized...
-									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									address = [NSString stringWithBytes:b length:fmaxl(i-1,1) encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
 									if (b[0] != '/')
 										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeDocumentation;	//	set the query type...
-									tmpIndex = i+13;	//	...and i can exit now and save a couple loops- i know the end
+									tmpIndex = i+14;	//	...and i can exit now and save a couple loops- i know the end
 								}
 								break;
 							case 't':
 								if (strncmp((char *)(b+i),"#type-signature",15)==0)	{
-									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									address = [NSString stringWithBytes:b length:fmaxl(i-1,1) encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
 									if (b[0] != '/')
 										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeTypeSignature;
-									tmpIndex = i+14;
+									tmpIndex = i+15;
 								}
 								break;
 							case 'c':
 								if (strncmp((char *)(b+i),"#current-value",14)==0)	{
-									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									address = [NSString stringWithBytes:b length:fmaxl(i-1,1) encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
 									if (b[0] != '/')
 										address = [NSString stringWithFormat:@"/%@",address];
 									queryType = OSCQueryTypeCurrentValue;
-									tmpIndex = i+13;
+									tmpIndex = i+14;
 								}
 								break;
 							case 'r':
 								if (strncmp((char *)(b+i),"#return-type-string",19)==0)	{
-									address = [NSString stringWithBytes:b length:i-1 encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
+									address = [NSString stringWithBytes:b length:fmaxl(i-1,1) encoding:NSUTF8StringEncoding];	//	assemble the address (stop short of the / before the #)
 									if (b[0] != '/')
 										address = [NSString stringWithFormat:@"/%@",address];
-									queryType = OSCQueryTypeReturnTypeString;
-									tmpIndex = i+18;
+									queryType = OSCQueryTypeReturnTypeSignature;
+									tmpIndex = i+19;
 								}
 								break;
 						}
@@ -212,13 +222,10 @@
 	*/
 	
 	
-	//	"tmpIndex" is the offset i'm currently reading from- so before i go further i
-	//	have to account for any padding
-	if (tmpIndex %4 == 0)
-		msgTypeStartIndex = tmpIndex + 4;
-	else
-		msgTypeStartIndex = (4 - (tmpIndex % 4)) + tmpIndex;
-	
+	//	"tmpIndex" is the offset i'm reading from- account for four-byte padding (or a four-byte space if it's already aligned)
+	msgTypeStartIndex = ROUNDUP4(tmpIndex);
+	if (msgTypeStartIndex == tmpIndex)
+		msgTypeStartIndex += 4;
 	
 	
 	/*
@@ -260,20 +267,27 @@
 		NSLog(@"\t\terr: msg was nil %s",__func__);
 		return nil;
 	}
-	OSCValue		*oscValue = nil;
+	OSCValue		*tmpVal = nil;
+	NSMutableArray	*arrayVals = nil;	//	an OSC message can have multiple levels of arrays- they're assembled and stored in here during parsing...
 	
 	//	run through the type arguments (,ffis etc.)- for each type arg, pull data from the buffer
 	for (i=msgTypeStartIndex; i<msgTypeEndIndex; ++i)	{
 		//	"tmpIndex" is the offset in "b" i'm currently reading data for this type from!
 		switch(b[i])	{
 			case 'i':			//	int32
-				oscValue = [OSCValue createWithInt:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithInt:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex += 4;;
 				break;
 			case 'f':			//	float32
-				oscValue = [OSCValue createWithFloat:NSSwapBigFloatToHost(*((NSSwappedFloat *)(b+tmpIndex)))];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithFloat:NSSwapBigFloatToHost(*((NSSwappedFloat *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex += 4;
 				break;
 			case 's':			//	OSC-string
@@ -291,8 +305,11 @@
 				//	4-byte-struct of '\0' to ensure that you know where that shit ends.
 				//	of course, this means that i don't need to check for the modulus before applying it.
 				
-				oscValue = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSUTF8StringEncoding]];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithString:[NSString stringWithCString:(char *)(b+tmpIndex) encoding:NSUTF8StringEncoding]];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				
 				//	beginning of this string (tmpIndex), plus the length of this string (tmpInt - tmpIndex), plus 1 (the null), then round that up to the nearest 4 bytes
 				//	this condenses down to....
@@ -311,28 +328,40 @@
 				tmpIndex += 4;
 				//	now that i know how big the blob is, create an NSData from the buffer
 				tmpData = [NSData dataWithBytes:(void *)(b+tmpIndex) length:tmpInt];
-				oscValue = [OSCValue createWithNSDataBlob:tmpData];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithNSDataBlob:tmpData];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				
 				//	update tmpIndex, make sure it's an even multiple of 4
 				tmpIndex = tmpIndex + tmpInt;
 				tmpIndex = ROUNDUP4(tmpIndex);
 				break;
 			case 'h':			//	64 bit big-endian two's complement integer
-				oscValue = [OSCValue createWithLongLong:NSSwapBigLongLongToHost(*((long long *)(b+tmpIndex)))];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithLongLong:NSSwapBigLongLongToHost(*((long long *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex += 8;
 				break;
 			case 't':			//	OSC-timetag (64-bit/8 byte)
-				oscValue = [OSCValue
+				tmpVal = [OSCValue
 					createWithTimeSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex)))
 					microSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex+4)))];
-				[returnMe addValue:oscValue];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex = tmpIndex + 8;
 				break;
 			case 'd':			//	64 bit ("double") IEEE 754 floating point number
-				oscValue = [OSCValue createWithDouble:NSSwapBigDoubleToHost(*((NSSwappedDouble *)(b+tmpIndex)))];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithDouble:NSSwapBigDoubleToHost(*((NSSwappedDouble *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex = tmpIndex + 8;
 				break;
 			case 'c':			//	an ascii character, sent as 32 bits- NOT SUPPORTED
@@ -342,49 +371,93 @@
 				//NSLog(@"%d, %d, %d, %d",*((unsigned char *)b+tmpIndex),*((unsigned char *)b+tmpIndex+1),*((unsigned char *)b+tmpIndex+2),*((unsigned char *)b+tmpIndex+3));
 
 #if IPHONE
-				oscValue = [OSCValue
+				tmpVal = [OSCValue
 					createWithColor:[UIColor
 						colorWithRed:b[tmpIndex]/255.0
 						green:b[tmpIndex+1]/255.0
 						blue:b[tmpIndex+2]/255.0
 						alpha:b[tmpIndex+3]/255.0]];
-				[returnMe addValue:oscValue];
 #else
-				oscValue = [OSCValue
+				tmpVal = [OSCValue
 					createWithColor:[NSColor
 						colorWithDeviceRed:b[tmpIndex]/255.0
 						green:b[tmpIndex+1]/255.0
 						blue:b[tmpIndex+2]/255.0
 						alpha:b[tmpIndex+3]/255.0]];
-				[returnMe addValue:oscValue];
 #endif
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex = tmpIndex + 4;
 				break;
 			case 'm':			//	4 byte MIDI message.  bytes from MSB to LSB are: port id, status byte, data1, data2
-				oscValue = [OSCValue
+				tmpVal = [OSCValue
 					createWithMIDIChannel:b[tmpIndex]
 					status:b[tmpIndex+1]
 					data1:b[tmpIndex+2]
 					data2:b[tmpIndex+3]];
-				[returnMe addValue:oscValue];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				
 				tmpIndex = tmpIndex + 4;
 				break;
 			case 'T':			//	True.  no bytes are allocated in the argument data!
-				oscValue = [OSCValue createWithBool:YES];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithBool:YES];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				break;
 			case 'F':			//	False.  no bytes are allocated in the argument data!
-				oscValue = [OSCValue createWithBool:NO];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithBool:NO];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				break;
 			case 'N':			//	Nil.  no bytes are allocated in the argument data!
+				tmpVal = [OSCValue createWithNil];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				break;
 			case 'I':			//	Infinitum.  no bytes are allocated in the argument data!
+				tmpVal = [OSCValue createWithInfinity];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
+				break;
+			case '[':			//	indicates the start of an array
+				if (arrayVals==nil)
+					arrayVals = MUTARRAY;
+				tmpVal = [OSCValue createArray];
+				[arrayVals addObject:tmpVal];
+				break;
+			case ']':			//	indicates the end of an array
+				if (arrayVals!=nil && [arrayVals count]>0)	{
+					OSCValue	*finishedVal = [arrayVals lastObject];
+					[finishedVal retain];
+					[arrayVals removeLastObject];
+					
+					if ([arrayVals count]>0)
+						[[arrayVals lastObject] addValue:finishedVal];
+					else
+						[returnMe addValue:finishedVal];
+					
+					[finishedVal release];
+				}
 				break;
 			case 'E':			//	SMPTE timecode. AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK!
-				oscValue = [OSCValue createWithSMPTEChunk:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
-				[returnMe addValue:oscValue];
+				tmpVal = [OSCValue createWithSMPTEChunk:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
 				tmpIndex += 4;
 				break;
 		}
@@ -739,7 +812,7 @@
 						return @"/#current-value";
 					return [NSString stringWithFormat:@"%@/#current-value",address];
 					break;
-				case OSCQueryTypeReturnTypeString:
+				case OSCQueryTypeReturnTypeSignature:
 					if ([address isEqualToString:@"/"])
 						return @"/#return-type-string";
 					return [NSString stringWithFormat:@"%@/#return-type-string",address];
@@ -805,7 +878,7 @@
 				case OSCQueryTypeCurrentValue:
 					addressLength += 15;
 					break;
-				case OSCQueryTypeReturnTypeString:
+				case OSCQueryTypeReturnTypeSignature:
 					addressLength += 20;
 					break;
 			}
@@ -818,23 +891,28 @@
 			break;
 	}
 	addressLength = ROUNDUP4((addressLength+1));
-	//	determine the length of the type args (1 [comma] + # of types + 1 [for the null], round up to nearest 4 bytes)
-	typeLength = ROUNDUP4((1 + valueCount + 1));
-	//	determine the length of the various arguments- each rounded up to the nearest 4 bytes
-	//	now write all the data from the vals to the buffer
-	if ((valueCount < 2) && (value != nil))
-		payloadLength += [value bufferLength];
-	else	{
-		OSCValue		*valuePtr = nil;
-		for (valuePtr in valueArray)	{
-			payloadLength += [valuePtr bufferLength];
+	
+	//	determine the length of the type args. 1 [comma] + actual type args + 1 [for the null]
+	typeLength = 1;
+	if (valueCount>0)	{
+		if (valueCount==1 && value!=nil)	{
+			typeLength += [value typeSignatureLength];
+			payloadLength += [value bufferLength];
+		}
+		else if (valueCount>1 && valueArray!=nil)	{
+			for (OSCValue *valPtr in valueArray)	{
+				typeLength += [valPtr typeSignatureLength];
+				payloadLength += [valPtr bufferLength];
+			}
 		}
 	}
+	//	the type args has to be rounded up to the nearest 4 bytes (payload was rounded up when each val reported its bufferLength)
+	typeLength = ROUNDUP4(typeLength);
 	
 	return addressLength + typeLength + payloadLength;
 }
 - (void) writeToBuffer:(unsigned char *)b	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,self);
 	if (b == NULL)
 		return;
 	
@@ -851,8 +929,20 @@
 	typeWriteOffset += (tmpCharsLength + 1);
 	//	the actual type data location is rounded up to the nearest 4-byte segment
 	typeWriteOffset = ROUNDUP4(typeWriteOffset);
-	//	figure out where i'll be starting to write the data (the first +1 is the comma, the second +1 is the null after the types)
-	dataWriteOffset = typeWriteOffset + 1 + valueCount + 1;
+	//	figure out where i'll be starting to write the data. +1 for the comma + actual type args + 1 for the null
+	dataWriteOffset = typeWriteOffset + 1;
+	if (valueCount > 0)	{
+		if (valueCount==1 && value!=nil)	{
+			dataWriteOffset += [value typeSignatureLength];
+		}
+		else if (valueCount>1 && valueArray!=nil)	{
+			for (OSCValue *valPtr in valueArray)	{
+				dataWriteOffset += [valPtr typeSignatureLength];
+			}
+		}
+	}
+	dataWriteOffset += 1;
+	//	the type args has to be rounded up to the nearest 4 bytes!
 	dataWriteOffset = ROUNDUP4(dataWriteOffset);
 	
 	//	write the comma at the beginning of the list of types

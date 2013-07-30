@@ -41,6 +41,7 @@
 - (IBAction) listNodesClicked:(id)sender;
 - (IBAction) documentationClicked:(id)sender;
 - (IBAction) acceptedTypesClicked:(id)sender;
+- (IBAction) returnTypesClicked:(id)sender;
 - (IBAction) currentValClicked:(id)sender;
 
 - (IBAction) clearDataViewsClicked:(id)sender;

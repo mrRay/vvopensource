@@ -221,6 +221,7 @@ long			_spriteGLViewSysVers;
 	return tmpSubview;
 }
 */
+/*
 - (void) keyDown:(NSEvent *)event	{
 	NSLog(@"%s",__func__);
 	//[VVControl keyPressed:event];
@@ -231,6 +232,7 @@ long			_spriteGLViewSysVers;
 	//[VVControl keyPressed:event];
 	//[super keyUp:event];
 }
+*/
 
 
 /*===================================================================================*/

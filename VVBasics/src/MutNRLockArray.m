@@ -16,6 +16,13 @@
 		return nil;
 	return [returnMe autorelease];
 }
+- (id) initWithCapacity:(NSInteger)c	{
+	if (self = [super initWithCapacity:c])	{
+		zwrFlag = NO;
+		return self;
+	}
+	return self;
+}
 - (NSMutableArray *) createArrayCopy	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	for (ObjectHolder *objPtr in array)	{
@@ -42,7 +49,6 @@
 			NSLog(@"\t\terr: object in MutNRLockArray wasn't a holder! %s, %@",__func__,objPtr);
 			//[returnMe addObject:objPtr];
 		}
-
 	}
 	return returnMe;	
 }
@@ -51,7 +57,8 @@
 		[super addObject:o];
 		return;
 	}
-	ObjectHolder		*holder = [ObjectHolder createWithObject:o];
+	id				holder = (zwrFlag) ? [ObjectHolder createWithZWRObject:o] : [ObjectHolder createWithObject:o];
+	//ObjectHolder		*holder = [ObjectHolder createWithObject:o];
 	[super addObject:holder];
 }
 - (void) addObjectsFromArray:(id)a	{
@@ -64,11 +71,11 @@
 		else if ([a isKindOfClass:[MutLockArray class]])	{
 			//	lock & get a copy of the array
 			NSMutableArray		*copy = [a lockCreateArrayCopy];
-			ObjectHolder		*tmpHolder = nil;
+			id					tmpHolder = nil;
 			if (copy!=nil)	{
 				//	run through the copy, creating ObjectHolders for each item & adding them to me
 				for (id anObj in copy)	{
-					tmpHolder = [ObjectHolder createWithObject:anObj];
+					tmpHolder = (zwrFlag) ? [ObjectHolder createWithZWRObject:anObj] : [ObjectHolder createWithObject:anObj];
 					if (tmpHolder != nil)
 						[array addObject:tmpHolder];
 				}
@@ -77,9 +84,9 @@
 		//	else it's some other kind of generic array
 		else	{
 			//	run through the array, creating ObjectHolders for each itme & adding them to me
-			ObjectHolder		*tmpHolder = nil;
+			id					tmpHolder = nil;
 			for (id anObj in a)	{
-				tmpHolder = [ObjectHolder createWithObject:anObj];
+				tmpHolder = (zwrFlag) ? [ObjectHolder createWithZWRObject:anObj] : [ObjectHolder createWithObject:anObj];
 				if (tmpHolder != nil)
 					[array addObject:tmpHolder];
 			}
@@ -98,7 +105,7 @@
 	}
 }
 - (BOOL) insertObject:(id)o atIndex:(NSInteger)i	{
-	ObjectHolder		*tmpHolder = [ObjectHolder createWithObject:o];
+	id					tmpHolder = (zwrFlag) ? [ObjectHolder createWithZWRObject:o] : [ObjectHolder createWithObject:o];
 	BOOL				returnMe = NO;
 	returnMe = [super insertObject:tmpHolder atIndex:i];
 	return returnMe;
@@ -249,6 +256,9 @@
 		return;
 	[self removeObjectAtIndex:foundIndex];
 }
+
+
+@synthesize zwrFlag;
 
 
 - (void) bruteForceMakeObjectsPerformSelector:(SEL)s	{

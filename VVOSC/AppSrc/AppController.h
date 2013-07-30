@@ -63,6 +63,4 @@
 - (IBAction) lengthTest:(id)sender;
 - (IBAction) blobTest:(id)sender;
 
-- (NSArray *) ipAddressArray;
-
 @end

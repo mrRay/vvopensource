@@ -9,11 +9,11 @@
 OSCValues have distinct types; these are used to describe the type of an OSCValue.
 */
 typedef enum	{
-	OSCValInt = 1,	//!<Integer, -2147483648 to 2147483647
+	OSCValInt = 1,	//!<Integer -2147483648 to 2147483647
 	OSCValFloat = 2,	//!<Float
 	OSCValString = 3,	//!<String
 	OSCValTimeTag = 4,	//!<TimeTag
-	OSCVal64Int = 5,	//!<64-bit integer, -9223372036854775808 to 9223372036854775807
+	OSCVal64Int = 5,	//!<64-bit integer -9223372036854775808 to 9223372036854775807
 	OSCValDouble = 6,	//!<64-bit float (double)
 	OSCValChar = 7,	//!<Char
 	OSCValColor = 8,	//!<Color
@@ -21,8 +21,9 @@ typedef enum	{
 	OSCValBool = 10,	//!<BOOL
 	OSCValNil = 11,	//!<nil/NULL
 	OSCValInfinity = 12,	//!<Infinity
-	OSCValBlob = 13,	//!<Blob- random binary data
-	OSCValSMPTE = 14	//!<SMPTE time- AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK! 32-bit value, max time is "7:23:59:59.255". first 4 bits define FPS (OSCSMPTEFPS). next 3 bits define days. next 5 bits define hours. next 6 bits define minutes. next 6 bits define seconds. last 8 bits define frame.
+	OSCValArray = 13,	//!<Array- contains other OSCValues
+	OSCValBlob = 14,	//!<Blob- random binary data
+	OSCValSMPTE = 15	//!<SMPTE time- AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK! 32-bit value max time is "7:23:59:59.255". first 4 bits define FPS (OSCSMPTEFPS). next 3 bits define days. next 5 bits define hours. next 6 bits define minutes. next 6 bits define seconds. last 8 bits define frame.
 } OSCValueType;
 
 
@@ -112,7 +113,7 @@ typedef enum	{
 
 //	there are several different kinds of OSC messages
 typedef enum	{
-	OSCMessageTypeUnknown=0,	//	if a message's type cannot be determined, this type is used.  rarely encountered.
+	OSCMessageTypeUnknown=0,	//	if a message's type cannot be determined, this type is used.  rarely encountered, might mean parsing error or malformed packet.
 	OSCMessageTypeControl,	//	"normal" OSC message- an address, and zero or more values.  does NOT require a reply!
 	OSCMessageTypeQuery,	//	standard query types are listed below (OSCQueryType)- requires a reply of some sort from the address space!
 	OSCMessageTypeReply,	//	a reply presumes that the query was executed successfully and an answer that is presumed to be useful is being returned
@@ -121,11 +122,11 @@ typedef enum	{
 //	these are the basic query types
 typedef enum	{
 	OSCQueryTypeUnknown=0,
-	OSCQueryTypeNamespaceExploration,
-	OSCQueryTypeDocumentation,
-	OSCQueryTypeTypeSignature,
-	OSCQueryTypeCurrentValue,
-	OSCQueryTypeReturnTypeString
+	OSCQueryTypeNamespaceExploration,	//	return a list of any sub-nodes "inside" the destination address node as strings
+	OSCQueryTypeDocumentation,	//	return strings that provide documentation for the support and behavior of the destination address node
+	OSCQueryTypeTypeSignature,	//	return a single type-tag string describing the destination address node's expected INPUT value types.
+	OSCQueryTypeCurrentValue,	//	return the value of the node (type of the value returned can be obtained with a "return type signature" query)
+	OSCQueryTypeReturnTypeSignature	//	return a single type-tag string describing the destination address node's expected OUTPUT value types
 } OSCQueryType;
 //	these strings are used in the spec and are defined here for convenience
 #define kOSCQueryTypeReplyString @"#reply"
@@ -134,7 +135,7 @@ typedef enum	{
 #define kOSCQueryTypeDocumentationString @"#documentation"
 #define kOSCQueryTypeTypeSignatureString @"#type-signature"
 #define kOSCQueryTypeCurrentValueString @"#current-value"
-#define kOSCQueryTypeReturnTypeStringString @"#return-type-string"
+#define kOSCQueryTypeReturnTypeSignatureString @"#return-type-string"
 /*
 typedef enum	{
 	OSCErrorTypeUnknown,

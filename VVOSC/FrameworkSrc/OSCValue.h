@@ -46,6 +46,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 + (id) createWithNil;
 ///	Creates & returns an auto-released instance of OSCValue representing infinity
 + (id) createWithInfinity;
+///	Creates & returns an auto-released instance of OSCValue that contains a mutable array (of other OSCValue instances)
++ (id) createArray;
 ///	Creates & returns an auto-released instance of OSCValue with an NSData blob
 + (id) createWithNSDataBlob:(NSData *)d;
 ///	Creates & returns an auto-released instance of OSCValue with an SMPTE timecode
@@ -66,6 +68,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (id) initWithBool:(BOOL)n;
 - (id) initWithNil;
 - (id) initWithInfinity;
+- (id) initArray;
 - (id) initWithNSDataBlob:(NSData *)d;
 - (id) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f;
 - (id) initWithSMPTEChunk:(int)n;
@@ -98,6 +101,10 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (Byte) midiData2;
 ///	Returns a BOOL value corresponding to the instance's value
 - (BOOL) boolValue;
+///	Adds the passed (non-nil) value to the array (only works if receiver is an array-type OSCValue)
+- (void) addValue:(OSCValue *)n;
+///	Returns this value's NSMutableArray, which contains zero or more OSCValue instances
+- (NSMutableArray *) valueArray;
 ///	Returns an auto-released NSData instance containing the "blob" data
 - (NSData *) blobNSData;
 ///	Returns a 32-bit value representing the SMPTE time.
@@ -110,6 +117,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 @property (nonatomic, readonly) OSCValueType type;
 
 - (long) bufferLength;
+- (long) typeSignatureLength;
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d;
 
 @end

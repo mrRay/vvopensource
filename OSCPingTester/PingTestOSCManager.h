@@ -29,7 +29,6 @@
 - (void) oscOutputsChangedNotification:(NSNotification *)note;
 - (IBAction) setupFieldUsed:(id)sender;
 - (IBAction) outputDestinationButtonUsed:(id)sender;
-- (NSArray *) ipAddressArray;
 
 - (IBAction) pingClicked:(id)sender;
 

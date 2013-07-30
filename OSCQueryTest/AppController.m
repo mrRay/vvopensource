@@ -38,8 +38,11 @@
 }
 - (void) awakeFromNib	{
 	[_mainAddressSpace setDelegate:self];
-	[_mainAddressSpace setAutoQueryReply:YES];
+	//	set myself as the main address space's query delegate
 	[_mainAddressSpace setQueryDelegate:self];
+	//	enable auto-query reply in the main address space node- i'm the query delegate, so if my query delegate methods return nil, the address space node will automatically reply
+	[_mainAddressSpace setAutoQueryReply:YES];
+	
 	[oscManager setDelegate:self];
 }
 
@@ -102,10 +105,43 @@
 	[oscManager dispatchQuery:msg toOutput:manualOutput];
 }
 - (IBAction) acceptedTypesClicked:(id)sender	{
+	//NSLog(@"%s",__func__);
+	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
+	if (manualOutput == nil)	{
+		NSLog(@"\t\terr: couldn't find manual output in %s",__func__);
+		return;
+	}
+	NSString		*address = [oscAddressField stringValue];
+	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeTypeSignature forAddress:address];
+	
+	[self addTXMsg:msg];
+	[oscManager dispatchQuery:msg toOutput:manualOutput];
+}
+- (IBAction) returnTypesClicked:(id)sender	{
 	NSLog(@"%s",__func__);
+	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
+	if (manualOutput == nil)	{
+		NSLog(@"\t\terr: couldn't find manual output in %s",__func__);
+		return;
+	}
+	NSString		*address = [oscAddressField stringValue];
+	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeReturnTypeSignature forAddress:address];
+	
+	[self addTXMsg:msg];
+	[oscManager dispatchQuery:msg toOutput:manualOutput];
 }
 - (IBAction) currentValClicked:(id)sender	{
 	NSLog(@"%s",__func__);
+	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
+	if (manualOutput == nil)	{
+		NSLog(@"\t\terr: couldn't find manual output in %s",__func__);
+		return;
+	}
+	NSString		*address = [oscAddressField stringValue];
+	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeCurrentValue forAddress:address];
+	
+	[self addTXMsg:msg];
+	[oscManager dispatchQuery:msg toOutput:manualOutput];
 }
 
 
@@ -212,19 +248,23 @@
 
 
 - (NSMutableArray *) namespaceArrayForNode:(OSCNode *)n	{
+	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
 	return nil;
 }
 - (NSString *) docStringForNode:(OSCNode *)n	{
-	//NSLog(@"%s",__func__);
+	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
 	return nil;
 }
 - (NSString *) typeSignatureForNode:(OSCNode *)n	{
+	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
 	return nil;
 }
 - (OSCValue *) currentValueForNode:(OSCNode *)n	{
+	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
 	return nil;
 }
 - (NSString *) returnTypeStringForNode:(OSCNode *)n	{
+	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
 	return nil;
 }
 

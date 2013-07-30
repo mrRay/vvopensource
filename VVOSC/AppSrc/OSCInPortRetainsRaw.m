@@ -31,7 +31,8 @@
 /*
 	this formats a bunch of strings based on the raw data, stores them,
 	then lets the super do it's thing.  the strings it formats are used
-	for displaying the raw OSC data which has been received.
+	for displaying the raw OSC data which has been received.  this is 
+	formatted & stored here because this is the easiest place to do it.
 */
 - (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort	{
 	//NSLog(@"%s",__func__);
@@ -76,7 +77,10 @@
 	//	tell the super to parse the raw data
 	[super parseRawBuffer:b ofMaxLength:l fromAddr:txAddr port:txPort];
 }
-
+/*
+	this formats and stores a bunch of strings based on the OSCMessage and 
+	OSCValue instances received and parsed by the input.
+*/
 - (void) handleScratchArray:(NSArray *)a	{
 	//NSLog(@"%s",__func__);
 	NSMutableString		*mutString = [NSMutableString stringWithCapacity:0];

@@ -65,6 +65,7 @@
 		return;
 	
 	
+	OSCValue		*itemVal = nil;
 	//	create a new UI item & OSC node
 	NSRect			tmpRect = [self bounds];
 	tmpRect.size.width -= 30;
@@ -82,6 +83,7 @@
 			//	create the node (note it is autoreleased, and must be retained if it is to stick around)
 			myNode = [OSCNode createWithName:a];
 			[myNode setNodeType:OSCNodeTypeFloat];
+			itemVal = [OSCValue createWithFloat:[myUIItem floatValue]];
 			break;
 		case OSCValString:
 			myUIItem = [[NSTextField alloc] initWithFrame:tmpRect];
@@ -89,6 +91,7 @@
 			[myUIItem setAction:@selector(textUsed:)];
 			myNode = [OSCNode createWithName:a];
 			[myNode setNodeType:OSCNodeTypeString];
+			itemVal = [OSCValue createWithString:[myUIItem stringValue]];
 			break;
 		case OSCValBool:
 			myUIItem = [[NSButton alloc] initWithFrame:tmpRect];
@@ -98,7 +101,9 @@
 			[myUIItem setAction:@selector(buttonUsed:)];
 			myNode = [OSCNode createWithName:a];
 			[myNode setNodeType:OSCNodeTypeFloat];
+			itemVal = [OSCValue createWithBool:([myUIItem intValue]==NSOnState)?YES:NO];
 			break;
+		case OSCValArray:
 		case OSCValBlob:
 		case OSCVal64Int:
 		case OSCValChar:
@@ -113,6 +118,11 @@
 			break;
 	}
 	
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:@""];
+	[tmpMsg addValue:itemVal];
+	[myNode setLastReceivedMessage:tmpMsg];
+	
+	[myNode setAutoQueryReply:YES];
 	
 	//	put the UI item in my content view, set up autoresizing
 	[[self contentView] addSubview:myUIItem];
@@ -132,13 +142,28 @@
 
 
 - (IBAction) sliderUsed:(id)sender	{
-
+	NSLog(@"%s",__func__);
+	if (deleted || myNode==nil)
+		return;
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
+	[tmpMsg addValue:[OSCValue createWithFloat:[sender floatValue]]];
+	[myNode setLastReceivedMessage:tmpMsg];
 }
 - (IBAction) textUsed:(id)sender	{
-
+	NSLog(@"%s",__func__);
+	if (deleted || myNode==nil)
+		return;
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
+	[tmpMsg addValue:[OSCValue createWithFloat:[sender floatValue]]];
+	[myNode setLastReceivedMessage:tmpMsg];
 }
 - (IBAction) buttonUsed:(id)sender	{
-
+	NSLog(@"%s",__func__);
+	if (deleted || myNode==nil)
+		return;
+	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
+	[tmpMsg addValue:[OSCValue createWithBool:([sender intValue]==NSOnState)?YES:NO]];
+	[myNode setLastReceivedMessage:tmpMsg];
 }
 
 
