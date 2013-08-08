@@ -11,6 +11,7 @@
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
+#import "VVNSViewAdditions.h"
 
 
 
@@ -42,13 +43,14 @@ typedef enum	{
 	CGLContextObj		spriteCtx;	//	NOT RETAINED! only NON-nil during draw callback, var exists so stuff with draw callbacks can get the GL context w/o having to pass it in methods (which would require discrete code paths)
 	BOOL				needsDisplay;
 	
-	NSRect				_frame;
+	NSRect				_frame;	//	the area i occupy in my superview's coordinate space
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
-	NSRect				_bounds;
+	double				localToBackingBoundsMultiplier;
+	NSRect				_bounds;	//	the area of my coordinate space- AFTER ROTATION- visible through my frame
 	GLfloat				_boundsRotation;
-	NSPoint				_boundsOrigin;	//	the bounds origin offset is kept as a separate var so i can quickly refer to "bounds" w/o having to worry about compensating for a non-zero origin.
-	id					superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
-	id					containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
+	//NSPoint				_boundsOrigin;	//	the bounds origin offset is kept as a separate var so i can quickly refer to "bounds" w/o having to worry about compensating for a non-zero origin.
+	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
+	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
@@ -61,9 +63,12 @@ typedef enum	{
 	GLfloat				borderColor[4];
 	
 	long				mouseDownModifierFlags;
+	VVSpriteEventType	mouseDownEventType;
 	long				modifierFlags;
 	BOOL				mouseIsDown;
 	id					clickedSubview;	//	NOT RETAINED
+	
+	MutLockArray		*dragTypes;	//	always non-nil, holds the strings of the regsitered drag types. empty by default.
 }
 
 - (id) initWithFrame:(NSRect)n;
@@ -78,10 +83,30 @@ typedef enum	{
 - (void) keyDown:(NSEvent *)e;
 - (void) keyUp:(NSEvent *)e;
 
-- (NSPoint) convertPoint:(NSPoint)pointInWindow fromView:(id)view;
 //- (id) hitTest:(NSPoint)n;	//	the point it's passed is in coords local to self!
 - (id) vvSubviewHitTest:(NSPoint)p;	//	the point it's passed is in coords local to self!
 - (BOOL) checkRect:(NSRect)n;
+
+- (NSPoint) convertPoint:(NSPoint)viewCoords fromView:(id)view;
+
+- (NSPoint) convertPointFromContainerViewCoords:(NSPoint)pointInContainer;
+- (NSPoint) convertPointFromWinCoords:(NSPoint)pointInWindow;
+- (NSPoint) convertPointFromDisplayCoords:(NSPoint)displayPoint;
+- (NSRect) convertRectFromContainerViewCoords:(NSRect)rectInContainer;
+
+- (NSPoint) convertPointToContainerViewCoords:(NSPoint)localCoords;
+- (NSPoint) convertPointToWinCoords:(NSPoint)localCoords;
+- (NSPoint) convertPointToDisplayCoords:(NSPoint)localCoords;
+- (NSRect) convertRectToContainerViewCoords:(NSRect)localRect;
+
+//- (NSPoint) containerViewCoordsOfLocalPoint:(NSPoint)n;
+- (NSPoint) winCoordsOfLocalPoint:(NSPoint)n;
+- (NSPoint) displayCoordsOfLocalPoint:(NSPoint)n;
+//- (NSPoint) localCoordsOfContainerViewPoint:(NSPoint)n;
+//- (NSPoint) localCoordsOfWinPoint:(NSPoint)n;
+//- (NSPoint) localCoordsOfDisplayPoint:(NSPoint)n;
+- (NSMutableArray *) _locationTransformsToContainerView;
+- (NSMutableArray *) _locationTransformsFromSuperview;
 
 - (NSRect) frame;
 - (void) setFrame:(NSRect)n;
@@ -93,17 +118,24 @@ typedef enum	{
 - (NSPoint) boundsOrigin;
 - (void) setBoundsRotation:(GLfloat)n;
 - (GLfloat) boundsRotation;
+- (void) _viewDidMoveToWindow;
+- (void) viewDidMoveToWindow;
 - (NSRect) visibleRect;
+- (NSRect) _visibleRect;
+//	returns YES if at least one of its views has a window and a non-zero visible rect
+- (BOOL) hasVisibleView;
 
-@property (readonly) id superview;
 @property (assign,readwrite) BOOL autoresizesSubviews;
 @property (assign,readwrite) VVViewResizeMask autoresizingMask;
 
 - (void) addSubview:(id)n;
 - (void) removeSubview:(id)n;
 - (void) removeFromSuperview;
-- (void) setSuperview:(id)n;
+- (void) _setSuperview:(id)n;
 - (id) superview;
+- (BOOL) containsSubview:(id)n;
+- (void) registerForDraggedTypes:(NSArray *)a;
+- (void) _collectDragTypesInArray:(NSMutableArray *)n;
 - (void) setContainerView:(id)n;
 - (id) containerView;
 - (MutLockArray *) subviews;
@@ -112,8 +144,12 @@ typedef enum	{
 - (void) _drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx;
 - (BOOL) isOpaque;
+- (void) setIsOpaque:(BOOL)n;
 - (void) finishedDrawing;
 - (void) updateSprites;
+- (NSRect) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
+- (double) localToBackingBoundsMultiplier;
+- (void) setLocalToBackingBoundsMultiplier:(double)n;
 
 @property (readonly) BOOL deleted;
 @property (readonly) VVSpriteManager *spriteManager;
@@ -130,8 +166,10 @@ typedef enum	{
 - (void) setBorderColor:(NSColor *)n;
 - (void) setBorderColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
 @property (readonly) long mouseDownModifierFlags;
+@property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
+@property (readonly) MutLockArray *dragTypes;
 
 
 @end

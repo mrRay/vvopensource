@@ -49,15 +49,7 @@ long			_spriteGLViewSysVers;
 }
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
-	if (_spriteGLViewSysVers >= 7)	{
-		[(id)self setWantsBestResolutionOpenGLSurface:YES];
-		NSRect		bounds = [self bounds];
-		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
-		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
-	}
-	else
-		boundsToRealBoundsMultiplier = 1.0;
-	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
 		selector:@selector(_glContextNeedsRefresh:)
@@ -67,6 +59,7 @@ long			_spriteGLViewSysVers;
 	deleted = NO;
 	initialized = NO;
 	flipped = NO;
+	localToBackingBoundsMultiplier = 1.0;
 	vvSubviews = [[MutLockArray alloc] init];
 	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
@@ -100,6 +93,8 @@ long			_spriteGLViewSysVers;
 	fenceADeployed = NO;
 	fenceBDeployed = NO;
 	fenceLock = OS_SPINLOCK_INIT;
+	
+	[(id)self setWantsBestResolutionOpenGLSurface:(_spriteGLViewSysVers>=7)?YES:NO];
 	//NSLog(@"\t\t%s ... %@, %p - FINISHED",__func__,[self class],self);
 }
 - (void) awakeFromNib	{
@@ -202,6 +197,44 @@ long			_spriteGLViewSysVers;
 	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
 }
+- (void) setWantsBestResolutionOpenGLSurface:(BOOL)n	{
+	//NSLog(@"%s ... %@, %d",__func__,self,n);
+	//	update my local display bounds multiplier
+	if (_spriteGLViewSysVers>=7)	{
+		//	note: only tells the super to do it if the current OS is 10.7 or newer!
+		[super setWantsBestResolutionOpenGLSurface:n];
+		
+		if (n)	{
+			NSRect		bounds = [self bounds];
+			NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+			localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
+		}
+		else
+			localToBackingBoundsMultiplier = 1.0;
+	}
+	else	{
+		localToBackingBoundsMultiplier = 1.0;
+	}
+	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+	//NSLog(@"\t\tsprites need updating!");
+	[self setSpritesNeedUpdate:YES];
+	//	if i have subviews, tell them to update their display bounds multipliers!
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+	}
+	[vvSubviews unlock];
+}
+- (void)viewDidMoveToWindow	{
+	//NSLog(@"%s ... %@",__func__,self);
+	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
+		return;
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr _viewDidMoveToWindow];
+	}
+	[vvSubviews unlock];
+}
 /*
 - (NSView *) hitTest:(NSPoint)p	{
 	NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
@@ -253,6 +286,13 @@ long			_spriteGLViewSysVers;
 		[n setContainerView:self];
 	}
 	[vvSubviews unlock];
+	
+	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
+	NSMutableArray		*tmpArray = MUTARRAY;
+	[n _collectDragTypesInArray:tmpArray];
+	if ([tmpArray count]>0)
+		[self reconcileVVSubviewDragTypes];
+	
 	[self setNeedsDisplay:YES];
 }
 - (void) removeVVSubview:(id)n	{
@@ -264,28 +304,164 @@ long			_spriteGLViewSysVers;
 	[n retain];
 	[vvSubviews lockRemoveIdenticalPtr:n];
 	[n setContainerView:nil];
+	
+	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
+	NSMutableArray		*tmpArray = MUTARRAY;
+	[n _collectDragTypesInArray:tmpArray];
+	if ([tmpArray count]>0)
+		[self reconcileVVSubviewDragTypes];
+	
 	[n release];
 }
 - (id) vvSubviewHitTest:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || vvSubviews==nil)
 		return nil;
-	id			tmpSubview = nil;
-	if ([vvSubviews count]>0)	{
-		[vvSubviews rdlock];
-		for (VVView *viewPtr in [vvSubviews array])	{
-			NSRect		tmpFrame = [viewPtr frame];
-			NSPoint		localPoint = NSMakePoint(p.x-tmpFrame.origin.x, p.y-tmpFrame.origin.y);
-			tmpSubview = [viewPtr vvSubviewHitTest:localPoint];
-			if (tmpSubview != nil)
+	
+	id					returnMe = nil;
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		NSRect			tmpFrame = [viewPtr frame];
+		if (NSPointInRect(p,tmpFrame))	{
+			returnMe = [viewPtr vvSubviewHitTest:p];
+			if (returnMe != nil)
 				break;
 		}
-		[vvSubviews unlock];
 	}
-	//NSLog(@"\t\ti appear to have clicked on %@",tmpSubview);
-	return tmpSubview;
+	[vvSubviews unlock];
+	
+	return returnMe;
+}
+- (void) reconcileVVSubviewDragTypes	{
+	NSLog(@"%s",__func__);
+	if (deleted || vvSubviews==nil)
+		return;
+	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr _collectDragTypesInArray:tmpArray];
+	}
+	[vvSubviews unlock];
+	
+	[self unregisterDraggedTypes];
+	NSLog(@"\t\tregistering for drags of type %@",tmpArray);
+	[self registerForDraggedTypes:tmpArray];
 }
 
+
+/*===================================================================================*/
+#pragma mark --------------------- NSDraggingDestination protocol
+/*------------------------------------*/
+
+
+- (NSDragOperation) draggingEntered:(id <NSDraggingInfo>)sender	{
+	NSLog(@"%s",__func__);
+	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
+		return NSDragOperationNone;
+	//	get the dragging pasteboard
+	NSPasteboard		*pboard = [sender draggingPasteboard];
+	if (pboard == nil)
+		return NSDragOperationNone;
+	//	get the array of drag types
+	NSArray				*dragTypes = [pboard types];
+	if (dragTypes==nil || [dragTypes count]<1)
+		return NSDragOperationNone;
+	//	check to see if there's a subview under the dragged point
+	NSLog(@"\t\tdragTypes are %@",dragTypes);
+	NSPoint				dragPoint = [sender draggingLocation];
+	return NSDragOperationGeneric;
+	/*
+	if (deleted || preventClickInspect || myObject==nil || ![myObject enabled] || [myObject actingAsDragSource])
+		return NSDragOperationNone;
+	//	get the dragging pasteboard
+	NSPasteboard		*pboard = [sender draggingPasteboard];
+	if (pboard == nil)
+		return NSDragOperationNone;
+	//	get the data off the pasteboard
+	NSData				*dragData = [pboard dataForType:@"DataSourceDrag"];
+	if (dragData == nil)
+		return NSDragOperationNone;
+	//	unarchive the data into a dict.  this dict's keys are receiver class names (eg: FloatNodeReceiver), and the objects are snap dicts for those classes.
+	NSMutableDictionary			*snapshotsDictionary = UNARCHIVE(dragData);
+	if (snapshotsDictionary == nil)
+		return NSDragOperationNone;
+	//	make sure that the passed snapshots dictionary has at least one snapshot dict at a key corresponding to my receiver class
+	BOOL		foundACompatibleSnap = NO;
+	Class		rxClass = [myObject receiverClass];
+	for (NSString *keyString in [snapshotsDictionary allKeys])	{
+		Class		keyClass = NSClassFromString(keyString);
+		if (rxClass==keyClass || [rxClass isSubclassOfClass:keyClass])	{
+			foundACompatibleSnap = YES;
+			break;
+		}
+	}
+	if (!foundACompatibleSnap)
+		return NSDragOperationNone;
+	
+	
+	OSSpinLockLock(&dsDropLock);
+	targetOfDataSourceDrop = YES;
+	OSSpinLockUnlock(&dsDropLock);
+	
+	[self setNeedsRender];
+	
+	return NSDragOperationCopy;
+	*/
+}
+- (void) mouseEntered:(NSEvent *)e	{
+	NSLog(@"%s",__func__);
+}
+- (void) mouseExited:(NSEvent *)e	{
+	NSLog(@"%s",__func__);
+}
+/*
+- (NSDragOperation) draggingUpdated:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return NSDragOperationCopy;
+}
+- (void) draggingExited:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	OSSpinLockLock(&dsDropLock);
+	targetOfDataSourceDrop = NO;
+	OSSpinLockUnlock(&dsDropLock);
+	[self setNeedsRender];
+}
+- (void) draggingEnded:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	OSSpinLockLock(&dsDropLock);
+	targetOfDataSourceDrop = NO;
+	OSSpinLockUnlock(&dsDropLock);
+	[self setNeedsRender];
+}
+
+- (BOOL) prepareForDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return YES;
+}
+- (BOOL) performDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return YES;
+}
+- (void) concludeDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	if (deleted || myObject==nil)
+		return;
+	//	get the dragging pasteboard
+	NSPasteboard		*pboard = [sender draggingPasteboard];
+	if (pboard == nil)
+		return;
+	//	get the data off the pasteboard
+	NSData				*dragData = [pboard dataForType:@"DataSourceDrag"];
+	if (dragData == nil)
+		return;
+	//	unarchive the data into a dict.  this dict's keys are receiver class names (eg: FloatNodeReceiver), and the objects are snap dicts for those classes.
+	NSMutableDictionary			*snapshotsDictionary = UNARCHIVE(dragData);
+	if (snapshotsDictionary == nil)
+		return;
+	//	subclasses should override this next method for specific handling of the dropped snapshots!
+	[myObject dataSourceDropHappened:snapshotsDictionary];
+}
+*/
 
 /*===================================================================================*/
 #pragma mark --------------------- frame-related
@@ -303,14 +479,31 @@ long			_spriteGLViewSysVers;
 	pthread_mutex_unlock(&glLock);
 	
 	//	update the bounds to real bounds multiplier
+	BOOL		backingBoundsChanged = NO;
 	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
 		NSRect		bounds = [self bounds];
-		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
-		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+		NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+		double		tmpDouble;
+		tmpDouble = (backingBounds.size.width/bounds.size.width);
+		if (tmpDouble != localToBackingBoundsMultiplier)
+			backingBoundsChanged = YES;
+		localToBackingBoundsMultiplier = tmpDouble;
 	}
-	else
-		boundsToRealBoundsMultiplier = 1.0;
-	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+	else	{
+		if (localToBackingBoundsMultiplier != 1.0)
+			backingBoundsChanged = YES;
+		localToBackingBoundsMultiplier = 1.0;
+	}
+	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+	
+	[vvSubviews rdlock];
+	if (backingBoundsChanged)	{
+		for (VVView *viewPtr in [vvSubviews array])	{
+			[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+		}
+	}
+	[vvSubviews unlock];
+	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,localToBackingBoundsMultiplier,self);
 	
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
@@ -364,12 +557,19 @@ long			_spriteGLViewSysVers;
 		//	update the bounds to real bounds multiplier
 		if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
 			NSRect		bounds = [self bounds];
-			NSRect		realBounds = [(id)self convertRectToBacking:bounds];
-			boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+			NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+			localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
 		}
 		else
-			boundsToRealBoundsMultiplier = 1.0;
-		//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,boundsToRealBoundsMultiplier,self);
+			localToBackingBoundsMultiplier = 1.0;
+		//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+		
+		[vvSubviews rdlock];
+		for (VVView *viewPtr in [vvSubviews array])	{
+			[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+		}
+		[vvSubviews unlock];
+		//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,localToBackingBoundsMultiplier,self);
 		
 		pthread_mutex_lock(&glLock);
 		initialized = NO;
@@ -384,11 +584,18 @@ long			_spriteGLViewSysVers;
 	//	update the bounds to real bounds multiplier
 	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
 		NSRect		bounds = [self bounds];
-		NSRect		realBounds = [(id)self convertRectToBacking:bounds];
-		boundsToRealBoundsMultiplier = (realBounds.size.width/bounds.size.width);
+		NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+		localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
 	}
 	else
-		boundsToRealBoundsMultiplier = 1.0;
+		localToBackingBoundsMultiplier = 1.0;
+	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+	
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+	}
+	[vvSubviews unlock];
 }
 - (void) reshape	{
 	//NSLog(@"%s",__func__);
@@ -407,14 +614,14 @@ long			_spriteGLViewSysVers;
 - (void) _unlock	{
 	pthread_mutex_unlock(&glLock);
 }
-- (NSRect) realBounds	{
+- (NSRect) backingBounds	{
 	if (_spriteGLViewSysVers >= 7)
 		return [(id)self convertRectToBacking:[self bounds]];
 	else
 		return [self bounds];
 }
-- (double) boundsToRealBoundsMultiplier	{
-	return boundsToRealBoundsMultiplier;
+- (double) localToBackingBoundsMultiplier	{
+	return localToBackingBoundsMultiplier;
 }
 
 
@@ -433,7 +640,7 @@ long			_spriteGLViewSysVers;
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
-	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//NSPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
@@ -446,7 +653,10 @@ long			_spriteGLViewSysVers;
 			return;
 		}
 	}
-	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager...
+	//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//NSPointLog(@"\t\tmodified localPoint is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
@@ -468,7 +678,7 @@ long			_spriteGLViewSysVers;
 	mouseIsDown = YES;
 	NSPoint		locationInWindow = [e locationInWindow];
 	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
-	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//NSPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
@@ -480,6 +690,10 @@ long			_spriteGLViewSysVers;
 			return;
 		}
 	}
+	
+	//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	
 	mouseDownModifierFlags = [e modifierFlags];
 	mouseDownEventType = VVSpriteEventRightDown;
 	modifierFlags = mouseDownModifierFlags;
@@ -494,12 +708,15 @@ long			_spriteGLViewSysVers;
 		lastMouseEvent = [e retain];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview rightMouseUp:e];
-	else
+	else	{
+		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localRightMouseUp:localPoint];
+	}
 }
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)
@@ -510,12 +727,15 @@ long			_spriteGLViewSysVers;
 	
 	modifierFlags = [e modifierFlags];
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseDragged:e];
-	else
+	else	{
+		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localMouseDragged:localPoint];
+	}
 }
 - (void) rightMouseDragged:(NSEvent *)e	{
 	[self mouseDragged:e];
@@ -536,12 +756,15 @@ long			_spriteGLViewSysVers;
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
 	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	localPoint = NSMakePoint(localPoint.x*boundsToRealBoundsMultiplier, localPoint.y*boundsToRealBoundsMultiplier);
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseUp:e];
-	else
+	else	{
+		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localMouseUp:localPoint];
+	}
 }
 
 
@@ -562,6 +785,7 @@ long			_spriteGLViewSysVers;
 }
 - (void) drawRect:(NSRect)r	{
 	//NSLog(@"%s",__func__);
+	//NSRectLog(@"\t\tpassed rect is",r);
 	if (deleted)
 		return;
 	
@@ -575,179 +799,194 @@ long			_spriteGLViewSysVers;
 		return;
 	}
 	
-		//	if the sprites need to be updated, do so now...this should probably be done inside the gl lock!
-		if (spritesNeedUpdate)
-			[self updateSprites];
-		
-		if (!initialized)	{
-			[self initializeGL];
-			initialized = YES;
-		}
-		NSOpenGLContext		*context = [self openGLContext];
-		CGLContextObj		cgl_ctx = [context CGLContextObj];
-		
-		//	lock around the fence, determine whether i should proceed with the render or not
-		OSSpinLockLock(&fenceLock);
-		BOOL		proceedWithRender = NO;
-		//	if the fences are broken, i'm going to proceed with rendering and ignore fencing
-		if ((fenceA < 1) || (fenceB < 1))
+	//	if the sprites need to be updated, do so now...this should probably be done inside the gl lock!
+	if (spritesNeedUpdate)
+		[self updateSprites];
+	
+	if (!initialized)	{
+		[self initializeGL];
+		initialized = YES;
+	}
+	NSOpenGLContext		*context = [self openGLContext];
+	CGLContextObj		cgl_ctx = [context CGLContextObj];
+	
+	//	lock around the fence, determine whether i should proceed with the render or not
+	OSSpinLockLock(&fenceLock);
+	BOOL		proceedWithRender = NO;
+	//	if the fences are broken, i'm going to proceed with rendering and ignore fencing
+	if ((fenceA < 1) || (fenceB < 1))
+		proceedWithRender = YES;
+	//	else the fences are fine- fence based on the fencing mode
+	else	{
+		//	if the fence mode wants to draw every refresh, proceed with rendering
+		if ((fenceMode==VVFenceModeEveryRefresh) || (fenceMode==VVFenceModeFinish))	{
+			//NSLog(@"\t\tfence mode is every refresh!");
 			proceedWithRender = YES;
-		//	else the fences are fine- fence based on the fencing mode
+		}
+		//	else the fence mode *isn't* drawing every refresh- i need to test fenceA no matter what
 		else	{
-			//	if the fence mode wants to draw every refresh, proceed with rendering
-			if ((fenceMode==VVFenceModeEveryRefresh) || (fenceMode==VVFenceModeFinish))	{
-				//NSLog(@"\t\tfence mode is every refresh!");
-				proceedWithRender = YES;
-			}
-			//	else the fence mode *isn't* drawing every refresh- i need to test fenceA no matter what
-			else	{
-				//	if i'm in single-buffer mode but i'm not waiting for fenceA, something's wrong- i should be waiting for A!
-				if ((fenceMode==VVFenceModeSBSkip) && (!waitingForFenceA))
-					waitingForFenceA = YES;
+			//	if i'm in single-buffer mode but i'm not waiting for fenceA, something's wrong- i should be waiting for A!
+			if ((fenceMode==VVFenceModeSBSkip) && (!waitingForFenceA))
+				waitingForFenceA = YES;
+			
+			//	if i'm waiting for fence A....
+			if (waitingForFenceA)	{
+				//	if fence A hasn't been deployed, proceed with rendering anyway
+				if (!fenceADeployed)
+					proceedWithRender = YES;
+				else	{
+					proceedWithRender = glTestFenceAPPLE(fenceA);
+					fenceADeployed = (proceedWithRender)?NO:YES;
+				}
+				//if (proceedWithRender)	{
+				//	//NSLog(@"\t\tfenceA executed- clear to render");
+				//}
+				//else	{
+				//	//NSLog(@"\t\tfenceA hasn't executed yet");
+				//}
 				
-				//	if i'm waiting for fence A....
-				if (waitingForFenceA)	{
-					//	if fence A hasn't been deployed, proceed with rendering anyway
-					if (!fenceADeployed)
-						proceedWithRender = YES;
-					else	{
-						proceedWithRender = glTestFenceAPPLE(fenceA);
-						fenceADeployed = (proceedWithRender)?NO:YES;
-					}
-					//if (proceedWithRender)	{
-					//	//NSLog(@"\t\tfenceA executed- clear to render");
-					//}
-					//else	{
-					//	//NSLog(@"\t\tfenceA hasn't executed yet");
-					//}
-					
+			}
+			//	if i'm in DB skip mode and i'm not waiting for fence A...
+			if ((fenceMode==VVFenceModeDBSkip) && (!waitingForFenceA))	{
+				//	if fence B hasn't been deployed, proceed with rendering anyway
+				if (!fenceBDeployed)
+					proceedWithRender = YES;
+				else	{
+					proceedWithRender = glTestFenceAPPLE(fenceB);
+					fenceBDeployed = (proceedWithRender)?NO:YES;
 				}
-				//	if i'm in DB skip mode and i'm not waiting for fence A...
-				if ((fenceMode==VVFenceModeDBSkip) && (!waitingForFenceA))	{
-					//	if fence B hasn't been deployed, proceed with rendering anyway
-					if (!fenceBDeployed)
-						proceedWithRender = YES;
-					else	{
-						proceedWithRender = glTestFenceAPPLE(fenceB);
-						fenceBDeployed = (proceedWithRender)?NO:YES;
+				//if (proceedWithRender)	{
+				//	//NSLog(@"\t\tfenceB executed- clear to render");
+				//}
+				//else	{
+				//	//NSLog(@"\t\tfenceB hasn't executed yet");
+				//}
+			}
+		}
+	}
+	OSSpinLockUnlock(&fenceLock);
+	
+	
+	
+	if (proceedWithRender)	{
+		//	clear the view
+		glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		//	tell the sprite manager to start drawing the sprites
+		if (spriteManager != nil)	{
+			if (_spriteGLViewSysVers >= 7)
+				[spriteManager drawRect:[(id)self convertRectToBacking:r]];
+			else
+				[spriteManager drawRect:r];
+		}
+		
+		
+		//	tell the subviews to draw
+		[vvSubviews rdlock];
+			if ([vvSubviews count]>0)	{
+				//	before i begin, enable the scissor test and get my bounds
+				//NSRectLog(@"\t\tmy reported bounds are",[self bounds]);
+				//NSRectLog(@"\t\tmy real bounds are",bounds);
+				glEnable(GL_SCISSOR_TEST);
+				//	run through all the subviews (last to first), drawing them
+				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
+				VVView				*viewPtr;
+				while (viewPtr = [it nextObject])	{
+					//NSLog(@"\t\tview is %@",viewPtr);
+					//NSRect				viewBounds = [viewPtr bounds];
+					NSRect				viewFrameInMyLocalBounds = [viewPtr frame];
+					//NSRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
+					NSRect				intersectRectInMyLocalBounds = NSIntersectionRect(r,viewFrameInMyLocalBounds);
+					if (intersectRectInMyLocalBounds.size.width>0 && intersectRectInMyLocalBounds.size.height>0)	{
+						//	update the intersect rect so it's local to the view i'm going to ask to draw
+						//intersectRectInMyLocalBounds.origin = NSMakePoint(intersectRectInMyLocalBounds.origin.x-viewFrameInMyLocalBounds.origin.x, intersectRectInMyLocalBounds.origin.y-viewFrameInMyLocalBounds.origin.y);
+						//NSRectLog(@"\t\tintersectRectInMyLocalBounds is",intersectRectInMyLocalBounds);
+						//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
+						glMatrixMode(GL_MODELVIEW);
+						glPushMatrix();
+						glTranslatef(viewFrameInMyLocalBounds.origin.x*localToBackingBoundsMultiplier, viewFrameInMyLocalBounds.origin.y*localToBackingBoundsMultiplier, 0.0);
+						
+						NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
+						viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
+						[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
+						viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
+						viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
+						viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+						//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
+						//NSRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
+						
+						//	now tell the view to do its drawing!
+						[viewPtr
+							_drawRect:viewBoundsToDraw
+							inContext:cgl_ctx];
+						
+						glMatrixMode(GL_MODELVIEW);
+						glPopMatrix();
 					}
-					//if (proceedWithRender)	{
-					//	//NSLog(@"\t\tfenceB executed- clear to render");
-					//}
-					//else	{
-					//	//NSLog(@"\t\tfenceB hasn't executed yet");
-					//}
 				}
+				//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
+				NSRect		bounds = [self backingBounds];
+				glScissor(bounds.origin.x,bounds.origin.y,bounds.size.width,bounds.size.height);
+				glDisable(GL_SCISSOR_TEST);
+			}
+		[vvSubviews unlock];
+		
+		
+		
+		//	if appropriate, draw the border
+		if (drawBorder)	{
+			glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			GLSTROKERECT([self backingBounds]);
+		}
+		
+		//	flush!
+		switch (flushMode)	{
+			case VVFlushModeGL:
+				glFlush();
+				break;
+			case VVFlushModeCGL:
+				CGLFlushDrawable(cgl_ctx);
+				break;
+			case VVFlushModeNS:
+				[context flushBuffer];
+				break;
+			case VVFlushModeApple:
+				glFlushRenderAPPLE();
+				break;
+			case VVFlushModeFinish:
+				glFinish();
+				break;
+		}
+		
+		//	lock around the fence, insert a fence in the command stream, and swap fences
+		OSSpinLockLock(&fenceLock);
+		if ((fenceMode!=VVFenceModeEveryRefresh) && (fenceMode!=VVFenceModeFinish) && (fenceA > 0) && (fenceB > 0))	{
+			if (waitingForFenceA)	{
+				glSetFenceAPPLE(fenceA);
+				fenceADeployed = YES;
+				//NSLog(@"\t\tdone drawing, inserting fenceA into stream");
+				if (fenceMode == VVFenceModeDBSkip)
+					waitingForFenceA = NO;
+			}
+			else	{
+				glSetFenceAPPLE(fenceB);
+				fenceBDeployed = YES;
+				//NSLog(@"\t\tdone drawing, inserting fenceB into stream");
+				waitingForFenceA = YES;
 			}
 		}
 		OSSpinLockUnlock(&fenceLock);
 		
-		
-		if (proceedWithRender)	{
-			
-			//	clear the view
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			//	tell the sprite manager to start drawing the sprites
-			if (spriteManager != nil)	{
-				if (_spriteGLViewSysVers >= 8)
-					[spriteManager drawRect:[(id)self convertRectToBacking:r]];
-				else
-					[spriteManager drawRect:r];
-			}
-			
-			
-			
-			//	tell the subviews to draw
-			[vvSubviews rdlock];
-				if ([vvSubviews count]>0)	{
-					//	before i begin, enable the scissor test and get my bounds
-					NSRect		bounds = [self realBounds];
-					glEnable(GL_SCISSOR_TEST);
-					//	run through all the subviews (last to first), drawing them
-					NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
-					VVView				*viewPtr;
-					while (viewPtr = [it nextObject])	{
-						NSRect				tmpFrame = [viewPtr frame];
-						GLfloat				tmpRotation = [viewPtr boundsRotation];
-						NSPoint				tmpOrigin = [viewPtr boundsOrigin];
-						if (NSIntersectsRect(r,tmpFrame))	{
-							//	use scissor to clip drawing
-							glScissor(tmpFrame.origin.x, tmpFrame.origin.y, tmpFrame.size.width, tmpFrame.size.height);
-							//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
-							glPushMatrix();
-							glTranslatef(tmpFrame.origin.x, tmpFrame.origin.y, 0.0);
-							if (tmpRotation != 0.0)
-								glRotatef(tmpRotation, 0.0, 0.0, 1.0);
-							if (tmpOrigin.x!=0.0 || tmpOrigin.y!=0.0)
-								glTranslatef(tmpOrigin.x, -1.0*tmpOrigin.y, 0.0);
-							
-							//	now tell the view to do its drawing!
-							tmpFrame.origin = NSMakePoint(0,0);
-							[viewPtr _drawRect:tmpFrame inContext:cgl_ctx];
-							
-							glPopMatrix();
-						}
-					}
-					//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
-					glScissor(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
-					glDisable(GL_SCISSOR_TEST);
-				}
-			[vvSubviews unlock];
-			
-			
-			
-			//	if appropriate, draw the border
-			if (drawBorder)	{
-				glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
-				glEnableClientState(GL_VERTEX_ARRAY);
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				GLSTROKERECT([self realBounds]);
-			}
-			
-			//	flush!
-			switch (flushMode)	{
-				case VVFlushModeGL:
-					glFlush();
-					break;
-				case VVFlushModeCGL:
-					CGLFlushDrawable(cgl_ctx);
-					break;
-				case VVFlushModeNS:
-					[context flushBuffer];
-					break;
-				case VVFlushModeApple:
-					glFlushRenderAPPLE();
-					break;
-				case VVFlushModeFinish:
-					glFinish();
-					break;
-			}
-			
-			//	lock around the fence, insert a fence in the command stream, and swap fences
-			OSSpinLockLock(&fenceLock);
-			if ((fenceMode!=VVFenceModeEveryRefresh) && (fenceMode!=VVFenceModeFinish) && (fenceA > 0) && (fenceB > 0))	{
-				if (waitingForFenceA)	{
-					glSetFenceAPPLE(fenceA);
-					fenceADeployed = YES;
-					//NSLog(@"\t\tdone drawing, inserting fenceA into stream");
-					if (fenceMode == VVFenceModeDBSkip)
-						waitingForFenceA = NO;
-				}
-				else	{
-					glSetFenceAPPLE(fenceB);
-					fenceBDeployed = YES;
-					//NSLog(@"\t\tdone drawing, inserting fenceB into stream");
-					waitingForFenceA = YES;
-				}
-			}
-			OSSpinLockUnlock(&fenceLock);
-			
-			//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
-			[self finishedDrawing];
-		}
-		//else
-		//	NSLog(@"\t\terr: sprite GL view fence prevented output!");
+		//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
+		[self finishedDrawing];
+	}
+	
+	//else
+	//	NSLog(@"\t\terr: sprite GL view fence prevented output!");
 	
 	pthread_mutex_unlock(&glLock);
 }
@@ -788,7 +1027,7 @@ long			_spriteGLViewSysVers;
 	//glDisable(GL_TEXTURE_2D);
 	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
-	NSRect		bounds = [self realBounds];
+	NSRect		bounds = [self backingBounds];
 	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
 	
 	//	moved in from drawRect:
@@ -796,14 +1035,20 @@ long			_spriteGLViewSysVers;
 	glLoadIdentity();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (flipped)
+	if (!flipped)	{
+		//glScissor(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height);
+		//glScissor(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
 		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, 1.0, -1.0);
-	else
+	}
+	else	{
+		//glScissor(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y+bounds.size.height, bounds.origin.y);
+		//glScissor(bounds.origin.x, bounds.origin.y+bounds.size.height, bounds.size.width, -1.0*bounds.size.height);
+		//glScissor(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
 		glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y+bounds.size.height, bounds.origin.y, 1.0, -1.0);
-	
+	}
 	//	always here!
 	//glDisable(GL_DEPTH_TEST);
-	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
+	//glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	
 	initialized = YES;
 }
@@ -826,7 +1071,7 @@ long			_spriteGLViewSysVers;
 - (BOOL) flipped	{
 	return flipped;
 }
-@synthesize boundsToRealBoundsMultiplier;
+@synthesize localToBackingBoundsMultiplier;
 @synthesize vvSubviews;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
 	spritesNeedUpdate = n;
@@ -849,12 +1094,12 @@ long			_spriteGLViewSysVers;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 	pthread_mutex_lock(&glLock);
-	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+	//CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	CGFloat			tmpVals[4];
 	[calibratedColor getComponents:(CGFloat *)tmpVals];
 	for (int i=0;i<4;++i)
 		clearColor[i] = tmpVals[i];
-	glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
+	//glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	pthread_mutex_unlock(&glLock);
 }
 - (NSColor *) clearColor	{

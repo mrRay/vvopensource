@@ -417,7 +417,21 @@ MutLockArray		*_spriteManagerArray;
 		}
 	[spriteArray unlock];
 }
+- (void) drawInContext:(CGLContextObj)cgl_ctx	{
+	//NSLog(@"%s",__func__);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return;
+	[spriteArray rdlock];
+		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
+		VVSprite	*spritePtr;
+		while (spritePtr = [it nextObject])	{
+			[spritePtr drawInContext:cgl_ctx];
+		}
+	[spriteArray unlock];
+}
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+	NSLog(@"%s",__func__);
+	NSRectLog(@"\t\tpassed rect is",r);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];

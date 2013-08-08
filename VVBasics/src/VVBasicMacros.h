@@ -37,6 +37,10 @@
 #define VVCENTER(r) (NSMakePoint(VVMIDX(r),VVMIDY(r)))
 #define VVADDPOINT(a,b) (NSMakePoint((a.x+b.x),(a.y+b.y)))
 #define VVSUBPOINT(a,b) (NSMakePoint((a.x-b.x),(a.y-b.y)))
+#define VVADDSIZE(a,b) (NSMakeSize(a.width+b.width, a.height+b.height))
+#define VVSUBSIZE(a,b) (NSMakeSize(a.width-b.width, a.height-b.height))
+#define VVEQUALRECTS(a,b) ((a.origin.x==b.origin.x && a.origin.y==b.origin.y && a.size.width==b.size.width && a.size.height==b.size.height) ? YES : NO)
+#define VVISZERORECT(a) ((a.size.width==0.0 && a.size.height==0.0) ? YES : NO)
 
 //	macro for clipping a val to the normalized range (0.0 - 1.0)
 #define CLIPNORM(n) (((n)<0.0)?0.0:(((n)>1.0)?1.0:(n)))
@@ -56,9 +60,9 @@
 #define CGMAKENSSIZE(n) NSMakeSize(n.width,n.height)
 
 //	macro for quickly printing out the dimensions of a rect (and a name/id so you can distinguish between them)
-#define NSRectLog(n,r) NSLog(@"%@, (%f,%f) : %fx%f",n,r.origin.x,r.origin.y,r.size.width,r.size.height)
-#define NSPointLog(n,r) NSLog(@"%@, (%f,%f)",n,r.x,r.y)
-#define NSSizeLog(n,s) NSLog(@"%@, %fx%f",n,s.width,s.height)
+#define NSRectLog(n,r) NSLog(@"%@, (%0.2f,%0.2f) : %0.2fx%0.2f",n,r.origin.x,r.origin.y,r.size.width,r.size.height)
+#define NSPointLog(n,r) NSLog(@"%@, (%0.2f,%0.2f)",n,r.x,r.y)
+#define NSSizeLog(n,s) NSLog(@"%@, %0.2fx%0.2f",n,s.width,s.height)
 
 //	macros for quickly making numbers and values
 #define NUMINT(i) [NSNumber numberWithInt:i]

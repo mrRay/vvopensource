@@ -42,7 +42,7 @@ extern long			_spriteGLViewSysVers;
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
-	double					boundsToRealBoundsMultiplier;
+	double					localToBackingBoundsMultiplier;
 	MutLockArray			*vvSubviews;
 	
 	VVSpriteManager			*spriteManager;
@@ -76,8 +76,8 @@ extern long			_spriteGLViewSysVers;
 - (void) finishedDrawing;
 //- (void) reshapeGL;
 - (void) updateSprites;
-- (NSRect) realBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
-- (double) boundsToRealBoundsMultiplier;
+- (NSRect) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
+- (double) localToBackingBoundsMultiplier;
 
 - (void) _lock;
 - (void) _unlock;
@@ -85,11 +85,12 @@ extern long			_spriteGLViewSysVers;
 - (void) addVVSubview:(id)n;
 - (void) removeVVSubview:(id)n;
 - (id) vvSubviewHitTest:(NSPoint)p;
+- (void) reconcileVVSubviewDragTypes;
 
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
 @property (assign,readwrite) BOOL flipped;
-@property (readonly) double boundsToRealBoundsMultiplier;
+@property (readonly) double localToBackingBoundsMultiplier;
 @property (readonly) MutLockArray *vvSubviews;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
