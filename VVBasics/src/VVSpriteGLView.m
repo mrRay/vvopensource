@@ -907,6 +907,31 @@ long			_spriteGLViewSysVers;
 						glPushMatrix();
 						glTranslatef(viewFrameInMyLocalBounds.origin.x*localToBackingBoundsMultiplier, viewFrameInMyLocalBounds.origin.y*localToBackingBoundsMultiplier, 0.0);
 						
+						//	calculate the rect (in the view's local coordinate space) of the are of the view i'm going to ask to draw
+						NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
+						viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
+						VVViewBoundsOrientation	viewBO = [viewPtr boundsOrientation];
+						if (viewBO != VVViewBOBottom)	{
+							switch (viewBO)	{
+								case VVViewBORight:
+									[rotTrans rotateByDegrees:-90.0];
+									break;
+								case VVViewBOTop:
+									[rotTrans rotateByDegrees:-180.0];
+									break;
+								case VVViewBOLeft:
+									[rotTrans rotateByDegrees:-270.0];
+									break;
+								case VVViewBOBottom:
+									break;
+							}
+							viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
+							viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
+							//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
+							viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+						}
+						/*
 						NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
 						viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
 						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
@@ -916,6 +941,7 @@ long			_spriteGLViewSysVers;
 						viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
 						//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
 						//NSRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
+						*/
 						
 						//	now tell the view to do its drawing!
 						[viewPtr

@@ -26,7 +26,7 @@
 	if (self = [super init])	{
 		[self generalInit];
 		_frame = n;
-		_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+		//_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
 		return self;
 	}
 	[self release];
@@ -41,9 +41,10 @@
 	_frame = NSMakeRect(0,0,1,1);
 	minFrameSize = NSMakeSize(1.0,1.0);
 	localToBackingBoundsMultiplier = 1.0;
-	_bounds = _frame;
-	//_boundsOrigin = NSMakePoint(0.0, 0.0);
-	_boundsRotation = 0.0;
+	//_bounds = _frame;
+	_boundsOrigin = NSMakePoint(0.0, 0.0);
+	_boundsOrientation = VVViewBOBottom;
+	//_boundsRotation = 0.0;
 	_superview = nil;
 	_containerView = nil;
 	subviews = [[MutLockArray alloc] init];
@@ -218,12 +219,42 @@
 	localPoint.y -= _frame.origin.y;
 	
 	NSAffineTransform	*trans = [NSAffineTransform transform];
+	NSPoint				tmpPoint;
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+			//[trans rotateByDegrees:0.0];
+			//localPoint = [trans transformPoint:localPoint];
+			localPoint = VVADDPOINT(localPoint, _boundsOrigin);
+			break;
+		case VVViewBORight:
+			[trans rotateByDegrees:-90.0];
+			localPoint = [trans transformPoint:localPoint];
+			tmpPoint = NSMakePoint(0.0, _frame.size.width);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			localPoint = VVADDPOINT(tmpPoint, localPoint);
+			break;
+		case VVViewBOTop:
+			[trans rotateByDegrees:-180.0];
+			localPoint = [trans transformPoint:localPoint];
+			tmpPoint = NSMakePoint(_frame.size.width,_frame.size.height);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			localPoint = VVADDPOINT(tmpPoint, localPoint);
+			break;
+		case VVViewBOLeft:
+			[trans rotateByDegrees:-270.0];
+			localPoint = [trans transformPoint:localPoint];
+			tmpPoint = NSMakePoint(_frame.size.height, 0.0);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			localPoint = VVADDPOINT(tmpPoint, localPoint);
+			break;
+	}
+	/*
 	[trans rotateByDegrees:-1.0*_boundsRotation];
 	localPoint = [trans transformPoint:localPoint];
 	
 	localPoint.x += _bounds.origin.x;
 	localPoint.y += _bounds.origin.y;
-	
+	*/
 	id			returnMe = nil;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
@@ -361,15 +392,36 @@
 	VVView				*viewPtr = self;
 	VVView				*theSuperview = [viewPtr superview];
 	NSRect				viewFrame;
-	double				boundsRotation;
-	NSRect				viewBounds;
+	VVViewBoundsOrientation		viewBO;
+	NSPoint						viewOrigin;
 	NSAffineTransform	*trans = nil;
 	NSMutableArray		*returnMe = MUTARRAY;
+	NSPoint				tmpPoint;
 	
 	while (1)	{
+		//NSLog(@"\t\tviewPtr is %@",viewPtr);
 		viewFrame = [viewPtr frame];
-		boundsRotation = [viewPtr boundsRotation];
-		viewBounds = [viewPtr bounds];
+		viewBO = [viewPtr boundsOrientation];
+		viewOrigin = [viewPtr boundsOrigin];
+		//	compensate for the view's bounds (including any bounds offsets caused by orientation/rotation)
+		switch (viewBO)	{
+			case VVViewBOBottom:
+				tmpPoint = NSMakePoint(0.0, 0.0);
+				viewOrigin = NSMakePoint(-1.0*viewOrigin.x, -1.0*viewOrigin.y);
+				break;
+			case VVViewBORight:
+				tmpPoint = NSMakePoint(0.0, -1.0*viewFrame.size.width);
+				viewOrigin = VVSUBPOINT(tmpPoint, viewOrigin);
+				break;
+			case VVViewBOTop:
+				tmpPoint = NSMakePoint(-1.0*viewFrame.size.width, -1.0*viewFrame.size.height);
+				viewOrigin = VVSUBPOINT(tmpPoint, viewOrigin);
+				break;
+			case VVViewBOLeft:
+				tmpPoint = NSMakePoint(-1.0*viewFrame.size.height, 0.0);
+				viewOrigin = VVSUBPOINT(tmpPoint, viewOrigin);
+				break;
+		}
 		
 		//	the 'frame' is the rect the view occupies in the superview's coordinate space
 		//	the 'bounds' is the coordinate space visible in the view
@@ -380,21 +432,29 @@
 		//	then compensate for any bound rotation (use the bounds here- not the frame- to move the origin back!)
 		//	finally, compensate for the view's frame (its position within its superview) to obtain the coordinates (relative to the enclosing superview)
 		
-		
-		if (viewBounds.origin.x!=0.0 || viewBounds.origin.y!=0.0)	{
-			//NSPointLog(@"\t\tcompensating for bounds origin, ",viewBounds.origin);
+		//NSPointLog(@"\t\tviewOrigin is",viewOrigin);
+		if (viewOrigin.x!=0.0 || viewOrigin.y!=0.0)	{
 			trans = [NSAffineTransform transform];
-			[trans translateXBy:-1.0*viewBounds.origin.x yBy:-1.0*viewBounds.origin.y];
+			[trans translateXBy:viewOrigin.x yBy:viewOrigin.y];
 			[returnMe addObject:trans];
 		}
-		
-		if (boundsRotation != 0.0)	{
-			//NSLog(@"\t\tcompensating for rotation, %0.2f",_boundsRotation);
+		if (viewBO != VVViewBOBottom)	{
 			trans = [NSAffineTransform transform];
-			[trans rotateByDegrees:boundsRotation];
+			switch (viewBO)	{
+				case VVViewBOBottom:
+					break;
+				case VVViewBORight:
+					[trans rotateByDegrees:90.0];
+					break;
+				case VVViewBOTop:
+					[trans rotateByDegrees:180.0];
+					break;
+				case VVViewBOLeft:
+					[trans rotateByDegrees:270.0];
+					break;
+			}
 			[returnMe addObject:trans];
 		}
-		
 		
 		if (viewFrame.origin.x!=0 || viewFrame.origin.y!=0)	{
 			//NSPointLog(@"\t\tcompensating for frame origin, ",viewFrame.origin);
@@ -496,18 +556,32 @@
 	}
 	
 	_frame.size = n;
+	/*
 	if (_boundsRotation==90 || _boundsRotation==270)
 		_bounds = NSMakeRect(0,0,_frame.size.height,_frame.size.width);
 	else
 		_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+	*/
 }
 - (void) setFrameOrigin:(NSPoint)n	{
 	_frame.origin = n;
 	[self setNeedsDisplay:YES];
 }
 - (NSRect) bounds	{
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+		case VVViewBOTop:
+			return NSMakeRect(_boundsOrigin.x, _boundsOrigin.y, _frame.size.width, _frame.size.height);
+		case VVViewBORight:
+		case VVViewBOLeft:
+			return NSMakeRect(_boundsOrigin.x, _boundsOrigin.y, _frame.size.height, _frame.size.width);
+	}
+	return NSMakeRect(0,0,0,0);
+	/*
 	return _bounds;
+	*/
 }
+/*
 - (void) setBounds:(NSRect)n	{
 	//_bounds = n;
 	if (_boundsRotation==90 || _boundsRotation==270)
@@ -515,18 +589,23 @@
 	else
 		_bounds = n;
 }
+*/
 - (void) setBoundsOrigin:(NSPoint)n	{
-	_bounds.origin = n;
+	BOOL		changed = (!NSEqualPoints(n,_boundsOrigin)) ? YES : NO;
+	_boundsOrigin = n;
+	if (changed)
+		[self setNeedsDisplay];
 	/*
 	_boundsOrigin = n;
 	*/
 }
 - (NSPoint) boundsOrigin	{
-	return _bounds.origin;
+	return _boundsOrigin;
 	/*
 	return _boundsOrigin;
 	*/
 }
+/*
 - (void) setBoundsRotation:(GLfloat)n	{
 	if (_boundsRotation != n)	{
 		if ((n==0&&_boundsRotation==90) || (n==90&&_boundsRotation==0))
@@ -536,6 +615,16 @@
 }
 - (GLfloat) boundsRotation	{
 	return _boundsRotation;
+}
+*/
+- (VVViewBoundsOrientation) boundsOrientation	{
+	return _boundsOrientation;
+}
+- (void) setBoundsOrientation:(VVViewBoundsOrientation)n	{
+	BOOL		changed = (n==_boundsOrientation) ? NO : YES;
+	_boundsOrientation = n;
+	if (changed)
+		[self setNeedsDisplay];
 }
 //	returns the visible rect in this view's LOCAL COORDINATE SPACE (bounds), just like NSView
 - (NSRect) visibleRect	{
@@ -549,6 +638,7 @@
 	return returnMe;
 }
 - (NSRect) _visibleRect	{
+	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted || (_superview==nil && _containerView==nil))	{
 		NSLog(@"\t\terr: bailing, %s",__func__);
 		return NSZeroRect;
@@ -580,21 +670,49 @@
 	myVisibleFrame.origin = NSMakePoint(myVisibleFrame.origin.x-_frame.origin.x, myVisibleFrame.origin.y-_frame.origin.y);
 	//NSRectLog(@"\t\tmyVisibleFrame is",myVisibleFrame);
 	//	convert the intersect rect (my visible frame) to my local coordinate space (bounds)
+	
+	
+	NSRect				returnMe = myVisibleFrame;
+	NSAffineTransform	*trans = nil;
+	//NSPoint				tmpPoint;
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
+			break;
+		case VVViewBORight:
+			trans = [NSAffineTransform transform];
+			[trans rotateByDegrees:-90.0];
+			returnMe.origin = [trans transformPoint:returnMe.origin];
+			returnMe.size = [trans transformSize:returnMe.size];
+			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
+			//tmpPoint = NSMakePoint(0.0, -1.0*_frame.size.width);
+			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
+			break;
+		case VVViewBOTop:
+			trans = [NSAffineTransform transform];
+			[trans rotateByDegrees:-180.0];
+			returnMe.origin = [trans transformPoint:returnMe.origin];
+			returnMe.size = [trans transformSize:returnMe.size];
+			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
+			//tmpPoint = NSMakePoint(-1.0*_frame.size.width,-1.0*_frame.size.height);
+			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
+			break;
+		case VVViewBOLeft:
+			trans = [NSAffineTransform transform];
+			[trans rotateByDegrees:-270.0];
+			returnMe.origin = [trans transformPoint:returnMe.origin];
+			returnMe.size = [trans transformSize:returnMe.size];
+			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
+			//tmpPoint = NSMakePoint(-1.0*_frame.size.height, 0.0);
+			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
+			break;
+	}
+	returnMe.size = NSMakeSize(fabs(returnMe.size.width),fabs(returnMe.size.height));
+	//NSRectLog(@"\t\treturning",returnMe);
 	/*
-	//if (_boundsRotation != 0.0)	{
-		NSAffineTransform		*tmpTrans = [NSAffineTransform transform];
-		[tmpTrans rotateByDegrees:-1.0*_boundsRotation];
-		NSPoint			tmpPoint = NSMakePoint(VVMINX(myVisibleFrame),VVMINY(myVisibleFrame));
-		tmpPoint = [tmpTrans transformPoint:tmpPoint];
-		NSPointLog(@"\t\ttransformed BL is",tmpPoint);
-		tmpPoint = NSMakePoint(VVMAXX(myVisibleFrame),VVMAXY(myVisibleFrame));
-		tmpPoint = [tmpTrans transformPoint:tmpPoint];
-		NSPointLog(@"\t\ttransformed TR is",tmpPoint);
-	//}
-	*/
-	
-	
-	
 	NSRect		returnMe = myVisibleFrame;
 	if (_boundsRotation != 0.0)	{
 		NSAffineTransform		*trans = [NSAffineTransform transform];
@@ -603,15 +721,8 @@
 		returnMe.size = [trans transformSize:returnMe.size];
 	}
 	returnMe.origin = NSMakePoint(returnMe.origin.x+_bounds.origin.x, returnMe.origin.y+_bounds.origin.y);
-	return returnMe;
-	
-	/*
-	NSRect		superviewVisRect = (_superview==nil) ? [_containerView visibleRect] : [_superview visibleRect];
-	if (NSEqualRects(superviewVisRect,NSZeroRect))
-		return NSZeroRect;
-	//	do a union rect with my superview's visible rect and my frame- this is my visible rect
-	return NSZeroRect;
 	*/
+	return returnMe;
 }
 - (void) _viewDidMoveToWindow	{
 	if (deleted)
@@ -787,20 +898,56 @@
 	}
 	//NSRectLog(@"\t\tclipRect in local coords is",clipRect);
 	clipRect = [self convertRectToContainerViewCoords:clipRect];
+	//NSRectLog(@"\t\tfirst-pass container coords are",clipRect);
 	//	make sure the passed clip rect has positive dimensions (adjust origin if dimensions are negative to compensate)
 	NSRect			tmpClipRect;
-	tmpClipRect.origin.x = VVMINX(clipRect);
-	tmpClipRect.size.width = VVMAXX(clipRect)-tmpClipRect.origin.x;
-	tmpClipRect.origin.y = VVMINY(clipRect);
-	tmpClipRect.size.height = VVMAXY(clipRect)-tmpClipRect.origin.y;
+	tmpClipRect.origin.x = roundf(VVMINX(clipRect));
+	tmpClipRect.size.width = roundf(VVMAXX(clipRect)-tmpClipRect.origin.x);
+	tmpClipRect.origin.y = roundf(VVMINY(clipRect));
+	tmpClipRect.size.height = roundf(VVMAXY(clipRect)-tmpClipRect.origin.y);
 	//NSRectLog(@"\t\tclipRect in container coords is",tmpClipRect);
 	//	use scissor to clip drawing to the passed rect
 	glScissor(tmpClipRect.origin.x*localToBackingBoundsMultiplier, tmpClipRect.origin.y*localToBackingBoundsMultiplier, tmpClipRect.size.width*localToBackingBoundsMultiplier, tmpClipRect.size.height*localToBackingBoundsMultiplier);
 	
 	
 	//	do the rotation & translation for the bounds now, AFTER i filled in the background/clear color
+	NSPoint			tmpPoint;
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+			tmpPoint = _boundsOrigin;
+			tmpPoint = NSMakePoint(-1.0*tmpPoint.x*localToBackingBoundsMultiplier, -1.0*tmpPoint.y*localToBackingBoundsMultiplier);
+			glTranslatef(tmpPoint.x, tmpPoint.y, 0.0);
+			break;
+		case VVViewBORight:
+			glRotatef(90.0, 0, 0, 1);
+			tmpPoint = NSMakePoint(0.0, _frame.size.width);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			tmpPoint = NSMakePoint(-1.0*tmpPoint.x*localToBackingBoundsMultiplier, -1.0*tmpPoint.y*localToBackingBoundsMultiplier);
+			//NSPointLog(@"\t\ttranslating",tmpPoint);
+			glTranslatef(tmpPoint.x, tmpPoint.y, 0.0);
+			break;
+		case VVViewBOTop:
+			glRotatef(180.0, 0, 0, 1);
+			tmpPoint = NSMakePoint(_frame.size.width,_frame.size.height);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			tmpPoint = NSMakePoint(-1.0*tmpPoint.x*localToBackingBoundsMultiplier, -1.0*tmpPoint.y*localToBackingBoundsMultiplier);
+			//NSPointLog(@"\t\ttranslating",tmpPoint);
+			glTranslatef(tmpPoint.x, tmpPoint.y, 0.0);
+			break;
+		case VVViewBOLeft:
+			glRotatef(270.0, 0, 0, 1);
+			tmpPoint = NSMakePoint(_frame.size.height, 0.0);
+			tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
+			tmpPoint = NSMakePoint(-1.0*tmpPoint.x*localToBackingBoundsMultiplier, -1.0*tmpPoint.y*localToBackingBoundsMultiplier);
+			//NSPointLog(@"\t\ttranslating",tmpPoint);
+			glTranslatef(tmpPoint.x, tmpPoint.y, 0.0);
+			break;
+	}
+	/*
 	glRotatef(_boundsRotation, 0, 0, 1);
 	glTranslatef(-1.0*_bounds.origin.x*localToBackingBoundsMultiplier, -1.0*_bounds.origin.y*localToBackingBoundsMultiplier, 0);
+	*/
+	
 	
 	
 	//	get the local bounds- zero out the origin before clearing
@@ -811,11 +958,11 @@
 	/*
 	if (isOpaque)	{
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
-		GLDRAWRECT(NSMakeRect(0,0,localBounds.size.width, localBounds.size.height));
+		GLDRAWRECT(NSMakeRect(localBounds.origin.x, localBounds.origin.y,localBounds.size.width, localBounds.size.height));
 	}
 	else if (clearColor[3]!=0.0)	{
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-		GLDRAWRECT(NSMakeRect(0,0,localBounds.size.width, localBounds.size.height));
+		GLDRAWRECT(NSMakeRect(localBounds.origin.x, localBounds.origin.y,localBounds.size.width, localBounds.size.height));
 	}
 	*/
 	if (isOpaque)	{
@@ -857,7 +1004,7 @@
 		VVView			*viewPtr = nil;
 		while (viewPtr = [it nextObject])	{
 			//NSLog(@"\t\tview is %@",viewPtr);
-			//NSRect			viewBounds = [viewPtr bounds];
+			NSPoint			viewBoundsOrigin = [viewPtr boundsOrigin];
 			NSRect			viewFrameInMyLocalBounds = [viewPtr frame];
 			//NSRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
 			NSRect			intersectRectInMyLocalBounds = NSIntersectionRect(r,viewFrameInMyLocalBounds);
@@ -870,7 +1017,31 @@
 				
 				//	calculate the rect (in the view's local coordinate space) of the are of the view i'm going to ask to draw
 				NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
-				viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+				//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+				viewBoundsToDraw.origin = VVSUBPOINT(viewBoundsToDraw.origin, viewFrameInMyLocalBounds.origin);
+				viewBoundsToDraw.origin = VVADDPOINT(viewBoundsToDraw.origin, viewBoundsOrigin);
+				VVViewBoundsOrientation	viewBO = [viewPtr boundsOrientation];
+				if (viewBO != VVViewBOBottom)	{
+					NSAffineTransform		*rotTrans = [NSAffineTransform transform];
+					switch (viewBO)	{
+						case VVViewBORight:
+							[rotTrans rotateByDegrees:-90.0];
+							break;
+						case VVViewBOTop:
+							[rotTrans rotateByDegrees:-180.0];
+							break;
+						case VVViewBOLeft:
+							[rotTrans rotateByDegrees:-270.0];
+							break;
+						case VVViewBOBottom:
+							break;
+					}
+					viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
+					viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
+					//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
+					viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+				}
+				/*
 				NSAffineTransform		*rotTrans = [NSAffineTransform transform];
 				[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
 				viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
@@ -879,6 +1050,7 @@
 				viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
 				//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
 				//NSRectLog(@"\t\viewBoundsToDraw is",viewBoundsToDraw);
+				*/
 				
 				//	now tell the view to do its drawing!
 				[viewPtr
@@ -913,7 +1085,18 @@
 	spritesNeedUpdate = NO;
 }
 - (NSRect) backingBounds	{
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+		case VVViewBOTop:
+			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier);
+		case VVViewBORight:
+		case VVViewBOLeft:
+			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier);
+	}
+	return NSMakeRect(0,0,0,0);
+	/*
 	return NSMakeRect(_bounds.origin.x*localToBackingBoundsMultiplier, _bounds.origin.y*localToBackingBoundsMultiplier, _bounds.size.width*localToBackingBoundsMultiplier, _bounds.size.height*localToBackingBoundsMultiplier);
+	*/
 }
 - (double) localToBackingBoundsMultiplier	{
 	return localToBackingBoundsMultiplier;

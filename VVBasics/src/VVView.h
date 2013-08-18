@@ -33,6 +33,13 @@ typedef enum	{
 	VVViewResizeHeight = 32
 } VVViewResizeMask;
 
+typedef enum	{
+	VVViewBOBottom = 0,
+	VVViewBORight,
+	VVViewBOTop,
+	VVViewBOLeft
+} VVViewBoundsOrientation;
+
 
 
 
@@ -46,8 +53,11 @@ typedef enum	{
 	NSRect				_frame;	//	the area i occupy in my superview's coordinate space
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
 	double				localToBackingBoundsMultiplier;
-	NSRect				_bounds;	//	the area of my coordinate space- AFTER ROTATION- visible through my frame
-	GLfloat				_boundsRotation;
+	//NSRect				_bounds;	//	the area of my coordinate space- AFTER ROTATION- visible through my frame
+	//GLfloat				_boundsRotation;
+	NSPoint					_boundsOrigin;
+	VVViewBoundsOrientation	_boundsOrientation;
+	
 	//NSPoint				_boundsOrigin;	//	the bounds origin offset is kept as a separate var so i can quickly refer to "bounds" w/o having to worry about compensating for a non-zero origin.
 	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
@@ -113,11 +123,14 @@ typedef enum	{
 - (void) setFrameSize:(NSSize)n;
 - (void) setFrameOrigin:(NSPoint)n;
 - (NSRect) bounds;
-- (void) setBounds:(NSRect)n;
+//- (void) setBounds:(NSRect)n;
 - (void) setBoundsOrigin:(NSPoint)n;
 - (NSPoint) boundsOrigin;
-- (void) setBoundsRotation:(GLfloat)n;
-- (GLfloat) boundsRotation;
+//- (void) setBoundsRotation:(GLfloat)n;
+//- (GLfloat) boundsRotation;
+- (VVViewBoundsOrientation) boundsOrientation;
+- (void) setBoundsOrientation:(VVViewBoundsOrientation)n;
+
 - (void) _viewDidMoveToWindow;
 - (void) viewDidMoveToWindow;
 - (NSRect) visibleRect;
