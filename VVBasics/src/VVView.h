@@ -11,7 +11,6 @@
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
-#import "VVNSViewAdditions.h"
 
 
 
