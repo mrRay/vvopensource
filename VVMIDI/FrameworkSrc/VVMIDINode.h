@@ -17,6 +17,7 @@ extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, C
 	MIDIClientRef			clientRef;		//	the client receives the data
 	MIDIPortRef				portRef;		//	the port is owned by the client, and connects it to the endpoint
 	NSString				*name;
+	NSString				*deviceName;
 	id						delegate;		//	the delegate will be passed any data i receive
 	BOOL					sender;			//	if it's a midi-sending endpoint, this will be YES
 	BOOL					virtualSender;	//	whether or not the sender is locally owned
@@ -60,6 +61,8 @@ extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, C
 - (MIDIEndpointRef) endpointRef;
 - (NSMutableDictionary *) properties;
 - (NSString *) name;
+- (NSString *) deviceName;
+- (NSString *) fullName;
 - (id) delegate;
 - (void) setDelegate:(id)n;
 - (BOOL) processingSysex;

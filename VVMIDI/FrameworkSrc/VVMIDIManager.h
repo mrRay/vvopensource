@@ -43,13 +43,19 @@
 - (void) sendMsgs:(NSArray *)a;
 
 - (VVMIDINode *) findDestNodeNamed:(NSString *)n;	//	finds a destination node with a given name
+- (VVMIDINode *) findDestNodeWithFullName:(NSString *)n;	//	finds a destination node with a given name
 - (VVMIDINode *) findDestNodeWithModelName:(NSString *)n;
+- (VVMIDINode *) findDestNodeWithDeviceName:(NSString *)n;
 - (VVMIDINode *) findSourceNodeNamed:(NSString *)n;	//	finds a source node with a given name
+- (VVMIDINode *) findSourceNodeWithFullName:(NSString *)n;
 - (VVMIDINode *) findSourceNodeWithModelName:(NSString *)n;
+- (VVMIDINode *) findSourceNodeWithDeviceName:(NSString *)n;
 
 //	Generates and returns an array of strings which correspond to the labels of this manager's out ports
 - (NSArray *) destNodeNameArray;
+- (NSArray *) destNodeFullNameArray;
 - (NSArray *) sourceNodeNameArray;
+- (NSArray *) sourceNodeFullNameArray;
 
 //	these methods exist so subclasses of me can override them to use custom subclasses of VVMIDINode
 - (id) receivingNodeClass;

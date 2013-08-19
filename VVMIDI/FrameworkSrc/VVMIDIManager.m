@@ -37,16 +37,18 @@
 	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[sourceArray rdlock];
 	for (VVMIDINode *nodePtr in [sourceArray array])
-		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr name]];
+		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr fullName]];
 	[sourceArray unlock];
-	[returnMe setObject:tmpDict forKey:@"src"];
+	//	older versions of VVMIDI stored this under the "src" key!
+	[returnMe setObject:tmpDict forKey:@"fullSrc"];
 	
 	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[destArray rdlock];
 	for (VVMIDINode *nodePtr in [destArray array])
-		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr name]];
+		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr fullName]];
 	[destArray unlock];
-	[returnMe setObject:tmpDict forKey:@"dst"];
+	//	older versions of VVMIDI stored this under the "dst" key!
+	[returnMe setObject:tmpDict forKey:@"fullDst"];
 	
 	return returnMe;
 }
@@ -58,26 +60,52 @@
 	NSDictionary		*tmpDict = nil;
 	NSNumber			*tmpNum = nil;
 	
-	tmpDict = [d objectForKey:@"src"];
+	tmpDict = [d objectForKey:@"fullSrc"];
 	if (tmpDict != nil)	{
 		[sourceArray rdlock];
 		for (VVMIDINode *nodePtr in [sourceArray array])	{
-			tmpNum = [tmpDict objectForKey:[nodePtr name]];
+			tmpNum = [tmpDict objectForKey:[nodePtr fullName]];
 			if (tmpNum != nil)
 				[nodePtr setEnabled:[tmpNum boolValue]];
 		}
 		[sourceArray unlock];
 	}
+	//	older versions of VVMIDI stored snapshots under the node name (instead of the full name)
+	else	{
+		tmpDict = [d objectForKey:@"src"];
+		if (tmpDict != nil)	{
+			[sourceArray rdlock];
+			for (VVMIDINode *nodePtr in [sourceArray array])	{
+				tmpNum = [tmpDict objectForKey:[nodePtr name]];
+				if (tmpNum != nil)
+					[nodePtr setEnabled:[tmpNum boolValue]];
+			}
+			[sourceArray unlock];
+		}
+	}
 	
-	tmpDict = [d objectForKey:@"dst"];
+	tmpDict = [d objectForKey:@"fullDst"];
 	if (tmpDict != nil)	{
 		[destArray rdlock];
 		for (VVMIDINode *nodePtr in [destArray array])	{
-			tmpNum = [tmpDict objectForKey:[nodePtr name]];
+			tmpNum = [tmpDict objectForKey:[nodePtr fullName]];
 			if (tmpNum != nil)
 				[nodePtr setEnabled:[tmpNum boolValue]];
 		}
 		[destArray unlock];
+	}
+	//	older versions of VVMIDI stored snapshots under the node name (instead of the full name)
+	else	{
+		tmpDict = [d objectForKey:@"dst"];
+		if (tmpDict != nil)	{
+			[destArray rdlock];
+			for (VVMIDINode *nodePtr in [destArray array])	{
+				tmpNum = [tmpDict objectForKey:[nodePtr name]];
+				if (tmpNum != nil)
+					[nodePtr setEnabled:[tmpNum boolValue]];
+			}
+			[destArray unlock];
+		}
 	}
 }
 
@@ -302,6 +330,22 @@
 	[destArray unlock];
 	return returnMe;
 }
+- (VVMIDINode *) findDestNodeWithFullName:(NSString *)n	{
+	if ((n==nil)||([n length]<1))
+		return nil;
+	VVMIDINode			*returnMe = nil;
+	NSEnumerator		*nodeIt = nil;
+	VVMIDINode			*nodePtr = nil;
+	
+	[destArray rdlock];
+		nodeIt = [[destArray array] objectEnumerator];
+		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
+			if ([[nodePtr fullName] isEqualToString:n])
+				returnMe = nodePtr;
+		}
+	[destArray unlock];
+	return returnMe;
+}
 - (VVMIDINode *) findDestNodeWithModelName:(NSString *)n	{
 	if (n==nil || [n length]<1)
 		return nil;
@@ -321,6 +365,22 @@
 	[destArray unlock];
 	return returnMe;
 }
+- (VVMIDINode *) findDestNodeWithDeviceName:(NSString *)n	{
+	if ((n==nil)||([n length]<1))
+		return nil;
+	VVMIDINode			*returnMe = nil;
+	NSEnumerator		*nodeIt = nil;
+	VVMIDINode			*nodePtr = nil;
+	
+	[destArray rdlock];
+		nodeIt = [[destArray array] objectEnumerator];
+		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
+			if ([[nodePtr deviceName] isEqualToString:n])
+				returnMe = nodePtr;
+		}
+	[destArray unlock];
+	return returnMe;
+}
 //	finds a source node with a given name
 - (VVMIDINode *) findSourceNodeNamed:(NSString *)n	{
 	if ((n==nil)||([n length]<1))
@@ -334,6 +394,23 @@
 		nodeIt = [[sourceArray array] objectEnumerator];
 		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
 			if ([[nodePtr name] isEqualToString:n])
+				returnMe = nodePtr;
+		}
+	[sourceArray unlock];
+	return returnMe;
+}
+- (VVMIDINode *) findSourceNodeWithFullName:(NSString *)n	{
+	if ((n==nil)||([n length]<1))
+		return nil;
+	
+	VVMIDINode			*returnMe = nil;
+	NSEnumerator		*nodeIt = nil;
+	VVMIDINode			*nodePtr = nil;
+	
+	[sourceArray rdlock];
+		nodeIt = [[sourceArray array] objectEnumerator];
+		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
+			if ([[nodePtr fullName] isEqualToString:n])
 				returnMe = nodePtr;
 		}
 	[sourceArray unlock];
@@ -358,6 +435,24 @@
 	[sourceArray unlock];
 	return returnMe;
 }
+- (VVMIDINode *) findSourceNodeWithDeviceName:(NSString *)n	{
+	if ((n==nil)||([n length]<1))
+		return nil;
+	
+	VVMIDINode			*returnMe = nil;
+	NSEnumerator		*nodeIt = nil;
+	VVMIDINode			*nodePtr = nil;
+	
+	[sourceArray rdlock];
+		nodeIt = [[sourceArray array] objectEnumerator];
+		while ((nodePtr = [nodeIt nextObject]) && (returnMe == nil))	{
+			if ([[nodePtr deviceName] isEqualToString:n])
+				returnMe = nodePtr;
+		}
+	[sourceArray unlock];
+	return returnMe;
+}
+
 
 - (NSArray *) destNodeNameArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
@@ -372,6 +467,19 @@
 	[destArray unlock];
 	return returnMe;
 }
+- (NSArray *) destNodeFullNameArray	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSString			*nodeName = nil;
+	
+	[destArray rdlock];
+	for (VVMIDINode *nodePtr in [destArray array])	{
+		nodeName = [nodePtr fullName];
+		if (nodeName != nil)
+			[returnMe addObject:nodeName];
+	}
+	[destArray unlock];
+	return returnMe;
+}
 - (NSArray *) sourceNodeNameArray	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	NSString			*nodeName = nil;
@@ -379,6 +487,19 @@
 	[sourceArray rdlock];
 	for (VVMIDINode *nodePtr in [sourceArray array])	{
 		nodeName = [nodePtr name];
+		if (nodeName != nil)
+			[returnMe addObject:nodeName];
+	}
+	[sourceArray unlock];
+	return returnMe;
+}
+- (NSArray *) sourceNodeFullNameArray	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSString			*nodeName = nil;
+	
+	[sourceArray rdlock];
+	for (VVMIDINode *nodePtr in [sourceArray array])	{
+		nodeName = [nodePtr fullName];
 		if (nodeName != nil)
 			[returnMe addObject:nodeName];
 	}

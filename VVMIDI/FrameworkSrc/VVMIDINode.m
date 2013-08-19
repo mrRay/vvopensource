@@ -301,9 +301,36 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 		//NSLog(@"\t\terror %ld at MIDIObjectGetStringProperty() d",(long)err);
 	}
 	else	{
+		//NSLog(@"\t\tmodel is %@",tmpString);
 		if (tmpString != NULL)	{
 			[properties setValue:(NSString *)tmpString forKey:@"model"];
 			CFRelease(tmpString);
+		}
+	}
+	//	get the entity.  an entity has multiple endpoints...
+	MIDIEntityRef		tmpEntity = NULL;
+	err = MIDIEndpointGetEntity(endpointRef, &tmpEntity);
+	if (err != noErr)	{
+		//NSLog(@"\t\terr: %ld at MIDIEndpointGetEntity() in %s for %@",err,__func__,name);
+	}
+	else	{
+		//	get the device.  a device has entities...
+		MIDIDeviceRef	tmpDevice = NULL;
+		err = MIDIEntityGetDevice(tmpEntity, &tmpDevice);
+		if (err != noErr)	{
+			//NSLog(@"\t\terr: %ld at MIDIEntityGetDevice() in %s",err,__func__);
+		}
+		else	{
+			//	get the device name?
+			err = MIDIObjectGetStringProperty(tmpDevice, kMIDIPropertyName, &tmpString);
+			if (err != noErr)	{
+				//NSLog(@"\t\terr: %ld at MIDIObjectGetStringProperty() e in %s",err,__func__);
+			}
+			else	{
+				//NSLog(@"\t\tdevice name is %@",tmpString);
+				VVRELEASE(deviceName);
+				deviceName = (tmpString==nil) ? nil : [(NSString *)tmpString copy];
+			}
 		}
 	}
 	
@@ -498,6 +525,17 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 }
 - (NSString *) name	{
 	return name;
+}
+- (NSString *) deviceName	{
+	return deviceName;
+}
+- (NSString *) fullName	{
+	if (deviceName!=nil && name!=nil)
+		return VVFMTSTRING(@"%@-%@",deviceName,name);
+	else if (deviceName==nil && name!=nil)
+		return name;
+	else
+		return nil;
 }
 - (id) delegate	{
 	return delegate;
