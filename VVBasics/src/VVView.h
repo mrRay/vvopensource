@@ -42,7 +42,7 @@ typedef enum	{
 
 
 
-@interface VVView : NSObject	{
+@interface VVView : NSObject <NSDraggingDestination>	{
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
@@ -52,12 +52,9 @@ typedef enum	{
 	NSRect				_frame;	//	the area i occupy in my superview's coordinate space
 	NSSize				minFrameSize;	//	frame's size cannot be set less than this
 	double				localToBackingBoundsMultiplier;
-	//NSRect				_bounds;	//	the area of my coordinate space- AFTER ROTATION- visible through my frame
-	//GLfloat				_boundsRotation;
 	NSPoint					_boundsOrigin;
 	VVViewBoundsOrientation	_boundsOrientation;
 	
-	//NSPoint				_boundsOrigin;	//	the bounds origin offset is kept as a separate var so i can quickly refer to "bounds" w/o having to worry about compensating for a non-zero origin.
 	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
@@ -111,11 +108,7 @@ typedef enum	{
 //- (NSPoint) containerViewCoordsOfLocalPoint:(NSPoint)n;
 - (NSPoint) winCoordsOfLocalPoint:(NSPoint)n;
 - (NSPoint) displayCoordsOfLocalPoint:(NSPoint)n;
-//- (NSPoint) localCoordsOfContainerViewPoint:(NSPoint)n;
-//- (NSPoint) localCoordsOfWinPoint:(NSPoint)n;
-//- (NSPoint) localCoordsOfDisplayPoint:(NSPoint)n;
 - (NSMutableArray *) _locationTransformsToContainerView;
-- (NSMutableArray *) _locationTransformsFromSuperview;
 
 - (NSRect) frame;
 - (void) setFrame:(NSRect)n;
@@ -143,11 +136,12 @@ typedef enum	{
 - (void) addSubview:(id)n;
 - (void) removeSubview:(id)n;
 - (void) removeFromSuperview;
+- (BOOL) containsSubview:(id)n;
 - (void) _setSuperview:(id)n;
 - (id) superview;
-- (BOOL) containsSubview:(id)n;
 - (void) registerForDraggedTypes:(NSArray *)a;
 - (void) _collectDragTypesInArray:(NSMutableArray *)n;
+- (MutLockArray *) dragTypes;
 - (void) setContainerView:(id)n;
 - (id) containerView;
 - (MutLockArray *) subviews;

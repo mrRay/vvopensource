@@ -44,6 +44,7 @@ extern long			_spriteGLViewSysVers;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
 	double					localToBackingBoundsMultiplier;
 	MutLockArray			*vvSubviews;
+	id						dragNDropSubview;	//	NOT RETAINED
 	
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
@@ -84,6 +85,7 @@ extern long			_spriteGLViewSysVers;
 //- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
 - (void) addVVSubview:(id)n;
 - (void) removeVVSubview:(id)n;
+- (BOOL) containsSubview:(id)n;
 - (id) vvSubviewHitTest:(NSPoint)p;
 - (void) reconcileVVSubviewDragTypes;
 

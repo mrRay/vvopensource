@@ -22,6 +22,11 @@
 @implementation VVView
 
 
+/*===================================================================================*/
+#pragma mark --------------------- init/dealloc
+/*------------------------------------*/
+
+
 - (id) initWithFrame:(NSRect)n	{
 	if (self = [super init])	{
 		[self generalInit];
@@ -93,8 +98,13 @@
 }
 
 
+/*===================================================================================*/
+#pragma mark --------------------- mouse & key interaction via NSEvent
+/*------------------------------------*/
+
+
 - (void) mouseDown:(NSEvent *)e	{
-	NSLog(@"%s ... %@",__func__,self);
+	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted)
 		return;
 	OSSpinLockLock(&propertyLock);
@@ -107,10 +117,8 @@
 	NSPoint		locationInWindow = [e locationInWindow];
 	//NSPointLog(@"\t\tlocationInWindow is",locationInWindow);
 	NSPoint		localPoint = [self convertPointFromWinCoords:locationInWindow];
-	NSPointLog(@"\t\tlocalPoint A is",localPoint);
+	//NSPointLog(@"\t\tlocalPoint A is",localPoint);
 	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-	//double		localToBackingBoundsMultiplier = [_containerView localToBackingBoundsMultiplier];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//NSPointLog(@"\t\tlocalPoint B is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
@@ -203,6 +211,11 @@
 }
 
 
+/*===================================================================================*/
+#pragma mark --------------------- geometry- rect/point intersect & conversion
+/*------------------------------------*/
+
+
 //	the point it's passed is in coords local to the superview- i need to see if the coords are in my frame!
 - (id) vvSubviewHitTest:(NSPoint)superviewPoint	{
 	//NSLog(@"%s ... %@- (%0.2f, %0.2f)",__func__,self,superviewPoint.x,superviewPoint.y);
@@ -248,13 +261,7 @@
 			localPoint = VVADDPOINT(tmpPoint, localPoint);
 			break;
 	}
-	/*
-	[trans rotateByDegrees:-1.0*_boundsRotation];
-	localPoint = [trans transformPoint:localPoint];
 	
-	localPoint.x += _bounds.origin.x;
-	localPoint.y += _bounds.origin.y;
-	*/
 	id			returnMe = nil;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
@@ -472,30 +479,10 @@
 	return returnMe;
 }
 
-- (NSMutableArray *) _locationTransformsFromSuperview	{
-	NSLog(@"ERR: %s",__func__);
-	return nil;
-	/*
-	NSMutableArray		*returnMe = MUTARRAY;
-	NSAffineTransform	*trans = nil;
-	if (_boundsRotation != 0)	{
-		trans = [NSAffineTransform transform];
-		[trans rotateByDegrees:_boundsRotation];
-		[returnMe addObject:trans];
-	}
-	if (_bounds.origin.x!=0 || _bounds.origin.y!=0)	{
-		trans = [NSAffineTransform transform];
-		[trans translateXBy:_bounds.origin.x yBy:_bounds.origin.y];
-		[returnMe addObject:trans];
-	}
-	if (_frame.origin.x!=0 || _frame.origin.y!=0)	{
-		trans = [NSAffineTransform transform];
-		[trans translateXBy:-1.0*_frame.origin.x yBy:-1.0*_frame.origin.y];
-		[returnMe addObject:trans];
-	}
-	return returnMe;
-	*/
-}
+
+/*===================================================================================*/
+#pragma mark --------------------- frame & bounds-related
+/*------------------------------------*/
 
 
 - (NSRect) frame	{
@@ -556,12 +543,6 @@
 	}
 	
 	_frame.size = n;
-	/*
-	if (_boundsRotation==90 || _boundsRotation==270)
-		_bounds = NSMakeRect(0,0,_frame.size.height,_frame.size.width);
-	else
-		_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
-	*/
 }
 - (void) setFrameOrigin:(NSPoint)n	{
 	_frame.origin = n;
@@ -577,46 +558,27 @@
 			return NSMakeRect(_boundsOrigin.x, _boundsOrigin.y, _frame.size.height, _frame.size.width);
 	}
 	return NSMakeRect(0,0,0,0);
-	/*
-	return _bounds;
-	*/
 }
-/*
-- (void) setBounds:(NSRect)n	{
-	//_bounds = n;
-	if (_boundsRotation==90 || _boundsRotation==270)
-		_bounds = NSMakeRect(n.origin.x, n.origin.y, n.size.height, n.size.width);
-	else
-		_bounds = n;
+- (NSRect) backingBounds	{
+	switch (_boundsOrientation)	{
+		case VVViewBOBottom:
+		case VVViewBOTop:
+			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier);
+		case VVViewBORight:
+		case VVViewBOLeft:
+			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier);
+	}
+	return NSMakeRect(0,0,0,0);
 }
-*/
 - (void) setBoundsOrigin:(NSPoint)n	{
 	BOOL		changed = (!NSEqualPoints(n,_boundsOrigin)) ? YES : NO;
 	_boundsOrigin = n;
 	if (changed)
 		[self setNeedsDisplay];
-	/*
-	_boundsOrigin = n;
-	*/
 }
 - (NSPoint) boundsOrigin	{
 	return _boundsOrigin;
-	/*
-	return _boundsOrigin;
-	*/
 }
-/*
-- (void) setBoundsRotation:(GLfloat)n	{
-	if (_boundsRotation != n)	{
-		if ((n==0&&_boundsRotation==90) || (n==90&&_boundsRotation==0))
-			_bounds.size = NSMakeSize(_bounds.size.height, _bounds.size.width);
-		_boundsRotation = n;
-	}
-}
-- (GLfloat) boundsRotation	{
-	return _boundsRotation;
-}
-*/
 - (VVViewBoundsOrientation) boundsOrientation	{
 	return _boundsOrientation;
 }
@@ -674,7 +636,6 @@
 	
 	NSRect				returnMe = myVisibleFrame;
 	NSAffineTransform	*trans = nil;
-	//NSPoint				tmpPoint;
 	switch (_boundsOrientation)	{
 		case VVViewBOBottom:
 			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
@@ -685,9 +646,6 @@
 			returnMe.origin = [trans transformPoint:returnMe.origin];
 			returnMe.size = [trans transformSize:returnMe.size];
 			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
-			//tmpPoint = NSMakePoint(0.0, -1.0*_frame.size.width);
-			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
-			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
 			break;
 		case VVViewBOTop:
 			trans = [NSAffineTransform transform];
@@ -695,9 +653,6 @@
 			returnMe.origin = [trans transformPoint:returnMe.origin];
 			returnMe.size = [trans transformSize:returnMe.size];
 			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
-			//tmpPoint = NSMakePoint(-1.0*_frame.size.width,-1.0*_frame.size.height);
-			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
-			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
 			break;
 		case VVViewBOLeft:
 			trans = [NSAffineTransform transform];
@@ -705,25 +660,19 @@
 			returnMe.origin = [trans transformPoint:returnMe.origin];
 			returnMe.size = [trans transformSize:returnMe.size];
 			returnMe.origin = VVADDPOINT(returnMe.origin, _boundsOrigin);
-			//tmpPoint = NSMakePoint(-1.0*_frame.size.height, 0.0);
-			//tmpPoint = VVADDPOINT(tmpPoint, _boundsOrigin);
-			//returnMe.origin = VVADDPOINT(returnMe.origin, tmpPoint);
 			break;
 	}
 	returnMe.size = NSMakeSize(fabs(returnMe.size.width),fabs(returnMe.size.height));
 	//NSRectLog(@"\t\treturning",returnMe);
-	/*
-	NSRect		returnMe = myVisibleFrame;
-	if (_boundsRotation != 0.0)	{
-		NSAffineTransform		*trans = [NSAffineTransform transform];
-		[trans rotateByDegrees:-1.0*_boundsRotation];
-		returnMe.origin = [trans transformPoint:returnMe.origin];
-		returnMe.size = [trans transformSize:returnMe.size];
-	}
-	returnMe.origin = NSMakePoint(returnMe.origin.x+_bounds.origin.x, returnMe.origin.y+_bounds.origin.y);
-	*/
 	return returnMe;
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- mimicing behavior of other NSView-related classes
+/*------------------------------------*/
+
+
 - (void) _viewDidMoveToWindow	{
 	if (deleted)
 		return;
@@ -754,6 +703,89 @@
 	}
 	return returnMe;
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- dragging setup
+/*------------------------------------*/
+
+
+- (void) registerForDraggedTypes:(NSArray *)a	{
+	if (deleted || a==nil || [a count]<1)
+		return;
+	BOOL		dragTypeChanged = NO;
+	for (NSString *tmpDragType in a)	{
+		[dragTypes rdlock];
+		if (![dragTypes containsObject:tmpDragType])	{
+			dragTypeChanged = YES;
+			[dragTypes addObject:tmpDragType];
+		}
+		[dragTypes unlock];
+	}
+	if (dragTypeChanged && _containerView!=nil)
+		[_containerView reconcileVVSubviewDragTypes];
+}
+- (void) _collectDragTypesInArray:(NSMutableArray *)n	{
+	if (deleted || n==nil)
+		return;
+	[dragTypes rdlock];
+	for (NSString *tmpString in [dragTypes array])	{
+		if (![n containsObject:tmpString])
+			[n addObject:tmpString];
+	}
+	[dragTypes unlock];
+	
+	if (subviews != nil)	{
+		[subviews rdlock];
+		for (VVView *viewPtr in [subviews array])	{
+			[viewPtr _collectDragTypesInArray:n];
+		}
+		[subviews unlock];
+	}
+}
+- (MutLockArray *) dragTypes	{
+	if (deleted)
+		return nil;
+	return dragTypes;
+}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- NSDraggingDestination protocol
+/*------------------------------------*/
+
+
+- (NSDragOperation) draggingEntered:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return NSDragOperationNone;
+}
+- (NSDragOperation) draggingUpdated:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return NSDragOperationCopy;
+}
+- (void) draggingExited:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+}
+- (void) draggingEnded:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+}
+
+- (BOOL) prepareForDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return YES;
+}
+- (BOOL) performDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	return YES;
+}
+- (void) concludeDragOperation:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- subviews & related methods
+/*------------------------------------*/
 
 
 @synthesize autoresizesSubviews;
@@ -801,57 +833,25 @@
 		[_containerView removeVVSubview:self];
 	}
 }
+- (BOOL) containsSubview:(id)n	{
+	if (deleted || n==nil)
+		return NO;
+	BOOL		returnMe = NO;
+	[subviews rdlock];
+	for (VVView *viewPtr in [subviews array])	{
+		if (viewPtr==n || [viewPtr containsSubview:n])	{
+			returnMe = YES;
+			break;
+		}
+	}
+	[subviews unlock];
+	return returnMe;
+}
 - (void) _setSuperview:(id)n	{
 	_superview = n;
 }
 - (id) superview	{
 	return _superview;
-}
-- (BOOL) containsSubview:(id)n	{
-	if (deleted || n==nil || subviews==nil)
-		return NO;
-	[subviews rdlock];
-	for (VVView *viewPtr in [subviews array])	{
-		if (viewPtr == n)
-			return YES;
-		if ([viewPtr containsSubview:n])
-			return YES;
-	}
-	[subviews unlock];
-	return NO;
-}
-- (void) registerForDraggedTypes:(NSArray *)a	{
-	if (deleted || a==nil || [a count]<1)
-		return;
-	BOOL		dragTypeChanged = NO;
-	for (NSString *tmpDragType in a)	{
-		[dragTypes rdlock];
-		if (![dragTypes containsObject:tmpDragType])	{
-			dragTypeChanged = YES;
-			[dragTypes addObject:tmpDragType];
-		}
-		[dragTypes unlock];
-	}
-	if (dragTypeChanged && _containerView!=nil)
-		[_containerView reconcileVVSubviewDragTypes];
-}
-- (void) _collectDragTypesInArray:(NSMutableArray *)n	{
-	if (deleted || n==nil)
-		return;
-	[dragTypes rdlock];
-	for (NSString *tmpString in [dragTypes array])	{
-		if (![n containsObject:tmpString])
-			[n addObject:tmpString];
-	}
-	[dragTypes unlock];
-	
-	if (subviews != nil)	{
-		[subviews rdlock];
-		for (VVView *viewPtr in [subviews array])	{
-			[viewPtr _collectDragTypesInArray:n];
-		}
-		[subviews unlock];
-	}
 }
 - (void) setContainerView:(id)n	{
 	_containerView = n;
@@ -872,6 +872,11 @@
 - (id) window	{
 	return nil;
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- drawing & related
+/*------------------------------------*/
 
 
 - (void) drawRect:(NSRect)r	{
@@ -909,7 +914,6 @@
 	//	use scissor to clip drawing to the passed rect
 	glScissor(tmpClipRect.origin.x*localToBackingBoundsMultiplier, tmpClipRect.origin.y*localToBackingBoundsMultiplier, tmpClipRect.size.width*localToBackingBoundsMultiplier, tmpClipRect.size.height*localToBackingBoundsMultiplier);
 	
-	
 	//	do the rotation & translation for the bounds now, AFTER i filled in the background/clear color
 	NSPoint			tmpPoint;
 	switch (_boundsOrientation)	{
@@ -943,28 +947,12 @@
 			glTranslatef(tmpPoint.x, tmpPoint.y, 0.0);
 			break;
 	}
-	/*
-	glRotatef(_boundsRotation, 0, 0, 1);
-	glTranslatef(-1.0*_bounds.origin.x*localToBackingBoundsMultiplier, -1.0*_bounds.origin.y*localToBackingBoundsMultiplier, 0);
-	*/
-	
-	
 	
 	//	get the local bounds- zero out the origin before clearing
 	NSRect		localBounds = [self backingBounds];
 	//NSRectLog(@"\t\tlocalBounds is",localBounds);
 	//	if i'm opaque, fill my bounds
 	OSSpinLockLock(&propertyLock);
-	/*
-	if (isOpaque)	{
-		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
-		GLDRAWRECT(NSMakeRect(localBounds.origin.x, localBounds.origin.y,localBounds.size.width, localBounds.size.height));
-	}
-	else if (clearColor[3]!=0.0)	{
-		glColor4f(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-		GLDRAWRECT(NSMakeRect(localBounds.origin.x, localBounds.origin.y,localBounds.size.width, localBounds.size.height));
-	}
-	*/
 	if (isOpaque)	{
 		glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -1041,16 +1029,6 @@
 					//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
 					viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
 				}
-				/*
-				NSAffineTransform		*rotTrans = [NSAffineTransform transform];
-				[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
-				viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
-				viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
-				//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
-				viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
-				//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
-				//NSRectLog(@"\t\viewBoundsToDraw is",viewBoundsToDraw);
-				*/
 				
 				//	now tell the view to do its drawing!
 				[viewPtr
@@ -1084,20 +1062,7 @@
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
 }
-- (NSRect) backingBounds	{
-	switch (_boundsOrientation)	{
-		case VVViewBOBottom:
-		case VVViewBOTop:
-			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier);
-		case VVViewBORight:
-		case VVViewBOLeft:
-			return NSMakeRect(_boundsOrigin.x*localToBackingBoundsMultiplier, _boundsOrigin.y*localToBackingBoundsMultiplier, _frame.size.height*localToBackingBoundsMultiplier, _frame.size.width*localToBackingBoundsMultiplier);
-	}
-	return NSMakeRect(0,0,0,0);
-	/*
-	return NSMakeRect(_bounds.origin.x*localToBackingBoundsMultiplier, _bounds.origin.y*localToBackingBoundsMultiplier, _bounds.size.width*localToBackingBoundsMultiplier, _bounds.size.height*localToBackingBoundsMultiplier);
-	*/
-}
+
 - (double) localToBackingBoundsMultiplier	{
 	return localToBackingBoundsMultiplier;
 }
@@ -1109,6 +1074,12 @@
 	}
 	[subviews unlock];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- misc backend- mostly key-val
+/*------------------------------------*/
+
 
 @synthesize deleted;
 @synthesize spriteManager;

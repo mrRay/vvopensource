@@ -61,6 +61,7 @@ long			_spriteGLViewSysVers;
 	flipped = NO;
 	localToBackingBoundsMultiplier = 1.0;
 	vvSubviews = [[MutLockArray alloc] init];
+	dragNDropSubview = nil;
 	//needsReshape = YES;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
@@ -111,6 +112,7 @@ long			_spriteGLViewSysVers;
 		[subCopy release];
 		subCopy = nil;
 	}
+	dragNDropSubview = nil;
 	
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
@@ -305,6 +307,11 @@ long			_spriteGLViewSysVers;
 	[vvSubviews lockRemoveIdenticalPtr:n];
 	[n setContainerView:nil];
 	
+	//	if there's a drag and drop subview (if i'm in the middle of a drag and drop action), i have to check if it's in the subview i'm removing!
+	if (dragNDropSubview!=nil && [n containsSubview:dragNDropSubview])	{
+		[dragNDropSubview draggingExited:nil];
+		dragNDropSubview = nil;
+	}
 	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
 	NSMutableArray		*tmpArray = MUTARRAY;
 	[n _collectDragTypesInArray:tmpArray];
@@ -312,6 +319,20 @@ long			_spriteGLViewSysVers;
 		[self reconcileVVSubviewDragTypes];
 	
 	[n release];
+}
+- (BOOL) containsSubview:(id)n	{
+	if (deleted || n==nil || vvSubviews==nil)
+		return NO;
+	BOOL		returnMe = NO;
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		if (viewPtr==n || [viewPtr containsSubview:n])	{
+			returnMe = YES;
+			break;
+		}
+	}
+	[vvSubviews unlock];
+	return returnMe;
 }
 - (id) vvSubviewHitTest:(NSPoint)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
@@ -333,7 +354,7 @@ long			_spriteGLViewSysVers;
 	return returnMe;
 }
 - (void) reconcileVVSubviewDragTypes	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	if (deleted || vvSubviews==nil)
 		return;
 	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
@@ -344,7 +365,6 @@ long			_spriteGLViewSysVers;
 	[vvSubviews unlock];
 	
 	[self unregisterDraggedTypes];
-	NSLog(@"\t\tregistering for drags of type %@",tmpArray);
 	[self registerForDraggedTypes:tmpArray];
 }
 
@@ -355,7 +375,7 @@ long			_spriteGLViewSysVers;
 
 
 - (NSDragOperation) draggingEntered:(id <NSDraggingInfo>)sender	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
 		return NSDragOperationNone;
 	//	get the dragging pasteboard
@@ -366,102 +386,114 @@ long			_spriteGLViewSysVers;
 	NSArray				*dragTypes = [pboard types];
 	if (dragTypes==nil || [dragTypes count]<1)
 		return NSDragOperationNone;
-	//	check to see if there's a subview under the dragged point
-	NSLog(@"\t\tdragTypes are %@",dragTypes);
+	//	...the reported dragging point is in window coords- convert it to my local coords
 	NSPoint				dragPoint = [sender draggingLocation];
-	return NSDragOperationGeneric;
-	/*
-	if (deleted || preventClickInspect || myObject==nil || ![myObject enabled] || [myObject actingAsDragSource])
+	NSView				*winCV = [[self window] contentView];
+	dragPoint = [self convertPoint:dragPoint fromView:winCV];
+	//	check to see if there's a subview under the dragged point
+	id					matchingSubview = [self vvSubviewHitTest:dragPoint];
+	MutLockArray		*viewDragTypes = (matchingSubview==nil) ? nil : [matchingSubview dragTypes];
+	if (viewDragTypes != nil)	{
+		[viewDragTypes rdlock];
+		BOOL				matchesDragType = NO;
+		for (NSString *dragType in dragTypes)	{
+			if ([viewDragTypes containsObject:dragType])	{
+				matchesDragType = YES;
+				break;
+			}
+		}
+		[viewDragTypes unlock];
+		//	if the subview under the cursor matches the drag type, i'm going to work with it...
+		if (matchesDragType)	{
+			dragNDropSubview = matchingSubview;
+			return [dragNDropSubview draggingEntered:sender];
+		}
+	}
+	return NSDragOperationNone;
+}
+- (NSDragOperation) draggingUpdated:(id <NSDraggingInfo>)sender	{
+	//NSLog(@"%s",__func__);
+	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
 		return NSDragOperationNone;
 	//	get the dragging pasteboard
 	NSPasteboard		*pboard = [sender draggingPasteboard];
 	if (pboard == nil)
 		return NSDragOperationNone;
-	//	get the data off the pasteboard
-	NSData				*dragData = [pboard dataForType:@"DataSourceDrag"];
-	if (dragData == nil)
+	//	get the array of drag types
+	NSArray				*dragTypes = [pboard types];
+	if (dragTypes==nil || [dragTypes count]<1)
 		return NSDragOperationNone;
-	//	unarchive the data into a dict.  this dict's keys are receiver class names (eg: FloatNodeReceiver), and the objects are snap dicts for those classes.
-	NSMutableDictionary			*snapshotsDictionary = UNARCHIVE(dragData);
-	if (snapshotsDictionary == nil)
-		return NSDragOperationNone;
-	//	make sure that the passed snapshots dictionary has at least one snapshot dict at a key corresponding to my receiver class
-	BOOL		foundACompatibleSnap = NO;
-	Class		rxClass = [myObject receiverClass];
-	for (NSString *keyString in [snapshotsDictionary allKeys])	{
-		Class		keyClass = NSClassFromString(keyString);
-		if (rxClass==keyClass || [rxClass isSubclassOfClass:keyClass])	{
-			foundACompatibleSnap = YES;
-			break;
+	//	...the reported dragging point is in the display backing coords
+	NSPoint				dragPoint = [sender draggingLocation];
+	NSView				*winCV = [[self window] contentView];
+	dragPoint = [self convertPoint:dragPoint fromView:winCV];
+	//	check to see if there's a subview under the dragged point
+	id					matchingSubview = [self vvSubviewHitTest:dragPoint];
+	//	if it's the same subview i'm already doing a drag-and-drop with, just update it & return!
+	if (dragNDropSubview!=nil && matchingSubview==dragNDropSubview)
+		return [dragNDropSubview draggingUpdated:sender];
+	
+	
+	//	...if i'm here, then i'm either dragging and dropping on a different- or on no!- subview...
+	
+	
+	//	finish the drag on the old...
+	if (dragNDropSubview != nil)
+		[dragNDropSubview draggingExited:nil];
+	dragNDropSubview = nil;
+	
+	//	now check to see if i should be starting a drag on this new view!
+	MutLockArray		*viewDragTypes = (matchingSubview==nil) ? nil : [matchingSubview dragTypes];
+	if (viewDragTypes != nil)	{
+		[viewDragTypes rdlock];
+		BOOL				matchesDragType = NO;
+		for (NSString *dragType in dragTypes)	{
+			if ([viewDragTypes containsObject:dragType])	{
+				matchesDragType = YES;
+				break;
+			}
+		}
+		[viewDragTypes unlock];
+		//	if the subview under the cursor matches the drag type, i'm going to work with it...
+		if (matchesDragType)	{
+			dragNDropSubview = matchingSubview;
+			return [dragNDropSubview draggingEntered:sender];
 		}
 	}
-	if (!foundACompatibleSnap)
-		return NSDragOperationNone;
-	
-	
-	OSSpinLockLock(&dsDropLock);
-	targetOfDataSourceDrop = YES;
-	OSSpinLockUnlock(&dsDropLock);
-	
-	[self setNeedsRender];
-	
-	return NSDragOperationCopy;
-	*/
-}
-- (void) mouseEntered:(NSEvent *)e	{
-	NSLog(@"%s",__func__);
-}
-- (void) mouseExited:(NSEvent *)e	{
-	NSLog(@"%s",__func__);
-}
-/*
-- (NSDragOperation) draggingUpdated:(id <NSDraggingInfo>)sender	{
-	//NSLog(@"%s",__func__);
-	return NSDragOperationCopy;
+	return NSDragOperationNone;
 }
 - (void) draggingExited:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&dsDropLock);
-	targetOfDataSourceDrop = NO;
-	OSSpinLockUnlock(&dsDropLock);
-	[self setNeedsRender];
+	if (deleted || dragNDropSubview==nil)
+		return;
+	[dragNDropSubview draggingExited:sender];
 }
 - (void) draggingEnded:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&dsDropLock);
-	targetOfDataSourceDrop = NO;
-	OSSpinLockUnlock(&dsDropLock);
-	[self setNeedsRender];
+	if (deleted || dragNDropSubview==nil)
+		return;
+	[dragNDropSubview draggingEnded:sender];
 }
 
 - (BOOL) prepareForDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	return YES;
+	if (deleted || dragNDropSubview==nil)
+		return NO;
+	return [dragNDropSubview prepareForDragOperation:sender];
 }
 - (BOOL) performDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	return YES;
+	if (deleted || dragNDropSubview==nil)
+		return NO;
+	return [dragNDropSubview performDragOperation:sender];
 }
 - (void) concludeDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (deleted || myObject==nil)
+	if (deleted || dragNDropSubview==nil)
 		return;
-	//	get the dragging pasteboard
-	NSPasteboard		*pboard = [sender draggingPasteboard];
-	if (pboard == nil)
-		return;
-	//	get the data off the pasteboard
-	NSData				*dragData = [pboard dataForType:@"DataSourceDrag"];
-	if (dragData == nil)
-		return;
-	//	unarchive the data into a dict.  this dict's keys are receiver class names (eg: FloatNodeReceiver), and the objects are snap dicts for those classes.
-	NSMutableDictionary			*snapshotsDictionary = UNARCHIVE(dragData);
-	if (snapshotsDictionary == nil)
-		return;
-	//	subclasses should override this next method for specific handling of the dropped snapshots!
-	[myObject dataSourceDropHappened:snapshotsDictionary];
+	[dragNDropSubview concludeDragOperation:sender];
 }
-*/
+
 
 /*===================================================================================*/
 #pragma mark --------------------- frame-related
