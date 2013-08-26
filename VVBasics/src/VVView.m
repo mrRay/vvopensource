@@ -825,7 +825,7 @@
 - (void) removeFromSuperview	{
 	if (deleted)
 		return;
-	NSLog(@"%s - ERR",__func__);
+	//NSLog(@"%s - ERR",__func__);
 	if (_superview != nil)	{
 		[_superview removeSubview:self];
 	}
@@ -870,7 +870,9 @@
 	return subviews;
 }
 - (id) window	{
-	return nil;
+	if (deleted || _containerView==nil)
+		return nil;
+	return [_containerView window];
 }
 
 
@@ -953,6 +955,7 @@
 	//NSRectLog(@"\t\tlocalBounds is",localBounds);
 	//	if i'm opaque, fill my bounds
 	OSSpinLockLock(&propertyLock);
+	/*
 	if (isOpaque)	{
 		glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -961,7 +964,15 @@
 		glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
-	
+	*/
+	if (isOpaque)	{
+		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
+		GLDRAWRECT(NSMakeRect(0,0,localBounds.size.width, localBounds.size.height));
+	}
+	else if (clearColor[3]!=0.0)	{
+		glColor4f(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+		GLDRAWRECT(NSMakeRect(0,0,localBounds.size.width, localBounds.size.height));
+	}
 	OSSpinLockUnlock(&propertyLock);
 	
 	
@@ -1144,6 +1155,15 @@
 @synthesize mouseDownEventType;
 @synthesize modifierFlags;
 @synthesize mouseIsDown;
+- (void) _setMouseIsDown:(BOOL)n	{
+	if (deleted)
+		return;
+	mouseIsDown = n;
+	if (_superview != nil)
+		[_superview _setMouseIsDown:n];
+	else if (_containerView != nil)
+		[_containerView _setMouseIsDown:n];
+}
 @synthesize dragTypes;
 
 

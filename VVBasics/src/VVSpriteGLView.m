@@ -286,6 +286,7 @@ long			_spriteGLViewSysVers;
 	if (![vvSubviews containsIdenticalPtr:n])	{
 		[vvSubviews insertObject:n atIndex:0];
 		[n setContainerView:self];
+		[n _setSuperview:nil];
 	}
 	[vvSubviews unlock];
 	
@@ -1186,6 +1187,9 @@ long			_spriteGLViewSysVers;
 @synthesize mouseDownEventType;
 @synthesize modifierFlags;
 @synthesize mouseIsDown;
+- (void) _setMouseIsDown:(BOOL)n	{
+	mouseIsDown = n;
+}
 @synthesize flushMode;
 
 

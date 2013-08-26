@@ -105,6 +105,7 @@ extern long			_spriteGLViewSysVers;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
+- (void) _setMouseIsDown:(BOOL)n;	//	used to work around the fact that NSViews don't get a "mouseUp" when they open a contextual menu
 @property (assign, readwrite) VVFlushMode flushMode;
 
 @end

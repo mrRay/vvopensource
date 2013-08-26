@@ -52,7 +52,9 @@
 	return [NSString stringWithFormat:@"<OSCMessage %@>",baseDescription];
 }
 - (NSString *) _description	{
-	if (valueCount < 2)
+	if (valueCount < 1)
+		return [NSString stringWithFormat:@"'%@'",address];
+	else if (valueCount < 2)
 		return [NSString stringWithFormat:@"'%@', '%@'",address,value];
 	else
 		return [NSString stringWithFormat:@"'%@'-'%@'",address,valueArray];
