@@ -66,6 +66,10 @@
 				//	now that i've assembed the message, send it to the in port
 				[p _addMessage:tmpMsg];
 			}
+			else	{
+				NSLog(@"\t\terr: breaking, message couldn't be parsed. %s",__func__);
+				break;
+			}
 		}
 		
 		/*
