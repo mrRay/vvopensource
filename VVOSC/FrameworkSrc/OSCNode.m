@@ -725,7 +725,7 @@
 					case OSCNodeDirectory:
 						tmpString = [NSString stringWithFormat:@"%@: Directory-type OSC node- potentially contains subnodes.  this node does not have any other specific data type.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
-					case OSCNodeTypeFloat:
+					case OSCNodeTypeNumber:
 						tmpString = [NSString stringWithFormat:@"%@: Float-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
 					case OSCNodeType2DPoint:
@@ -769,7 +769,7 @@
 					}
 					break;
 				case OSCNodeTypeUnknown:
-				case OSCNodeTypeFloat:
+				case OSCNodeTypeNumber:
 				case OSCNodeTypeRect:
 				case OSCNodeTypeString:
 					break;
@@ -790,7 +790,7 @@
 				case OSCNodeTypeUnknown:	//	nothing (empty)
 				case OSCNodeDirectory:	//	nothing (empty)
 					break;
-				case OSCNodeTypeFloat:	//	float
+				case OSCNodeTypeNumber:	//	float
 					[reply addValue:[OSCValue createWithString:@"f"]];
 					break;
 				case OSCNodeType2DPoint:	//	two floats
@@ -816,7 +816,7 @@
 				case OSCNodeTypeUnknown:
 				case OSCNodeDirectory:
 					break;
-				case OSCNodeTypeFloat:
+				case OSCNodeTypeNumber:
 					OSSpinLockLock(&lastReceivedMessageLock);
 					if (lastReceivedMessage != nil)	{
 						OSCValue		*lastVal = [lastReceivedMessage value];

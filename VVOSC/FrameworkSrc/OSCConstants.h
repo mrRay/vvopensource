@@ -81,7 +81,7 @@ The OSC spec describes an address space capable of pattern matching and message 
 typedef enum	{
 	OSCNodeTypeUnknown,
 	OSCNodeDirectory,
-	OSCNodeTypeFloat,
+	OSCNodeTypeNumber,
 	OSCNodeType2DPoint,
 	OSCNodeType3DPoint,
 	OSCNodeTypeRect,
