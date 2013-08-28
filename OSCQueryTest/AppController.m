@@ -37,8 +37,9 @@
 	return nil;
 }
 - (void) awakeFromNib	{
+	/*	set this object as the address space's delegate.  the address space needs to dispatch replies to queries it received- the main instance of OSCAddressSpace does this by notifying its delegate (which presumably dispatches it to an OSCManager or directly to the port)		*/
 	[_mainAddressSpace setDelegate:self];
-	//	set myself as the main address space's query delegate
+	/*	set myself as the main address space's query delegate.	*/
 	[_mainAddressSpace setQueryDelegate:self];
 	//	enable auto-query reply in the main address space node- i'm the query delegate, so if my query delegate methods return nil, the address space node will automatically reply
 	[_mainAddressSpace setAutoQueryReply:YES];
@@ -73,7 +74,7 @@
 
 
 - (IBAction) populateButtonUsed:(id)sender	{
-
+	
 }
 
 - (IBAction) listNodesClicked:(id)sender	{

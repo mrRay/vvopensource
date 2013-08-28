@@ -82,7 +82,7 @@
 			[myUIItem setAction:@selector(sliderUsed:)];
 			//	create the node (note it is autoreleased, and must be retained if it is to stick around)
 			myNode = [OSCNode createWithName:a];
-			[myNode setNodeType:OSCNodeTypeFloat];
+			[myNode setNodeType:OSCNodeTypeNumber];
 			itemVal = [OSCValue createWithFloat:[myUIItem floatValue]];
 			break;
 		case OSCValString:
@@ -100,7 +100,7 @@
 			[myUIItem setTarget:self];
 			[myUIItem setAction:@selector(buttonUsed:)];
 			myNode = [OSCNode createWithName:a];
-			[myNode setNodeType:OSCNodeTypeFloat];
+			[myNode setNodeType:OSCNodeTypeNumber];
 			itemVal = [OSCValue createWithBool:([myUIItem intValue]==NSOnState)?YES:NO];
 			break;
 		case OSCValArray:
@@ -154,7 +154,7 @@
 	if (deleted || myNode==nil)
 		return;
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
-	[tmpMsg addValue:[OSCValue createWithFloat:[sender floatValue]]];
+	[tmpMsg addValue:[OSCValue createWithString:[sender stringValue]]];
 	[myNode setLastReceivedMessage:tmpMsg];
 }
 - (IBAction) buttonUsed:(id)sender	{

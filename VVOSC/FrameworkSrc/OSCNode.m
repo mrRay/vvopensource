@@ -817,9 +817,16 @@
 				case OSCNodeDirectory:
 					break;
 				case OSCNodeTypeNumber:
+				case OSCNodeTypeRect:
+				case OSCNodeTypeColor:
+				case OSCNodeTypeString:
 					OSSpinLockLock(&lastReceivedMessageLock);
 					if (lastReceivedMessage != nil)	{
 						OSCValue		*lastVal = [lastReceivedMessage value];
+						if (lastVal != nil)
+							[reply addValue:lastVal];
+						
+						/*
 						switch ([lastVal type])	{
 							case OSCValInt:
 								[reply addValue:[OSCValue createWithFloat:(float)[lastVal intValue]]];
@@ -836,6 +843,7 @@
 							case OSCValBool:
 								[reply addValue:[OSCValue createWithFloat:(([lastVal boolValue]) ? (1.0) : (0.0))]];
 								break;
+							
 							case OSCValString:
 							case OSCValTimeTag:
 							case OSCValChar:
@@ -848,14 +856,12 @@
 							case OSCValSMPTE:
 								break;
 						}
+						*/
 					}
 					OSSpinLockUnlock(&lastReceivedMessageLock);
 					break;
 				case OSCNodeType2DPoint:
 				case OSCNodeType3DPoint:
-				case OSCNodeTypeRect:
-				case OSCNodeTypeColor:
-				case OSCNodeTypeString:
 					break;
 			}
 			break;
