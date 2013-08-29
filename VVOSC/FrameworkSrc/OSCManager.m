@@ -334,7 +334,24 @@
 /*------------------------------------*/
 
 
-- (void) dispatchReplyOrError:(OSCMessage *)m	{
+//- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o	{
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block	{
+	if (m==nil || o==nil)
+		return;
+	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
+	if (inPort == nil)
+		return;
+	[inPort dispatchQuery:m toOutPort:o timeout:t replyHandler:block];
+}
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d	{
+	if (m==nil || o==nil)
+		return;
+	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
+	if (inPort == nil)
+		return;
+	[inPort dispatchQuery:m toOutPort:o timeout:t replyDelegate:d];
+}
+- (void) transmitReplyOrError:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	//	make sure that the passed message is either a reply or error
 	OSCMessageType		mType = [m messageType];
@@ -361,15 +378,6 @@
 		}
 	}
 	
-}
-- (void) dispatchQuery:(OSCMessage *)m toOutput:(OSCOutPort *)o	{
-	//NSLog(@"%s ... %@, %@",__func__,m,o);
-	OSCMessageType		mType = [m messageType];
-	if (mType != OSCMessageTypeQuery)
-		return;
-	//	find an in port- doesn't matter which one, the query just has to come from a place i'm listening to
-	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
-	[inPort _dispatchQuery:m toOutPort:o];
 }
 
 

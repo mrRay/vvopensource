@@ -90,7 +90,10 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutput:manualOutput];
+	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+		NSLog(@"%s",__func__);
+		[self addRXMsg:replyMsg];
+	}];
 }
 - (IBAction) documentationClicked:(id)sender	{
 	//NSLog(@"%s",__func__);
@@ -103,7 +106,12 @@
 	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeDocumentation forAddress:address];
 	
 	[self addTXMsg:msg];
-	[oscManager dispatchQuery:msg toOutput:manualOutput];
+	
+	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
+	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+		NSLog(@"%s",__func__);
+		[self addRXMsg:replyMsg];
+	}];
 }
 - (IBAction) acceptedTypesClicked:(id)sender	{
 	//NSLog(@"%s",__func__);
@@ -116,10 +124,15 @@
 	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeTypeSignature forAddress:address];
 	
 	[self addTXMsg:msg];
-	[oscManager dispatchQuery:msg toOutput:manualOutput];
+	
+	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
+	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+		NSLog(@"%s",__func__);
+		[self addRXMsg:replyMsg];
+	}];
 }
 - (IBAction) returnTypesClicked:(id)sender	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
 	if (manualOutput == nil)	{
 		NSLog(@"\t\terr: couldn't find manual output in %s",__func__);
@@ -129,10 +142,15 @@
 	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeReturnTypeSignature forAddress:address];
 	
 	[self addTXMsg:msg];
-	[oscManager dispatchQuery:msg toOutput:manualOutput];
+	
+	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
+	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+		NSLog(@"%s",__func__);
+		[self addRXMsg:replyMsg];
+	}];
 }
 - (IBAction) currentValClicked:(id)sender	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
 	if (manualOutput == nil)	{
 		NSLog(@"\t\terr: couldn't find manual output in %s",__func__);
@@ -142,7 +160,12 @@
 	OSCMessage		*msg = [OSCMessage createQueryType:OSCQueryTypeCurrentValue forAddress:address];
 	
 	[self addTXMsg:msg];
-	[oscManager dispatchQuery:msg toOutput:manualOutput];
+	
+	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
+	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+		NSLog(@"%s",__func__);
+		[self addRXMsg:replyMsg];
+	}];
 }
 
 
@@ -229,17 +252,7 @@
 - (void) receivedOSCMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	[self addRXMsg:m];
-	
-	OSCMessageType		mType = [m messageType];
-	switch (mType)	{
-		case OSCMessageTypeReply:
-		case OSCMessageTypeError:
-			NSLog(@"\t\t%s received reply/error: %@",__func__,m);
-			break;
-		default:
-			[_mainAddressSpace dispatchMessage:m];
-			break;
-	}
+	[_mainAddressSpace dispatchMessage:m];
 }
 
 
@@ -278,11 +291,11 @@
 - (void) nodeRenamed:(OSCNode *)n	{
 	/*		left intentionally blank- don't need to do anything, just want to avoid a warning for not having this method		*/
 }
-- (void) dispatchReplyOrError:(OSCMessage *)m	{
+- (void) queryResponseNeedsToBeSent:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	[self addTXMsg:m];
 	
-	[oscManager dispatchReplyOrError:m];
+	[oscManager transmitReplyOrError:m];
 }
 
 

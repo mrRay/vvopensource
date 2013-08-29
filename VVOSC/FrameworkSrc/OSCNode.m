@@ -659,7 +659,7 @@
 			NSLog(@"\t\treceived error %@ %s",m,__func__);
 			break;
 	}
-	//	if there's a reply, send it- just give it to the osc manager, which will either dispatch it or create any necessary outputs and then dispatch it
+	//	if there's a reply, give it to the address space, which will notify its delegate what to do about it!
 	if (reply != nil)	{
 		//NSLog(@"\t\tshould be sending reply %@",reply);
 		//NSLog(@"\t\treply has %d values",[reply valueCount]);
@@ -706,7 +706,7 @@
 
 
 - (OSCMessage *) generateAutomaticResponseForQuery:(OSCMessage *)m	{
-	NSLog(@"%s ... %@",__func__,m);
+	//NSLog(@"%s ... %@",__func__,m);
 	NSString			*tmpString = nil;
 	NSMutableArray		*tmpArray = nil;
 	OSCMessage			*reply = nil;
@@ -726,7 +726,7 @@
 						tmpString = [NSString stringWithFormat:@"%@: Directory-type OSC node- potentially contains subnodes.  this node does not have any other specific data type.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
 					case OSCNodeTypeNumber:
-						tmpString = [NSString stringWithFormat:@"%@: Float-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
+						tmpString = [NSString stringWithFormat:@"%@: Number-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
 					case OSCNodeType2DPoint:
 						tmpString = [NSString stringWithFormat:@"%@: 2D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];

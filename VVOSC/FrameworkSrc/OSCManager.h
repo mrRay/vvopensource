@@ -8,6 +8,7 @@
 #import "OSCZeroConfManager.h"
 #import "OSCInPort.h"
 #import "OSCOutPort.h"
+#import "OSCQueryReply.h"
 
 
 
@@ -76,10 +77,11 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 ///	Called when OSCInPorts are processing received messages serially (by default, the manager is an OSCInPort's delegate)
 - (void) receivedOSCMessage:(OSCMessage *)m;
-///	Only used to support the (non-specification) OSC query protocol.  All queries must be sent via this method (the query has to actually be sent from an input port, or the client won't know what to reply to)
-- (void) dispatchQuery:(OSCMessage *)m toOutput:(OSCOutPort *)o;
+///	Only used to support the (non-specification) OSC query protocol.  All queries should be sent via one of these methods (the query has to actually be sent from an input port, or the client won't know what to reply to- the manager takes care of this, and also checks timeouts).
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block;
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d;
 ///	Used to support the (non-specification) OSC query protocol.  Only works if the passed message is a reply (OSCMessageTypeReply) or error (OSCMessageTypeError) and has a valid (non-0) queryTXAddress & queryTXPort.  locates the corresponding OSCOutPort- creating one if necessary- and sends the OSCMessage out it.
-- (void) dispatchReplyOrError:(OSCMessage *)m;
+- (void) transmitReplyOrError:(OSCMessage *)m;
 
 //	Creates and returns a unique label for an input port (unique to this manager)
 - (NSString *) getUniqueInputLabel;

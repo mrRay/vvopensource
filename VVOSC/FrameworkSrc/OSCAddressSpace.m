@@ -19,7 +19,7 @@ id				_mainAddressSpace;
 }
 + (void) refreshMenu	{
 	//NSLog(@"%s",__func__);
-	[[NSNotificationCenter defaultCenter] postNotificationName:AddressSpaceUpdateMenus object:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:OSCAddressSpaceUpdateMenus object:nil];
 }
 #if !IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a	{
@@ -359,7 +359,7 @@ id				_mainAddressSpace;
 - (void) _dispatchReplyOrError:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	if (delegate!=nil)
-		[delegate dispatchReplyOrError:m];
+		[delegate queryResponseNeedsToBeSent:m];
 }
 - (void) addDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);

@@ -14,6 +14,15 @@
 
 
 
+/*
+		this class is a view that contains an array of ElementBox instances.  as these elements are 
+		added and removed, they're also added and removed to me as subviews, and this instance of 
+		ElementChain will resize itself and arrange the subviews veritcally (like a filter chain).
+*/
+
+
+
+
 @interface ElementChain : NSView {
 	MutLockArray		*elementArray;
 }

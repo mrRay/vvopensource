@@ -12,6 +12,17 @@
 
 
 
+/*
+	this subclass of NSBox can be configured to display a toggle (boolean), a slider (float), or a text field (string).  when you set its type and name, it automatically creates the appropriate UI item.
+	
+	more importantly, it also creates an instance of OSCNode and adds it to the OSC address space.  this instance isn't retained locally (it's a weak ref), but this is a simple example and we know it won't get deleted out from under us so there's no need to retain it or use a zeroing weak ref.
+	
+	when the UI item is used, an OSCMessage is created and dispatched to the OSC node.
+*/
+
+
+
+
 @interface ElementBox : NSBox <OSCNodeDelegateProtocol,OSCNodeQueryDelegateProtocol> {
 	BOOL		deleted;
 	id			myUIItem;	//	the actual UI item (button/slider/etc)

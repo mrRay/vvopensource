@@ -15,7 +15,8 @@
 According to the OSC spec, a message consists of an address path (where the message should be sent) and zero or more arguments.  An OSCMessage must be created with an address path- once the OSCMessage exists, you may add as many arguments to it as you'd like.
 */
 @interface OSCMessage : NSObject <NSCopying> {
-	NSString			*address;	//!<The address this message is being sent to.  does NOT include any OSC query stuff!  this is literally just the address of the destination node!
+	NSString			*address;	//!<The address this message is being sent to.  does NOT include any address formatting related to OSC query stuff!  this is literally just the address of the destination node!
+	
 	int					valueCount;	//!<The number of values in this message
 	OSCValue			*value;	//!<Only used if 'valueCount' is < 2
 	NSMutableArray		*valueArray;//!<Only used if 'valCount' is > 1

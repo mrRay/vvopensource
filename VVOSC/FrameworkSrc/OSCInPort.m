@@ -44,6 +44,8 @@
 			selector:@selector(OSCThreadProc)];
 		*/
 		thread = nil;
+		timeoutSWatch = [[VVStopwatch alloc] init];
+		queryDict = [[MutLockDict alloc] init];
 		
 		portLabel = nil;
 		if (l != nil)
@@ -75,9 +77,11 @@
 		[threadLooper release];
 	threadLooper = nil;
 	*/
-	if (scratchArray != nil)
-		[scratchArray release];
-	scratchArray = nil;
+	VVRELEASE(scratchArray);
+	VVRELEASE(timeoutSWatch);
+	if (queryDict != nil)
+		[queryDict release];
+	queryDict = nil;
 	
 	if (portLabel != nil)
 		[portLabel release];
@@ -300,7 +304,39 @@
 				
 				[self handleScratchArray:tmpArray];
 			}
-			
+			//	check the query dict occasionally for queries which have timed out and need a reply
+			if ([timeoutSWatch timeSinceStart]>0.5)	{
+				[queryDict wrlock];
+				__block NSMutableArray		*stringsToRemove = nil;
+				__block NSMutableArray		*expiredQueries = nil;
+				NSDate						*nowDate = [NSDate date];
+				[[queryDict dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+					//	if the query's timeout has expired
+					if ([obj _timeoutCheckAgainstDate:nowDate])	{
+						//	store the string (i need to remove the query from the dict)
+						if (stringsToRemove==nil)
+							stringsToRemove = [[NSMutableArray alloc] initWithCapacity:0];
+						[stringsToRemove addObject:key];
+						//	store the query (i have to dispatch an error for the timeout after removing them)
+						if (expiredQueries==nil)
+							expiredQueries = [[NSMutableArray alloc] initWithCapacity:0];
+						[expiredQueries addObject:obj];
+					}
+				}];
+				if (stringsToRemove != nil)
+					[[queryDict dict] removeObjectsForKeys:stringsToRemove];
+				[queryDict unlock];
+				
+				[timeoutSWatch start];
+				
+				//	now that the query dict has been re-locked, send error messages for all the expired queries
+				for (OSCQueryReply *queryReply in expiredQueries)	{
+					[queryReply dispatchReply:[OSCMessage createErrorForMessage:[queryReply initialQuery]]];
+				}
+				
+				VVRELEASE(stringsToRemove);
+				VVRELEASE(expiredQueries);
+			}
 			{
 				NSAutoreleasePool		*oldPool = pool;
 				pool = nil;
@@ -436,8 +472,38 @@
 - (void) handleScratchArray:(NSArray *)a	{
 	//NSLog(@"%s",__func__);
 	if ((delegate != nil) && ([delegate respondsToSelector:@selector(receivedOSCMessage:)]))	{
-		for (OSCMessage *anObj in a)	{
-			[delegate receivedOSCMessage:anObj];
+		for (OSCMessage *msg in a)	{
+			OSCMessageType		msgType = [msg messageType];
+			switch (msgType)	{
+				//	control messages and received queries get handled "normally" (the delegate is told that it has received an OSC message)
+				case OSCMessageTypeControl:
+				case OSCMessageTypeQuery:
+					[delegate receivedOSCMessage:msg];
+					break;
+				//	replies & errors are received as a result of queries sent from this in port: look for an object in the queryDict!
+				case OSCMessageTypeReply:
+				case OSCMessageTypeError:
+					{
+						OSCValue			*parsedQueryStringVal = [msg value];
+						NSString			*stringVal = [parsedQueryStringVal stringValue];
+						
+						[queryDict wrlock];
+						OSCQueryReply		*queryReplyObj = [queryDict objectForKey:stringVal];
+						if (queryReplyObj != nil)	{
+							[queryReplyObj retain];
+							[queryDict removeObjectForKey:stringVal];
+							[queryDict unlock];
+							
+							[queryReplyObj dispatchReply:msg];
+							[queryReplyObj release];
+						}
+						else
+							[queryDict unlock];
+					}
+					break;
+				case OSCMessageTypeUnknown:
+					break;
+			}
 		}
 	}
 }
@@ -481,6 +547,57 @@
 	//[self start];
 	[pack release];
 }
+
+
+
+
+
+///	Only used to support the (non-specification) OSC query protocol.  All queries should be sent via one of these methods (the query has to actually be sent from an input port, or the client won't know what to reply to- the manager takes care of this, and also checks timeouts).
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block	{
+	//NSLog(@"%s",__func__);
+	//NSLog(@"\t\tquery is %@",m);
+	if (m==nil || o==nil || (sock==-1))
+		return;
+	OSCMessageType		mType = [m messageType];
+	if (mType != OSCMessageTypeQuery)
+		return;
+	//	get the reply address for the message (which basically represents the query with a unique string, and will be echoed back with the reply)
+	NSString			*replyAddress = [m replyAddress];
+	//NSLog(@"\t\treplyAddress is %@, length is %d",replyAddress,[replyAddress length]);
+	OSCQueryReply		*replyObj = [[OSCQueryReply alloc] initWithQuery:m timeout:t replyBlock:block];
+	[queryDict lockSetObject:replyObj forKey:replyAddress];
+	[replyObj release];
+	replyObj = nil;
+	
+	[self _dispatchQuery:m toOutPort:o];
+}
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d	{
+	//NSLog(@"%s",__func__);
+	//NSLog(@"\t\tquery is %@",m);
+	if (m==nil || o==nil || (sock==-1))
+		return;
+	OSCMessageType		mType = [m messageType];
+	if (mType != OSCMessageTypeQuery)
+		return;
+	//	get the reply address for the message (which basically represents the query with a unique string, and will be echoed back with the reply)
+	NSString			*replyAddress = [m replyAddress];
+	//NSLog(@"\t\treplyAddress is %@, length is %d",replyAddress,[replyAddress length]);
+	OSCQueryReply		*replyObj = [[OSCQueryReply alloc] initWithQuery:m timeout:t replyDelegate:d];
+	[queryDict lockSetObject:replyObj forKey:replyAddress];
+	[replyObj release];
+	replyObj = nil;
+	
+	[self _dispatchQuery:m toOutPort:o];
+}
+
+
+
+
+
+
+
+
+
 
 - (unsigned short) port	{
 	return port;

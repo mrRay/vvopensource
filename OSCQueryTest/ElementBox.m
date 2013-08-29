@@ -46,7 +46,7 @@
 
 
 - (void) setType:(OSCValueType)n andName:(NSString *)a	{
-	//NSLog(@"%s ... %@",__func__,a);
+	NSLog(@"%s ... %@",__func__,a);
 	[self setTitle:a];
 	
 	//	if there's an existing node, clear it out
@@ -147,7 +147,7 @@
 		return;
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
 	[tmpMsg addValue:[OSCValue createWithFloat:[sender floatValue]]];
-	[myNode setLastReceivedMessage:tmpMsg];
+	[myNode dispatchMessage:tmpMsg];
 }
 - (IBAction) textUsed:(id)sender	{
 	NSLog(@"%s",__func__);
@@ -155,7 +155,7 @@
 		return;
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
 	[tmpMsg addValue:[OSCValue createWithString:[sender stringValue]]];
-	[myNode setLastReceivedMessage:tmpMsg];
+	[myNode dispatchMessage:tmpMsg];
 }
 - (IBAction) buttonUsed:(id)sender	{
 	NSLog(@"%s",__func__);
@@ -163,7 +163,7 @@
 		return;
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:[myNode fullName]];
 	[tmpMsg addValue:[OSCValue createWithBool:([sender intValue]==NSOnState)?YES:NO]];
-	[myNode setLastReceivedMessage:tmpMsg];
+	[myNode dispatchMessage:tmpMsg];
 }
 
 

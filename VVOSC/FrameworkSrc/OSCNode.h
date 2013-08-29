@@ -17,7 +17,7 @@
 - (void) nodeNameChanged:(id)node;
 - (void) nodeDeleted:(id)node;
 @end
-///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode
+///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode.
 @protocol OSCNodeQueryDelegateProtocol
 - (NSMutableArray *) namespaceArrayForNode:(id)n;
 - (NSString *) docStringForNode:(id)n;
@@ -110,7 +110,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 ///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).  If the passed message is a query, this tries to assemble a reply (either from the queryDelegate or automatically if autoQueryReply is enabled) which is sent to the main address space.
 - (void) dispatchMessage:(OSCMessage *)m;
 
-///	Generates a default reply for a query of the passed type.  if "autoQueryReply" is enabled, this is how the reply is generaetd- this is a discrete method so query delegates can quickly generate query replies without having to implement reply methods in every query delegate class!
+///	Generates a default reply for a query of the passed type.  if "autoQueryReply" is enabled, this is how the reply is generated- this is a discrete method so query delegates can quickly generate query replies without having to implement reply methods in every query delegate class!
 - (OSCMessage *) generateAutomaticResponseForQuery:(OSCMessage *)m;
 
 @property (assign, readwrite) id addressSpace;

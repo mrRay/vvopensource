@@ -306,6 +306,11 @@
 		96BF10B0100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96BF10B1100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; };
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96C7DD7217CE8AD10012A030 /* OSCQueryReply.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
+		96C7DD7417CE8BD50012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
+		96C7DD7517CE8BD50012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
+		96C7DD7617CE8BD60012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
 		96CD198517A7CEFD001FEB7A /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D3D340179EB6EB0035A15B /* MAZeroingWeakRef.m */; };
@@ -845,6 +850,8 @@
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
+		96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCQueryReply.h; path = VVOSC/FrameworkSrc/OSCQueryReply.h; sourceTree = "<group>"; };
+		96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCQueryReply.m; path = VVOSC/FrameworkSrc/OSCQueryReply.m; sourceTree = "<group>"; };
 		96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOMIDIManager.h; path = MIDIviaOSC/MVOMIDIManager.h; sourceTree = "<group>"; };
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
@@ -1140,6 +1147,8 @@
 				9628D0FE100E8A6700C3944E /* OSCBundle.m */,
 				9628D105100E8A6700C3944E /* OSCPacket.h */,
 				9628D102100E8A6700C3944E /* OSCPacket.m */,
+				96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */,
+				96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */,
 			);
 			name = "basic data types";
 			sourceTree = "<group>";
@@ -1393,6 +1402,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				969FCEA0120DB9EF0067E617 /* lgpl-3.0.txt in Headers */,
+				96C7DD7217CE8AD10012A030 /* OSCQueryReply.h in Headers */,
 				9628D0F1100E8A5200C3944E /* OSCAddressSpace.h in Headers */,
 				9628D113100E8A6700C3944E /* OSCZeroConfManager.h in Headers */,
 				9628D117100E8A6700C3944E /* OSCOutPort.h in Headers */,
@@ -2128,6 +2138,7 @@
 				9628D123100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D124100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D128100E8A6700C3944E /* OSCInPort.m in Sources */,
+				96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2147,6 +2158,7 @@
 				9628D13A100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D13B100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D13F100E8A6700C3944E /* OSCInPort.m in Sources */,
+				96C7DD7417CE8BD50012A030 /* OSCQueryReply.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2166,6 +2178,7 @@
 				9628D151100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D152100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D156100E8A6700C3944E /* OSCInPort.m in Sources */,
+				96C7DD7517CE8BD50012A030 /* OSCQueryReply.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2185,6 +2198,7 @@
 				9628D168100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D169100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D16D100E8A6700C3944E /* OSCInPort.m in Sources */,
+				96C7DD7617CE8BD60012A030 /* OSCQueryReply.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

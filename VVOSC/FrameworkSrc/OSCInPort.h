@@ -5,7 +5,8 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#import <VVBasics/VVThreadLoop.h>
+#import <VVBasics/VVBasics.h>
+#import "OSCQueryReply.h"
 //#import <sys/types.h>
 //#import <sys/socket.h>
 #import <netinet/in.h>
@@ -38,7 +39,8 @@ the documentation here only covers the basics, the header file for this class is
 	
 	OSSpinLock				scratchLock;
 	NSThread				*thread;
-	//VVThreadLoop			*threadLooper;
+	VVStopwatch				*timeoutSWatch;	//	used to check the query dict for timeouts
+	MutLockDict				*queryDict;	//	key is the address of the dispatched query, object is a OSCQueryReply object
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
 	NSNetService			*zeroConfDest;	//	bonjour service for publishing this input's address...only active if there's a portLabel!
@@ -69,8 +71,17 @@ the documentation here only covers the basics, the header file for this class is
 - (void) handleScratchArray:(NSArray *)a;
 ///	called internally as messages are parsed.  useful if you're subclassing OSCInPort.
 - (void) _addMessage:(OSCMessage *)val;
+
+
+
+///	Only used to support the (non-specification) OSC query protocol.  All queries should be sent via one of these methods (the query has to actually be sent from an input port, or the client won't know what to reply to- the manager takes care of this, and also checks timeouts).
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block;
+- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d;
+
 //	called internally by OSCManager when it's asked to dispatch a query.  you should never need to call this method manually.
 - (void) _dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o;
+
+
 
 - (unsigned short) port;
 - (void) setPort:(unsigned short)n;

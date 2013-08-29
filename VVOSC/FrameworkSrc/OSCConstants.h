@@ -95,7 +95,7 @@ typedef enum	{
 
 
 //	this is the name of the notification that gets posted whenever the address space is told to refresh its menu
-#define AddressSpaceUpdateMenus @"AddressSpaceUpdateMenus"
+#define OSCAddressSpaceUpdateMenus @"OSCAddressSpaceUpdateMenus"
 
 ///	This notification gets fired whenever the input ports in an OSC manager are about to be changed
 #define OSCInPortsAboutToChangeNotification @"OSCInPortsAboutToChangeNotification"
@@ -109,24 +109,25 @@ typedef enum	{
 
 
 
-/*			these constants extist to provide support for an experimental protocol for OSC queries described here: http://opensoundcontrol.org/publication/query-system-open-sound-control			*/
+/*		The VVOSC framework supports an experimental OSC query protocol described here: http://opensoundcontrol.org/publication/query-system-open-sound-control
+		These types and constants describe different aspects of the spec		*/
 
 //	there are several different kinds of OSC messages
 typedef enum	{
 	OSCMessageTypeUnknown=0,	//	if a message's type cannot be determined, this type is used.  rarely encountered, might mean parsing error or malformed packet.
-	OSCMessageTypeControl,	//	"normal" OSC message- an address, and zero or more values.  does NOT require a reply!
-	OSCMessageTypeQuery,	//	standard query types are listed below (OSCQueryType)- requires a reply of some sort from the address space!
-	OSCMessageTypeReply,	//	a reply presumes that the query was executed successfully and an answer that is presumed to be useful is being returned
-	OSCMessageTypeError,		//	an error presumes taht either the query was malformed or there was an error executing it
+	OSCMessageTypeControl,		//	"normal" OSC message- an address, and zero or more values.  does NOT require a reply!  if software doesn't support the query protocol, it sends control messages.
+	OSCMessageTypeQuery,		//	standard query types are listed below (OSCQueryType)- they require a reply of some sort from the address space.  if a reply isn't forthcoming, a (programmatically-set) timeout error will be sent.
+	OSCMessageTypeReply,		//	a reply presumes that the query was executed successfully and an answer that is presumed to be useful is being returned
+	OSCMessageTypeError,		//	an error presumes that either the query was malformed or there was an error executing it
 } OSCMessageType;
 //	these are the basic query types
 typedef enum	{
 	OSCQueryTypeUnknown=0,
 	OSCQueryTypeNamespaceExploration,	//	return a list of any sub-nodes "inside" the destination address node as strings
-	OSCQueryTypeDocumentation,	//	return strings that provide documentation for the support and behavior of the destination address node
-	OSCQueryTypeTypeSignature,	//	return a single type-tag string describing the destination address node's expected INPUT value types.
-	OSCQueryTypeCurrentValue,	//	return the value of the node (type of the value returned can be obtained with a "return type signature" query)
-	OSCQueryTypeReturnTypeSignature	//	return a single type-tag string describing the destination address node's expected OUTPUT value types
+	OSCQueryTypeDocumentation,			//	return strings that provide documentation for the support and behavior of the destination address node
+	OSCQueryTypeTypeSignature,			//	return a single type-tag string describing the destination address node's expected INPUT value types.
+	OSCQueryTypeCurrentValue,			//	return the value of the node (type of the value returned can be obtained with a "return type signature" query)
+	OSCQueryTypeReturnTypeSignature		//	return a single type-tag string describing the destination address node's expected OUTPUT value types
 } OSCQueryType;
 //	these strings are used in the spec and are defined here for convenience
 #define kOSCQueryTypeReplyString @"#reply"

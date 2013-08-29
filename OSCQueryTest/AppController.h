@@ -17,7 +17,7 @@
 @interface AppController : NSObject <OSCNodeQueryDelegateProtocol,OSCDelegateProtocol,OSCAddressSpaceDelegateProtocol> {
 	IBOutlet NSPopUpButton		*createTypePopUpButton;
 	IBOutlet NSScrollView		*myScrollView;
-	IBOutlet ElementChain		*myChain;
+	IBOutlet ElementChain		*myChain;	//	ElementChain is an NSView subclass with an array of ElementBox instances.  looks like a filter chain.
 	
 	IBOutlet NSScrollView		*targetScrollView;
 	IBOutlet ElementChain		*targetChain;
