@@ -388,33 +388,48 @@
 
 - (NSString *) getUniqueInputLabel	{
 	NSString		*tmpString = nil;
-	NSEnumerator	*it;
 	BOOL			found = NO;
-	BOOL			alreadyInUse = NO;
-	OSCInPort		*portPtr = nil;
+	//BOOL			alreadyInUse = NO;
 	int				index = 1;
 	
-	[inPortArray rdlock];
-		while (!found)	{
-			tmpString = [NSString stringWithFormat:@"%@ %d",[self inPortLabelBase],index];
-			
-			alreadyInUse = NO;
-			it = [[inPortArray array] objectEnumerator];
-			while ((!alreadyInUse) && (portPtr = [it nextObject]))	{
-				if ([[portPtr portLabel] isEqualToString:tmpString])	{
-					alreadyInUse = YES;
-				}
-			}
-			
-			if ((tmpString != nil) && (!alreadyInUse))	{
-				found = YES;
-			}
-			
-			++index;
-		}
-	[inPortArray unlock];
+	while (!found)	{
+#if IPHONE
+		tmpString = [NSString stringWithFormat:@"%@ %@ %d",[[UIDevice currentDevice] name],[self inPortLabelBase],index];
+#else
+		tmpString = [NSString stringWithFormat:@"%@ %@ %d",SCDynamicStoreCopyComputerName(NULL, NULL),[self inPortLabelBase],index];
+#endif
+		//tmpString = [NSString stringWithFormat:@"%@ %d",[self inPortLabelBase],index];
+		
+		if ([self isUniqueInputLabel:tmpString])
+			found = YES;
+		
+		++index;
+	}
 	
 	return tmpString;
+}
+- (BOOL) isUniqueInputLabel:(NSString *)n	{
+	BOOL		returnMe = YES;
+	[inPortArray rdlock];
+	for (OSCInPort *portPtr in [inPortArray array])	{
+		if ([[portPtr portLabel] isEqualToString:n])	{
+			returnMe = NO;
+			break;
+		}
+	}
+	[inPortArray unlock];
+	
+	if (returnMe)	{
+		[outPortArray rdlock];
+		for (OSCOutPort *portPtr in [outPortArray array])	{
+			if ([[portPtr portLabel] isEqualToString:n])	{
+				returnMe = NO;
+				break;
+			}
+		}
+		[outPortArray unlock];
+	}
+	return returnMe;
 }
 - (NSString *) getUniqueOutputLabel	{
 	NSString		*tmpString = nil;
@@ -447,43 +462,44 @@
 	return tmpString;
 }
 - (OSCInPort *) findInputWithLabel:(NSString *)n	{
+	NSMutableArray		*matchingPorts = [self findInputsWithLabel:n];
+	return (matchingPorts==nil) ? nil : [matchingPorts objectAtIndex:0];
+}
+- (NSMutableArray *) findInputsWithLabel:(NSString *)n	{
 	if (n == nil)
 		return nil;
 	
-	OSCInPort		*foundPort = nil;
-	NSEnumerator	*it;
-	OSCInPort		*portPtr = nil;
-	
+	NSMutableArray	*returnMe = nil;
 	[inPortArray rdlock];
-		it = [[inPortArray array] objectEnumerator];
-		while ((portPtr = [it nextObject]) && (foundPort == nil))	{
-			if ([[portPtr portLabel] isEqualToString:n])	{
-				foundPort = portPtr;
-			}
+	for (OSCInPort *portPtr in [inPortArray array])	{
+		if ([[portPtr portLabel] isEqualToString:n])	{
+			if (returnMe == nil)
+				returnMe = [NSMutableArray arrayWithCapacity:0];
+			[returnMe addObject:portPtr];
 		}
+	}
 	[inPortArray unlock];
-	
-	return foundPort;
+	return returnMe;
 }
 - (OSCOutPort *) findOutputWithLabel:(NSString *)n	{
-	if (n == nil)	{
+	NSMutableArray		*matchingPorts = [self findOutputsWithLabel:n];
+	return (matchingPorts==nil) ? nil : [matchingPorts objectAtIndex:0];
+}
+- (NSMutableArray *) findOutputsWithLabel:(NSString *)n	{
+	if (n == nil)
 		return nil;
-	}
 	
-	OSCOutPort		*foundPort = nil;
-	NSEnumerator		*it;
-	OSCOutPort		*portPtr = nil;
-	
+	NSMutableArray	*returnMe = nil;
 	[outPortArray rdlock];
-		it = [[outPortArray array] objectEnumerator];
-		while ((portPtr = [it nextObject]) && (foundPort == nil))	{
-			if ([[portPtr portLabel] isEqualToString:n])	{
-				foundPort = portPtr;
-			}
+	for (OSCOutPort *portPtr in [outPortArray array])	{
+		if ([[portPtr portLabel] isEqualToString:n])	{
+			if (returnMe == nil)
+				returnMe = [NSMutableArray arrayWithCapacity:0];
+			[returnMe addObject:portPtr];
 		}
+	}
 	[outPortArray unlock];
-	
-	return foundPort;
+	return returnMe;
 }
 
 

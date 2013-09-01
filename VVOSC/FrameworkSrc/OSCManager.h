@@ -85,12 +85,15 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 //	Creates and returns a unique label for an input port (unique to this manager)
 - (NSString *) getUniqueInputLabel;
+- (BOOL) isUniqueInputLabel:(NSString *)n;
 //	Creates and returns a unique label for an output port (unique to this manager)
 - (NSString *) getUniqueOutputLabel;
 //	Finds and returns an input matching the passed label (returns nil if not found)
 - (OSCInPort *) findInputWithLabel:(NSString *)n;
+- (NSMutableArray *) findInputsWithLabel:(NSString *)n;
 //	Finds and returns an output matching the passed label (returns nil if not found)
 - (OSCOutPort *) findOutputWithLabel:(NSString *)n;
+- (NSMutableArray *) findOutputsWithLabel:(NSString *)n;
 //	Finds and returns an output matching the passed address and port (returns nil if not found)
 - (OSCOutPort *) findOutputWithAddress:(NSString *)a andPort:(int)p;
 //	Finds and returns an output matching the passed address (which is the raw, network-byte-order internet address expressed as an int) and port.  Returns nil if not found.

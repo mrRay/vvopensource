@@ -190,11 +190,12 @@
 		zeroConfDest = [[NSNetService alloc]
 			initWithDomain:@"local."
 			type:@"_osc._udp."
-#if IPHONE
-			name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
-#else
-			name:[NSString stringWithFormat:@"%@ %@",SCDynamicStoreCopyComputerName(NULL, NULL),portLabel]
-#endif
+//#if IPHONE
+//			name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
+//#else
+//			name:[NSString stringWithFormat:@"%@ %@",SCDynamicStoreCopyComputerName(NULL, NULL),portLabel]
+//#endif
+			name:portLabel
 			port:port];
 		[zeroConfDest publish];
 	}
