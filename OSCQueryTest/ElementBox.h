@@ -23,7 +23,7 @@
 
 
 
-@interface ElementBox : NSBox <OSCNodeDelegateProtocol,OSCNodeQueryDelegateProtocol> {
+@interface ElementBox : NSBox <OSCNodeDelegateProtocol,OSCNodeQueryDelegate> {
 	BOOL		deleted;
 	id			myUIItem;	//	the actual UI item (button/slider/etc)
 	OSCNode		*myNode;	//	the OSCNode this UI item represents.  this is NOT RETAINED LOCALLY- the OSCAddressSpace creates it, and i'm this node's delegate so i get notified if something else deletes it (by setting its address to nil in the address space).

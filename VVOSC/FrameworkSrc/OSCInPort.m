@@ -35,6 +35,7 @@
 		sock = -1;
 		port = p;
 		buf = malloc(65506);
+		interval = 1.0/100.0;
 		
 		scratchLock = OS_SPINLOCK_INIT;
 		/*
@@ -338,12 +339,17 @@
 				VVRELEASE(stringsToRemove);
 				VVRELEASE(expiredQueries);
 			}
+			
+			
 			{
 				NSAutoreleasePool		*oldPool = pool;
 				pool = nil;
 				[oldPool release];
 				pool = [[NSAutoreleasePool alloc] init];
 			}
+			
+			if (interval > 0.0)
+				[NSThread sleepForTimeInterval:interval];
 		}
 	}
 	@catch (NSException *err)	{
@@ -686,11 +692,7 @@
 	delegate = n;
 }
 - (void) setInterval:(double)n	{
-	NSLog(@"**** PROBABLY DEPRECATED: %s",__func__);
-	/*
-	if (threadLooper != nil)
-		[threadLooper setInterval:n];
-	*/
+	interval = fmax(0.0, n);
 }
 
 

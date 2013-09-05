@@ -20,14 +20,14 @@
 
 
 //	this is the main instance of OSCAddressSpace.  it is auto-created when this class is initialized
-extern id				_mainAddressSpace;
+extern id				_mainVVOSCAddressSpace;
 
 
 
 
-///	OSCAddressSpace is a representation of the OSC address space described in the OSC spec.  It is a subclass of OSCNode.  This class is optional- it's not needed for basic OSC message sending/receiving.
+///	OSCAddressSpace is the primary means of interacting with the OSC address space described in the OSC specification.  This class is optional- it's not needed for basic OSC message sending/receiving.
 /*!
-There should only ever be one instance of OSCAddressSpace, and you shouldn't explicitly create it.  Just call [OSCAddressSpace class] (or any other OSCAddressSpace method) and it will be automatically created.  This main instance may be retrieved by the class method +[OSCAddressSpace mainAddressSpace] or by the class variable _mainAddressSpace.
+There should only ever be one instance of OSCAddressSpace, which is automatically created when the class is initialized- you should not create another instance of this class.  The main instance may be retrieved by the class method +[OSCAddressSpace mainAddressSpace] or by the class variable _mainVVOSCAddressSpace.
 
 OSCAddressSpace is your application's main way of dealing with the OSC address space- if you need to dispatch a message, set, rename, or delete a node, you should do via the main instance of this class.
 */
@@ -53,10 +53,15 @@ OSCAddressSpace is your application's main way of dealing with the OSC address s
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a;
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a createIfMissing:(BOOL)c;
 
+///	Tries to find the node at the passed address, creating it (and any missing interim nodes) in the process if appropriate.  Returns an instance of OSCNode which is already retained by the address space- if you're going to keep a weak ref to this OSCNode, become its delegate so you can be informed of its deletion.
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c;
+///	This method uses regex to find matches.  path components may be regex strings- this returns all the nodes that match every component in the passed address/address array!
+- (NSMutableArray *) findNodesMatchingAddress:(NSString *)a;
+
 //	this method is called whenever a node is added to another node
 - (void) nodeRenamed:(OSCNode *)n;
 
-///	Unlike a normal OSCNode, this method finds the destination node and then dispatches the msg.  If the destination is itself, it just calls the super.
+///	Sends the passed message to the appropriate node in the address space- this is how you pass received OSC data from a source (like an OSCInPort) to your address space.  First it finds the OSCNode corresponding to the passed message's address, and then calls "dispatchMessage:" on it, which ultimately results in the node's delegates acquiring the passed OSC message.
 - (void) dispatchMessage:(OSCMessage *)m;
 //	Don't call this method externally- this gets called by an OSCNode inside me (or by me), and you probably won't need to ever call this method.  The passed message is a reply or error that needs to be sent back in response to a query.  The passed OSCMessage contains the IP address and port of the destination.  This method just passes the data on to the addres space's delegate- it does NOT actually send anything out, this is something you'll have to implement in the delegate.
 - (void) _dispatchReplyOrError:(OSCMessage *)m;

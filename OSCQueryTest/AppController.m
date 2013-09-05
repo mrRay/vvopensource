@@ -38,11 +38,11 @@
 }
 - (void) awakeFromNib	{
 	/*	set this object as the address space's delegate.  the address space needs to dispatch replies to queries it received- the main instance of OSCAddressSpace does this by notifying its delegate (which presumably dispatches it to an OSCManager or directly to the port)		*/
-	[_mainAddressSpace setDelegate:self];
+	[_mainVVOSCAddressSpace setDelegate:self];
 	/*	set myself as the main address space's query delegate.	*/
-	[_mainAddressSpace setQueryDelegate:self];
+	[_mainVVOSCAddressSpace setQueryDelegate:self];
 	//	enable auto-query reply in the main address space node- i'm the query delegate, so if my query delegate methods return nil, the address space node will automatically reply
-	[_mainAddressSpace setAutoQueryReply:YES];
+	[_mainVVOSCAddressSpace setAutoQueryReply:YES];
 	
 	[oscManager setDelegate:self];
 }
@@ -252,12 +252,12 @@
 - (void) receivedOSCMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
 	[self addRXMsg:m];
-	[_mainAddressSpace dispatchMessage:m];
+	[_mainVVOSCAddressSpace dispatchMessage:m];
 }
 
 
 /*===================================================================================*/
-#pragma mark --------------------- OSCNodeQueryDelegateProtocol- i'm the OSCAddressSpace's query delegate
+#pragma mark --------------------- OSCNodeQueryDelegate- i'm the OSCAddressSpace's query delegate
 /*------------------------------------*/
 
 

@@ -11,6 +11,7 @@
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
+#include <AvailabilityMacros.h>
 
 
 
@@ -41,8 +42,11 @@ typedef enum	{
 
 
 
-
+#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 1070)
 @interface VVView : NSObject <NSDraggingDestination>	{
+#else
+@interface VVView : NSObject	{
+#endif
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;

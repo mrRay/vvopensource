@@ -77,10 +77,11 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 ///	Called when OSCInPorts are processing received messages serially (by default, the manager is an OSCInPort's delegate)
 - (void) receivedOSCMessage:(OSCMessage *)m;
-///	Only used to support the (non-specification) OSC query protocol.  All queries should be sent via one of these methods (the query has to actually be sent from an input port, or the client won't know what to reply to- the manager takes care of this, and also checks timeouts).
+///	Only used to support the (non-specification) OSC query protocol.  All queries MUST be sent from the manager via this method to one of its outputs (the manager has to actually send the message through an input for technical reasons).  The reply handler is called when a reply is received or when the timeout expires.
 - (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block;
+///	Only used to support the (non-specification) OSC query protocol.  All queries MUST be sent from the manager via this method to one of its outputs (the manager has to actually send the message through an input for technical reasons).  The delegate is called when a reply is received or when the timeout expires.
 - (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d;
-///	Used to support the (non-specification) OSC query protocol.  Only works if the passed message is a reply (OSCMessageTypeReply) or error (OSCMessageTypeError) and has a valid (non-0) queryTXAddress & queryTXPort.  locates the corresponding OSCOutPort- creating one if necessary- and sends the OSCMessage out it.
+///	Used to support the (non-specification) OSC query protocol.  If you've received a query and have assembled a reply or an error, this is how you send the reply/error back to the other app/device/whatever sent the query.  Only works if the passed message is a reply (OSCMessageTypeReply) or error (OSCMessageTypeError) and has a valid (non-0) queryTXAddress & queryTXPort.  locates the corresponding OSCOutPort- creating one if necessary- and sends the OSCMessage out it.
 - (void) transmitReplyOrError:(OSCMessage *)m;
 
 //	Creates and returns a unique label for an input port (unique to this manager)

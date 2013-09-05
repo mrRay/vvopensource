@@ -6,7 +6,7 @@
 
 
 
-id				_mainAddressSpace;
+id				_mainVVOSCAddressSpace;
 
 
 
@@ -15,7 +15,7 @@ id				_mainAddressSpace;
 
 
 + (id) mainAddressSpace	{
-	return _mainAddressSpace;
+	return _mainVVOSCAddressSpace;
 }
 + (void) refreshMenu	{
 	//NSLog(@"%s",__func__);
@@ -105,18 +105,18 @@ id				_mainAddressSpace;
 #endif
 + (void) load	{
 	//NSLog(@"%s",__func__);
-	_mainAddressSpace = nil;
-	//NSLog(@"\t\t_mainAddressSpace is %@",_mainAddressSpace);
+	_mainVVOSCAddressSpace = nil;
+	//NSLog(@"\t\t_mainVVOSCAddressSpace is %@",_mainVVOSCAddressSpace);
 }
 + (void) initialize	{
 	//NSLog(@"%s",__func__);
-	if (_mainAddressSpace != nil)
+	if (_mainVVOSCAddressSpace != nil)
 		return;
 	//NSLog(@"\t\tallocating main address space!");
-	_mainAddressSpace = [[OSCAddressSpace alloc] init];
-	[_mainAddressSpace setNodeType:OSCNodeDirectory];
-	[_mainAddressSpace setAutoQueryReply:YES];
-	//NSLog(@"\t\t_mainAddressSpace is %@",_mainAddressSpace);
+	_mainVVOSCAddressSpace = [[OSCAddressSpace alloc] init];
+	[_mainVVOSCAddressSpace setNodeType:OSCNodeDirectory];
+	[_mainVVOSCAddressSpace setAutoQueryReply:YES];
+	//NSLog(@"\t\t_mainVVOSCAddressSpace is %@",_mainVVOSCAddressSpace);
 }
 
 
@@ -160,8 +160,8 @@ id				_mainAddressSpace;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	//if (_mainAddressSpace == self)
-	//	_mainAddressSpace = nil;
+	//if (_mainVVOSCAddressSpace == self)
+	//	_mainVVOSCAddressSpace = nil;
 	[super dealloc];
 }
 
@@ -302,6 +302,12 @@ id				_mainAddressSpace;
 	//	i retained the ndoe i'm about to insert earlier- release it now
 	if (n != nil)
 		[n release];
+}
+- (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
+	return [super findNodeForAddress:p createIfMissing:c];
+}
+- (NSMutableArray *) findNodesMatchingAddress:(NSString *)a	{
+	return [super findNodesMatchingAddress:a];
 }
 /*
 //	this method is called whenever a new node is added to the address space- subclasses can override this for custom notifications

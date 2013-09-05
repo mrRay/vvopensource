@@ -120,7 +120,7 @@
 	
 	OSCMessage		*tmpMsg = [OSCMessage createWithAddress:@""];
 	[tmpMsg addValue:itemVal];
-	[myNode setLastReceivedMessage:tmpMsg];
+	[myNode dispatchMessage:tmpMsg];
 	
 	[myNode setAutoQueryReply:YES];
 	
@@ -128,12 +128,12 @@
 	[[self contentView] addSubview:myUIItem];
 	[(NSView *)myUIItem setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
 	//	put the node in the address space, which retains it so it doesn't get released
-	[_mainAddressSpace setNode:myNode forAddress:[NSString stringWithFormat:@"/%@",[myNode nodeName]]];
+	[_mainVVOSCAddressSpace setNode:myNode forAddress:[NSString stringWithFormat:@"/%@",[myNode nodeName]]];
 	//	set myself up as the node's delegate (so i receive OSCMessages dispatched to the node, as well as other node-related stuff)
 	[myNode addDelegate:self];
 	
 	/*	if you un-comment this next line, then basic querying would work even if you didn't set this 
-	object as the query delegate- or even if you didn't implement OSCNodeQueryDelegateProtocol!		*/
+	object as the query delegate- or even if you didn't implement OSCNodeQueryDelegate!		*/
 	//[myNode setAutoQueryReply:YES];
 	
 	//	set myself as the node's query delegate (this class demonstrates a use of the query protocol)
@@ -172,7 +172,7 @@
 /*------------------------------------*/
 
 
-- (void) node:(id)n receivedOSCMessage:(id)msg	{
+- (void) node:(id)n receivedOSCMessage:(OSCMessage *)msg	{
 	NSLog(@"%s ... %@",__func__,msg);
 }
 - (void) nodeNameChanged:(id)node	{
@@ -185,7 +185,7 @@
 
 
 /*===================================================================================*/
-#pragma mark --------------------- OSCNodeQueryDelegateProtocol
+#pragma mark --------------------- OSCNodeQueryDelegate
 /*------------------------------------*/
 
 

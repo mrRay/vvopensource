@@ -75,7 +75,7 @@
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
-		addressSpace = _mainAddressSpace;
+		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
 		nameLock = OS_SPINLOCK_INIT;
@@ -102,7 +102,7 @@
 - (id) init	{
 	//NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
-		addressSpace = _mainAddressSpace;
+		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
 		nameLock = OS_SPINLOCK_INIT;
@@ -285,9 +285,9 @@
 	[n release];
 }
 - (void) removeFromAddressSpace	{
-	if (deleted || _mainAddressSpace==nil || fullName==nil)
+	if (deleted || _mainVVOSCAddressSpace==nil || fullName==nil)
 		return;
-	[_mainAddressSpace setNode:nil forAddress:fullName];
+	[_mainVVOSCAddressSpace setNode:nil forAddress:fullName];
 }
 
 
@@ -452,7 +452,7 @@
 /*------------------------------------*/
 
 
-- (void) addDelegate:(id)d	{
+- (void) addDelegate:(id <OSCNodeDelegateProtocol>)d	{
 	if (d == nil)
 		return;
 	//	if there's no delegate array, make one
@@ -665,7 +665,7 @@
 		//NSLog(@"\t\treply has %d values",[reply valueCount]);
 		//NSLog(@"\t\tfirst val is %@",[reply valueAtIndex:0]);
 		//NSLog(@"\t\tsecond val is %@",[reply valueAtIndex:1]);
-		[_mainAddressSpace _dispatchReplyOrError:reply];
+		[_mainVVOSCAddressSpace _dispatchReplyOrError:reply];
 	}
 	
 	
@@ -731,12 +731,6 @@
 					case OSCNodeType2DPoint:
 						tmpString = [NSString stringWithFormat:@"%@: 2D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
-					case OSCNodeType3DPoint:
-						tmpString = [NSString stringWithFormat:@"%@: 3D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeTypeRect:
-						tmpString = [NSString stringWithFormat:@"%@: Rect-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
 					case OSCNodeTypeColor:
 						tmpString = [NSString stringWithFormat:@"%@: Color-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
 						break;
@@ -754,7 +748,6 @@
 			switch (nodeType)	{
 				case OSCNodeDirectory:
 				case OSCNodeType2DPoint:
-				case OSCNodeType3DPoint:
 				case OSCNodeTypeColor:
 					if (nodeContents!=nil && [nodeContents count]>0)	{
 						[nodeContents rdlock];
@@ -770,7 +763,6 @@
 					break;
 				case OSCNodeTypeUnknown:
 				case OSCNodeTypeNumber:
-				case OSCNodeTypeRect:
 				case OSCNodeTypeString:
 					break;
 			}
@@ -796,12 +788,6 @@
 				case OSCNodeType2DPoint:	//	two floats
 					[reply addValue:[OSCValue createWithString:@"ff"]];
 					break;
-				case OSCNodeType3DPoint:	//	three floats
-					[reply addValue:[OSCValue createWithString:@"fff"]];
-					break;
-				case OSCNodeTypeRect:	//	four floats
-					[reply addValue:[OSCValue createWithString:@"ffff"]];
-					break;
 				case OSCNodeTypeColor:	//	color
 					[reply addValue:[OSCValue createWithString:@"r"]];
 					break;
@@ -817,7 +803,6 @@
 				case OSCNodeDirectory:
 					break;
 				case OSCNodeTypeNumber:
-				case OSCNodeTypeRect:
 				case OSCNodeTypeColor:
 				case OSCNodeTypeString:
 					OSSpinLockLock(&lastReceivedMessageLock);
@@ -861,7 +846,6 @@
 					OSSpinLockUnlock(&lastReceivedMessageLock);
 					break;
 				case OSCNodeType2DPoint:
-				case OSCNodeType3DPoint:
 					break;
 			}
 			break;
@@ -938,10 +922,10 @@
 - (OSCNode *) parentNode	{
 	return parentNode;
 }
-- (void) setNodeType:(int)n	{
+- (void) setNodeType:(OSCNodeType)n	{
 	nodeType = n;
 }
-- (int) nodeType	{
+- (OSCNodeType) nodeType	{
 	return nodeType;
 }
 - (void) setHiddenInMenu:(BOOL)n	{
@@ -995,15 +979,15 @@
 - (void) setAutoQueryReply:(BOOL)n	{
 	autoQueryReply = n;
 }
-- (id <OSCNodeQueryDelegateProtocol>) queryDelegate	{
+- (id <OSCNodeQueryDelegate>) queryDelegate	{
 	return queryDelegate;
 }
-- (void) setQueryDelegate:(id <OSCNodeQueryDelegateProtocol>)n	{
+- (void) setQueryDelegate:(id <OSCNodeQueryDelegate>)n	{
 	queryDelegate = nil;
-	if (n!=nil && [(id)n conformsToProtocol:@protocol(OSCNodeQueryDelegateProtocol)])
+	if (n!=nil && [(id)n conformsToProtocol:@protocol(OSCNodeQueryDelegate)])
 		queryDelegate = n;
 	else
-		NSLog(@"**** ERR: query delegate doesn't support OSCNodeQueryDelegateProtocol, %s",__func__);
+		NSLog(@"**** ERR: query delegate doesn't support OSCNodeQueryDelegate, %s",__func__);
 }
 
 

@@ -36,6 +36,7 @@ the documentation here only covers the basics, the header file for this class is
 	struct sockaddr_in		addr;		//	struct that describes *my* address (this is an in port)
 	unsigned short			port;		//	the port number i'm receiving from
 	unsigned char			*buf;	//	the socket gets data and dumps it here immediately
+	double					interval;	//	how many times/sec you want the thread to run
 	
 	OSSpinLock				scratchLock;
 	NSThread				*thread;
