@@ -113,6 +113,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 
 ///	Returns a float value, regardless as to the type of the OSCValue
 - (float) calculateFloatValue;
+///	Returns a double value, regardless as to the type of the OSCValue
+- (double) calculateDoubleValue;
 
 @property (nonatomic, readonly) OSCValueType type;
 

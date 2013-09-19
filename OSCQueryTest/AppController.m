@@ -39,10 +39,9 @@
 - (void) awakeFromNib	{
 	/*	set this object as the address space's delegate.  the address space needs to dispatch replies to queries it received- the main instance of OSCAddressSpace does this by notifying its delegate (which presumably dispatches it to an OSCManager or directly to the port)		*/
 	[_mainVVOSCAddressSpace setDelegate:self];
-	/*	set myself as the main address space's query delegate.	*/
-	[_mainVVOSCAddressSpace setQueryDelegate:self];
-	//	enable auto-query reply in the main address space node- i'm the query delegate, so if my query delegate methods return nil, the address space node will automatically reply
+	/*	enable auto query reply in the main address space node- the OSCAddressSpace instance (which is the "top-level" OSC node) will automatically assemble replies for queries		*/
 	[_mainVVOSCAddressSpace setAutoQueryReply:YES];
+	
 	
 	[oscManager setDelegate:self];
 }
@@ -73,10 +72,6 @@
 }
 
 
-- (IBAction) populateButtonUsed:(id)sender	{
-	
-}
-
 - (IBAction) listNodesClicked:(id)sender	{
 	//NSLog(@"%s",__func__);
 	OSCOutPort		*manualOutput = [oscManager findOutputWithLabel:@"ManualOutput"];
@@ -91,7 +86,7 @@
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
 	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
-		NSLog(@"%s",__func__);
+		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
 }
@@ -109,7 +104,7 @@
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
 	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
-		NSLog(@"%s",__func__);
+		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
 }
@@ -127,7 +122,7 @@
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
 	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
-		NSLog(@"%s",__func__);
+		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
 }
@@ -145,7 +140,7 @@
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
 	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
-		NSLog(@"%s",__func__);
+		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
 }
@@ -163,7 +158,7 @@
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
 	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
-		NSLog(@"%s",__func__);
+		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
 }
@@ -181,8 +176,6 @@
 	[txMsgs unlock];
 	[rxMsgs unlock];
 }
-
-
 - (void) addTXMsg:(OSCMessage *)m	{
 	if (m==nil)
 		return;
@@ -205,8 +198,7 @@
 	[rxMsgs unlock];
 	[txMsgs unlock];
 }
-
-
+//	this method updates the text views at the bottom of the app with the contents of the received messages
 - (void) _lockedUpdateDataAndViews	{
 	while ([rxMsgs count] > MAXMSGS)
 		[rxMsgs removeObjectAtIndex:0];
@@ -250,36 +242,11 @@
 
 
 - (void) receivedOSCMessage:(OSCMessage *)m	{
-	//NSLog(@"%s ... %@",__func__,m);
+	//	add the message to the array of received messages for display in the data views
 	[self addRXMsg:m];
+	
+	//	dispatch the message to the OSC address space- this sends the message to the appropriate node
 	[_mainVVOSCAddressSpace dispatchMessage:m];
-}
-
-
-/*===================================================================================*/
-#pragma mark --------------------- OSCNodeQueryDelegate- i'm the OSCAddressSpace's query delegate
-/*------------------------------------*/
-
-
-- (NSMutableArray *) namespaceArrayForNode:(OSCNode *)n	{
-	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
-	return nil;
-}
-- (NSString *) docStringForNode:(OSCNode *)n	{
-	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
-	return nil;
-}
-- (NSString *) typeSignatureForNode:(OSCNode *)n	{
-	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
-	return nil;
-}
-- (OSCValue *) currentValueForNode:(OSCNode *)n	{
-	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
-	return nil;
-}
-- (NSString *) returnTypeStringForNode:(OSCNode *)n	{
-	//	...by returning nil, the OSCNode will automatically attempt to reply (auto query reply was enabled on the main address space node)
-	return nil;
 }
 
 
@@ -292,9 +259,10 @@
 	/*		left intentionally blank- don't need to do anything, just want to avoid a warning for not having this method		*/
 }
 - (void) queryResponseNeedsToBeSent:(OSCMessage *)m	{
-	//NSLog(@"%s ... %@",__func__,m);
+	//	add the message to the array of msgs that were sent for display in the data view
 	[self addTXMsg:m];
 	
+	//	tell the OSC manager to tranmist the reply- this actually sends the reply over the network
 	[oscManager transmitReplyOrError:m];
 }
 

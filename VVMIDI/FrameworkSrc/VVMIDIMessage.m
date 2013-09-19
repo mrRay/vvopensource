@@ -223,14 +223,18 @@
 	return sysexArray;
 }
 - (double) doubleValue	{
+	//NSLog(@"%s ... %@",__func__,self);
+	double		returnMe = 0.0;
 	if (data3<0 || data3>127)	{
 		//NSLog(@"\t\t7-bit, %d",data2);
-		return ((double)data2/127.0);
+		returnMe = (double)((double)data2/(double)127.0);
 	}
 	else	{
 		//NSLog(@"\t\t14-bit, %d / %d, %f",data2,data3,((double)((((long)data2 & 0x7F)<<7) | ((long)data3 & 0x7F))/16383.0));
-		return ((double)((((long)data2 & 0x7F)<<7) | ((long)data3 & 0x7F))/16383.0);
+		returnMe = (double)((double)((((long)data2 & 0x7F)<<7) | ((long)data3 & 0x7F))/(double)16383.0);
 	}
+	//NSLog(@"\t\treturning %0.32f",returnMe);
+	return returnMe;
 }
 
 

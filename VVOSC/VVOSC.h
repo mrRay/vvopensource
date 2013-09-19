@@ -75,7 +75,8 @@ VVOSC is an Objective-c framework for assembling, sending, and receiving OSC (Op
 <li>Supports the following data types: i (int32), f (float32), s/S (OSC-string), b (OSC blob), h (64-bit int), d (64-bit float/double), r (32-bit RGBA color), m (MIDI message), T (tru), F (false), N(nil), I (infinity), t (OSC-timetag)</li>
 <li>Processing frequency defaults to 100hz, but may be adjusted dynamically and has been tested up to 1khz</li>
 <li>Multithreaded- each input port runs on its own thread- and threadsafe.</li>
-<li>Optional OSC address space classes (OSCNode & OSCAddressSpace) may be used to quickly create a simple OSC-based API for controlling software.  Address space includes POSIX regex-based pattern matching engine for dispatching a single message to multiple nodes, and support for an experimental query protocol with asynchronous OSC message sending and receiving via blocks or callbacks.</li>
+<li>Optional OSC address space classes (OSCNode & OSCAddressSpace) may be used to quickly and easily construct a threadsafe address space for controlling your software.  Address space includes POSIX regex-based pattern matching for dispatching a single message to multiple addresses.</li>
+<li>Native support for an experimental query protocol described here: (http://opensoundcontrol.org/publication/query-system-open-sound-control).  The API for this protocol supports both blocks and delegate/callbacks for easy asynchronous OSC communication.</li>
 <li>Built on a handful of small, easy-to-grok classes written specifically for OS X.  Very easy to understand, modify, subclass, or extend.</li>
 <li>Project includes targets that build and install an SDK for using VVOSC in iOS apps</li>
 </p>
@@ -124,9 +125,6 @@ newMsg = [OSCMessage createWithAddress:@"/Address/Path/1"];<BR>
 //	get the OSC address space<BR>
 OSCAddressSpace		*as = [OSCAddressSpace mainAddressSpace];<BR>
 <BR>
-//	dispatch an OSC message received from an OSCInPort to the address space<BR>
-[as dispatchMessage:receivedMessage];<BR>
-<BR>
 //	find/create a node in the address space<BR>
 OSCNode				*myNode = [as findNodeForAddress:@"/A/B/C" createIfMissing:YES];<BR>
 <BR>
@@ -136,11 +134,14 @@ OSCNode				*myNode = [as findNodeForAddress:@"/A/B/C" createIfMissing:YES];<BR>
 - (void) node:(id)n receivedOSCMessage:(OSCMessage *)msg	{<BR>
 	&nbsp;&nbsp;&nbsp;&nbsp;//	this method is called whenever the node receives OSC data because I'm one of the node's delegates<BR>
 }<BR>
+<BR>
+//	dispatch an OSC message received from an OSCInPort to the address space<BR>
+[as dispatchMessage:receivedMessage];<BR>
 </div>
 
 
 <BR>
-<big>Sample code- OSC query protocol, sending queries</big>
+<big>Sample code- OSC query protocol, sending queries (optional)</big>
 <div style="width: 100%; border: 1px #000 solid; background-color: #F0F0F0; padding: 5px; margin: 5px; color: black; font-family: Courier; font-size: 10pt; font-style: normal;">
 //	assemble the query message<BR>
 OSCMessage		*queryMsg = [OSCMessage createQueryType:OSCQueryTypeNamespaceExploration forAddress:@"/"];<BR>
@@ -168,7 +169,7 @@ OSCMessage		*queryMsg = [OSCMessage createQueryType:OSCQueryTypeNamespaceExplora
 
 
 <BR>
-<big>Sample code- OSC query protocol, responding to queries</big>
+<big>Sample code- OSC query protocol, responding to queries (optional)</big>
 <div style="width: 100%; border: 1px #000 solid; background-color: #F0F0F0; padding: 5px; margin: 5px; color: black; font-family: Courier; font-size: 10pt; font-style: normal;">
 //	get the OSC address space<BR>
 OSCAddressSpace		*as = [OSCAddressSpace mainAddressSpace];<BR>

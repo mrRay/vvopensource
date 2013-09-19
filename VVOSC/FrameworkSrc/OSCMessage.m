@@ -694,18 +694,22 @@
 	//NSLog(@"%s",__func__);
 	[self addValue:[OSCValue createWithFloat:n]];
 }
+- (void) addDouble:(double)n	{
+	[self addValue:[OSCValue createWithDouble:n]];
+}
 - (void) addString:(NSString *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	[self addValue:[OSCValue createWithString:n]];
 }
 #if IPHONE
 - (void) addColor:(UIColor *)c	{
-#else
-- (void) addColor:(NSColor *)c	{
-#endif
-	//NSLog(@"%s",__func__);
 	[self addValue:[OSCValue createWithColor:c]];
 }
+#else
+- (void) addColor:(NSColor *)c	{
+	[self addValue:[OSCValue createWithColor:c]];
+}
+#endif
 - (void) addBOOL:(BOOL)n	{
 	//NSLog(@"%s",__func__);
 	[self addValue:[OSCValue createWithBool:n]];
@@ -777,6 +781,23 @@
 	}
 	//	return -1.0 if i couldn't find the value!
 	return (float)-1.0;
+}
+- (double) calculateDoubleValue	{
+	return [self calculateDoubleValueAtIndex:0];
+}
+- (double) calculateDoubleValueAtIndex:(int)i	{
+	if (valueCount < 2)	{
+		if (value != nil)
+			return (i==0) ? [(OSCValue *)value calculateDoubleValue] : (double)0.0;
+		return (double)0.0;
+	}
+	//	get the OSCValue at the index
+	if ((i<valueCount)&&(valueArray!=nil))	{
+		OSCValue	*tmpVal = [valueArray objectAtIndex:i];
+		return (tmpVal != nil ) ? [tmpVal calculateDoubleValue] : (double)0.0;
+	}
+	//	return -1.0 if i couldn't find the value!
+	return (double)-1.0;
 }
 
 

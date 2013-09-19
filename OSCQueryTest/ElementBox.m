@@ -33,8 +33,10 @@
 		[myUIItem release];
 		myUIItem = nil;
 	}
-	if (myNode != nil)
+	if (myNode != nil)	{
 		[myNode removeFromAddressSpace];
+		myNode = nil;
+	}
 	deleted = YES;
 }
 - (void) dealloc	{

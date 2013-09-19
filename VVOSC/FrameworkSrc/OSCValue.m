@@ -27,7 +27,7 @@
 		case OSCValColor:
 			return [NSString stringWithFormat:@"<OSCVal r %@>",(id)value];
 		case OSCValMIDI:
-			return [NSString stringWithFormat:@"<OSCVal m %hhd-%hhd-%hhd-%hhd>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+			return [NSString stringWithFormat:@"<OSCVal m %d-%d-%d-%d>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
 			if (*(BOOL *)value)
 				return @"<OSCVal T>";
@@ -74,7 +74,7 @@
 #endif
 			
 		case OSCValMIDI:
-			return [NSString stringWithFormat:@"MIDI %hhd-%hhd-%hhd-%hhd>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+			return [NSString stringWithFormat:@"MIDI %d-%d-%d-%d>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
 			if (*(BOOL *)value)
 				return @"True";
@@ -617,35 +617,41 @@
 
 
 - (float) calculateFloatValue	{
-	float		returnMe = (float)0.0;
+	float		returnMe = 0.0;
+	double		tmp = [self calculateDoubleValue];
+	returnMe = tmp;
+	return returnMe;
+}
+- (double) calculateDoubleValue	{
+	double		returnMe = (double)0.0;
 	CGFloat		comps[4];
 	switch (type)	{
 		case OSCValInt:
-			returnMe = (float)(*(int *)value);
+			returnMe = (double)(*(int *)value);
 			break;
 		case OSCValFloat:
-			returnMe = *(float *)value;
+			returnMe = (double)*(float *)value;
 			break;
 		case OSCValString:
 			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
 			//return ROUNDUP4(([(NSString *)value length] + 1));
 			break;
 		case OSCValTimeTag:
-			returnMe = (float)(*((long long *)value)>>32);
-			returnMe += (float)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
+			returnMe = (double)(*((long long *)value)>>32);
+			returnMe += (double)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
 			/*
 			returnMe = *((long *)(value));
 			returnMe += *((long *)(value+1));
 			*/
 			break;
 		case OSCVal64Int:
-			returnMe = (float)(*(long long *)value);
+			returnMe = (double)(*(long long *)value);
 			break;
 		case OSCValDouble:
 			returnMe = (double)(*(double *)value);
 			break;
 		case OSCValChar:
-			returnMe = (float)(*(char *)value);
+			returnMe = (double)(*(char *)value);
 			break;
 		case OSCValColor:
 #if IPHONE
@@ -653,7 +659,7 @@
 #else
 			[(NSColor *)value getComponents:comps];
 #endif
-			returnMe = (float)(comps[0]+comps[1]+comps[2])/(float)3.0;
+			returnMe = (double)(comps[0]+comps[1]+comps[2])/(double)3.0;
 			break;
 		case OSCValMIDI:
 			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
@@ -663,22 +669,22 @@
 				case OSCMIDIUndefinedCommon1Val:
 				case OSCMIDIUndefinedCommon2Val:
 				case OSCMIDIEndSysexDumpVal:
-					returnMe = (float)0.0;
+					returnMe = (double)0.0;
 					break;
 				case OSCMIDINoteOnVal:
 				case OSCMIDIAfterTouchVal:
 				case OSCMIDIControlChangeVal:
-					returnMe = ((float)([self midiData2]))/(float)127.0;
+					returnMe = ((double)([self midiData2]))/(double)127.0;
 					break;
 				case OSCMIDIProgramChangeVal:
 				case OSCMIDIChannelPressureVal:
 				case OSCMIDIMTCQuarterFrameVal:
 				case OSCMIDISongSelectVal:
-					returnMe = ((float)([self midiData1]))/(float)127.0;
+					returnMe = ((double)([self midiData1]))/(double)127.0;
 					break;
 				case OSCMIDIPitchWheelVal:
 				case OSCMIDISongPosPointerVal:
-					returnMe = ((float)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/(float)16383.0;
+					returnMe = ((double)	((long)(([self midiData2] << 7) | ([self midiData1])))	)/(double)16383.0;
 					break;
 				case OSCMIDITuneRequestVal:
 				case OSCMIDIClockVal:
@@ -689,58 +695,58 @@
 				case OSCMIDIUndefinedRealtime1Val:
 				case OSCMIDIActiveSenseVal:
 				case OSCMIDIResetVal:
-					returnMe = (float)1.0;
+					returnMe = (double)1.0;
 					break;
 			}
 			break;
 		case OSCValBool:
-			returnMe = (*(BOOL *)value) ? (float)1.0 : (float)0.0;
+			returnMe = (*(BOOL *)value) ? (double)1.0 : (double)0.0;
 			break;
 		case OSCValNil:
-			returnMe = (float)0.0;
+			returnMe = (double)0.0;
 			break;
 		case OSCValInfinity:
-			returnMe = (float)1.0;
+			returnMe = (double)1.0;
 			break;
 		case OSCValArray:
-			returnMe = (float)0.0;
+			returnMe = (double)0.0;
 			break;
 		case OSCValBlob:
-			returnMe = (float)1.0;
+			returnMe = (double)1.0;
 			break;
 		case OSCValSMPTE:
 			returnMe = 0.0;
 			//	switching the "osc smpte fps mode", so i can convert frames into a double/seconds
 			switch ((*(int *)value) >> 28)	{
 				case OSCSMPTEFPS24:
-					returnMe += (float)((*(int *)value) & 0xFF)/24.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/24.0;
 					break;
 				case OSCSMPTEFPS25:
-					returnMe += (float)((*(int *)value) & 0xFF)/25.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/25.0;
 					break;
 				case OSCSMPTEFPS30:
-					returnMe += (float)((*(int *)value) & 0xFF)/30.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/30.0;
 					break;
 				case OSCSMPTEFPS48:
-					returnMe += (float)((*(int *)value) & 0xFF)/48.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/48.0;
 					break;
 				case OSCSMPTEFPS50:
-					returnMe += (float)((*(int *)value) & 0xFF)/50.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/50.0;
 					break;
 				case OSCSMPTEFPS60:
-					returnMe += (float)((*(int *)value) & 0xFF)/60.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/60.0;
 					break;
 				case OSCSMPTEFPS120:
-					returnMe += (float)((*(int *)value) & 0xFF)/120.0;
+					returnMe += (double)((*(int *)value) & 0xFF)/120.0;
 					break;
 				case OSCSMPTEFPSUnknown:
 				default:
 					break;
 			}
-			returnMe += (float)(((*(int *)value) >> 8) & 0x3F);	//	seconds
-			returnMe += (float)(((*(int *)value) >> 14) & 0x3F) * 60.0;	//	minutes
-			returnMe += (float)(((*(int *)value) >> 20) & 0x1F) * 60.0 * 60.0;	//	hours
-			returnMe += (float)(((*(int *)value) >> 25) & 0x07) * 60.0 * 60.0 * 24.0;	//	days
+			returnMe += (double)(((*(int *)value) >> 8) & 0x3F);	//	seconds
+			returnMe += (double)(((*(int *)value) >> 14) & 0x3F) * 60.0;	//	minutes
+			returnMe += (double)(((*(int *)value) >> 20) & 0x1F) * 60.0 * 60.0;	//	hours
+			returnMe += (double)(((*(int *)value) >> 25) & 0x07) * 60.0 * 60.0 * 24.0;	//	days
 			break;
 	}
 	return returnMe;

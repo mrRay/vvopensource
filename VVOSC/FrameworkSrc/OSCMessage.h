@@ -53,6 +53,8 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (void) addInt:(int)n;
 ///	Add the passed float to the message
 - (void) addFloat:(float)n;
+///	Add the passed double to the message
+- (void) addDouble:(double)n;
 ///	Add the passed string to the message
 - (void) addString:(NSString *)n;
 #if IPHONE
@@ -78,6 +80,11 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (float) calculateFloatValue;
 ///	Returns 0.0 if 'valueArray' is empty, otherwise calculates the float val for the OSCValue in 'valueArray' at the specified index
 - (float) calculateFloatValueAtIndex:(int)i;
+
+///	Returns 0.0 if 'valueArray' is empty, otherwise calculates the float val for the first OSCValue in 'valueArray'
+- (double) calculateDoubleValue;
+///	Returns 0.0 if 'valueArray' is empty, otherwise calculates the float val for the OSCValue in 'valueArray' at the specified index
+- (double) calculateDoubleValueAtIndex:(int)i;
 
 ///	Returns the address variable
 - (NSString *) address;
