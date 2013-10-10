@@ -71,6 +71,53 @@
 }
 //	NEVER CALL THIS METHOD DIRECTLY!
 - (void) _performWithDelegate:(id <VVCURLDLDelegate>)d	{
+	[self _execute];
+	
+	//	if there's a delegate, tell the delegate that shit's done
+	if ((d!=nil)&&([(id)d conformsToProtocol:@protocol(VVCURLDLDelegate)]))	{
+		if (returnOnMain)
+			[(id)d performSelectorOnMainThread:@selector(dlFinished:) withObject:self waitUntilDone:YES];
+		else
+			[(id)d dlFinished:self];
+	}
+	
+}
+
+
+- (void) performAsync:(BOOL)as withBlock:(void (^)(VVCURLDL *completedDL))b	{
+	//	if i'm performing asynchronously, spawn a thread (make an autorelease pool!) and go
+	if (as)
+		[NSThread detachNewThreadSelector:@selector(_performAsyncWithBlock:) toTarget:self withObject:b];
+	//	else just go
+	else
+		[self _performWithBlock:b];
+}
+- (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b	{
+	//	make a pool
+	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
+	//	perform the download
+	[self _performWithBlock:b];
+	//	release the pool
+	[pool release];
+}
+- (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b	{
+	[self _execute];
+	
+	if (b != nil)	{
+		__block VVCURLDL	*blockSafeSelf = self;
+		if (returnOnMain)	{
+			dispatch_async(dispatch_get_main_queue(), ^{
+				b(blockSafeSelf);
+			});
+		}
+		else	{
+			b(blockSafeSelf);
+		}
+	}
+}
+
+
+- (void) _execute	{
 	performing = YES;
 	curlHandle = curl_easy_init();
 	if (curlHandle)	{
@@ -150,15 +197,6 @@
 	}
 	
 	performing = NO;
-	
-	//	if there's a delegate, tell the delegate that shit's done
-	if ((d!=nil)&&([(id)d conformsToProtocol:@protocol(VVCURLDLDelegate)]))	{
-		if (returnOnMain)
-			[(id)d performSelectorOnMainThread:@selector(dlFinished:) withObject:self waitUntilDone:YES];
-		else
-			[(id)d dlFinished:self];
-	}
-	
 }
 
 

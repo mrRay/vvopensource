@@ -54,6 +54,12 @@
 - (void) _performAsyncWithDelegate:(id <VVCURLDLDelegate>)d;
 - (void) _performWithDelegate:(id <VVCURLDLDelegate>)d;
 
+- (void) performAsync:(BOOL)as withBlock:(void (^)(VVCURLDL *completedDL))b;
+- (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b;
+- (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b;
+
+- (void) _execute;
+
 //- (struct curl_slist *) headerList;
 //- (struct curl_httppost *) firstFormPtr;
 //- (struct curl_httppost *) lastFormPtr;
