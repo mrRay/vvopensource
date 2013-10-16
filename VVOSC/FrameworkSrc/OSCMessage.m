@@ -929,7 +929,8 @@
 			}
 		}
 	}
-	//	the type args has to be rounded up to the nearest 4 bytes (payload was rounded up when each val reported its bufferLength)
+	//	the type string is an OSC-string, which means it's terminated by a null character and then padded with enough 0s to make it a multiple of 4
+	++typeLength;
 	typeLength = ROUNDUP4(typeLength);
 	
 	return addressLength + typeLength + payloadLength;
