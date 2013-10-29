@@ -503,6 +503,8 @@ long			_spriteGLViewSysVers;
 
 - (void) setFrame:(NSRect)f	{
 	//NSLog(@"%s ... %@, (%0.2f, %0.2f) %0.2f x %0.2f",__func__, self, f.origin.x, f.origin.y, f.size.width, f.size.height);
+	if (deleted)
+		return;
 	pthread_mutex_lock(&glLock);
 		[super setFrame:f];
 		[self updateSprites];

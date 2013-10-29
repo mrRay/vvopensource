@@ -430,8 +430,8 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray unlock];
 }
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
-	NSLog(@"%s",__func__);
-	NSRectLog(@"\t\tpassed rect is",r);
+	//NSLog(@"%s",__func__);
+	//NSRectLog(@"\t\tpassed rect is",r);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];

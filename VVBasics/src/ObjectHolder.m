@@ -72,6 +72,17 @@
 	[self release];
 	return nil;
 }
+- (id) init	{
+	if (self = [super init])	{
+		deleted = NO;
+		object = nil;
+		zwr = nil;
+		return self;
+	}
+	NSLog(@"\t\terr: %s - BAIL",__func__);
+	[self release];
+	return nil;
+}
 - (void) dealloc	{
 	deleted = YES;
 	object = nil;

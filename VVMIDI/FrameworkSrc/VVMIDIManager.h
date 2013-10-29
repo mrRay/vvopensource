@@ -56,6 +56,7 @@
 - (NSArray *) destNodeFullNameArray;
 - (NSArray *) sourceNodeNameArray;
 - (NSArray *) sourceNodeFullNameArray;
+- (NSArray *) deviceNameArray;
 
 //	these methods exist so subclasses of me can override them to use custom subclasses of VVMIDINode
 - (id) receivingNodeClass;

@@ -34,6 +34,7 @@
 
 + (id) createWithObject:(id)o;
 + (id) createWithZWRObject:(id)o;
+- (id) init;
 - (id) initWithObject:(id)o;
 - (id) initWithZWRObject:(id)o;
 

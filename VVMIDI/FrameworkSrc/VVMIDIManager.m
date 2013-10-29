@@ -506,6 +506,18 @@
 	[sourceArray unlock];
 	return returnMe;
 }
+- (NSArray *) deviceNameArray	{
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
+	NSString			*tmpName = nil;
+	[sourceArray rdlock];
+	for (VVMIDINode *nodePtr in [sourceArray array])	{
+		tmpName = [nodePtr deviceName];
+		if (tmpName!=nil && ![returnMe containsObject:tmpName])
+			[returnMe addObject:tmpName];
+	}
+	[sourceArray unlock];
+	return returnMe;
+}
 
 //	these methods exist so subclasses of me can override them to use custom subclasses of VVMIDINode
 - (id) receivingNodeClass	{
