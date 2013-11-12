@@ -212,10 +212,10 @@
 		VVMAXX(localMacroDst), VVMAXY(localMacroDst), 0.0,												\
 		VVMINX(localMacroDst), VVMAXY(localMacroDst), 0.0};												\
 	GLfloat		vvMacroTexs[]={																			\
-		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
-		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
-		VVMAXX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc)),		\
-		VVMINX(localMacroSrc),	(!localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc))};		\
+		VVMINX(localMacroSrc),	(localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMAXX(localMacroSrc),	(localMacroFlip ? VVMAXY(localMacroSrc) : VVMINY(localMacroSrc)),		\
+		VVMAXX(localMacroSrc),	(localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc)),		\
+		VVMINX(localMacroSrc),	(localMacroFlip ? VVMINY(localMacroSrc) : VVMAXY(localMacroSrc))};		\
 	glVertexPointer(3,GL_FLOAT,0,vvMacroVerts);															\
 	glTexCoordPointer(2,GL_FLOAT,0,vvMacroTexs);														\
 	glBindTexture(localMacroTexTarget,texName);															\
