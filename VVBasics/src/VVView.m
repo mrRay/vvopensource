@@ -8,6 +8,7 @@
 
 #import "VVView.h"
 #import "VVBasicMacros.h"
+#import <OpenGL/CGLMacro.h>
 #import "VVSpriteGLView.h"
 
 
@@ -976,8 +977,6 @@
 	OSSpinLockUnlock(&propertyLock);
 	
 	
-	
-	
 	//	tell the sprite manager to draw
 	if (spriteManager != nil)
 		[spriteManager drawInContext:cgl_ctx];
@@ -995,6 +994,8 @@
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
+	
+	
 	//	if i have subviews, tell them to draw now- back to front...
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews rdlock];

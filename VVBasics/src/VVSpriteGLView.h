@@ -2,7 +2,6 @@
 #import <Cocoa/Cocoa.h>
 #import "VVSpriteManager.h"
 #import <OpenGL/OpenGL.h>
-#import <OpenGL/CGLMacro.h>
 #import <libkern/OSAtomic.h>
 
 

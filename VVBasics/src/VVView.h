@@ -10,7 +10,6 @@
 #import "VVSpriteManager.h"
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
-#import <OpenGL/CGLMacro.h>
 #include <AvailabilityMacros.h>
 
 
