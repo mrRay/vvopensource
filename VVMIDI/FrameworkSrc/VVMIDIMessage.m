@@ -86,6 +86,20 @@
 	}
 	return nil;
 }
+- (BOOL) isFullFrameSMPTE	{
+	if (sysexArray==nil)
+		return NO;
+	if ([sysexArray count]==10 && 
+	[[sysexArray objectAtIndex:0] intValue]==240 &&
+	[[sysexArray objectAtIndex:1] intValue]==127 &&
+	[[sysexArray objectAtIndex:2] intValue]==127 &&
+	[[sysexArray objectAtIndex:3] intValue]==1 &&
+	[[sysexArray objectAtIndex:4] intValue]==1 &&
+	[[sysexArray objectAtIndex:9] intValue]==247)	{
+		return YES;
+	}
+	return NO;
+}
 + (id) createWithType:(Byte)t channel:(Byte)c	{
 	return [[[VVMIDIMessage alloc] initWithType:t channel:c] autorelease];
 }
@@ -157,7 +171,7 @@
 		data1 = -1;
 		data2 = -1;
 		data3 = -1;
-		sysexArray = [s retain];
+		sysexArray = [s mutableCopy];
 		return self;
 	}
 	BAIL:

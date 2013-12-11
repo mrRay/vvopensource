@@ -26,6 +26,7 @@
 
 - (NSString *) description;
 - (NSString *) lengthyDescription;
+- (BOOL) isFullFrameSMPTE;
 
 - (Byte) type;
 - (void) setType:(Byte)newType;
