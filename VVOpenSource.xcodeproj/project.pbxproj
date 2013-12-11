@@ -298,6 +298,7 @@
 		96ACD741170641A700138AE6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96ACD742170641AA00138AE6 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */; };
+		96AD0AAD18577ADF00472548 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AD0AAC18577ADF00472548 /* AudioToolbox.framework */; };
 		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -843,6 +844,7 @@
 		96ACD7391706416400138AE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		96ACD7491706422D00138AE6 /* PingTestOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingTestOSCManager.h; sourceTree = "<group>"; };
 		96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PingTestOSCManager.m; sourceTree = "<group>"; };
+		96AD0AAC18577ADF00472548 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = ../../../../System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<group>"; };
 		96B49302106AEB4C008FB26E /* MIDIviaOSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDIviaOSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
 		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
@@ -885,6 +887,7 @@
 				96174626100F887E00FB60E6 /* VVBasics.framework in Frameworks */,
 				96174627100F888C00FB60E6 /* Cocoa.framework in Frameworks */,
 				96174644100F88EF00FB60E6 /* CoreMIDI.framework in Frameworks */,
+				96AD0AAD18577ADF00472548 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1295,6 +1298,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				96AD0AAC18577ADF00472548 /* AudioToolbox.framework */,
 				96ACD7231706416300138AE6 /* Cocoa.framework */,
 				96ACD7251706416300138AE6 /* Other Frameworks */,
 			);

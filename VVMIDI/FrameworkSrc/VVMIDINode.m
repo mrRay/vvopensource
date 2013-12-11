@@ -248,7 +248,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 
 - (void) loadProperties	{
 	//NSLog(@"%s",__func__);
-	OSStatus		err = noErr;
+	long		err = noErr;
 	CFStringRef		tmpString;
 	SInt32			tmpInt;
 	//CFDataRef		uids;
@@ -641,7 +641,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 - (double) MTCQuarterFrameSMPTEAsDouble	{
 	if (clockRef==NULL)
 		return (double)0.0;
-	OSStatus		err = noErr;
+	long		err = noErr;
 	CAClockTime		clockTime;
 	err = CAClockGetCurrentTime(clockRef, kCAClockTimeFormat_SMPTESeconds, &clockTime);
 	if (err != noErr)	{
@@ -736,7 +736,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 								newMsg = [VVMIDIMessage createWithSysexArray:sysex];
 								if (newMsg != nil)	{
 									if ([newMsg isFullFrameSMPTE])	{
-										OSStatus				err = noErr;
+										long					err = noErr;
 										CAClockRef				tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
 										CAClockSMPTEFormat		clockSMPTEFormat = kSMPTETimeType30;
 										UInt32					tmpSize = sizeof(clockSMPTEFormat);
@@ -897,7 +897,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							//	the high nibble is a number describing which "piece"- piece 7 contains SMPTE format data (and hours, but we don't care about that here)
 							if (highNibble == 7)	{
 								int			lowNibble = (mtcVal & 0x0F);
-								OSStatus	err = noErr;
+								long	err = noErr;
 								CAClockRef	tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
 								//UInt32		smpteType = ((lowNibble >> 1) & 0x03);	//	0-based, max val is 3. from 0, vals represent: 24fps, 25fps, 30-drop fps, 30fps.
 								UInt32		smpteType = 0;
@@ -933,7 +933,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 	
 	if (hadClockMsg)	{
 		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
-		OSStatus		err = CAClockParseMIDI(tmpClock, pktList);
+		long			err = CAClockParseMIDI(tmpClock, pktList);
 		if (err != noErr)
 			NSLog(@"\t\terr %ld at CAClockParseMIDI() in %s",err,__func__);
 	}
