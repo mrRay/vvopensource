@@ -116,4 +116,4 @@ VVOSC uses Doxygen; a copy of the generated documentation is hosted here:
 Licensing
 ---------
 
-This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html
+This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html.  Some classes in this project use code from other open-source projects- all third-party code and licensing information is located in the top-level "external" directory.  At present, the third-party code used includes MAZeroingWeakRef from Mike Ash, DDMathParser from Dave DeLong, and JSONKit by John Engelhart.
