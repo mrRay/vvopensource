@@ -185,7 +185,8 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 	properties = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
 	clientRef = 0;
 	portRef = 0;
-	clockRef = NULL;
+	mtcClockRef = NULL;
+	bpmClockRef = NULL;
 	name = nil;
 	delegate = nil;
 	sender = NO;
@@ -216,9 +217,13 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 		properties = nil;
 	}
 	
-	if (clockRef != NULL)	{
-		CAClockDispose(clockRef);
-		clockRef = NULL;
+	if (mtcClockRef != NULL)	{
+		CAClockDispose(mtcClockRef);
+		mtcClockRef = NULL;
+	}
+	if (bpmClockRef != NULL)	{
+		CAClockDispose(bpmClockRef);
+		bpmClockRef = NULL;
 	}
 	
 	if (clientRef)	{
@@ -327,10 +332,10 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 	//NSLog(@"\t\t%@",properties);
 	
 	BOOL		successful = NO;
-	//	create the clock, which will receive MTC and MIDI clock signals
+	//	create the clock, which will receive MTC
 	if (!sender)	{
 		//	create the clock
-		err = CAClockNew(0, &clockRef);
+		err = CAClockNew(0, &mtcClockRef);
 		if (err != noErr)	{
 			NSLog(@"\t\terror %ld at CAClockNew()",err);
 		}
@@ -338,20 +343,20 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			CAClockTimebase		timebase = kCAClockTimebase_HostTime;
 			UInt32				size = 0;
 			size = sizeof(timebase);
-			err = CAClockSetProperty(clockRef, kCAClockProperty_InternalTimebase, size, &timebase);
+			err = CAClockSetProperty(mtcClockRef, kCAClockProperty_InternalTimebase, size, &timebase);
 			if (err != noErr)
 				NSLog(@"\t\terr %ld setting internal timebase in %s",err,__func__);
 			else	{
 				UInt32		tSyncMode = kCAClockSyncMode_MTCTransport;
 				size = sizeof(tSyncMode);
-				err = CAClockSetProperty(clockRef, kCAClockProperty_SyncMode, size, &tSyncMode);
+				err = CAClockSetProperty(mtcClockRef, kCAClockProperty_SyncMode, size, &tSyncMode);
 				if (err != noErr)
 					NSLog(@"\t\terr %ld setting sync mode in %s",err,__func__);
 				else	{
 					/*
 					//	this should make the clock receive MIDI from the endpoint, but it doesn't work- instead i manually pass MIDI data to the clock (which parses and applies it)
 					size = sizeof(endpointRef);
-					err = CAClockSetProperty(clockRef, kCAClockProperty_SyncSource, size, endpointRef);
+					err = CAClockSetProperty(mtcClockRef, kCAClockProperty_SyncSource, size, endpointRef);
 					if (err != noErr)
 						NSLog(@"\t\terr %d setting sync source in %s for %@",err,__func__,properties);
 					else	{
@@ -359,22 +364,22 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 						/*
 						UInt32 tSMPTEType = kSMPTETimeType30;
 						size = sizeof(tSMPTEType);
-						err = CAClockSetProperty(clockRef, kCAClockProperty_SMPTEFormat, size, &tSMPTEType);
+						err = CAClockSetProperty(mtcClockRef, kCAClockProperty_SMPTEFormat, size, &tSMPTEType);
 						if (err != noErr)
 							NSLog(@"\t\terr %ld setting SMPTE format in %s",err,__func__);
 						else	{
 						*/
 							CAClockSeconds freeWheelTime = 0.2;
 							size = sizeof(freeWheelTime);
-							err = CAClockSetProperty(clockRef, kCAClockProperty_MTCFreewheelTime, size, &freeWheelTime);
+							err = CAClockSetProperty(mtcClockRef, kCAClockProperty_MTCFreewheelTime, size, &freeWheelTime);
 							if (err != noErr)
 								NSLog(@"\t\terr %ld setting freewheel time in %s",err,__func__);
 							else	{
-								err = CAClockAddListener(clockRef, clockListenerProc, self);
+								err = CAClockAddListener(mtcClockRef, clockListenerProc, self);
 								if (err != noErr)
 									NSLog(@"\t\terr %ld adding listener in %s",err,__func__);
 								else	{
-									err = CAClockArm(clockRef);
+									err = CAClockArm(mtcClockRef);
 									if (err != noErr)
 										NSLog(@"\t\ter %ld arming clock in %s",err,__func__);
 									else
@@ -391,10 +396,56 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			}
 			
 			//	if i wasn't successful, get rid of the clock
-			if (!successful && clockRef!=NULL)	{
+			if (!successful && mtcClockRef!=NULL)	{
 				NSLog(@"\t\terr %@ disposing clock, %s",name,__func__);
-				CAClockDispose(clockRef);
-				clockRef = NULL;
+				CAClockDispose(mtcClockRef);
+				mtcClockRef = NULL;
+			}
+		}
+	}
+	
+	successful = NO;
+	//	create the clock, which will receive MTC
+	if (!sender)	{
+		//	create the clock
+		err = CAClockNew(0, &bpmClockRef);
+		if (err != noErr)	{
+			NSLog(@"\t\terror %ld at CAClockNew()",err);
+		}
+		else	{
+			CAClockTimebase		timebase = kCAClockTimebase_HostTime;
+			UInt32				size = 0;
+			size = sizeof(timebase);
+			err = CAClockSetProperty(bpmClockRef, kCAClockProperty_InternalTimebase, size, &timebase);
+			if (err != noErr)
+				NSLog(@"\t\terr %ld setting internal timebase in %s",err,__func__);
+			else	{
+				UInt32		tSyncMode = kCAClockSyncMode_MIDIClockTransport;
+				size = sizeof(tSyncMode);
+				err = CAClockSetProperty(bpmClockRef, kCAClockProperty_SyncMode, size, &tSyncMode);
+				if (err != noErr)
+					NSLog(@"\t\terr %ld setting sync mode in %s",err,__func__);
+				else	{
+					CAClockSeconds freeWheelTime = 0.2;
+					size = sizeof(freeWheelTime);
+					err = CAClockAddListener(bpmClockRef, clockListenerProc, self);
+					if (err != noErr)
+						NSLog(@"\t\terr %ld adding listener in %s",err,__func__);
+					else	{
+						err = CAClockArm(bpmClockRef);
+						if (err != noErr)
+							NSLog(@"\t\ter %ld arming clock in %s",err,__func__);
+						else
+							successful = YES;
+					}
+				}
+			}
+			
+			//	if i wasn't successful, get rid of the clock
+			if (!successful && bpmClockRef!=NULL)	{
+				NSLog(@"\t\terr %@ disposing clock, %s",name,__func__);
+				CAClockDispose(bpmClockRef);
+				bpmClockRef = NULL;
 			}
 		}
 	}
@@ -586,8 +637,11 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 - (NSMutableDictionary *) properties	{
 	return properties;
 }
-- (CAClockRef) clockRef	{
-	return clockRef;
+- (CAClockRef) mtcClockRef	{
+	return mtcClockRef;
+}
+- (CAClockRef) bpmClockRef	{
+	return bpmClockRef;
 }
 - (NSString *) name	{
 	return name;
@@ -639,17 +693,50 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 	twoPieceCCVals[c][cc+32] = lsb;
 }
 - (double) MTCQuarterFrameSMPTEAsDouble	{
-	if (clockRef==NULL)
+	if (mtcClockRef==NULL)
 		return (double)0.0;
 	long		err = noErr;
 	CAClockTime		clockTime;
-	err = CAClockGetCurrentTime(clockRef, kCAClockTimeFormat_SMPTESeconds, &clockTime);
+	err = CAClockGetCurrentTime(mtcClockRef, kCAClockTimeFormat_SMPTESeconds, &clockTime);
 	if (err != noErr)	{
 		NSLog(@"\t\terr %ld at CAClockGetCurrentTime() in %s",err,__func__);
 		return (double)0.0;
 	}
 	Float64		tmpClockTime = clockTime.time.seconds;
 	double		returnMe = (double)tmpClockTime;
+	return returnMe;
+}
+- (double) midiClockBeats	{
+	if (bpmClockRef==NULL)
+		return (double)0.0;
+	long			err = noErr;
+	CAClockTime		clockTime;
+	err = CAClockGetCurrentTime(bpmClockRef, kCAClockTimeFormat_Beats, &clockTime);
+	if (err != noErr)	{
+		NSLog(@"\t\terr %ld at CAClockGetCurrentTime() in %s",err,__func__);
+		return (double)0.0;
+	}
+	Float64		tmpClockTime = clockTime.time.beats;
+	double		returnMe = (double)tmpClockTime;
+	return returnMe;
+}
+- (double) midiClockBPM	{
+	if (bpmClockRef==NULL)
+		return (double)0.0;
+	long			err = noErr;
+	CAClockTempo	tempo;
+	err = CAClockGetCurrentTempo(bpmClockRef, &tempo, NULL);
+	if (err != noErr)	{
+		NSLog(@"\t\terr %ld at CAClockGetCurrentTempo() in %s",err,__func__);
+		return (double)0.0;
+	}
+	Float64			playRate;
+	err = CAClockGetPlayRate(bpmClockRef, &playRate);
+	if (err != noErr)	{
+		NSLog(@"\t\terr %ld at CAClockGetPlayRate() in %s",err,__func__);
+		return (double)0.0;
+	}
+	double			returnMe = (double)(tempo * playRate);
 	return returnMe;
 }
 
@@ -670,6 +757,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 	int						processingSysexIterationCount = [(VVMIDINode *)readProcRefCon processingSysexIterationCount];
 	NSMutableArray			*sysex = [(VVMIDINode *)readProcRefCon sysexArray];
 	NSMutableArray			*msgs = [NSMutableArray arrayWithCapacity:0];
+	BOOL					hadMTCMsg = NO;
 	BOOL					hadClockMsg = NO;
 	
 	//	first of all, if i'm processing sysex, bump the iteration count
@@ -720,7 +808,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 						switch (currByte)	{
 							//	common messages- insert leisurely
 							case VVMIDIMTCQuarterFrameVal:
-								hadClockMsg = YES;
+								hadMTCMsg = YES;
 							case VVMIDISongPosPointerVal:
 							case VVMIDISongSelectVal:
 							case VVMIDIUndefinedCommon1Val:
@@ -737,7 +825,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 								if (newMsg != nil)	{
 									if ([newMsg isFullFrameSMPTE])	{
 										long					err = noErr;
-										CAClockRef				tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
+										CAClockRef				tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
 										CAClockSMPTEFormat		clockSMPTEFormat = kSMPTETimeType30;
 										UInt32					tmpSize = sizeof(clockSMPTEFormat);
 										//	get the SMPTE format from the clock
@@ -783,6 +871,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIUndefinedRealtime1Val:
 							case VVMIDIActiveSenseVal:
 							case VVMIDIResetVal:
+								hadClockMsg = YES;
 								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
 								if (newMsg != nil)	{
 									[msgs addObject:newMsg];
@@ -891,14 +980,14 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 						/*	if the last MIDI msg was a MTC quarter-frame message, it will be passed on to the CAClockRef.  however, 
 						if the CAClockRef's SMPTE mode doesn't match the SMPTE mode of the incoming message, it will be ignored.  this 
 						isn't desirable, so we pull the SMPTE mode out of the message and apply it to the clock anyway.		*/
-						if (hadClockMsg)	{
+						if (hadMTCMsg)	{
 							Byte		mtcVal = [newMsg data1];
 							int			highNibble = ((mtcVal >> 4) & 0x0F);
 							//	the high nibble is a number describing which "piece"- piece 7 contains SMPTE format data (and hours, but we don't care about that here)
 							if (highNibble == 7)	{
 								int			lowNibble = (mtcVal & 0x0F);
 								long	err = noErr;
-								CAClockRef	tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
+								CAClockRef	tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
 								//UInt32		smpteType = ((lowNibble >> 1) & 0x03);	//	0-based, max val is 3. from 0, vals represent: 24fps, 25fps, 30-drop fps, 30fps.
 								UInt32		smpteType = 0;
 								UInt32		tmpSize = sizeof(UInt32);
@@ -931,11 +1020,17 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 		packet = MIDIPacketNext(packet);
 	}
 	
-	if (hadClockMsg)	{
-		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon clockRef];
+	if (hadMTCMsg)	{
+		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
 		long			err = CAClockParseMIDI(tmpClock, pktList);
 		if (err != noErr)
-			NSLog(@"\t\terr %ld at CAClockParseMIDI() in %s",err,__func__);
+			NSLog(@"\t\terr %ld at CAClockParseMIDI() for MTC in %s",err,__func__);
+	}
+	if (hadClockMsg)	{
+		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon bpmClockRef];
+		long			err = CAClockParseMIDI(tmpClock, pktList);
+		if (err != noErr)
+			NSLog(@"\t\terr %ld at CAClockParseMIDI() for BPM in %s",err,__func__);
 	}
 	
 	//	update the sysex-related flags in the actual VVMIDINode object

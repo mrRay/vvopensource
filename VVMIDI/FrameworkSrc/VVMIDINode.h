@@ -17,7 +17,9 @@ extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, C
 	NSMutableDictionary		*properties;	//	dict or source properties (just for the hell of it)
 	MIDIClientRef			clientRef;		//	the client receives the data
 	MIDIPortRef				portRef;		//	the port is owned by the client, and connects it to the endpoint
-	CAClockRef				clockRef;
+	CAClockRef				mtcClockRef;
+	CAClockRef				bpmClockRef;
+	
 	NSString				*name;
 	NSString				*deviceName;
 	id						delegate;		//	the delegate will be passed any data i receive
@@ -60,7 +62,7 @@ extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, C
 
 - (MIDIEndpointRef) endpointRef;
 - (NSMutableDictionary *) properties;
-- (CAClockRef) clockRef;
+- (CAClockRef) mtcClockRef;
 - (NSString *) name;
 - (NSString *) deviceName;
 - (NSString *) fullName;
@@ -76,6 +78,8 @@ extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, C
 - (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb;
 - (void) _setValsForCC:(int)cc channel:(int)c fromMSB:(int)msb LSB:(int)lsb;
 - (double) MTCQuarterFrameSMPTEAsDouble;
+- (double) midiClockBeats;
+- (double) midiClockBPM;
 
 @end
 
