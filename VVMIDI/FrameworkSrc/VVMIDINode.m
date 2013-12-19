@@ -1067,19 +1067,19 @@ void clockListenerProc(void *userData, CAClockMessage msg, const void *param)	{
 	//NSLog(@"%s",__func__);
 	switch (msg)	{
 		case kCAClockMessage_StartTimeSet:
-			NSLog(@"\t\tclock start time set");
+			//NSLog(@"\t\tclock start time set");
 			break;
 		case kCAClockMessage_Started:
-			NSLog(@"\t\tclock started");
+			//NSLog(@"\t\tclock started");
 			break;
 		case kCAClockMessage_Stopped:
-			NSLog(@"\t\tclock stopped");
+			//NSLog(@"\t\tclock stopped");
 			break;
 		case kCAClockMessage_Armed:
-			NSLog(@"\t\tclock armed");
+			//NSLog(@"\t\tclock armed");
 			break;
 		case kCAClockMessage_Disarmed:
-			NSLog(@"\t\tclock disarmed");
+			//NSLog(@"\t\tclock disarmed");
 			break;
 		case kCAClockMessage_PropertyChanged:
 			NSLog(@"\t\tclock property changed");

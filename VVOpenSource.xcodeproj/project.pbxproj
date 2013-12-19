@@ -122,6 +122,7 @@
 		966CCC6214322FBD006D580F /* ElementChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC6114322FBD006D580F /* ElementChain.m */; };
 		966CCC6514322FCA006D580F /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC6414322FCA006D580F /* AppController.m */; };
 		966CCC6814322FD6006D580F /* NetworkSetupController.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC6714322FD6006D580F /* NetworkSetupController.m */; };
+		966D3E9518634F8000A7BE9E /* LICENSE in Headers */ = {isa = PBXBuildFile; fileRef = 96C00549185A477000C33FE2 /* LICENSE */; settings = {ATTRIBUTES = (Public, ); }; };
 		96765969100F818900E02974 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9676596A100F818F00E02974 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
@@ -549,7 +550,6 @@
 
 /* Begin PBXFileReference section */
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		20136A24140E67E900EE499E /* assembleSDK.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = assembleSDK.sh; path = scripts/assembleSDK.sh; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
@@ -840,43 +840,20 @@
 		0867D691FE84028FC02AAC07 /* VVOpenSource */ = {
 			isa = PBXGroup;
 			children = (
-				961EA8F2100E85CB007E6C25 /* VVBasics framework */,
-				96C18C30185A1A740082DE35 /* VVBasicsStatic */,
-				96174601100F879900FB60E6 /* VVMIDI framework */,
-				9628D0CA100E8A0100C3944E /* VVOSC framework */,
-				96C18C40185A1A7D0082DE35 /* VVOSCStatic */,
-				968FAA6D108B60C6000E470D /* CrashReporterTestApp */,
-				9656D910100F89F70064EEA6 /* MIDITestApp */,
-				9628D17F100E8B5B00C3944E /* OSCTestApp */,
-				96B4931F106AEB8A008FB26E /* MIDI via OSC app */,
-				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
-				96C00547185A445B00C33FE2 /* EXTERNAL PROJECTS */,
+				966D3E9718634FF000A7BE9E /* Frameworks & Static Libs */,
+				966D3E9618634FE900A7BE9E /* Applications */,
+				96C00547185A445B00C33FE2 /* EXTERNAL CODE */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
-				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
-				96ACD7291706416400138AE6 /* OSCPingTester */,
 				96ACD7221706416300138AE6 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
 			sourceTree = "<group>";
 		};
-		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
-				96A99011108CEA2600895DC1 /* Foundation.framework */,
-				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
-				9617463E100F88EC00FB60E6 /* CoreMIDI.framework */,
-				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
-			);
-			name = "External Frameworks and Libraries";
-			sourceTree = "<group>";
-		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
 				969FCE94120DB9A10067E617 /* lgpl-3.0.txt */,
-				20136A24140E67E900EE499E /* assembleSDK.sh */,
 				32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */,
 			);
 			name = "Other Sources";
@@ -1018,6 +995,31 @@
 			name = OSCQueryTest;
 			sourceTree = "<group>";
 		};
+		966D3E9618634FE900A7BE9E /* Applications */ = {
+			isa = PBXGroup;
+			children = (
+				968FAA6D108B60C6000E470D /* CrashReporterTestApp */,
+				9656D910100F89F70064EEA6 /* MIDITestApp */,
+				9628D17F100E8B5B00C3944E /* OSCTestApp */,
+				96B4931F106AEB8A008FB26E /* MIDI via OSC app */,
+				966CCBDE1431EFC1006D580F /* OSCQueryTest */,
+				96ACD7291706416400138AE6 /* OSCPingTester */,
+			);
+			name = Applications;
+			sourceTree = "<group>";
+		};
+		966D3E9718634FF000A7BE9E /* Frameworks & Static Libs */ = {
+			isa = PBXGroup;
+			children = (
+				961EA8F2100E85CB007E6C25 /* VVBasics framework */,
+				96C18C30185A1A740082DE35 /* VVBasicsStatic */,
+				96174601100F879900FB60E6 /* VVMIDI framework */,
+				9628D0CA100E8A0100C3944E /* VVOSC framework */,
+				96C18C40185A1A7D0082DE35 /* VVOSCStatic */,
+			);
+			name = "Frameworks & Static Libs";
+			sourceTree = "<group>";
+		};
 		968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1091,6 +1093,11 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
+				96A99011108CEA2600895DC1 /* Foundation.framework */,
+				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
+				9617463E100F88EC00FB60E6 /* CoreMIDI.framework */,
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
 				96AD0AAC18577ADF00472548 /* AudioToolbox.framework */,
 				96ACD7231706416300138AE6 /* Cocoa.framework */,
 				96C18C2E185A1A740082DE35 /* Foundation.framework */,
@@ -1149,12 +1156,12 @@
 			name = "MIDI via OSC app";
 			sourceTree = "<group>";
 		};
-		96C00547185A445B00C33FE2 /* EXTERNAL PROJECTS */ = {
+		96C00547185A445B00C33FE2 /* EXTERNAL CODE */ = {
 			isa = PBXGroup;
 			children = (
 				96C00548185A447900C33FE2 /* MAZeroingWeakRef */,
 			);
-			name = "EXTERNAL PROJECTS";
+			name = "EXTERNAL CODE";
 			sourceTree = "<group>";
 		};
 		96C00548185A447900C33FE2 /* MAZeroingWeakRef */ = {
@@ -1221,6 +1228,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				966D3E9518634F8000A7BE9E /* LICENSE in Headers */,
 				969FCE9E120DB9DA0067E617 /* lgpl-3.0.txt in Headers */,
 				961EA957100E8834007E6C25 /* MutLockArray.h in Headers */,
 				961EA959100E8834007E6C25 /* MutLockDict.h in Headers */,
@@ -1501,7 +1509,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1962,7 +1970,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
@@ -1974,14 +1982,14 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
@@ -1991,7 +1999,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};
@@ -1999,6 +2007,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2018,6 +2027,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2038,6 +2048,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2058,6 +2069,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2079,6 +2091,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2098,6 +2111,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2118,6 +2132,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2140,6 +2155,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -2163,6 +2179,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2185,6 +2202,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -2207,6 +2225,7 @@
 		96677EDE100F7CF300163134 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2217,6 +2236,7 @@
 		96677EDF100F7CF300163134 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				PRODUCT_NAME = Untitled;
@@ -2228,6 +2248,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2250,6 +2271,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -2272,6 +2294,7 @@
 		968A7EEC185BA3100075DEB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2279,6 +2302,7 @@
 		968A7EED185BA3100075DEB1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2287,6 +2311,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2309,6 +2334,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -2356,7 +2382,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "OSCPingTester/OSCPingTester-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2385,7 +2410,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "OSCPingTester/OSCPingTester-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2395,6 +2419,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -2417,6 +2442,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
