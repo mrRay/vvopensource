@@ -75,30 +75,21 @@ If you're writing a plugin, you need to weak-link against these frameworks.  If 
 How to use VVOSC in your iPhone application
 -------------------------------------------
 
-To the best of my knowledge, Apple doesn't allow you to use external libraries in iPhone apps, so the workaround is to compile VVOSC as a static library, install it on your dev machine as an SDK, and compile against it.  This process has been largely automated: here's what you need to do:
+In addition to frameworks for development of mac apps, this project can produce static libraries for use with iOS app creation.  Here's how to use the static libs in your project:
+  1.  Open your project in XCode, and make sure that the VVOpenSource project is closed.
+  2.  In the Finder, drag "VVOpenSource.xcodeproj" into your project's workspace
+  3.  Switch back to XCode, and locate the "Build Phases" settings.
+  4.  Add a target dependency for "Build iOS static libs (VVOpenSource)".
+  5.  Add "libVVBasics.a" and "libVVOSC.a" to the "Link Binary with Libraries" section.
+  6.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import \<VVOSC/VVOSC.h\>).
 
-  1.  Open the VVOpenSource project in XCode
-  2.  In XCode, make "Build/Install VVOSC iPhone SDK" your active target.  Make sure the build mode is set to "Release", and build the target.  Each of the static libraries (iPhone, iPhone sim, and OS X) executes a shellscript which installs it as an SDK in ~/Library/SDKs/.  If you have a problem- if the compile fails- please watch this video, which will probably explain how to fix your problem: http://vidvox.com/rays_oddsnends/UpdatingVVOSC.mov
-  3.  When it's done building, quit XCode, and then open your application's XCode project.
-  4.  Double-click your application/target in the left-hand list in your project window (or select it and get its info).  Click on the "Build" tab.
-  5.  Find the "Additional SDKs" option, and add "$HOME/Library/SDKs/VVOSC/$(PLATFORM_NAME).sdk"
-  6.  Still in the "Additional SDKs" option, add "$HOME/Library/SDKs/VVBasics/$(PLATFORM_NAME).sdk"
-  7.  Find the "Other Linker Flags" option, and add "-ObjC -lVVOSC -lVVBasics"
-  8.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import <VVOSC/VVOSC.h>).
-
-
-Compiling the SDKs failed, there are a bunch of warnings about missing SDKS!  What do I do?!?
----------------------------------------------------------------------------------------------
-
-Some targets in this project (the VVOSC/VVBasics SDKs for iOS) explicitly reference a certain version of the iOS SDKs.  If you don't have that version of the iOS SDK installed, compiling the VVOSC/VVBasics iOS SDKs will fail- the solution is to update your project so it uses whatever version of the iOS SDKs you installed.  Here's how:
-
-http://vidvox.com/rays_oddsnends/UpdatingVVOSC.mov
+Here's a quick video demonstrating the above steps:[http://vidvox.net/rays_oddsnends/addingVVOSC.mov].
 
 
 Using VVBasics/VVOSC/etc. in closed-source iOS applications
 -----------------------------------------------------------
 
-Apple doesn't permit dynamic libraries to be used on iOS devices; as a result of this, the VVOSC SDK created by this project is a static library (you compile it, and then use the static lib to compile your iOS applications).  Recently it's been brought to my attention that the LGPL doesn't cover static libraries, so I hereby grant permission to treat the static lib compiled by this project as if it were a dynamic lib with respect to the terms of the LGPL.  All the terms and provisions which apply to dynamic libs are conferred to the VVOSC SDK.  If you have a question about this, feel free to either email me directly or open an issue in the project for clarification.
+At some point it was brought to my attention that the LGPL doesn't cover static libraries, so I hereby grant permission to treat the static lib compiled by this project as if it were a dynamic lib with respect to the terms of the LGPL.  All the terms and provisions which apply to dynamic libs are conferred to the VVOSC SDK.  If you have a question about this, feel free to either email me directly or open an issue in the project for clarification.
 
 
 Documentation and sample code
