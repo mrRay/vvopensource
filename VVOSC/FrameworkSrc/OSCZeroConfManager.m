@@ -9,13 +9,16 @@
 @implementation OSCZeroConfManager
 
 
-- (id) initWithOSCManager:(id)m	{
+- (id) initWithOSCManager:(id)m serviceType:(NSString *)t {
 	if (m == nil)
 		goto BAIL;
 	//NSLog(@"%s",__func__);
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
+        
+        serviceTypeString = t;
+        
 		pthread_rwlockattr_init(&attr);
 		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_PRIVATE);
@@ -183,7 +186,7 @@
 	//NSLog(@"%s ... %@, %d",__func__,d,m);
 	OSCZeroConfDomain	*newDomain = nil;
 	
-	newDomain = [OSCZeroConfDomain createWithDomain:d andDomainManager:self];
+	newDomain = [OSCZeroConfDomain createWithDomain:d andDomainManager:self serviceType:serviceTypeString];
 	if (newDomain != nil)	{
 		pthread_rwlock_wrlock(&domainLock);
 			[domainDict setObject:newDomain forKey:d];

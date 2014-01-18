@@ -54,11 +54,11 @@
 	VVMIDIMessage		*msg = nil;
 	
 	//	create a message
-	msg = [VVMIDIMessage createFromVals:
-		VVMIDIControlChangeVal:
-		[channelField intValue]:
-		[ctrlField intValue]:
-		floor(127*[sender floatValue])];
+	msg = [VVMIDIMessage createFromVals:VVMIDIControlChangeVal
+                                       :[channelField intValue]
+                                       :[ctrlField intValue]
+                                       :floor(127*[sender floatValue])
+                              timestamp:AudioGetCurrentHostTime()];
 	
 	/*
 	NSArray		*tmpArray = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedChar:0x7F],[NSNumber numberWithUnsignedChar:0x7E],nil];

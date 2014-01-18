@@ -41,6 +41,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4DF87EEC188B2AD100FEB6F1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF87EEB188B2AD100FEB6F1 /* CoreAudio.framework */; };
+		4DF87EED188B2AED00FEB6F1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF87EEB188B2AD100FEB6F1 /* CoreAudio.framework */; };
 		5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
 		96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */ = {isa = PBXBuildFile; fileRef = 96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -551,6 +553,7 @@
 /* Begin PBXFileReference section */
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
+		4DF87EEB188B2AD100FEB6F1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
 		96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCrashReporterEmailField.h; path = VVBasics/src/VVCrashReporterEmailField.h; sourceTree = "<group>"; };
@@ -715,6 +718,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DF87EEC188B2AD100FEB6F1 /* CoreAudio.framework in Frameworks */,
 				96174626100F887E00FB60E6 /* VVBasics.framework in Frameworks */,
 				96174627100F888C00FB60E6 /* Cocoa.framework in Frameworks */,
 				96174644100F88EF00FB60E6 /* CoreMIDI.framework in Frameworks */,
@@ -756,6 +760,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DF87EED188B2AED00FEB6F1 /* CoreAudio.framework in Frameworks */,
 				9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */,
 				9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */,
 				9656D90F100F89ED0064EEA6 /* VVMIDI.framework in Frameworks */,
@@ -1093,6 +1098,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4DF87EEB188B2AD100FEB6F1 /* CoreAudio.framework */,
 				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
 				96A99011108CEA2600895DC1 /* Foundation.framework */,
 				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
@@ -1509,7 +1515,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1970,7 +1976,6 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
@@ -1982,14 +1987,13 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/build";
@@ -1999,7 +2003,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2358,7 +2362,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2391,7 +2394,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

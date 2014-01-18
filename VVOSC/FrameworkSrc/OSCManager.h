@@ -44,12 +44,15 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 	Class					inPortClass;
 	NSString				*inPortLabelBase;
 	Class					outPortClass;
+    
+    NSString                *serviceTypeString; // Defaults to "_osc._udp"
 }
 
 //	used to generate the IP addresses for this host
 + (NSArray *) hostIPv4Addresses;
 
-- (id) initWithInPortClass:(Class)i outPortClass:(Class)o;
+- (id) initWithServiceType:(NSString *)t;
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t;
 - (void) _generalInit;
 
 ///	Deletes all input ports

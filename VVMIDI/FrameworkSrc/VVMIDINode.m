@@ -481,6 +481,10 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 	MIDIPacket		*newPacket = nil;
 	OSStatus		err = noErr;
 	
+    uint64_t        timestamp = [m timestamp];
+    
+    if(!timestamp) timestamp = AudioGetCurrentHostTime();
+    
 	//	lock so threads sending midi data don't collide
 	pthread_mutex_lock(&sendingLock);
 	
@@ -510,7 +514,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			//NSLog(@"\t%X",bufferPtr[i]);
 		}
 		*/
-		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,[msgSysexArray count]+2,bufferPtr);
+		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,[msgSysexArray count]+2,bufferPtr);
 		free(bufferPtr);
 		if (newPacket == NULL)	{
 			NSLog(@"\terr adding new sysex packet");
@@ -530,14 +534,14 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			case VVMIDISongPosPointerVal:	//	+2 data bytes
 				scratchStruct[1] = [m data1];
 				scratchStruct[2] = [m data2];
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,3,scratchStruct);
 				break;
 			case VVMIDIMTCQuarterFrameVal:	//	+1 data byte
 			case VVMIDISongSelectVal:		//	+1 data byte
 			case VVMIDIProgramChangeVal:	//	+1 data byte
 			case VVMIDIChannelPressureVal:	//	+1 data type
 				scratchStruct[1] = [m data1];
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,2,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,2,scratchStruct);
 				break;
 			case VVMIDITuneRequestVal:		//	no data bytes
 			case VVMIDIClockVal:			//	no data bytes
@@ -547,7 +551,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			case VVMIDIStopVal:				//	no data bytes
 			case VVMIDIActiveSenseVal:		//	no data bytes
 			case VVMIDIResetVal:			//	no data bytes
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,1,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,1,scratchStruct);
 				break;
 		}
 		if (newPacket == NULL)	{
@@ -595,8 +599,12 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 		scratchStruct[0] = [msgPtr type] | [msgPtr channel];
 		scratchStruct[1] = [msgPtr data1];
 		scratchStruct[2] = [msgPtr data2];
+        
+        uint64_t timestamp = [msgPtr timestamp];
+        
+        if(!timestamp) timestamp = AudioGetCurrentHostTime();
 		
-		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,[msgPtr timestamp],3,scratchStruct);
 		if (newPacket == NULL)	{
 			NSLog(@"\t\terror adding new packet");
 			return;
@@ -782,7 +790,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 				
 				switch((currByte & 0xF0))	{
 					case VVMIDIControlChangeVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F)];
+						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:AudioGetCurrentHostTime()];
 						if (newMsg == nil)	{
 							break;
 						}
@@ -797,7 +805,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 					case VVMIDIProgramChangeVal:
 					case VVMIDIChannelPressureVal:
 					case VVMIDIPitchWheelVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F)];
+						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:AudioGetCurrentHostTime()];
 						if (newMsg == nil)	{
 							break;
 						}
@@ -814,14 +822,14 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIUndefinedCommon1Val:
 							case VVMIDIUndefinedCommon2Val:
 							case VVMIDITuneRequestVal:
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
+								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:AudioGetCurrentHostTime()];
 								if (newMsg != nil)	{
 									[msgs addObject:newMsg];
 									msgElementCount = 0;
 								}
 								break;
 							case VVMIDIEndSysexDumpVal:
-								newMsg = [VVMIDIMessage createWithSysexArray:sysex];
+								newMsg = [VVMIDIMessage createWithSysexArray:sysex timestamp:AudioGetCurrentHostTime()];
 								if (newMsg != nil)	{
 									if ([newMsg isFullFrameSMPTE])	{
 										long					err = noErr;
@@ -872,7 +880,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIActiveSenseVal:
 							case VVMIDIResetVal:
 								hadClockMsg = YES;
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
+								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:AudioGetCurrentHostTime()];
 								if (newMsg != nil)	{
 									[msgs addObject:newMsg];
 								}

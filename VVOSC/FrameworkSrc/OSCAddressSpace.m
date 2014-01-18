@@ -24,7 +24,7 @@ id				_mainVVOSCAddressSpace;
 #if !IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a	{
 	NSMenu				*returnMe = nil;
-	NSMutableIndexSet	*tmpSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeString+1)];
+	NSMutableIndexSet	*tmpSet = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeString+1)];
 	returnMe = [OSCAddressSpace
 		makeMenuForNode:n
 		ofType:tmpSet

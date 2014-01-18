@@ -8,16 +8,16 @@
 @implementation OSCZeroConfDomain
 
 
-+ (id) createWithDomain:(NSString *)d andDomainManager:(id)m	{
++ (id) createWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t {
 	if ((d == nil) || (m == nil))
 		return nil;
 	OSCZeroConfDomain		*returnMe = nil;
-	returnMe = [[OSCZeroConfDomain alloc] initWithDomain:d andDomainManager:m];
+	returnMe = [[OSCZeroConfDomain alloc] initWithDomain:d andDomainManager:m serviceType:t];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithDomain:(NSString *)d andDomainManager:(id)m	{
+- (id) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t {
 	if ((d == nil) || (m == nil))
 		goto BAIL;
 	
@@ -32,7 +32,7 @@
 		serviceBrowser = [[NSNetServiceBrowser alloc] init];
 		[serviceBrowser setDelegate:(id)self];
 		//[serviceBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
-		[serviceBrowser searchForServicesOfType:@"_osc._udp" inDomain:domainString];
+		[serviceBrowser searchForServicesOfType:t inDomain:domainString];
 		
 		return self;
 	}
