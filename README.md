@@ -1,6 +1,15 @@
 vvopensource
 ============
 
+Mark Eats Fork
+--------------
+
+This fork is the version used in [Mark Eats Sequencer](http://markeats.com/sequencer)
+Changes include:
+  * All MIDI messages have timestamps
+  * Those timestamps can be specified, so you can schedule messages in advance
+  * OSC service type can be specified (useful when trying to find, for example, a monome which shows up as '_monome-osc._udp')
+
 
 Introduction
 ------------
