@@ -23,9 +23,11 @@
 	pthread_rwlock_t		domainLock;
 	
 	id						oscManager;
+    
+    NSString                *serviceTypeString;
 }
 
-- (id) initWithOSCManager:(id)m;
+- (id) initWithOSCManager:(id)m serviceType:(NSString *)t;
 
 - (void) serviceRemoved:(NSNetService *)s;
 - (void) serviceResolved:(NSNetService *)s;

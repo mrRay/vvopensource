@@ -53,7 +53,19 @@
 - (id) init	{
 	if (self = [super init])	{
 		[self _generalInit];
-		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
+        serviceTypeString = [self checkServiceType:nil];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:serviceTypeString];
+		return self;
+	}
+	if (self != nil)
+		[self release];
+	return nil;
+}
+- (id) initWithServiceType:(NSString *)t	{
+	if (self = [super init])	{
+		[self _generalInit];
+        serviceTypeString = [self checkServiceType:t];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:serviceTypeString];
 		return self;
 	}
 	if (self != nil)
@@ -67,7 +79,23 @@
 			inPortClass = i;
 		if (o != nil)
 			outPortClass = o;
-		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
+        serviceTypeString = [self checkServiceType:nil];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:serviceTypeString];
+		return self;
+	}
+	if (self != nil)
+		[self release];
+	return nil;
+}
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
+	if (self = [super init])	{
+		[self _generalInit];
+		if (i != nil)
+			inPortClass = i;
+		if (o != nil)
+			outPortClass = o;
+        serviceTypeString = [self checkServiceType:t];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:serviceTypeString];
 		return self;
 	}
 	if (self != nil)
@@ -665,6 +693,13 @@
 	[outPortArray unlock];
 	
 	return returnMe;
+}
+
+- (NSString *) checkServiceType:(NSString *)s {
+    if( !s || s.length == 0 )
+        return @"_osc._udp";
+    else
+        return s;
 }
 
 

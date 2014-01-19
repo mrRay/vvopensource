@@ -13,6 +13,7 @@
 	//	array of NSNumbers, or nil if this isn't a sysex message
 	//	DOES NOT CONTAIN SYSEX START/STOP STATUS BYTES (0xF0 / 0xF7)
 	NSMutableArray	*sysexArray;
+    uint64_t        timestamp; // timestamp that message should be sent. if it's 0 we'll just use mach_absolute_time
 }
 
 + (id) createWithType:(Byte)t channel:(Byte)c;
@@ -23,6 +24,15 @@
 - (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
 - (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
 - (id) initWithSysexArray:(NSMutableArray *)s;
+
++ (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 timestamp:(uint64_t)time;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 timestamp:(uint64_t)time;
++ (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
+- (id) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 timestamp:(uint64_t)time;
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 timestamp:(uint64_t)time;
+- (id) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
 
 - (NSString *) description;
 - (NSString *) lengthyDescription;
@@ -38,6 +48,8 @@
 - (void) setData3:(Byte)newData;
 - (Byte) data3;
 - (NSMutableArray *) sysexArray;
+- (void) setTimestamp:(uint64_t)newTimestamp;
+- (uint64_t) timestamp;
 - (double) doubleValue;
 
 @end
