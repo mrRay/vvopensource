@@ -75,7 +75,7 @@
 	if ([val type] != OSCValMIDI)
 		return;
 	VVMIDIMessage	*msg = nil;
-	msg = [VVMIDIMessage createFromVals:[val midiStatus]:[val midiPort]:[val midiData1]:[val midiData2] timestamp:nil];
+	msg = [VVMIDIMessage createFromVals:[val midiStatus]:[val midiPort]:[val midiData1]:[val midiData2]];
 	if (msg != nil)
 		[self sendMsg:msg];
 	//	if the received message wasn't a clock pulse...

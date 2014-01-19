@@ -13,7 +13,7 @@
 	//	array of NSNumbers, or nil if this isn't a sysex message
 	//	DOES NOT CONTAIN SYSEX START/STOP STATUS BYTES (0xF0 / 0xF7)
 	NSMutableArray	*sysexArray;
-    uint64_t        timestamp; // timestamp that message should be sent. if it's 0 we'll just use AudioGetCurrentHostTime()
+    uint64_t        timestamp; // timestamp that message should be sent. if it's 0 we'll just use mach_absolute_time
 }
 
 + (id) createWithType:(Byte)t channel:(Byte)c;

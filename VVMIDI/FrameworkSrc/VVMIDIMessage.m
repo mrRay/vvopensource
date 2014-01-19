@@ -9,41 +9,41 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d : %d : %lli>",type,channel,data1,data2,data3, timestamp];
+	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d : %d : %llu>",type,channel,data1,data2,data3,timestamp];
 }
 - (NSString *) lengthyDescription	{
 	switch (type)	{
 		//	status byte
 		case VVMIDINoteOffVal:
-			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%lli",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDINoteOnVal:
-			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%lli",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIAfterTouchVal:
-			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%lli",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIControlChangeVal:
-			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%lli",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIProgramChangeVal:
-			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%lli",channel,data1,timestamp];
+			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%llu",channel,data1,timestamp];
 			break;
 		case VVMIDIChannelPressureVal:
-			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%lli",channel,data1,timestamp];
+			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%llu",channel,data1,timestamp];
 			break;
 		case VVMIDIPitchWheelVal:
-			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%lli",channel,(data2<<7)|data1,timestamp];
+			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%llu",channel,(data2<<7)|data1,timestamp];
 			break;
 		//	common messages
 		case VVMIDIMTCQuarterFrameVal:
-			return [NSString stringWithFormat:@"Quarter-Frame: %hhd, time.%lli",data1,timestamp];
+			return [NSString stringWithFormat:@"Quarter-Frame: %hhd, time.%llu",data1,timestamp];
 			break;
 		case VVMIDISongPosPointerVal:
-			return [NSString stringWithFormat:@"Song Pos'n ptr: %d, time.%lli",(data2 << 7) | data1,timestamp];
+			return [NSString stringWithFormat:@"Song Pos'n ptr: %d, time.%llu",(data2 << 7) | data1,timestamp];
 			break;
 		case VVMIDISongSelectVal:
-			return [NSString stringWithFormat:@"Song Select: %hhd, time.%lli",data1,timestamp];
+			return [NSString stringWithFormat:@"Song Select: %hhd, time.%llu",data1,timestamp];
 			break;
 		case VVMIDIUndefinedCommon1Val:
 			return @"Undefined common";
