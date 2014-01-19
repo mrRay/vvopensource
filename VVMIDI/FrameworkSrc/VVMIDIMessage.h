@@ -16,6 +16,15 @@
     uint64_t        timestamp; // timestamp that message should be sent. if it's 0 we'll just use AudioGetCurrentHostTime()
 }
 
++ (id) createWithType:(Byte)t channel:(Byte)c;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
++ (id) createWithSysexArray:(NSMutableArray *)s;
+- (id) initWithType:(Byte)t channel:(Byte)c;
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
+- (id) initWithSysexArray:(NSMutableArray *)s;
+
 + (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 timestamp:(uint64_t)time;
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 timestamp:(uint64_t)time;

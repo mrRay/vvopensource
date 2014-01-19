@@ -18,8 +18,8 @@
 - (id) init	{
 	if (self = [super init])	{
 		//	make an osc manager- i'm using i'm using a custom in-port to record a bunch of extra conversion for the display, but you can just make a "normal" manager
-		manager = [[OSCManager alloc] initWithServiceType:nil];
-		manager = [[OSCManager alloc] initWithInPortClass:[OSCInPortRetainsRaw class] outPortClass:nil serviceType:nil];
+		manager = [[OSCManager alloc] init];
+		manager = [[OSCManager alloc] initWithInPortClass:[OSCInPortRetainsRaw class] outPortClass:nil];
 		//	by default, the osc manager's delegate will be told when osc messages are received
 		[manager setDelegate:self];
 	}

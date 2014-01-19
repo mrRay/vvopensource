@@ -100,6 +100,32 @@
 	}
 	return NO;
 }
+
++ (id) createWithType:(Byte)t channel:(Byte)c {
+    return [self createWithType:t channel:c timestamp:nil];
+}
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+    return [self createFromVals:t :c :d1 :d2 timestamp:nil];
+}
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+    return [self createFromVals:t :c :d1 :d2 :d3 timestamp:nil];
+}
++ (id) createWithSysexArray:(NSMutableArray *)s {
+    return [self createWithSysexArray:s timestamp:nil];
+}
+- (id) initWithType:(Byte)t channel:(Byte)c {
+    return [self initWithType:t channel:c timestamp:nil];
+}
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+    return [self initFromVals:t :c :d1 :d2 timestamp:nil];
+}
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+    return [self initFromVals:t :c :d1 :d2 :d3 timestamp:nil];
+}
+- (id) initWithSysexArray:(NSMutableArray *)s {
+    return [self initWithSysexArray:s timestamp:nil];
+}
+
 + (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;	{
 	return [[[VVMIDIMessage alloc] initWithType:t channel:c timestamp:time] autorelease];
 }

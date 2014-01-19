@@ -72,6 +72,21 @@
 		[self release];
 	return nil;
 }
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o	{
+	if (self = [super init])	{
+		[self _generalInit];
+		if (i != nil)
+			inPortClass = i;
+		if (o != nil)
+			outPortClass = o;
+        serviceTypeString = [self checkServiceType:nil];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:serviceTypeString];
+		return self;
+	}
+	if (self != nil)
+		[self release];
+	return nil;
+}
 - (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
 	if (self = [super init])	{
 		[self _generalInit];

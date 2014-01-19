@@ -57,8 +57,7 @@
 	msg = [VVMIDIMessage createFromVals:VVMIDIControlChangeVal
                                        :[channelField intValue]
                                        :[ctrlField intValue]
-                                       :floor(127*[sender floatValue])
-                              timestamp:AudioGetCurrentHostTime()];
+                                       :floor(127*[sender floatValue])];
 	
 	/*
 	NSArray		*tmpArray = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedChar:0x7F],[NSNumber numberWithUnsignedChar:0x7E],nil];
