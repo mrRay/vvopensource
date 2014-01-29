@@ -9,41 +9,41 @@
 
 
 - (NSString *) description	{
-	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d : %d>",type,channel,data1,data2,data3];
+	return [NSString stringWithFormat:@"<VVMIDIMessage: 0x%X : %d : %d : %d : %d : %llu>",type,channel,data1,data2,data3,timestamp];
 }
 - (NSString *) lengthyDescription	{
 	switch (type)	{
 		//	status byte
 		case VVMIDINoteOffVal:
-			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
+			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDINoteOnVal:
-			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
+			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIAfterTouchVal:
-			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
+			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIControlChangeVal:
-			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd",channel,data1,data2];
+			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
 			break;
 		case VVMIDIProgramChangeVal:
-			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd",channel,data1];
+			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%llu",channel,data1,timestamp];
 			break;
 		case VVMIDIChannelPressureVal:
-			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd",channel,data1];
+			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%llu",channel,data1,timestamp];
 			break;
 		case VVMIDIPitchWheelVal:
-			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d",channel,(data2<<7)|data1];
+			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%llu",channel,(data2<<7)|data1,timestamp];
 			break;
 		//	common messages
 		case VVMIDIMTCQuarterFrameVal:
-			return [NSString stringWithFormat:@"Quarter-Frame: %hhd",data1];
+			return [NSString stringWithFormat:@"Quarter-Frame: %hhd, time.%llu",data1,timestamp];
 			break;
 		case VVMIDISongPosPointerVal:
-			return [NSString stringWithFormat:@"Song Pos'n ptr: %d",(data2 << 7) | data1];
+			return [NSString stringWithFormat:@"Song Pos'n ptr: %d, time.%llu",(data2 << 7) | data1,timestamp];
 			break;
 		case VVMIDISongSelectVal:
-			return [NSString stringWithFormat:@"Song Select: %hhd",data1];
+			return [NSString stringWithFormat:@"Song Select: %hhd, time.%llu",data1,timestamp];
 			break;
 		case VVMIDIUndefinedCommon1Val:
 			return @"Undefined common";
@@ -56,7 +56,7 @@
 			break;
 		//	sysex!
 		case VVMIDIBeginSysexDumpVal:
-			return [NSString stringWithFormat:@"Sysex: %@",sysexArray];
+			return [NSString stringWithFormat:@"Sysex: %@, time.%lli",sysexArray,timestamp];
 			break;
 		//	realtime messages- insert these immediately
 		case VVMIDIClockVal:
@@ -100,65 +100,45 @@
 	}
 	return NO;
 }
-+ (id) createWithType:(Byte)t channel:(Byte)c	{
-	return [[[VVMIDIMessage alloc] initWithType:t channel:c] autorelease];
+
+
++ (id) createWithType:(Byte)t channel:(Byte)c {
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:0] autorelease];
 }
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2	{
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2] autorelease];
++ (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time; {
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:time] autorelease];
 }
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3	{
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3] autorelease];
++ (id) createWithSysexArray:(NSMutableArray *)s {
+	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:0] autorelease];
 }
-+ (id) createWithSysexArray:(NSMutableArray *)s	{
-	id			returnMe = [[VVMIDIMessage alloc] initWithSysexArray:s];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
++ (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;	{
+	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:time] autorelease];
 }
-- (id) initWithType:(Byte)t channel:(Byte)c	{
-	if (self = [super init])	{
-		type = t;
-		channel = c;
-		data1 = -1;
-		data2 = -1;
-		data3 = -1;
-		sysexArray = nil;
-		return self;
-	}
-	[self release];
-	return nil;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:0] autorelease];
 }
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2	{
-	if (self = [super init])	{
-		type = t;
-		channel = c;
-		data1 = d1;
-		data2 = d2;
-		data3 = -1;
-		sysexArray = nil;
-		return self;
-	}
-	[self release];
-	return nil;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:0] autorelease];
 }
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3	{
-	if (self = [super init])	{
-		type = t;
-		channel = c;
-		data1 = d1;
-		data2 = d2;
-		data3 = d3;
-		sysexArray = nil;
-		return self;
-	}
-	[self release];
-	return nil;
++ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:time] autorelease];
 }
-- (id) initWithSysexArray:(NSMutableArray *)s	{
+
+
+- (id) initWithType:(Byte)t channel:(Byte)c {
+	return [self initFromVals:t :c :-1 :-1 :-1 :0];
+}
+- (id) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time	{
+	return [self initFromVals:t :c :-1 :-1 :-1 :time];
+}
+- (id) initWithSysexArray:(NSMutableArray *)s {
+	return [self initWithSysexArray:s timestamp:0];
+}
+- (id) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time; {
 	if ((s==nil)||([s count]<1))
 		goto BAIL;
 	//	if any vals in sysex array are improperly sized, release & return nil
-	for (NSNumber *numPtr in s)	{
+	for (NSNumber *numPtr in s) {
 		if ([numPtr intValue] > 0x7F)	{
 			NSLog(@"\terr: bailing, val in passed sysex array (%X) was > 0x7F",[numPtr intValue]);
 			goto BAIL;
@@ -172,6 +152,7 @@
 		data2 = -1;
 		data3 = -1;
 		sysexArray = [s mutableCopy];
+		timestamp = time;
 		return self;
 	}
 	BAIL:
@@ -179,13 +160,34 @@
 	[self release];
 	return nil;
 }
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+	return [self initFromVals:t :c :d1 :d2 :-1 :0];
+}
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+	return [self initFromVals:t :c :d1 :d2 :d3 :0];
+}
+- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
+	if (self = [super init])	{
+		type = t;
+		channel = c;
+		data1 = d1;
+		data2 = d2;
+		data3 = d3;
+		sysexArray = nil;
+		timestamp = time;
+		return self;
+	}
+	[self release];
+	return nil;
+}
+
 
 - (id) copyWithZone:(NSZone *)z	{
 	VVMIDIMessage		*copy = nil;
 	if (type == VVMIDIBeginSysexDumpVal)
-		copy = [[[self class] allocWithZone:z] initWithSysexArray:sysexArray];
+		copy = [[[self class] allocWithZone:z] initWithSysexArray:sysexArray timestamp:timestamp];
 	else
-		copy = [[[self class] allocWithZone:z] initFromVals:type:channel:data1:data2:data3];
+		copy = [[[self class] allocWithZone:z] initFromVals:type :channel :data1 :data2 :data3 :timestamp];
 	return copy;
 	/*
 	VVMIDIMessage		*copy = [[[self class] allocWithZone:z] initWithType:type channel:channel];
@@ -194,7 +196,6 @@
 	return copy;
 	*/
 }
-
 
 
 - (void) dealloc	{
@@ -235,6 +236,12 @@
 }
 - (NSMutableArray *) sysexArray	{
 	return sysexArray;
+}
+- (void) setTimestamp:(uint64_t)newTimestamp {
+	timestamp = newTimestamp;
+}
+- (uint64_t) timestamp	{
+	return timestamp;
 }
 - (double) doubleValue	{
 	//NSLog(@"%s ... %@",__func__,self);

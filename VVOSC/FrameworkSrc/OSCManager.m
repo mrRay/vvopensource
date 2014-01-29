@@ -51,9 +51,12 @@
 	return returnMe;
 }
 - (id) init	{
+	return [self initWithServiceType:@"_osc._udp"];
+}
+- (id) initWithServiceType:(NSString *)t	{
 	if (self = [super init])	{
 		[self _generalInit];
-		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:t];
 		return self;
 	}
 	if (self != nil)
@@ -61,13 +64,16 @@
 	return nil;
 }
 - (id) initWithInPortClass:(Class)i outPortClass:(Class)o	{
+	return [self initWithInPortClass:i outPortClass:o serviceType:@"_osc._udp"];
+}
+- (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
 	if (self = [super init])	{
 		[self _generalInit];
 		if (i != nil)
 			inPortClass = i;
 		if (o != nil)
 			outPortClass = o;
-		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self];
+		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:t];
 		return self;
 	}
 	if (self != nil)

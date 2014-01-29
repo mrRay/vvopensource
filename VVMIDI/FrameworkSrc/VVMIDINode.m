@@ -1,18 +1,31 @@
 
 #import "VVMIDINode.h"
 #import "VVMIDI.h"
-
+#import <mach/mach_time.h>
 
 
 
 BOOL			_VVMIDIFourteenBitCCs = NO;
-
+double			_machTimeToNsFactor;
 
 
 
 @implementation VVMIDINode
 
 
++ (void) initialize	{
+	kern_return_t				kernError;
+	mach_timebase_info_data_t	timebaseInfo;
+	
+	kernError = mach_timebase_info(&timebaseInfo);
+	if (kernError != KERN_SUCCESS)	{
+		NSLog(@"Error getting mach_timebase in %s",__func__);
+	}
+	else	{
+		// Set the time factors so we can work in ns
+		_machTimeToNsFactor = (double)timebaseInfo.numer / timebaseInfo.denom;
+	}
+}
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<VVMIDINode: %@, %@>",name,[properties objectForKey:(NSString *)kMIDIPropertyUniqueID]];
 }
@@ -208,6 +221,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 		for (int cc=32;cc<64;++cc)
 			twoPieceCCVals[c][cc] = -1;
 	}
+	
 	return self;
 }
 
@@ -481,6 +495,11 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 	MIDIPacket		*newPacket = nil;
 	OSStatus		err = noErr;
 	
+	uint64_t		timestamp = [m timestamp];
+	
+	if (timestamp == 0)
+		timestamp = mach_absolute_time() * _machTimeToNsFactor;
+	
 	//	lock so threads sending midi data don't collide
 	pthread_mutex_lock(&sendingLock);
 	
@@ -510,7 +529,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			//NSLog(@"\t%X",bufferPtr[i]);
 		}
 		*/
-		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,[msgSysexArray count]+2,bufferPtr);
+		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,[msgSysexArray count]+2,bufferPtr);
 		free(bufferPtr);
 		if (newPacket == NULL)	{
 			NSLog(@"\terr adding new sysex packet");
@@ -530,14 +549,14 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			case VVMIDISongPosPointerVal:	//	+2 data bytes
 				scratchStruct[1] = [m data1];
 				scratchStruct[2] = [m data2];
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,3,scratchStruct);
 				break;
 			case VVMIDIMTCQuarterFrameVal:	//	+1 data byte
 			case VVMIDISongSelectVal:		//	+1 data byte
 			case VVMIDIProgramChangeVal:	//	+1 data byte
 			case VVMIDIChannelPressureVal:	//	+1 data type
 				scratchStruct[1] = [m data1];
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,2,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,2,scratchStruct);
 				break;
 			case VVMIDITuneRequestVal:		//	no data bytes
 			case VVMIDIClockVal:			//	no data bytes
@@ -547,7 +566,7 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 			case VVMIDIStopVal:				//	no data bytes
 			case VVMIDIActiveSenseVal:		//	no data bytes
 			case VVMIDIResetVal:			//	no data bytes
-				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,1,scratchStruct);
+				newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,1,scratchStruct);
 				break;
 		}
 		if (newPacket == NULL)	{
@@ -596,7 +615,12 @@ BOOL			_VVMIDIFourteenBitCCs = NO;
 		scratchStruct[1] = [msgPtr data1];
 		scratchStruct[2] = [msgPtr data2];
 		
-		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,0,3,scratchStruct);
+		uint64_t	timestamp = [msgPtr timestamp];
+		
+		if (timestamp == 0)
+			timestamp = mach_absolute_time() * _machTimeToNsFactor;
+		
+		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,3,scratchStruct);
 		if (newPacket == NULL)	{
 			NSLog(@"\t\terror adding new packet");
 			return;

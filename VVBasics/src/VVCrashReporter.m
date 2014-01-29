@@ -51,7 +51,7 @@
 		[theTask launch];
 		
 		//	make sure the task doesn't hang- start a loop that executes 20 times/sec which will kill the task after a terminate date
-		NSDate				*terminateDate = [[NSDate date] addTimeInterval:5.0];
+		NSDate				*terminateDate = [[NSDate date] dateByAddingTimeInterval:5.0];
 		int					terminateCount = 0;	//	only want to terminate it a couple times!
 		while ((theTask != nil) && ([theTask isRunning]))	{
 			if ([[NSDate date] compare:(id)terminateDate] == NSOrderedDescending)	{

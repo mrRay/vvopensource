@@ -80,7 +80,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 
 
 + (void) load	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	_OSCStrAdditionsWildcardCharSet = nil;
 	_OSCStrPOSIXRegexDict = nil;
 }
