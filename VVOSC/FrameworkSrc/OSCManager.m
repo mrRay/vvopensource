@@ -569,16 +569,13 @@
 	id				foundPort = nil;
 	NSEnumerator	*it;
 	id				anObj;
-	id				zeroConfDest = nil;
 	
 	[inPortArray rdlock];
 		it = [[inPortArray array] objectEnumerator];
 		while ((anObj = [it nextObject]) && (foundPort == nil))	{
-			zeroConfDest = [anObj zeroConfDest];
-			if (zeroConfDest != nil)	{
-				if ([n isEqualToString:[zeroConfDest name]])
-					foundPort = anObj;
-			}
+			NSString		*objName = [anObj zeroConfName];
+			if (objName!=nil && [objName isEqualToString:n])
+				foundPort = anObj;
 		}
 	[inPortArray unlock];
 	return foundPort;

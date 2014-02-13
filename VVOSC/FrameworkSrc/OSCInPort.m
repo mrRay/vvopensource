@@ -51,6 +51,8 @@
 		portLabel = nil;
 		if (l != nil)
 			portLabel = [l copy];
+		zeroConfSwatch = [[VVStopwatch alloc] init];
+		zeroConfLock = OS_SPINLOCK_INIT;
 		
 		scratchArray = [[NSMutableArray arrayWithCapacity:0] retain];
 		
@@ -87,6 +89,9 @@
 	if (portLabel != nil)
 		[portLabel release];
 	portLabel = nil;
+	OSSpinLockLock(&zeroConfLock);
+	VVRELEASE(zeroConfSwatch);
+	OSSpinLockUnlock(&zeroConfLock);
 	
 	if (buf != nil)	{
 		free(buf);
@@ -181,27 +186,11 @@
 		toTarget:self
 		withObject:nil];
 	
-	//	if there's a port name, create a NSNetService so devices using bonjour know they can send data to me
-	if (portLabel != nil)	{
-		//NSLog(@"\t\tpublishing zeroConf: %ld, %@ %@",port,CSCopyMachineName(),portLabel);
-		if (zeroConfDest != nil)	{
-			[zeroConfDest stop];
-			[zeroConfDest release];
-		}
-		zeroConfDest = [[NSNetService alloc]
-			initWithDomain:@"local."
-			type:@"_osc._udp."
-//#if IPHONE
-//			name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
-//#else
-//			name:[NSString stringWithFormat:@"%@ %@",SCDynamicStoreCopyComputerName(NULL, NULL),portLabel]
-//#endif
-			name:portLabel
-			port:port];
-		[zeroConfDest publish];
-	}
-	else
-		NSLog(@"\t\terr: couldn't make zero conf dest, portLabel was nil");
+	//	if there's an NSNetService, release it and start a stopwatch (new services are created on a time-delay otherwise changes to ports are ignored)
+	OSSpinLockLock(&zeroConfLock);
+	VVRELEASE(zeroConfDest);
+	[zeroConfSwatch start];
+	OSSpinLockUnlock(&zeroConfLock);
 	
 }
 - (void) stop	{
@@ -212,12 +201,12 @@
 		return;
 	}
 	
-	//	stop & release the bonjour service
+	//	stop the bonjour service but dont release it yet
+	OSSpinLockLock(&zeroConfLock);
 	if (zeroConfDest != nil)	{
 		[zeroConfDest stop];
-		[zeroConfDest release];
-		zeroConfDest = nil;
 	}
+	OSSpinLockUnlock(&zeroConfLock);
 	/*
 	[threadLooper stopAndWaitUntilDone];
 	*/
@@ -338,6 +327,24 @@
 				
 				VVRELEASE(stringsToRemove);
 				VVRELEASE(expiredQueries);
+			}
+			//	is it time to start advertising a bonjour/zeroconf service yet?
+			if (zeroConfDest==nil)	{
+				OSSpinLockLock(&zeroConfLock);
+				if (zeroConfDest==nil && portLabel!=nil && [zeroConfSwatch timeSinceStart]>1.0)	{
+					zeroConfDest = [[NSNetService alloc]
+						initWithDomain:@"local."
+						type:@"_osc._udp."
+//#if IPHONE
+//						name:[NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],portLabel]
+//#else
+//						name:[NSString stringWithFormat:@"%@ %@",SCDynamicStoreCopyComputerName(NULL, NULL),portLabel]
+//#endif
+						name:portLabel
+						port:port];
+					[zeroConfDest publish];
+				}
+				OSSpinLockUnlock(&zeroConfLock);
 			}
 			
 			
@@ -674,8 +681,12 @@
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCInPortsChangedNotification object:nil];
 }
-- (NSNetService *) zeroConfDest	{
-	return zeroConfDest;
+- (NSString *) zeroConfName	{
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&zeroConfLock);
+	returnMe = (zeroConfDest==nil) ? nil : [zeroConfDest name];
+	OSSpinLockUnlock(&zeroConfLock);
+	return returnMe;
 }
 - (BOOL) bound	{
 	return bound;
