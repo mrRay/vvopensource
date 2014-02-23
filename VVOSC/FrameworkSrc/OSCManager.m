@@ -402,7 +402,9 @@
 #if IPHONE
 		tmpString = [NSString stringWithFormat:@"%@ %@ %d",[[UIDevice currentDevice] name],[self inPortLabelBase],index];
 #else
-		tmpString = [NSString stringWithFormat:@"%@ %@ %d",SCDynamicStoreCopyComputerName(NULL, NULL),[self inPortLabelBase],index];
+		CFStringRef computerName = SCDynamicStoreCopyComputerName(NULL, NULL);
+		tmpString = [NSString stringWithFormat:@"%@ %@ %d",computerName,[self inPortLabelBase],index];
+		CFRelease(computerName);
 #endif
 		//tmpString = [NSString stringWithFormat:@"%@ %d",[self inPortLabelBase],index];
 		

@@ -115,10 +115,10 @@
 	if ((deleted) || (sock == -1) || (b == nil))
 		return;
 	
-	OSCPacket		*newPacket = [OSCPacket createWithContent:b];
+	OSCPacket		*packet = [OSCPacket createWithContent:b];
 	
-	if (newPacket != nil)
-		[self sendThisPacket:newPacket];
+	if (packet != nil)
+		[self sendThisPacket:packet];
 }
 - (void) sendThisMessage:(OSCMessage *)m	{
 	/*
@@ -165,6 +165,7 @@
 	
 	if (buff == NULL)	{
 		NSLog(@"\t\terr: packet's buffer was null");
+		[p release];
 		return;
 	}
 	//	send the packet's data to the destination

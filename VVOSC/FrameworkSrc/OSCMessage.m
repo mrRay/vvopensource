@@ -264,7 +264,7 @@
 	*/
 	
 	//returnMe = [OSCMessage createWithAddress:address];
-	returnMe = [[OSCMessage alloc] _fastInit:address:hasWildcard:msgType:queryType:txAddr:txPort];
+	returnMe = [[OSCMessage alloc] initFast:address:hasWildcard:msgType:queryType:txAddr:txPort];
 	if (returnMe == nil)	{
 		NSLog(@"\t\terr: msg was nil %s",__func__);
 		return nil;
@@ -509,7 +509,7 @@
 	}
 	id			returnMe = nil;
 	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
-	returnMe = [self _fastInit:
+	returnMe = [self initFast:
 		addrString:
 		((a==nil)?NO:[a containsOSCWildCard]):
 		OSCMessageTypeControl:
@@ -526,7 +526,7 @@
 	}
 	id			returnMe = nil;
 	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
-	returnMe = [self _fastInit:
+	returnMe = [self initFast:
 		addrString:
 		((a==nil)?NO:[a containsOSCWildCard]):
 		OSCMessageTypeQuery:
@@ -543,7 +543,7 @@
 	}
 	id			returnMe = nil;
 	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
-	returnMe = [self _fastInit:
+	returnMe = [self initFast:
 		nil:
 		NO:
 		OSCMessageTypeReply:
@@ -558,7 +558,7 @@
 	//NSLog(@"%s ... %@",__func__,m);
 	if (m==nil)
 		goto BAIL;
-	self = [self _fastInit:
+	self = [self initFast:
 		nil:
 		NO:
 		OSCMessageTypeReply:
@@ -591,7 +591,7 @@
 		return nil;
 	}
 	id			returnMe = nil;
-	returnMe = [self _fastInit:
+	returnMe = [self initFast:
 		a:
 		((a==nil)?NO:[a containsOSCWildCard]):
 		OSCMessageTypeError:
@@ -603,7 +603,7 @@
 - (id) initErrorForMessage:(OSCMessage *)m	{
 	if (m==nil)
 		goto BAIL;
-	self = [self _fastInit:
+	self = [self initFast:
 		nil:
 		NO:
 		OSCMessageTypeError:
@@ -628,7 +628,7 @@
 	return nil;
 }
 //	DOES NO CHECKING WHATSOEVER.  MEANT TO BE FAST, NOT SAFE.  USE OTHER CREATE/INIT METHODS.
-- (id) _fastInit:(NSString *)addr :(BOOL)addrHasWildcards :(OSCMessageType)mType :(OSCQueryType)qType :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
+- (id) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(OSCMessageType)mType :(OSCQueryType)qType :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
 	if (self = [super init])	{
 		address = (addr==nil)?nil:[addr retain];
 		valueCount = 0;
@@ -649,7 +649,7 @@
 }
 - (id) copyWithZone:(NSZone *)z	{
 	//OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initWithAddress:address];
-	OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] _fastInit:address:wildcardsInAddress:messageType:queryType:queryTXAddress:queryTXPort];
+	OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initFast:address:wildcardsInAddress:messageType:queryType:queryTXAddress:queryTXPort];
 	
 	if (valueCount == 1)
 		[returnMe addValue:value];
@@ -949,7 +949,10 @@
 	const char			*tmpChars = (tmpString==nil) ? nil : [tmpString UTF8String];
 	int					tmpCharsLength = (tmpChars==nil) ? 0 : (int)strlen(tmpChars);
 	
-	strncpy((char *)b, tmpChars, tmpCharsLength);
+	if (tmpCharsLength != 0)
+	{
+		strncpy((char *)b, tmpChars, tmpCharsLength);
+	}
 	typeWriteOffset += (tmpCharsLength + 1);
 	//	the actual type data location is rounded up to the nearest 4-byte segment
 	typeWriteOffset = ROUNDUP4(typeWriteOffset);
