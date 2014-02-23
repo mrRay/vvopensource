@@ -47,7 +47,7 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (id) initReplyForMessage:(OSCMessage *)m;
 - (id) initErrorForAddress:(NSString *)a;
 - (id) initErrorForMessage:(OSCMessage *)m;
-- (id) _fastInit:(NSString *)addr :(BOOL)addrHasWildcards :(OSCMessageType)mType :(OSCQueryType)qType :(unsigned int)qTxAddr :(unsigned short)qTxPort;
+- (id) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(OSCMessageType)mType :(OSCQueryType)qType :(unsigned int)qTxAddr :(unsigned short)qTxPort;
 
 ///	Add the passed int to the message
 - (void) addInt:(int)n;
