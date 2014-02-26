@@ -413,7 +413,7 @@
 			break;
 		case OSCValTimeTag:
 			//returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:*((long *)(value)) microSeconds:*((long *)(value+1))];
-			[[OSCValue allocWithZone:z] initWithTimeSeconds:(long)(*((long long *)value)>>32) microSeconds:(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+			returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:(long)(*((long long *)value)>>32) microSeconds:(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
 			break;
 		case OSCVal64Int:
 			returnMe = [[OSCValue allocWithZone:z] initWithLongLong:*(long long *)value];
