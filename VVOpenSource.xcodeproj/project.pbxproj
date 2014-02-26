@@ -16,6 +16,7 @@
 				96677EE1100F7CF600163134 /* PBXTargetDependency */,
 				9617464A100F891A00FB60E6 /* PBXTargetDependency */,
 				96677EE3100F7CFA00163134 /* PBXTargetDependency */,
+				96B06C2C18BE10BA000A921C /* PBXTargetDependency */,
 				96A99143108D67B400895DC1 /* PBXTargetDependency */,
 				9656D920100F8A370064EEA6 /* PBXTargetDependency */,
 				96A24ECC100F7EE300F21F0F /* PBXTargetDependency */,
@@ -102,8 +103,6 @@
 		9628D189100E8B7C00C3944E /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D181100E8B7C00C3944E /* AppController.m */; };
 		9628D18B100E8B7C00C3944E /* OSCInPortRetainsRaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D184100E8B7C00C3944E /* OSCInPortRetainsRaw.m */; };
 		9628D18C100E8B7C00C3944E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9628D185100E8B7C00C3944E /* MainMenu.xib */; };
-		9645131016494057006370F8 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9645131B16499BAF006370F8 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
 		9647274316D41BF400888157 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9652676F108C29AC00A2906D /* SystemConfiguration.framework */; };
 		9656D90A100F89E60064EEA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		9656D90B100F89E90064EEA6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
@@ -133,7 +132,8 @@
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
 		96913A141432382F008A2111 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96913A2D14323832008A2111 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
-		9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
+		96932EB218BE111700BDE8F6 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
+		96932EB318BE114A00BDE8F6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		969B2480185A230D007B2C01 /* VVBasics.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; };
 		969B2481185A230D007B2C01 /* VVBasicMacros.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; };
 		969B2482185A230D007B2C01 /* VVStopwatch.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; };
@@ -184,10 +184,27 @@
 		96ACD742170641AA00138AE6 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */; };
 		96AD0AAD18577ADF00472548 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AD0AAC18577ADF00472548 /* AudioToolbox.framework */; };
+		96AE248818BE12E300CE2446 /* VVUIToolbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 96B06C2518BE0ECF000A921C /* VVUIToolbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C1D18BE0ECF000A921C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		96B06C2318BE0ECF000A921C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96B06C2118BE0ECF000A921C /* InfoPlist.strings */; };
+		96B06C2D18BE10D5000A921C /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C2E18BE10D5000A921C /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
+		96B06C2F18BE10D5000A921C /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3018BE10D5000A921C /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
+		96B06C3118BE10D5000A921C /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3218BE10D5000A921C /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
+		96B06C3318BE10D5000A921C /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3418BE10D5000A921C /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
+		96B06C3518BE10D5000A921C /* VVSpriteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3618BE10D5000A921C /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
+		96B06C3718BE10D5000A921C /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3818BE10D5000A921C /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
+		96B06C3918BE10D5000A921C /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3A18BE10D5000A921C /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
+		96B06C3B18BE10D5000A921C /* VVTrackingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BC320418B62A5300A25D81 /* VVTrackingArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96B06C3C18BE10D5000A921C /* VVTrackingArea.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BC320518B62A5300A25D81 /* VVTrackingArea.m */; };
 		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
-		96BC320618B62A5300A25D81 /* VVTrackingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BC320418B62A5300A25D81 /* VVTrackingArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96BC320718B62A5300A25D81 /* VVTrackingArea.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BC320518B62A5300A25D81 /* VVTrackingArea.m */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C0057E185A47D000C33FE2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 96C00549185A477000C33FE2 /* LICENSE */; };
@@ -231,18 +248,6 @@
 		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		96ED419910628A5500D8373F /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
-		96F07F361072A1B7007C66E2 /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F07F371072A1B7007C66E2 /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
-		96F07F381072A1B7007C66E2 /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F07F391072A1B7007C66E2 /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
-		96F07F3A1072A1B7007C66E2 /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
-		96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
-		96F2AEFF127106AB00AF86DD /* VVSpriteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F2AF00127106AB00AF86DD /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
-		96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
 		96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A99011108CEA2600895DC1 /* Foundation.framework */; };
 		96F60B23185BA5370003410A /* MAZeroingWeakRef.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96AC1809185A41A500917830 /* MAZeroingWeakRef.h */; };
 		96F60B25185BA54A0003410A /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96AC180B185A41A500917830 /* MAZeroingWeakRefNativeZWRNotAllowedTable.h */; };
@@ -395,6 +400,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 96ACD7201706416300138AE6;
 			remoteInfo = OSCPingTester;
+		};
+		96B06C2B18BE10BA000A921C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96B06C1B18BE0ECF000A921C;
+			remoteInfo = VVUIToolbox;
 		};
 		96C18C89185A1D220082DE35 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -620,8 +632,8 @@
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
 		9628D187100E8B7C00C3944E /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVOSC/AppSrc/AppController.h; sourceTree = "<group>"; };
-		9645130E16494057006370F8 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVView.h; path = VVBasics/src/VVView.h; sourceTree = "<group>"; };
-		9645130F16494057006370F8 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVView.m; path = VVBasics/src/VVView.m; sourceTree = "<group>"; };
+		9645130E16494057006370F8 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVView.h; path = ../VVBasics/src/VVView.h; sourceTree = "<group>"; };
+		9645130F16494057006370F8 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVView.m; path = ../VVBasics/src/VVView.m; sourceTree = "<group>"; };
 		9652676F108C29AC00A2906D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		9656D900100F89BA0064EEA6 /* MIDITestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDITestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9656D904100F89BA0064EEA6 /* MIDITestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDITestApp-Info.plist"; path = "VVMIDI/AppSrc/MIDITestApp-Info.plist"; sourceTree = "<group>"; };
@@ -674,12 +686,17 @@
 		96ACD7491706422D00138AE6 /* PingTestOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingTestOSCManager.h; sourceTree = "<group>"; };
 		96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PingTestOSCManager.m; sourceTree = "<group>"; };
 		96AD0AAC18577ADF00472548 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = ../../../../System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<group>"; };
+		96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVUIToolbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		96B06C2018BE0ECF000A921C /* VVUIToolbox-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VVUIToolbox-Info.plist"; sourceTree = "<group>"; };
+		96B06C2218BE0ECF000A921C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		96B06C2418BE0ECF000A921C /* VVUIToolbox-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VVUIToolbox-Prefix.pch"; sourceTree = "<group>"; };
+		96B06C2518BE0ECF000A921C /* VVUIToolbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVUIToolbox.h; sourceTree = "<group>"; };
 		96B49302106AEB4C008FB26E /* MIDIviaOSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDIviaOSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
 		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
-		96BC320418B62A5300A25D81 /* VVTrackingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVTrackingArea.h; path = VVBasics/src/VVTrackingArea.h; sourceTree = "<group>"; };
-		96BC320518B62A5300A25D81 /* VVTrackingArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVTrackingArea.m; path = VVBasics/src/VVTrackingArea.m; sourceTree = "<group>"; };
+		96BC320418B62A5300A25D81 /* VVTrackingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVTrackingArea.h; path = ../VVBasics/src/VVTrackingArea.h; sourceTree = "<group>"; };
+		96BC320518B62A5300A25D81 /* VVTrackingArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVTrackingArea.m; path = ../VVBasics/src/VVTrackingArea.m; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96C00549185A477000C33FE2 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = external/MAZeroingWeakRef/LICENSE; sourceTree = "<group>"; };
@@ -700,18 +717,18 @@
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
-		96F07F2E1072A1B7007C66E2 /* VVSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSprite.h; path = VVBasics/src/VVSprite.h; sourceTree = "<group>"; };
-		96F07F2F1072A1B7007C66E2 /* VVSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSprite.m; path = VVBasics/src/VVSprite.m; sourceTree = "<group>"; };
-		96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteGLView.h; path = VVBasics/src/VVSpriteGLView.h; sourceTree = "<group>"; };
-		96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteGLView.m; path = VVBasics/src/VVSpriteGLView.m; sourceTree = "<group>"; };
-		96F07F321072A1B7007C66E2 /* VVSpriteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteManager.h; path = VVBasics/src/VVSpriteManager.h; sourceTree = "<group>"; };
-		96F07F331072A1B7007C66E2 /* VVSpriteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteManager.m; path = VVBasics/src/VVSpriteManager.m; sourceTree = "<group>"; };
-		96F07F341072A1B7007C66E2 /* VVSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteView.h; path = VVBasics/src/VVSpriteView.h; sourceTree = "<group>"; };
-		96F07F351072A1B7007C66E2 /* VVSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteView.m; path = VVBasics/src/VVSpriteView.m; sourceTree = "<group>"; };
-		96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControl.h; path = VVBasics/src/VVSpriteControl.h; sourceTree = "<group>"; };
-		96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControl.m; path = VVBasics/src/VVSpriteControl.m; sourceTree = "<group>"; };
-		96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControlCell.h; path = VVBasics/src/VVSpriteControlCell.h; sourceTree = "<group>"; };
-		96F2AF601271147900AF86DD /* VVSpriteControlCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControlCell.m; path = VVBasics/src/VVSpriteControlCell.m; sourceTree = "<group>"; };
+		96F07F2E1072A1B7007C66E2 /* VVSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSprite.h; path = ../VVBasics/src/VVSprite.h; sourceTree = "<group>"; };
+		96F07F2F1072A1B7007C66E2 /* VVSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSprite.m; path = ../VVBasics/src/VVSprite.m; sourceTree = "<group>"; };
+		96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteGLView.h; path = ../VVBasics/src/VVSpriteGLView.h; sourceTree = "<group>"; };
+		96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteGLView.m; path = ../VVBasics/src/VVSpriteGLView.m; sourceTree = "<group>"; };
+		96F07F321072A1B7007C66E2 /* VVSpriteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteManager.h; path = ../VVBasics/src/VVSpriteManager.h; sourceTree = "<group>"; };
+		96F07F331072A1B7007C66E2 /* VVSpriteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteManager.m; path = ../VVBasics/src/VVSpriteManager.m; sourceTree = "<group>"; };
+		96F07F341072A1B7007C66E2 /* VVSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteView.h; path = ../VVBasics/src/VVSpriteView.h; sourceTree = "<group>"; };
+		96F07F351072A1B7007C66E2 /* VVSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteView.m; path = ../VVBasics/src/VVSpriteView.m; sourceTree = "<group>"; };
+		96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControl.h; path = ../VVBasics/src/VVSpriteControl.h; sourceTree = "<group>"; };
+		96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControl.m; path = ../VVBasics/src/VVSpriteControl.m; sourceTree = "<group>"; };
+		96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControlCell.h; path = ../VVBasics/src/VVSpriteControlCell.h; sourceTree = "<group>"; };
+		96F2AF601271147900AF86DD /* VVSpriteControlCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControlCell.m; path = ../VVBasics/src/VVSpriteControlCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -732,7 +749,6 @@
 			files = (
 				961EA925100E876F007E6C25 /* Cocoa.framework in Frameworks */,
 				96A99138108D674400895DC1 /* SystemConfiguration.framework in Frameworks */,
-				9691B05010CDA6B9008A0D35 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,6 +810,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96B06C1818BE0ECF000A921C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96932EB318BE114A00BDE8F6 /* VVBasics.framework in Frameworks */,
+				96B06C1D18BE0ECF000A921C /* Cocoa.framework in Frameworks */,
+				96932EB218BE111700BDE8F6 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96B49300106AEB4C008FB26E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -837,6 +863,7 @@
 				96ACD7211706416300138AE6 /* OSCPingTester.app */,
 				96C18C2D185A1A740082DE35 /* libVVBasics.a */,
 				96C18C3E185A1A7D0082DE35 /* libVVOSC.a */,
+				96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -889,7 +916,6 @@
 				961EA94D100E8834007E6C25 /* VVStopwatch.m */,
 				96ED419710628A5500D8373F /* VVCURLDL.h */,
 				96ED419810628A5500D8373F /* VVCURLDL.m */,
-				968D939D1072A4EA00FE7527 /* Sprites */,
 				96A9911F108D668C00895DC1 /* VVCrashReporter */,
 			);
 			name = "VVBasics framework";
@@ -1020,6 +1046,7 @@
 				96174601100F879900FB60E6 /* VVMIDI framework */,
 				9628D0CA100E8A0100C3944E /* VVOSC framework */,
 				96C18C40185A1A7D0082DE35 /* VVOSCStatic */,
+				96B06C1E18BE0ECF000A921C /* VVUIToolbox framework */,
 			);
 			name = "Frameworks & Static Libs";
 			sourceTree = "<group>";
@@ -1043,29 +1070,6 @@
 				5107014110E14BF200A67653 /* MutNRLockDict.m */,
 			);
 			name = "Threads & Thread-safe classes";
-			sourceTree = "<group>";
-		};
-		968D939D1072A4EA00FE7527 /* Sprites */ = {
-			isa = PBXGroup;
-			children = (
-				96F07F321072A1B7007C66E2 /* VVSpriteManager.h */,
-				96F07F331072A1B7007C66E2 /* VVSpriteManager.m */,
-				96F07F2E1072A1B7007C66E2 /* VVSprite.h */,
-				96F07F2F1072A1B7007C66E2 /* VVSprite.m */,
-				96F07F341072A1B7007C66E2 /* VVSpriteView.h */,
-				96F07F351072A1B7007C66E2 /* VVSpriteView.m */,
-				96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */,
-				96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */,
-				96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */,
-				96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */,
-				96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */,
-				96F2AF601271147900AF86DD /* VVSpriteControlCell.m */,
-				9645130E16494057006370F8 /* VVView.h */,
-				9645130F16494057006370F8 /* VVView.m */,
-				96BC320418B62A5300A25D81 /* VVTrackingArea.h */,
-				96BC320518B62A5300A25D81 /* VVTrackingArea.m */,
-			);
-			name = Sprites;
 			sourceTree = "<group>";
 		};
 		968FAA6D108B60C6000E470D /* CrashReporterTestApp */ = {
@@ -1143,6 +1147,42 @@
 				96ACD72F1706416400138AE6 /* main.m */,
 				96ACD7311706416400138AE6 /* OSCPingTester-Prefix.pch */,
 				96ACD7321706416400138AE6 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		96B06C1E18BE0ECF000A921C /* VVUIToolbox framework */ = {
+			isa = PBXGroup;
+			children = (
+				96B06C2518BE0ECF000A921C /* VVUIToolbox.h */,
+				96F07F321072A1B7007C66E2 /* VVSpriteManager.h */,
+				96F07F331072A1B7007C66E2 /* VVSpriteManager.m */,
+				96F07F2E1072A1B7007C66E2 /* VVSprite.h */,
+				96F07F2F1072A1B7007C66E2 /* VVSprite.m */,
+				96F07F341072A1B7007C66E2 /* VVSpriteView.h */,
+				96F07F351072A1B7007C66E2 /* VVSpriteView.m */,
+				96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */,
+				96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */,
+				96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */,
+				96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */,
+				96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */,
+				96F2AF601271147900AF86DD /* VVSpriteControlCell.m */,
+				9645130E16494057006370F8 /* VVView.h */,
+				9645130F16494057006370F8 /* VVView.m */,
+				96BC320418B62A5300A25D81 /* VVTrackingArea.h */,
+				96BC320518B62A5300A25D81 /* VVTrackingArea.m */,
+				96B06C1F18BE0ECF000A921C /* Supporting Files */,
+			);
+			name = "VVUIToolbox framework";
+			path = VVUIToolbox;
+			sourceTree = "<group>";
+		};
+		96B06C1F18BE0ECF000A921C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				96B06C2018BE0ECF000A921C /* VVUIToolbox-Info.plist */,
+				96B06C2118BE0ECF000A921C /* InfoPlist.strings */,
+				96B06C2418BE0ECF000A921C /* VVUIToolbox-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1245,21 +1285,13 @@
 				961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */,
 				96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */,
 				96ED419910628A5500D8373F /* VVCURLDL.h in Headers */,
-				96F07F361072A1B7007C66E2 /* VVSprite.h in Headers */,
-				96F07F381072A1B7007C66E2 /* VVSpriteGLView.h in Headers */,
-				96F07F3A1072A1B7007C66E2 /* VVSpriteManager.h in Headers */,
-				96F07F3C1072A1B7007C66E2 /* VVSpriteView.h in Headers */,
 				96A9911D108D668700895DC1 /* VVCrashReporter.h in Headers */,
 				96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */,
 				9601770D108D71EA008F90CA /* VVCrashReporterDescriptionField.h in Headers */,
 				5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */,
-				96F2AEFF127106AB00AF86DD /* VVSpriteControl.h in Headers */,
-				96F2AF611271147900AF86DD /* VVSpriteControlCell.h in Headers */,
 				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
-				9645131016494057006370F8 /* VVView.h in Headers */,
 				96AC180C185A41A500917830 /* MAZeroingWeakRef.h in Headers */,
 				96AC180F185A41A500917830 /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */,
-				96BC320618B62A5300A25D81 /* VVTrackingArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1283,6 +1315,22 @@
 				9628D129100E8A6700C3944E /* OSCManager.h in Headers */,
 				96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */,
 				96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96B06C1918BE0ECF000A921C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B06C2D18BE10D5000A921C /* VVSpriteManager.h in Headers */,
+				96B06C2F18BE10D5000A921C /* VVSprite.h in Headers */,
+				96B06C3118BE10D5000A921C /* VVSpriteView.h in Headers */,
+				96B06C3318BE10D5000A921C /* VVSpriteGLView.h in Headers */,
+				96B06C3518BE10D5000A921C /* VVSpriteControl.h in Headers */,
+				96B06C3718BE10D5000A921C /* VVSpriteControlCell.h in Headers */,
+				96B06C3918BE10D5000A921C /* VVView.h in Headers */,
+				96B06C3B18BE10D5000A921C /* VVTrackingArea.h in Headers */,
+				96AE248818BE12E300CE2446 /* VVUIToolbox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1451,6 +1499,24 @@
 			productReference = 96ACD7211706416300138AE6 /* OSCPingTester.app */;
 			productType = "com.apple.product-type.application";
 		};
+		96B06C1B18BE0ECF000A921C /* VVUIToolbox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96B06C2A18BE0ECF000A921C /* Build configuration list for PBXNativeTarget "VVUIToolbox" */;
+			buildPhases = (
+				96B06C1718BE0ECF000A921C /* Sources */,
+				96B06C1818BE0ECF000A921C /* Frameworks */,
+				96B06C1918BE0ECF000A921C /* Headers */,
+				96B06C1A18BE0ECF000A921C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VVUIToolbox;
+			productName = VVUIToolbox;
+			productReference = 96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		96B49301106AEB4C008FB26E /* MIDIviaOSC */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96B49307106AEB4F008FB26E /* Build configuration list for PBXNativeTarget "MIDIviaOSC" */;
@@ -1536,6 +1602,7 @@
 			targets = (
 				96677EDD100F7CF300163134 /* Build Mac Fmwks & Apps */,
 				961EA8EC100E8565007E6C25 /* VVBasics */,
+				96B06C1B18BE0ECF000A921C /* VVUIToolbox */,
 				961745F3100F86B400FB60E6 /* VVMIDI */,
 				9628D0C4100E89F700C3944E /* VVOSC */,
 				968FAA85108B6141000E470D /* CrashReporterTestApp */,
@@ -1617,6 +1684,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96B06C1A18BE0ECF000A921C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B06C2318BE0ECF000A921C /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96B492FE106AEB4C008FB26E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1679,20 +1754,12 @@
 				961EA961100E8834007E6C25 /* ObjectHolder.m in Sources */,
 				961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */,
 				96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */,
-				96F07F371072A1B7007C66E2 /* VVSprite.m in Sources */,
-				96F07F391072A1B7007C66E2 /* VVSpriteGLView.m in Sources */,
-				96F07F3B1072A1B7007C66E2 /* VVSpriteManager.m in Sources */,
-				96F07F3D1072A1B7007C66E2 /* VVSpriteView.m in Sources */,
 				96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */,
 				9601770A108D71D6008F90CA /* VVCrashReporterEmailField.m in Sources */,
 				9601770E108D71EA008F90CA /* VVCrashReporterDescriptionField.m in Sources */,
 				5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */,
-				96F2AF00127106AB00AF86DD /* VVSpriteControl.m in Sources */,
-				96F2AF621271147900AF86DD /* VVSpriteControlCell.m in Sources */,
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
-				9645131B16499BAF006370F8 /* VVView.m in Sources */,
 				96AC180D185A41A500917830 /* MAZeroingWeakRef.m in Sources */,
-				96BC320718B62A5300A25D81 /* VVTrackingArea.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1763,6 +1830,21 @@
 				96ACD7301706416400138AE6 /* main.m in Sources */,
 				96ACD7371706416400138AE6 /* AppDelegate.m in Sources */,
 				96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96B06C1718BE0ECF000A921C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96B06C2E18BE10D5000A921C /* VVSpriteManager.m in Sources */,
+				96B06C3018BE10D5000A921C /* VVSprite.m in Sources */,
+				96B06C3218BE10D5000A921C /* VVSpriteView.m in Sources */,
+				96B06C3418BE10D5000A921C /* VVSpriteGLView.m in Sources */,
+				96B06C3618BE10D5000A921C /* VVSpriteControl.m in Sources */,
+				96B06C3818BE10D5000A921C /* VVSpriteControlCell.m in Sources */,
+				96B06C3A18BE10D5000A921C /* VVView.m in Sources */,
+				96B06C3C18BE10D5000A921C /* VVTrackingArea.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1920,6 +2002,11 @@
 			target = 96ACD7201706416300138AE6 /* OSCPingTester */;
 			targetProxy = 96ACD747170641C000138AE6 /* PBXContainerItemProxy */;
 		};
+		96B06C2C18BE10BA000A921C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96B06C1B18BE0ECF000A921C /* VVUIToolbox */;
+			targetProxy = 96B06C2B18BE10BA000A921C /* PBXContainerItemProxy */;
+		};
 		96C18C8A185A1D220082DE35 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 96C18C2C185A1A740082DE35 /* VVBasicsStatic */;
@@ -1970,6 +2057,14 @@
 				96ACD7391706416400138AE6 /* en */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		96B06C2118BE0ECF000A921C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				96B06C2218BE0ECF000A921C /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -2423,6 +2518,51 @@
 			};
 			name = Release;
 		};
+		96B06C2818BE0ECF000A921C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VVUIToolbox/VVUIToolbox-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
+				INSTALL_PATH = "@rpath";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		96B06C2918BE0ECF000A921C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VVUIToolbox/VVUIToolbox-Prefix.pch";
+				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
+				INSTALL_PATH = "@rpath";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
 		96B49305106AEB4E008FB26E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2694,6 +2834,15 @@
 			buildConfigurations = (
 				96ACD73B1706416400138AE6 /* Debug */,
 				96ACD73C1706416400138AE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96B06C2A18BE0ECF000A921C /* Build configuration list for PBXNativeTarget "VVUIToolbox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96B06C2818BE0ECF000A921C /* Debug */,
+				96B06C2918BE0ECF000A921C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

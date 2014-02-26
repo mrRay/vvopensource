@@ -1,7 +1,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "VVSprite.h"
-#import "MutLockArray.h"
+#import <VVBasics/VVBasics.h>
 
 
 
