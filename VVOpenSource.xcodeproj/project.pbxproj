@@ -130,6 +130,22 @@
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
 		968FAAAD108B6A62000E470D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAA108B6A62000E470D /* main.m */; };
 		968FAAAE108B6A62000E470D /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 968FAAAC108B6A62000E470D /* AppController.m */; };
+		96900D5B18BE37A90098AB25 /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D4B18BE37A90098AB25 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D5C18BE37A90098AB25 /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D4C18BE37A90098AB25 /* VVSprite.m */; };
+		96900D5D18BE37A90098AB25 /* VVSpriteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D4D18BE37A90098AB25 /* VVSpriteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D5E18BE37A90098AB25 /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D4E18BE37A90098AB25 /* VVSpriteControl.m */; };
+		96900D5F18BE37A90098AB25 /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D4F18BE37A90098AB25 /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6018BE37A90098AB25 /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5018BE37A90098AB25 /* VVSpriteControlCell.m */; };
+		96900D6118BE37A90098AB25 /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D5118BE37A90098AB25 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6218BE37A90098AB25 /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5218BE37A90098AB25 /* VVSpriteGLView.m */; };
+		96900D6318BE37A90098AB25 /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D5318BE37A90098AB25 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6418BE37A90098AB25 /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5418BE37A90098AB25 /* VVSpriteManager.m */; };
+		96900D6518BE37A90098AB25 /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D5518BE37A90098AB25 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6618BE37A90098AB25 /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5618BE37A90098AB25 /* VVSpriteView.m */; };
+		96900D6718BE37A90098AB25 /* VVTrackingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D5718BE37A90098AB25 /* VVTrackingArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6818BE37A90098AB25 /* VVTrackingArea.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5818BE37A90098AB25 /* VVTrackingArea.m */; };
+		96900D6918BE37A90098AB25 /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96900D5918BE37A90098AB25 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96900D6A18BE37A90098AB25 /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5A18BE37A90098AB25 /* VVView.m */; };
 		96913A141432382F008A2111 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96913A2D14323832008A2111 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		96932EB218BE111700BDE8F6 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9691B04F10CDA6B9008A0D35 /* OpenGL.framework */; };
@@ -187,22 +203,6 @@
 		96AE248818BE12E300CE2446 /* VVUIToolbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 96B06C2518BE0ECF000A921C /* VVUIToolbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96B06C1D18BE0ECF000A921C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96B06C2318BE0ECF000A921C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96B06C2118BE0ECF000A921C /* InfoPlist.strings */; };
-		96B06C2D18BE10D5000A921C /* VVSpriteManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F321072A1B7007C66E2 /* VVSpriteManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C2E18BE10D5000A921C /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F331072A1B7007C66E2 /* VVSpriteManager.m */; };
-		96B06C2F18BE10D5000A921C /* VVSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F2E1072A1B7007C66E2 /* VVSprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3018BE10D5000A921C /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F2F1072A1B7007C66E2 /* VVSprite.m */; };
-		96B06C3118BE10D5000A921C /* VVSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F341072A1B7007C66E2 /* VVSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3218BE10D5000A921C /* VVSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F351072A1B7007C66E2 /* VVSpriteView.m */; };
-		96B06C3318BE10D5000A921C /* VVSpriteGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3418BE10D5000A921C /* VVSpriteGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */; };
-		96B06C3518BE10D5000A921C /* VVSpriteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3618BE10D5000A921C /* VVSpriteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */; };
-		96B06C3718BE10D5000A921C /* VVSpriteControlCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3818BE10D5000A921C /* VVSpriteControlCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F2AF601271147900AF86DD /* VVSpriteControlCell.m */; };
-		96B06C3918BE10D5000A921C /* VVView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9645130E16494057006370F8 /* VVView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3A18BE10D5000A921C /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9645130F16494057006370F8 /* VVView.m */; };
-		96B06C3B18BE10D5000A921C /* VVTrackingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BC320418B62A5300A25D81 /* VVTrackingArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96B06C3C18BE10D5000A921C /* VVTrackingArea.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BC320518B62A5300A25D81 /* VVTrackingArea.m */; };
 		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -632,8 +632,6 @@
 		9628D185100E8B7C00C3944E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVOSC/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9628D186100E8B7C00C3944E /* OSCInPortRetainsRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCInPortRetainsRaw.h; path = VVOSC/AppSrc/OSCInPortRetainsRaw.h; sourceTree = "<group>"; };
 		9628D187100E8B7C00C3944E /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVOSC/AppSrc/AppController.h; sourceTree = "<group>"; };
-		9645130E16494057006370F8 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVView.h; path = ../VVBasics/src/VVView.h; sourceTree = "<group>"; };
-		9645130F16494057006370F8 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVView.m; path = ../VVBasics/src/VVView.m; sourceTree = "<group>"; };
 		9652676F108C29AC00A2906D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		9656D900100F89BA0064EEA6 /* MIDITestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIDITestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9656D904100F89BA0064EEA6 /* MIDITestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDITestApp-Info.plist"; path = "VVMIDI/AppSrc/MIDITestApp-Info.plist"; sourceTree = "<group>"; };
@@ -659,6 +657,22 @@
 		968FAAAA108B6A62000E470D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CrashReporterTestApp/main.m; sourceTree = "<group>"; };
 		968FAAAB108B6A62000E470D /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = CrashReporterTestApp/AppController.h; sourceTree = "<group>"; };
 		968FAAAC108B6A62000E470D /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = CrashReporterTestApp/AppController.m; sourceTree = "<group>"; };
+		96900D4B18BE37A90098AB25 /* VVSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSprite.h; sourceTree = "<group>"; };
+		96900D4C18BE37A90098AB25 /* VVSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSprite.m; sourceTree = "<group>"; };
+		96900D4D18BE37A90098AB25 /* VVSpriteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteControl.h; sourceTree = "<group>"; };
+		96900D4E18BE37A90098AB25 /* VVSpriteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteControl.m; sourceTree = "<group>"; };
+		96900D4F18BE37A90098AB25 /* VVSpriteControlCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteControlCell.h; sourceTree = "<group>"; };
+		96900D5018BE37A90098AB25 /* VVSpriteControlCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteControlCell.m; sourceTree = "<group>"; };
+		96900D5118BE37A90098AB25 /* VVSpriteGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLView.h; sourceTree = "<group>"; };
+		96900D5218BE37A90098AB25 /* VVSpriteGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteGLView.m; sourceTree = "<group>"; };
+		96900D5318BE37A90098AB25 /* VVSpriteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteManager.h; sourceTree = "<group>"; };
+		96900D5418BE37A90098AB25 /* VVSpriteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteManager.m; sourceTree = "<group>"; };
+		96900D5518BE37A90098AB25 /* VVSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteView.h; sourceTree = "<group>"; };
+		96900D5618BE37A90098AB25 /* VVSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteView.m; sourceTree = "<group>"; };
+		96900D5718BE37A90098AB25 /* VVTrackingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVTrackingArea.h; sourceTree = "<group>"; };
+		96900D5818BE37A90098AB25 /* VVTrackingArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVTrackingArea.m; sourceTree = "<group>"; };
+		96900D5918BE37A90098AB25 /* VVView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVView.h; sourceTree = "<group>"; };
+		96900D5A18BE37A90098AB25 /* VVView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVView.m; sourceTree = "<group>"; };
 		9691B04F10CDA6B9008A0D35 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		969FCE94120DB9A10067E617 /* lgpl-3.0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lgpl-3.0.txt"; sourceTree = "<group>"; };
 		96A99011108CEA2600895DC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -695,8 +709,6 @@
 		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
 		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
-		96BC320418B62A5300A25D81 /* VVTrackingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVTrackingArea.h; path = ../VVBasics/src/VVTrackingArea.h; sourceTree = "<group>"; };
-		96BC320518B62A5300A25D81 /* VVTrackingArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVTrackingArea.m; path = ../VVBasics/src/VVTrackingArea.m; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96C00549185A477000C33FE2 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = external/MAZeroingWeakRef/LICENSE; sourceTree = "<group>"; };
@@ -717,18 +729,6 @@
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
 		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
 		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
-		96F07F2E1072A1B7007C66E2 /* VVSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSprite.h; path = ../VVBasics/src/VVSprite.h; sourceTree = "<group>"; };
-		96F07F2F1072A1B7007C66E2 /* VVSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSprite.m; path = ../VVBasics/src/VVSprite.m; sourceTree = "<group>"; };
-		96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteGLView.h; path = ../VVBasics/src/VVSpriteGLView.h; sourceTree = "<group>"; };
-		96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteGLView.m; path = ../VVBasics/src/VVSpriteGLView.m; sourceTree = "<group>"; };
-		96F07F321072A1B7007C66E2 /* VVSpriteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteManager.h; path = ../VVBasics/src/VVSpriteManager.h; sourceTree = "<group>"; };
-		96F07F331072A1B7007C66E2 /* VVSpriteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteManager.m; path = ../VVBasics/src/VVSpriteManager.m; sourceTree = "<group>"; };
-		96F07F341072A1B7007C66E2 /* VVSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteView.h; path = ../VVBasics/src/VVSpriteView.h; sourceTree = "<group>"; };
-		96F07F351072A1B7007C66E2 /* VVSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteView.m; path = ../VVBasics/src/VVSpriteView.m; sourceTree = "<group>"; };
-		96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControl.h; path = ../VVBasics/src/VVSpriteControl.h; sourceTree = "<group>"; };
-		96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControl.m; path = ../VVBasics/src/VVSpriteControl.m; sourceTree = "<group>"; };
-		96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSpriteControlCell.h; path = ../VVBasics/src/VVSpriteControlCell.h; sourceTree = "<group>"; };
-		96F2AF601271147900AF86DD /* VVSpriteControlCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSpriteControlCell.m; path = ../VVBasics/src/VVSpriteControlCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1155,22 +1155,22 @@
 			isa = PBXGroup;
 			children = (
 				96B06C2518BE0ECF000A921C /* VVUIToolbox.h */,
-				96F07F321072A1B7007C66E2 /* VVSpriteManager.h */,
-				96F07F331072A1B7007C66E2 /* VVSpriteManager.m */,
-				96F07F2E1072A1B7007C66E2 /* VVSprite.h */,
-				96F07F2F1072A1B7007C66E2 /* VVSprite.m */,
-				96F07F341072A1B7007C66E2 /* VVSpriteView.h */,
-				96F07F351072A1B7007C66E2 /* VVSpriteView.m */,
-				96F07F301072A1B7007C66E2 /* VVSpriteGLView.h */,
-				96F07F311072A1B7007C66E2 /* VVSpriteGLView.m */,
-				96F2AEFD127106AB00AF86DD /* VVSpriteControl.h */,
-				96F2AEFE127106AB00AF86DD /* VVSpriteControl.m */,
-				96F2AF5F1271147900AF86DD /* VVSpriteControlCell.h */,
-				96F2AF601271147900AF86DD /* VVSpriteControlCell.m */,
-				9645130E16494057006370F8 /* VVView.h */,
-				9645130F16494057006370F8 /* VVView.m */,
-				96BC320418B62A5300A25D81 /* VVTrackingArea.h */,
-				96BC320518B62A5300A25D81 /* VVTrackingArea.m */,
+				96900D4B18BE37A90098AB25 /* VVSprite.h */,
+				96900D4C18BE37A90098AB25 /* VVSprite.m */,
+				96900D4D18BE37A90098AB25 /* VVSpriteControl.h */,
+				96900D4E18BE37A90098AB25 /* VVSpriteControl.m */,
+				96900D4F18BE37A90098AB25 /* VVSpriteControlCell.h */,
+				96900D5018BE37A90098AB25 /* VVSpriteControlCell.m */,
+				96900D5118BE37A90098AB25 /* VVSpriteGLView.h */,
+				96900D5218BE37A90098AB25 /* VVSpriteGLView.m */,
+				96900D5318BE37A90098AB25 /* VVSpriteManager.h */,
+				96900D5418BE37A90098AB25 /* VVSpriteManager.m */,
+				96900D5518BE37A90098AB25 /* VVSpriteView.h */,
+				96900D5618BE37A90098AB25 /* VVSpriteView.m */,
+				96900D5718BE37A90098AB25 /* VVTrackingArea.h */,
+				96900D5818BE37A90098AB25 /* VVTrackingArea.m */,
+				96900D5918BE37A90098AB25 /* VVView.h */,
+				96900D5A18BE37A90098AB25 /* VVView.m */,
 				96B06C1F18BE0ECF000A921C /* Supporting Files */,
 			);
 			name = "VVUIToolbox framework";
@@ -1322,15 +1322,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96B06C2D18BE10D5000A921C /* VVSpriteManager.h in Headers */,
-				96B06C2F18BE10D5000A921C /* VVSprite.h in Headers */,
-				96B06C3118BE10D5000A921C /* VVSpriteView.h in Headers */,
-				96B06C3318BE10D5000A921C /* VVSpriteGLView.h in Headers */,
-				96B06C3518BE10D5000A921C /* VVSpriteControl.h in Headers */,
-				96B06C3718BE10D5000A921C /* VVSpriteControlCell.h in Headers */,
-				96B06C3918BE10D5000A921C /* VVView.h in Headers */,
-				96B06C3B18BE10D5000A921C /* VVTrackingArea.h in Headers */,
 				96AE248818BE12E300CE2446 /* VVUIToolbox.h in Headers */,
+				96900D5B18BE37A90098AB25 /* VVSprite.h in Headers */,
+				96900D5D18BE37A90098AB25 /* VVSpriteControl.h in Headers */,
+				96900D5F18BE37A90098AB25 /* VVSpriteControlCell.h in Headers */,
+				96900D6118BE37A90098AB25 /* VVSpriteGLView.h in Headers */,
+				96900D6318BE37A90098AB25 /* VVSpriteManager.h in Headers */,
+				96900D6518BE37A90098AB25 /* VVSpriteView.h in Headers */,
+				96900D6718BE37A90098AB25 /* VVTrackingArea.h in Headers */,
+				96900D6918BE37A90098AB25 /* VVView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1837,14 +1837,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96B06C2E18BE10D5000A921C /* VVSpriteManager.m in Sources */,
-				96B06C3018BE10D5000A921C /* VVSprite.m in Sources */,
-				96B06C3218BE10D5000A921C /* VVSpriteView.m in Sources */,
-				96B06C3418BE10D5000A921C /* VVSpriteGLView.m in Sources */,
-				96B06C3618BE10D5000A921C /* VVSpriteControl.m in Sources */,
-				96B06C3818BE10D5000A921C /* VVSpriteControlCell.m in Sources */,
-				96B06C3A18BE10D5000A921C /* VVView.m in Sources */,
-				96B06C3C18BE10D5000A921C /* VVTrackingArea.m in Sources */,
+				96900D5C18BE37A90098AB25 /* VVSprite.m in Sources */,
+				96900D5E18BE37A90098AB25 /* VVSpriteControl.m in Sources */,
+				96900D6018BE37A90098AB25 /* VVSpriteControlCell.m in Sources */,
+				96900D6218BE37A90098AB25 /* VVSpriteGLView.m in Sources */,
+				96900D6418BE37A90098AB25 /* VVSpriteManager.m in Sources */,
+				96900D6618BE37A90098AB25 /* VVSpriteView.m in Sources */,
+				96900D6818BE37A90098AB25 /* VVTrackingArea.m in Sources */,
+				96900D6A18BE37A90098AB25 /* VVView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
