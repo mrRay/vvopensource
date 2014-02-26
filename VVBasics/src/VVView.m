@@ -33,6 +33,7 @@
 		[self generalInit];
 		_frame = n;
 		//_bounds = NSMakeRect(0,0,_frame.size.width,_frame.size.height);
+		[self initComplete];
 		return self;
 	}
 	[self release];
@@ -51,6 +52,7 @@
 	_boundsOrigin = NSMakePoint(0.0, 0.0);
 	_boundsOrientation = VVViewBOBottom;
 	//_boundsRotation = 0.0;
+	trackingAreas = [[MutLockArray alloc] init];
 	_superview = nil;
 	_containerView = nil;
 	subviews = [[MutLockArray alloc] init];
@@ -71,6 +73,9 @@
 	clickedSubview = nil;
 	dragTypes = [[MutLockArray alloc] init];
 }
+- (void) initComplete	{
+
+}
 - (void) prepareToBeDeleted	{
 	NSMutableArray		*subCopy = [subviews lockCreateArrayCopy];
 	if (subCopy != nil)	{
@@ -81,6 +86,11 @@
 		[subCopy release];
 		subCopy = nil;
 	}
+	
+	if (_superview != nil)
+		[_superview removeSubview:self];
+	else if (_containerView != nil)
+		[_containerView removeVVSubview:self];
 	
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
@@ -95,6 +105,7 @@
 	VVRELEASE(lastMouseEvent);
 	OSSpinLockUnlock(&propertyLock);
 	VVRELEASE(dragTypes);
+	VVRELEASE(trackingAreas);
 	[super dealloc];
 }
 
@@ -203,6 +214,37 @@
 	NSPoint		localPoint = [self convertPointFromWinCoords:[e locationInWindow]];
 	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	[spriteManager localRightMouseUp:localPoint];
+}
+//	entered & exited are sent if the view is using tracking objects!
+- (void) mouseEntered:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
+	OSSpinLockLock(&propertyLock);
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	OSSpinLockUnlock(&propertyLock);
+}
+- (void) mouseExited:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
+	OSSpinLockLock(&propertyLock);
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	OSSpinLockUnlock(&propertyLock);
+}
+- (void) mouseMoved:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
+	OSSpinLockLock(&propertyLock);
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	OSSpinLockUnlock(&propertyLock);
 }
 - (void) keyDown:(NSEvent *)e	{
 	NSLog(@"%s ... %@",__func__,e);
@@ -490,15 +532,35 @@
 	return _frame;
 }
 - (void) setFrame:(NSRect)n	{
+	if (deleted)
+		return;
+	[self _setFrame:n];
+	[self updateTrackingAreas];
+	if (_superview != nil)
+		[_superview setNeedsDisplay:YES];
+	else if (_containerView != nil)
+		[_containerView setNeedsDisplay:YES];
+}
+- (void) _setFrame:(NSRect)n	{
 	//NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
 	if (deleted)
 		return;
 	if (NSEqualRects(n,_frame))
 		return;
-	[self setFrameSize:n.size];
-	_frame.origin = n.origin;
+	[self _setFrameSize:n.size];
+	[self _setFrameOrigin:n.origin];
 }
-- (void) setFrameSize:(NSSize)proposedSize	{
+- (void) setFrameSize:(NSSize)n	{
+	if (deleted)
+		return;
+	[self _setFrameSize:n];
+	[self updateTrackingAreas];
+	if (_superview != nil)
+		[_superview setNeedsDisplay:YES];
+	else if (_containerView != nil)
+		[_containerView setNeedsDisplay:YES];
+}
+- (void) _setFrameSize:(NSSize)proposedSize	{
 	//NSLog(@"%s ... %@, (%f x %f)",__func__,self,proposedSize.width,proposedSize.height);
 	NSSize			oldSize = _frame.size;
 	NSSize			n = NSMakeSize(fmax(minFrameSize.width,proposedSize.width),fmax(minFrameSize.height,proposedSize.height));
@@ -526,7 +588,7 @@
 				++vSubDivs;
 			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
 				++vSubDivs;
-			
+			//NSLog(@"\t\thSubDivs = %d, vSubDivs = %d",hSubDivs,vSubDivs);
 			if (hSubDivs>0 || vSubDivs>0)	{
 				if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
 					viewNewFrame.size.width += widthDelta/hSubDivs;
@@ -538,7 +600,7 @@
 					viewNewFrame.origin.y += heightDelta/vSubDivs;
 			}
 			//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
-			[viewPtr setFrame:viewNewFrame];
+			[viewPtr _setFrame:viewNewFrame];
 		}
 		[subviews unlock];
 	}
@@ -546,8 +608,17 @@
 	_frame.size = n;
 }
 - (void) setFrameOrigin:(NSPoint)n	{
+	if (deleted)
+		return;
+	[self _setFrameOrigin:n];
+	[self updateTrackingAreas];
+	if (_superview != nil)
+		[_superview setNeedsDisplay:YES];
+	else if (_containerView != nil)
+		[_containerView setNeedsDisplay:YES];
+}
+- (void) _setFrameOrigin:(NSPoint)n	{
 	_frame.origin = n;
-	[self setNeedsDisplay:YES];
 }
 - (NSRect) bounds	{
 	switch (_boundsOrientation)	{
@@ -589,6 +660,67 @@
 	if (changed)
 		[self setNeedsDisplay];
 }
+
+
+- (void) updateTrackingAreas	{
+	if (deleted)
+		return;
+	//	run through my tracking areas, removing the apple parts from the container view
+	[trackingAreas rdlock];
+	for (VVTrackingArea *ta in [trackingAreas array])	{
+		NSRect			localRect = [ta rect];
+		NSRect			containerRect = [self convertRectToContainerViewCoords:localRect];
+		[ta updateAppleTrackingAreaWithContainerView:_containerView containerViewRect:containerRect];
+	}
+	[trackingAreas unlock];
+	//	tell my subviews to update their tracking areas recursively
+	[subviews rdlock];
+	for (VVView *viewPtr in [subviews array])	{
+		[viewPtr updateTrackingAreas];
+	}
+	[subviews unlock];
+}
+- (void) addTrackingArea:(VVTrackingArea *)n	{
+	if (deleted || n==nil)
+		return;
+	NSRect			containerRect = [self convertRectToContainerViewCoords:[n rect]];
+	if (_containerView != nil)
+		[n updateAppleTrackingAreaWithContainerView:_containerView containerViewRect:containerRect];
+	[trackingAreas lockAddObject:n];
+}
+- (void) removeTrackingArea:(VVTrackingArea *)n	{
+	if (deleted || n==nil)
+		return;
+	if (_containerView != nil)
+		[n removeAppleTrackingAreaFromContainerView:_containerView];
+	[trackingAreas lockRemoveIdenticalPtr:n];
+}
+- (void) _clearAppleTrackingAreas	{
+	if (deleted)
+		return;
+	
+	[trackingAreas rdlock];
+	for (VVTrackingArea *ta in [trackingAreas array])	{
+		[ta removeAppleTrackingAreaFromContainerView:_containerView];
+	}
+	[trackingAreas unlock];
+}
+- (void) _refreshAppleTrackingAreas	{
+	if (deleted)
+		return;
+	if (_containerView == nil)
+		return;
+	
+	[trackingAreas rdlock];
+	for (VVTrackingArea *ta in [trackingAreas array])	{
+		NSRect		localRect = [ta rect];
+		NSRect		containerRect = [self convertRectToContainerViewCoords:localRect];
+		[ta updateAppleTrackingAreaWithContainerView:_containerView containerViewRect:containerRect];
+	}
+	[trackingAreas unlock];
+}
+
+
 //	returns the visible rect in this view's LOCAL COORDINATE SPACE (bounds), just like NSView
 - (NSRect) visibleRect	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -813,6 +945,7 @@
 	if (deleted || n==nil || subviews==nil)
 		return;
 	[subviews lockRemoveIdenticalPtr:n];
+	[n _setSuperview:nil];
 	[n setContainerView:nil];
 	if (_containerView != nil)
 		[_containerView setNeedsDisplay:YES];
@@ -854,8 +987,26 @@
 - (id) superview	{
 	return _superview;
 }
+- (NSRect) superBounds	{
+	if (deleted)
+		return NSZeroRect;
+	if (_superview!=nil)
+		return [_superview bounds];
+	else if (_containerView!=nil)
+		return [_containerView bounds];
+	else
+		return NSZeroRect;
+}
 - (void) setContainerView:(id)n	{
+	BOOL			changed = (_containerView != n) ? YES : NO;
+	if (changed && _containerView!=nil)
+		[self _clearAppleTrackingAreas];
+	
 	_containerView = n;
+	
+	if (changed && _containerView!=nil)
+		[self _refreshAppleTrackingAreas];
+	
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews lockMakeObjectsPerformSelector:@selector(setContainerView:) withObject:n];
 	}
@@ -1058,7 +1209,7 @@
 	spriteCtx = NULL;
 }
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
-	NSLog(@"ERR: %s",__func__);
+	NSLog(@"ERR: %s, %@",__func__,self);
 	/*		this method should be used by subclasses.  put the simple drawing code in here (origin is the bottom-left corner of me!)		*/
 }
 - (BOOL) isOpaque	{

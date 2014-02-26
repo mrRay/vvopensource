@@ -11,6 +11,7 @@
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
 #include <AvailabilityMacros.h>
+#import "VVTrackingArea.h"
 
 
 
@@ -57,6 +58,7 @@ typedef enum	{
 	double				localToBackingBoundsMultiplier;
 	NSPoint					_boundsOrigin;
 	VVViewBoundsOrientation	_boundsOrientation;
+	MutLockArray		*trackingAreas;
 	
 	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
@@ -82,6 +84,7 @@ typedef enum	{
 
 - (id) initWithFrame:(NSRect)n;
 - (void) generalInit;
+- (void) initComplete;
 - (void) prepareToBeDeleted;
 
 - (void) mouseDown:(NSEvent *)e;
@@ -89,6 +92,9 @@ typedef enum	{
 - (void) mouseDragged:(NSEvent *)e;
 - (void) mouseUp:(NSEvent *)e;
 - (void) rightMouseUp:(NSEvent *)e;
+- (void) mouseEntered:(NSEvent *)e;
+- (void) mouseExited:(NSEvent *)e;
+- (void) mouseMoved:(NSEvent *)e;
 - (void) keyDown:(NSEvent *)e;
 - (void) keyUp:(NSEvent *)e;
 
@@ -126,6 +132,14 @@ typedef enum	{
 - (VVViewBoundsOrientation) boundsOrientation;
 - (void) setBoundsOrientation:(VVViewBoundsOrientation)n;
 
+//- (NSTrackingRectTag) addTrackingRect:(NSRect)aRect owner:(id)userObject userData:(void *)userData assumeInside:(BOOL)flag;
+//- (void) removeTrackingRect:(NSTrackingRectTag)aTag;
+- (void) updateTrackingAreas;
+- (void) addTrackingArea:(VVTrackingArea *)n;
+- (void) removeTrackingArea:(VVTrackingArea *)n;
+- (void) _clearAppleTrackingAreas;
+- (void) _refreshAppleTrackingAreas;
+
 - (void) _viewDidMoveToWindow;
 - (void) viewDidMoveToWindow;
 - (NSRect) visibleRect;
@@ -142,6 +156,8 @@ typedef enum	{
 - (BOOL) containsSubview:(id)n;
 - (void) _setSuperview:(id)n;
 - (id) superview;
+//	returns the bounds of the superview (or the container view if applicable). returns NSZeroRect if something's wrong or missing
+- (NSRect) superBounds;
 - (void) registerForDraggedTypes:(NSArray *)a;
 - (void) _collectDragTypesInArray:(NSMutableArray *)n;
 - (MutLockArray *) dragTypes;

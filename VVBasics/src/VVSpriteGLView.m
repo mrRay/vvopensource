@@ -236,6 +236,19 @@ long			_spriteGLViewSysVers;
 		[viewPtr _viewDidMoveToWindow];
 	}
 	[vvSubviews unlock];
+	
+	[self updateTrackingAreas];
+}
+- (void) updateTrackingAreas	{
+	[super updateTrackingAreas];
+	
+	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
+		return;
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr updateTrackingAreas];
+	}
+	[vvSubviews unlock];
 }
 /*
 - (NSView *) hitTest:(NSPoint)p	{
@@ -634,10 +647,14 @@ long			_spriteGLViewSysVers;
 }
 - (void) reshape	{
 	//NSLog(@"%s",__func__);
+	[super reshape];
+	
 	spritesNeedUpdate = YES;
 	initialized = NO;
 }
 - (void) update	{
+	[super update];
+	
 	spritesNeedUpdate = YES;
 	initialized = NO;
 }
@@ -701,6 +718,32 @@ long			_spriteGLViewSysVers;
 	else	{
 		mouseDownEventType = VVSpriteEventDown;
 		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
+	}
+}
+- (void) mouseUp:(NSEvent *)e	{
+	if (deleted)
+		return;
+	
+	if (mouseDownEventType == VVSpriteEventRightDown)	{
+		[self rightMouseUp:e];
+		return;
+	}
+	
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)
+		lastMouseEvent = [e retain];
+	
+	modifierFlags = [e modifierFlags];
+	mouseIsDown = NO;
+	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+	if (clickedSubview != nil)
+		[clickedSubview mouseUp:e];
+	else	{
+		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+		[spriteManager localMouseUp:localPoint];
 	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
@@ -775,32 +818,6 @@ long			_spriteGLViewSysVers;
 - (void) rightMouseDragged:(NSEvent *)e	{
 	[self mouseDragged:e];
 }
-- (void) mouseUp:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
-	if (mouseDownEventType == VVSpriteEventRightDown)	{
-		[self rightMouseUp:e];
-		return;
-	}
-	
-	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	
-	modifierFlags = [e modifierFlags];
-	mouseIsDown = NO;
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-	if (clickedSubview != nil)
-		[clickedSubview mouseUp:e];
-	else	{
-		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-		[spriteManager localMouseUp:localPoint];
-	}
-}
 
 
 /*===================================================================================*/
@@ -830,7 +847,7 @@ long			_spriteGLViewSysVers;
 	
 	//pthread_mutex_lock(&glLock);
 	if (pthread_mutex_trylock(&glLock) != 0)	{	//	returns 0 if successful- so if i can't get a gl lock, skip drawing!
-		//NSLog(@"\t\tcouldn't get GL lock, bailing %s",__func__);
+		NSLog(@"\t\terr: couldn't get GL lock, bailing %s",__func__);
 		return;
 	}
 	
@@ -922,7 +939,7 @@ long			_spriteGLViewSysVers;
 			if ([vvSubviews count]>0)	{
 				//	before i begin, enable the scissor test and get my bounds
 				//NSRectLog(@"\t\tmy reported bounds are",[self bounds]);
-				//NSRectLog(@"\t\tmy real bounds are",bounds);
+				//NSRectLog(@"\t\tmy real bounds are",_bounds);
 				glEnable(GL_SCISSOR_TEST);
 				//	run through all the subviews (last to first), drawing them
 				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];

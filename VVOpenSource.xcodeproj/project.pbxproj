@@ -186,6 +186,8 @@
 		96AD0AAD18577ADF00472548 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AD0AAC18577ADF00472548 /* AudioToolbox.framework */; };
 		96B49324106AEC32008FB26E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96B49322106AEC32008FB26E /* main.m */; };
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
+		96BC320618B62A5300A25D81 /* VVTrackingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BC320418B62A5300A25D81 /* VVTrackingArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96BC320718B62A5300A25D81 /* VVTrackingArea.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BC320518B62A5300A25D81 /* VVTrackingArea.m */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C0057E185A47D000C33FE2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 96C00549185A477000C33FE2 /* LICENSE */; };
@@ -676,6 +678,8 @@
 		96B49304106AEB4C008FB26E /* MIDIviaOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MIDIviaOSC-Info.plist"; path = "MIDIviaOSC/MIDIviaOSC-Info.plist"; sourceTree = "<group>"; };
 		96B49322106AEC32008FB26E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MIDIviaOSC/main.m; sourceTree = "<group>"; };
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
+		96BC320418B62A5300A25D81 /* VVTrackingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVTrackingArea.h; path = VVBasics/src/VVTrackingArea.h; sourceTree = "<group>"; };
+		96BC320518B62A5300A25D81 /* VVTrackingArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVTrackingArea.m; path = VVBasics/src/VVTrackingArea.m; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96C00549185A477000C33FE2 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = external/MAZeroingWeakRef/LICENSE; sourceTree = "<group>"; };
@@ -1058,6 +1062,8 @@
 				96F2AF601271147900AF86DD /* VVSpriteControlCell.m */,
 				9645130E16494057006370F8 /* VVView.h */,
 				9645130F16494057006370F8 /* VVView.m */,
+				96BC320418B62A5300A25D81 /* VVTrackingArea.h */,
+				96BC320518B62A5300A25D81 /* VVTrackingArea.m */,
 			);
 			name = Sprites;
 			sourceTree = "<group>";
@@ -1253,6 +1259,7 @@
 				9645131016494057006370F8 /* VVView.h in Headers */,
 				96AC180C185A41A500917830 /* MAZeroingWeakRef.h in Headers */,
 				96AC180F185A41A500917830 /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */,
+				96BC320618B62A5300A25D81 /* VVTrackingArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1685,6 +1692,7 @@
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
 				9645131B16499BAF006370F8 /* VVView.m in Sources */,
 				96AC180D185A41A500917830 /* MAZeroingWeakRef.m in Sources */,
+				96BC320718B62A5300A25D81 /* VVTrackingArea.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1982,7 +1990,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1999,7 +2007,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
