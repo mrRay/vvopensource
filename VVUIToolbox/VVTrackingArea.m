@@ -86,7 +86,7 @@
 	OSSpinLockUnlock(&attribLock);
 }
 - (void) removeAppleTrackingAreaFromContainerView:(NSView *)v	{
-	NSLog(@"%s ... %@",__func__,v);
+	//NSLog(@"%s ... %@",__func__,v);
 	if (v==nil)
 		return;
 	OSSpinLockLock(&attribLock);
@@ -98,7 +98,7 @@
 	OSSpinLockUnlock(&attribLock);
 }
 
-
+/*
 - (void) setAppleTrackingArea:(NSTrackingArea *)n	{
 	OSSpinLockLock(&attribLock);
 	VVRELEASE(appleTrackingArea);
@@ -112,6 +112,6 @@
 	OSSpinLockUnlock(&attribLock);
 	return (returnMe==nil) ? nil : [returnMe autorelease];
 }
-
+*/
 
 @end

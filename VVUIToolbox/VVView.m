@@ -10,6 +10,7 @@
 #import "VVBasicMacros.h"
 #import <OpenGL/CGLMacro.h>
 #import "VVSpriteGLView.h"
+#import "VVScrollView.h"
 
 
 
@@ -43,6 +44,14 @@
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
+	
+	pthread_mutexattr_t		attr;
+	pthread_mutexattr_init(&attr);
+	//pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_NORMAL);
+	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&spritesUpdateLock,&attr);
+	pthread_mutexattr_destroy(&attr);
+	
 	spriteCtx = NULL;
 	needsDisplay = YES;
 	_frame = NSMakeRect(0,0,1,1);
@@ -92,6 +101,7 @@
 	else if (_containerView != nil)
 		[_containerView removeVVSubview:self];
 	
+	pthread_mutex_destroy(&spritesUpdateLock);
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
@@ -108,6 +118,14 @@
 	VVRELEASE(trackingAreas);
 	[super dealloc];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- first responder stuff
+/*------------------------------------*/
+
+
+
 
 
 /*===================================================================================*/
@@ -246,6 +264,24 @@
 		lastMouseEvent = [e retain];
 	OSSpinLockUnlock(&propertyLock);
 }
+- (void) scrollWheel:(NSEvent *)e	{
+	if (deleted)
+		return;
+	//	don't bother doing anything with "lastMouseEvent", this is a scroll action
+	//	find the first superview which is an instance of the "VVScrollView" class, tell it to scroll
+	if ([e type] != NSScrollWheel)
+		NSLog(@"\t\terr: event wasn't of type NSScrollWheel in %s",__func__);
+	else	{
+		//	find the first superview which is an instance of the VVScrollView class, tell it to scroll
+		id			viewPtr = _superview;
+		while (viewPtr!=nil && ![viewPtr isKindOfClass:[VVScrollView class]])	{
+			viewPtr = [viewPtr superview];
+		}
+		if (viewPtr != nil)	{
+			[viewPtr scrollByAmount:NSMakePoint([e scrollingDeltaX],[e scrollingDeltaY])];
+		}
+	}
+}
 - (void) keyDown:(NSEvent *)e	{
 	NSLog(@"%s ... %@",__func__,e);
 }
@@ -308,6 +344,7 @@
 	id			returnMe = nil;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
+		//NSLog(@"\t\tview %@ checking view %@",self,viewPtr);
 		returnMe = [viewPtr vvSubviewHitTest:localPoint];
 		if (returnMe != nil)
 			break;
@@ -532,14 +569,18 @@
 	return _frame;
 }
 - (void) setFrame:(NSRect)n	{
+	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
+	BOOL		changed = (NSEqualRects(n,_frame)) ? NO : YES;
 	[self _setFrame:n];
-	[self updateTrackingAreas];
-	if (_superview != nil)
-		[_superview setNeedsDisplay:YES];
-	else if (_containerView != nil)
-		[_containerView setNeedsDisplay:YES];
+	if (changed)	{
+		[self updateTrackingAreas];
+		if (_superview != nil)
+			[_superview setNeedsDisplay:YES];
+		else if (_containerView != nil)
+			[_containerView setNeedsDisplay:YES];
+	}
 }
 - (void) _setFrame:(NSRect)n	{
 	//NSLog(@"%s ... (%f, %f) : %f x %f",__func__,n.origin.x,n.origin.y,n.size.width,n.size.height);
@@ -553,71 +594,89 @@
 - (void) setFrameSize:(NSSize)n	{
 	if (deleted)
 		return;
+	BOOL			changed = (NSEqualSizes(n,_frame.size)) ? NO : YES;
 	[self _setFrameSize:n];
-	[self updateTrackingAreas];
-	if (_superview != nil)
-		[_superview setNeedsDisplay:YES];
-	else if (_containerView != nil)
-		[_containerView setNeedsDisplay:YES];
+	if (changed)	{
+		[self updateTrackingAreas];
+		if (_superview != nil)
+			[_superview setNeedsDisplay:YES];
+		else if (_containerView != nil)
+			[_containerView setNeedsDisplay:YES];
+	}
 }
 - (void) _setFrameSize:(NSSize)proposedSize	{
-	//NSLog(@"%s ... %@, (%f x %f)",__func__,self,proposedSize.width,proposedSize.height);
+	//NSLog(@"%s ... %@, (%0.2f x %0.2f)",__func__,self,proposedSize.width,proposedSize.height);
 	NSSize			oldSize = _frame.size;
+	//NSSizeLog(@"\t\toldSize is",oldSize);
 	NSSize			n = NSMakeSize(fmax(minFrameSize.width,proposedSize.width),fmax(minFrameSize.height,proposedSize.height));
+	BOOL			changed = (NSEqualSizes(oldSize,n)) ? NO : YES;
 	
-	if ([self autoresizesSubviews])	{
-		double		widthDelta = n.width - oldSize.width;
-		double		heightDelta = n.height - oldSize.height;
-		[subviews rdlock];
-		for (VVView *viewPtr in [subviews array])	{
-			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
-			NSRect				viewNewFrame = [viewPtr frame];
-			//NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
-			int					hSubDivs = 0;
-			int					vSubDivs = 0;
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
-				++hSubDivs;
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxXMargin))
-				++hSubDivs;
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
-				++hSubDivs;
-			
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
-				++vSubDivs;
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxYMargin))
-				++vSubDivs;
-			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
-				++vSubDivs;
-			//NSLog(@"\t\thSubDivs = %d, vSubDivs = %d",hSubDivs,vSubDivs);
-			if (hSubDivs>0 || vSubDivs>0)	{
-				if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
-					viewNewFrame.size.width += widthDelta/hSubDivs;
-				if (vSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
-					viewNewFrame.size.height += heightDelta/vSubDivs;
+	if (changed)	{
+		if ([self autoresizesSubviews])	{
+			double		widthDelta = n.width - oldSize.width;
+			double		heightDelta = n.height - oldSize.height;
+			[subviews rdlock];
+			for (VVView *viewPtr in [subviews array])	{
+				VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
+				//NSLog(@"\t\tresizing subview %@ with mask %d",viewPtr,viewResizeMask);
+				NSRect				viewNewFrame = [viewPtr frame];
+				//NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
+				int					hSubDivs = 0;
+				int					vSubDivs = 0;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
-					viewNewFrame.origin.x += widthDelta/hSubDivs;
+					++hSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxXMargin))
+					++hSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+					++hSubDivs;
+				
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
-					viewNewFrame.origin.y += heightDelta/vSubDivs;
+					++vSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxYMargin))
+					++vSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+					++vSubDivs;
+				//NSLog(@"\t\thSubDivs = %d, vSubDivs = %d",hSubDivs,vSubDivs);
+				if (hSubDivs>0 || vSubDivs>0)	{
+					if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+						viewNewFrame.size.width += widthDelta/hSubDivs;
+					if (vSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+						viewNewFrame.size.height += heightDelta/vSubDivs;
+					if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+						viewNewFrame.origin.x += widthDelta/hSubDivs;
+					if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+						viewNewFrame.origin.y += heightDelta/vSubDivs;
+				}
+				//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
+				[viewPtr _setFrame:viewNewFrame];
 			}
-			//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
-			[viewPtr _setFrame:viewNewFrame];
+			[subviews unlock];
 		}
-		[subviews unlock];
+		
+		_frame.size = n;
+		
+		//if (changed)	{
+			pthread_mutex_lock(&spritesUpdateLock);
+			spritesNeedUpdate = YES;
+			pthread_mutex_unlock(&spritesUpdateLock);
+		//}
 	}
-	
-	_frame.size = n;
 }
 - (void) setFrameOrigin:(NSPoint)n	{
 	if (deleted)
 		return;
+	BOOL		changed = (!NSEqualPoints(n,_frame.origin)) ? YES : NO;
 	[self _setFrameOrigin:n];
-	[self updateTrackingAreas];
-	if (_superview != nil)
-		[_superview setNeedsDisplay:YES];
-	else if (_containerView != nil)
-		[_containerView setNeedsDisplay:YES];
+	if (changed)	{
+		[self updateTrackingAreas];
+		if (_superview != nil)
+			[_superview setNeedsDisplay:YES];
+		else if (_containerView != nil)
+			[_containerView setNeedsDisplay:YES];
+	}
 }
 - (void) _setFrameOrigin:(NSPoint)n	{
+	//NSLog(@"%s ... %@, (%0.2f, %0.2f)",__func__,self,n.x,n.y);
 	_frame.origin = n;
 }
 - (NSRect) bounds	{
@@ -645,8 +704,13 @@
 - (void) setBoundsOrigin:(NSPoint)n	{
 	BOOL		changed = (!NSEqualPoints(n,_boundsOrigin)) ? YES : NO;
 	_boundsOrigin = n;
-	if (changed)
-		[self setNeedsDisplay];
+	if (changed)	{
+		[self updateTrackingAreas];
+		if (_superview != nil)
+			[_superview setNeedsDisplay:YES];
+		else if (_containerView != nil)
+			[_containerView setNeedsDisplay:YES];
+	}
 }
 - (NSPoint) boundsOrigin	{
 	return _boundsOrigin;
@@ -657,18 +721,24 @@
 - (void) setBoundsOrientation:(VVViewBoundsOrientation)n	{
 	BOOL		changed = (n==_boundsOrientation) ? NO : YES;
 	_boundsOrientation = n;
-	if (changed)
-		[self setNeedsDisplay];
+	if (changed)	{
+		[self updateTrackingAreas];
+		if (_superview != nil)
+			[_superview setNeedsDisplay:YES];
+		else if (_containerView != nil)
+			[_containerView setNeedsDisplay:YES];
+	}
 }
 
 
 - (void) updateTrackingAreas	{
 	if (deleted)
 		return;
+	NSRect		myVisibleBounds = [self visibleRect];
 	//	run through my tracking areas, removing the apple parts from the container view
 	[trackingAreas rdlock];
 	for (VVTrackingArea *ta in [trackingAreas array])	{
-		NSRect			localRect = [ta rect];
+		NSRect			localRect = NSIntersectionRect(myVisibleBounds, [ta rect]);
 		NSRect			containerRect = [self convertRectToContainerViewCoords:localRect];
 		[ta updateAppleTrackingAreaWithContainerView:_containerView containerViewRect:containerRect];
 	}
@@ -725,11 +795,13 @@
 - (NSRect) visibleRect	{
 	//NSLog(@"%s ... %@",__func__,self);
 	NSRect		tmpRect = [self _visibleRect];
-	NSRect		returnMe;
-	returnMe.origin.x = VVMINX(tmpRect);
-	returnMe.size.width = VVMAXX(tmpRect)-returnMe.origin.x;
-	returnMe.origin.y = VVMINY(tmpRect);
-	returnMe.size.height = VVMAXY(tmpRect)-returnMe.origin.y;
+	NSRect		returnMe = NSZeroRect;
+	if (!NSEqualRects(tmpRect, NSZeroRect))	{
+		returnMe.origin.x = VVMINX(tmpRect);
+		returnMe.size.width = VVMAXX(tmpRect)-returnMe.origin.x;
+		returnMe.origin.y = VVMINY(tmpRect);
+		returnMe.size.height = VVMAXY(tmpRect)-returnMe.origin.y;
+	}
 	return returnMe;
 }
 - (NSRect) _visibleRect	{
@@ -830,7 +902,7 @@
 	BOOL			returnMe = NO;
 	if ([_containerView window] != nil)	{
 		NSRect		visRect = [self visibleRect];
-		if ((visRect.size.width>0) && (visRect.size.height>0))	{
+		if (!(VVISZERORECT(visRect)))	{
 			returnMe = YES;
 		}
 	}
@@ -997,6 +1069,20 @@
 	else
 		return NSZeroRect;
 }
+- (NSRect) subviewFramesUnion	{
+	//NSLog(@"%s ... %@",__func__,self);
+	NSRect		returnMe = NSMakeRect(0,0,0,0);
+	[subviews rdlock];
+	for (VVView *subview in [subviews array])	{
+		//NSLog(@"\t\tsubview is %@",subview);
+		NSRect		tmpFrame = [subview frame];
+		//NSRectLog(@"\t\tsubview frame is",tmpFrame);
+		if (tmpFrame.size.width>0.0 && tmpFrame.size.height>0.0)
+			returnMe = NSUnionRect(returnMe,tmpFrame);
+	}
+	[subviews unlock];
+	return returnMe;
+}
 - (void) setContainerView:(id)n	{
 	BOOL			changed = (_containerView != n) ? YES : NO;
 	if (changed && _containerView!=nil)
@@ -1039,15 +1125,17 @@
 }
 - (void) _drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s ... %@",__func__,self);
-	//NSRectLog(@"\t\tpassed rect is",r);
+	//NSRectLog(@"\t\trect is",r);
 	//NSRectLog(@"\t\tclipRect is",c);
 	if (deleted)
 		return;
 	
 	spriteCtx = cgl_ctx;
 	
+	pthread_mutex_lock(&spritesUpdateLock);
 	if (spritesNeedUpdate)
 		[self updateSprites];
+	pthread_mutex_unlock(&spritesUpdateLock);
 	
 	//	configure glScissor so it's clipping to my visible rect (bail if i don't have a visible rect)
 	NSRect			clipRect = [self visibleRect];
@@ -1151,7 +1239,7 @@
 	if (subviews!=nil && [subviews count]>0)	{
 		[subviews rdlock];
 		
-		NSEnumerator	*it = [[subviews array] objectEnumerator];
+		NSEnumerator	*it = [[subviews array] reverseObjectEnumerator];
 		VVView			*viewPtr = nil;
 		while (viewPtr = [it nextObject])	{
 			//NSLog(@"\t\tview is %@",viewPtr);
@@ -1209,7 +1297,8 @@
 	spriteCtx = NULL;
 }
 - (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
-	NSLog(@"ERR: %s, %@",__func__,self);
+	//NSLog(@"ERR: %s, %@",__func__,self);
+	//NSRectLog(@"\t\trect is",r);
 	/*		this method should be used by subclasses.  put the simple drawing code in here (origin is the bottom-left corner of me!)		*/
 }
 - (BOOL) isOpaque	{
@@ -1222,6 +1311,7 @@
 - (void) finishedDrawing	{
 	
 }
+//	you MUST LOCK 'spritesUpdateLock' BEFORE CALLING THIS METHOD
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
 }
@@ -1247,8 +1337,22 @@
 @synthesize deleted;
 @synthesize spriteManager;
 @synthesize spritesNeedUpdate;
+- (void) setSpritesNeedUpdate:(BOOL)n	{
+	pthread_mutex_lock(&spritesUpdateLock);
+	spritesNeedUpdate = n;
+	pthread_mutex_unlock(&spritesUpdateLock);
+}
+- (BOOL) spritesNeedUpdate	{
+	BOOL		returnMe = NO;
+	pthread_mutex_lock(&spritesUpdateLock);
+	returnMe = spritesNeedUpdate;
+	pthread_mutex_unlock(&spritesUpdateLock);
+	return returnMe;
+}
 - (void) setSpritesNeedUpdate	{
+	pthread_mutex_lock(&spritesUpdateLock);
 	spritesNeedUpdate = YES;
+	pthread_mutex_unlock(&spritesUpdateLock);
 }
 - (void) setNeedsDisplay:(BOOL)n	{
 	needsDisplay = n;

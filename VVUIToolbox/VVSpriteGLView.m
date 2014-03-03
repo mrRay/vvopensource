@@ -354,9 +354,11 @@ long			_spriteGLViewSysVers;
 		return nil;
 	
 	id					returnMe = nil;
+	//	run from "top" view to bottom, checking to see if the point lies within any of the views
 	[vvSubviews rdlock];
 	for (VVView *viewPtr in [vvSubviews array])	{
 		NSRect			tmpFrame = [viewPtr frame];
+		//NSRectLog(@"\t\tview's frame is",tmpFrame);
 		if (NSPointInRect(p,tmpFrame))	{
 			returnMe = [viewPtr vvSubviewHitTest:p];
 			if (returnMe != nil)
@@ -697,7 +699,8 @@ long			_spriteGLViewSysVers;
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
-		if (clickedSubview == self) clickedSubview = nil;
+		if (clickedSubview == (id)self)
+			clickedSubview = nil;
 		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
 		//NSRectLog(@"\t\tclickedSubview frame is",[clickedSubview frame]);
 		if (clickedSubview != nil)	{
@@ -762,7 +765,8 @@ long			_spriteGLViewSysVers;
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
 		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
-		if (clickedSubview == self) clickedSubview = nil;
+		if (clickedSubview == (id)self)
+			clickedSubview = nil;
 		if (clickedSubview != nil)	{
 			[clickedSubview rightMouseDown:e];
 			return;
@@ -818,6 +822,35 @@ long			_spriteGLViewSysVers;
 - (void) rightMouseDragged:(NSEvent *)e	{
 	[self mouseDragged:e];
 }
+- (void) scrollWheel:(NSEvent *)e	{
+	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
+	
+	//	find the view under the event location, call "scrollWheel:" on it
+	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//NSPointLog(@"\t\tlocalPoint is",localPoint);
+	if ([[self vvSubviews] count]>0)	{
+		VVView		*scrollSubview = [self vvSubviewHitTest:localPoint];
+		//NSLog(@"\t\tscrollSubview is %@",scrollSubview);
+		if (scrollSubview==(id)self)
+			scrollSubview=nil;
+		if (scrollSubview != nil)
+			[scrollSubview scrollWheel:e];
+	}
+}
+- (void) scrollLineDown:(id)s	{
+	NSLog(@"%s",__func__);
+}
+- (void) scrollLineUp:(id)s	{
+	NSLog(@"%s",__func__);
+}
+- (void) scrollPageDown:(id)s	{
+	NSLog(@"%s",__func__);
+}
+- (void) scrollPageUp:(id)s	{
+	NSLog(@"%s",__func__);
+}
 
 
 /*===================================================================================*/
@@ -836,8 +869,9 @@ long			_spriteGLViewSysVers;
 	pthread_mutex_unlock(&glLock);
 }
 - (void) drawRect:(NSRect)r	{
+	//NSLog(@"*****************************");
 	//NSLog(@"%s",__func__);
-	//NSRectLog(@"\t\tpassed rect is",r);
+	//NSRectLog(@"\t\trect is",r);
 	if (deleted)
 		return;
 	

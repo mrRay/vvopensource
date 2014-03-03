@@ -207,6 +207,8 @@
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96BF19C118C4ED7000B76FA3 /* VVScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96BF19C218C4ED7000B76FA3 /* VVScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF19C018C4ED7000B76FA3 /* VVScrollView.m */; };
 		96C0057E185A47D000C33FE2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 96C00549185A477000C33FE2 /* LICENSE */; };
 		96C18C2F185A1A740082DE35 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C18C2E185A1A740082DE35 /* Foundation.framework */; };
 		96C18C34185A1A740082DE35 /* VVBasicsStatic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C18C33185A1A740082DE35 /* VVBasicsStatic.h */; };
@@ -711,6 +713,8 @@
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
 		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
 		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
+		96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVScrollView.h; sourceTree = "<group>"; };
+		96BF19C018C4ED7000B76FA3 /* VVScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVScrollView.m; sourceTree = "<group>"; };
 		96C00549185A477000C33FE2 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = external/MAZeroingWeakRef/LICENSE; sourceTree = "<group>"; };
 		96C18C2D185A1A740082DE35 /* libVVBasics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVBasics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		96C18C2E185A1A740082DE35 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1171,6 +1175,8 @@
 				96900D5818BE37A90098AB25 /* VVTrackingArea.m */,
 				96900D5918BE37A90098AB25 /* VVView.h */,
 				96900D5A18BE37A90098AB25 /* VVView.m */,
+				96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */,
+				96BF19C018C4ED7000B76FA3 /* VVScrollView.m */,
 				96B06C1F18BE0ECF000A921C /* Supporting Files */,
 			);
 			name = "VVUIToolbox framework";
@@ -1331,6 +1337,7 @@
 				96900D6518BE37A90098AB25 /* VVSpriteView.h in Headers */,
 				96900D6718BE37A90098AB25 /* VVTrackingArea.h in Headers */,
 				96900D6918BE37A90098AB25 /* VVView.h in Headers */,
+				96BF19C118C4ED7000B76FA3 /* VVScrollView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1845,6 +1852,7 @@
 				96900D6618BE37A90098AB25 /* VVSpriteView.m in Sources */,
 				96900D6818BE37A90098AB25 /* VVTrackingArea.m in Sources */,
 				96900D6A18BE37A90098AB25 /* VVView.m in Sources */,
+				96BF19C218C4ED7000B76FA3 /* VVScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

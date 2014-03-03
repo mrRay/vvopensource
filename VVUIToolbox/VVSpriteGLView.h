@@ -3,6 +3,7 @@
 #import "VVSpriteManager.h"
 #import <OpenGL/OpenGL.h>
 #import <libkern/OSAtomic.h>
+#import "VVView.h"
 
 
 
@@ -56,7 +57,7 @@ extern long			_spriteGLViewSysVers;
 	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
-	NSView					*clickedSubview;	//	NOT RETAINED
+	VVView					*clickedSubview;	//	NOT RETAINED
 	
 	VVFlushMode				flushMode;
 	

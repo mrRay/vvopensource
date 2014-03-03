@@ -28,7 +28,7 @@
 - (void) removeAppleTrackingAreaFromContainerView:(NSView *)v;
 
 //	JUST retains the tracking area locally.  does NOT add the tracking area to anything in the NSView hierarchy.
-- (void) setAppleTrackingArea:(NSTrackingArea *)n;
-- (NSTrackingArea *) appleTrackingArea;
+//- (void) setAppleTrackingArea:(NSTrackingArea *)n;
+//- (NSTrackingArea *) appleTrackingArea;
 
 @end

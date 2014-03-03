@@ -50,6 +50,7 @@ typedef enum	{
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
+	pthread_mutex_t		spritesUpdateLock;	//	used to lock around 'updateSprites' and access to 'spritesNeedUpdate'
 	CGLContextObj		spriteCtx;	//	NOT RETAINED! only NON-nil during draw callback, var exists so stuff with draw callbacks can get the GL context w/o having to pass it in methods (which would require discrete code paths)
 	BOOL				needsDisplay;
 	
@@ -95,6 +96,7 @@ typedef enum	{
 - (void) mouseEntered:(NSEvent *)e;
 - (void) mouseExited:(NSEvent *)e;
 - (void) mouseMoved:(NSEvent *)e;
+- (void) scrollWheel:(NSEvent *)e;
 - (void) keyDown:(NSEvent *)e;
 - (void) keyUp:(NSEvent *)e;
 
@@ -122,7 +124,9 @@ typedef enum	{
 - (NSRect) frame;
 - (void) setFrame:(NSRect)n;
 - (void) setFrameSize:(NSSize)n;
+- (void) _setFrameSize:(NSSize)n;
 - (void) setFrameOrigin:(NSPoint)n;
+- (void) _setFrameOrigin:(NSPoint)n;
 - (NSRect) bounds;
 //- (void) setBounds:(NSRect)n;
 - (void) setBoundsOrigin:(NSPoint)n;
@@ -158,6 +162,8 @@ typedef enum	{
 - (id) superview;
 //	returns the bounds of the superview (or the container view if applicable). returns NSZeroRect if something's wrong or missing
 - (NSRect) superBounds;
+//	returns an NSUnionRect of the frames of all my subviews
+- (NSRect) subviewFramesUnion;
 - (void) registerForDraggedTypes:(NSArray *)a;
 - (void) _collectDragTypesInArray:(NSMutableArray *)n;
 - (MutLockArray *) dragTypes;
@@ -171,7 +177,7 @@ typedef enum	{
 - (BOOL) isOpaque;
 - (void) setIsOpaque:(BOOL)n;
 - (void) finishedDrawing;
-- (void) updateSprites;
+- (void) updateSprites;	//	you MUST LOCK 'spritesUpdateLock' BEFORE CALLING THIS METHOD
 - (NSRect) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
 - (double) localToBackingBoundsMultiplier;
 - (void) setLocalToBackingBoundsMultiplier:(double)n;
