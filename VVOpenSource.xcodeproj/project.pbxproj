@@ -7,16 +7,27 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		9658764818CE5C2D003126BC /* Build Mac Frameworks */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9658764B18CE5C2D003126BC /* Build configuration list for PBXAggregateTarget "Build Mac Frameworks" */;
+			buildPhases = (
+			);
+			dependencies = (
+				9658764D18CE5C39003126BC /* PBXTargetDependency */,
+				9658764F18CE5C39003126BC /* PBXTargetDependency */,
+				9658765118CE5C39003126BC /* PBXTargetDependency */,
+				9658765318CE5C39003126BC /* PBXTargetDependency */,
+			);
+			name = "Build Mac Frameworks";
+			productName = "Build Mac Frameworks";
+		};
 		96677EDD100F7CF300163134 /* Build Mac Fmwks & Apps */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 96677EEE100F7D1A00163134 /* Build configuration list for PBXAggregateTarget "Build Mac Fmwks & Apps" */;
 			buildPhases = (
 			);
 			dependencies = (
-				96677EE1100F7CF600163134 /* PBXTargetDependency */,
-				9617464A100F891A00FB60E6 /* PBXTargetDependency */,
-				96677EE3100F7CFA00163134 /* PBXTargetDependency */,
-				96B06C2C18BE10BA000A921C /* PBXTargetDependency */,
+				9658765518CE5C41003126BC /* PBXTargetDependency */,
 				96A99143108D67B400895DC1 /* PBXTargetDependency */,
 				9656D920100F8A370064EEA6 /* PBXTargetDependency */,
 				96A24ECC100F7EE300F21F0F /* PBXTargetDependency */,
@@ -263,13 +274,6 @@
 			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
-		96174649100F891A00FB60E6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 961745F3100F86B400FB60E6;
-			remoteInfo = VVMIDI;
-		};
 		9656D908100F89D60064EEA6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -291,19 +295,40 @@
 			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
-		96677EE0100F7CF600163134 /* PBXContainerItemProxy */ = {
+		9658764C18CE5C39003126BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
 			remoteInfo = VVBasics;
 		};
-		96677EE2100F7CFA00163134 /* PBXContainerItemProxy */ = {
+		9658764E18CE5C39003126BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96B06C1B18BE0ECF000A921C;
+			remoteInfo = VVUIToolbox;
+		};
+		9658765018CE5C39003126BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961745F3100F86B400FB60E6;
+			remoteInfo = VVMIDI;
+		};
+		9658765218CE5C39003126BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 9628D0C4100E89F700C3944E;
 			remoteInfo = VVOSC;
+		};
+		9658765418CE5C41003126BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9658764818CE5C2D003126BC;
+			remoteInfo = "Build Mac Frameworks";
 		};
 		966CCBDF1431F019006D580F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -402,13 +427,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 96ACD7201706416300138AE6;
 			remoteInfo = OSCPingTester;
-		};
-		96B06C2B18BE10BA000A921C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 96B06C1B18BE0ECF000A921C;
-			remoteInfo = VVUIToolbox;
 		};
 		96C18C89185A1D220082DE35 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1608,6 +1626,7 @@
 			projectRoot = "";
 			targets = (
 				96677EDD100F7CF300163134 /* Build Mac Fmwks & Apps */,
+				9658764818CE5C2D003126BC /* Build Mac Frameworks */,
 				961EA8EC100E8565007E6C25 /* VVBasics */,
 				96B06C1B18BE0ECF000A921C /* VVUIToolbox */,
 				961745F3100F86B400FB60E6 /* VVMIDI */,
@@ -1910,11 +1929,6 @@
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
 			targetProxy = 96174622100F886F00FB60E6 /* PBXContainerItemProxy */;
 		};
-		9617464A100F891A00FB60E6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
-			targetProxy = 96174649100F891A00FB60E6 /* PBXContainerItemProxy */;
-		};
 		9656D909100F89D60064EEA6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
@@ -1930,15 +1944,30 @@
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
 			targetProxy = 9656D921100F8A460064EEA6 /* PBXContainerItemProxy */;
 		};
-		96677EE1100F7CF600163134 /* PBXTargetDependency */ = {
+		9658764D18CE5C39003126BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
-			targetProxy = 96677EE0100F7CF600163134 /* PBXContainerItemProxy */;
+			targetProxy = 9658764C18CE5C39003126BC /* PBXContainerItemProxy */;
 		};
-		96677EE3100F7CFA00163134 /* PBXTargetDependency */ = {
+		9658764F18CE5C39003126BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96B06C1B18BE0ECF000A921C /* VVUIToolbox */;
+			targetProxy = 9658764E18CE5C39003126BC /* PBXContainerItemProxy */;
+		};
+		9658765118CE5C39003126BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
+			targetProxy = 9658765018CE5C39003126BC /* PBXContainerItemProxy */;
+		};
+		9658765318CE5C39003126BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9628D0C4100E89F700C3944E /* VVOSC */;
-			targetProxy = 96677EE2100F7CFA00163134 /* PBXContainerItemProxy */;
+			targetProxy = 9658765218CE5C39003126BC /* PBXContainerItemProxy */;
+		};
+		9658765518CE5C41003126BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
+			targetProxy = 9658765418CE5C41003126BC /* PBXContainerItemProxy */;
 		};
 		966CCBE01431F019006D580F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2009,11 +2038,6 @@
 			isa = PBXTargetDependency;
 			target = 96ACD7201706416300138AE6 /* OSCPingTester */;
 			targetProxy = 96ACD747170641C000138AE6 /* PBXContainerItemProxy */;
-		};
-		96B06C2C18BE10BA000A921C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 96B06C1B18BE0ECF000A921C /* VVUIToolbox */;
-			targetProxy = 96B06C2B18BE10BA000A921C /* PBXContainerItemProxy */;
 		};
 		96C18C8A185A1D220082DE35 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2333,6 +2357,20 @@
 			};
 			name = Release;
 		};
+		9658764918CE5C2D003126BC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9658764A18CE5C2D003126BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		96677EDE100F7CF300163134 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2469,7 +2507,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2502,7 +2539,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2543,7 +2579,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2797,6 +2832,15 @@
 			buildConfigurations = (
 				9656D905100F89BA0064EEA6 /* Debug */,
 				9656D906100F89BA0064EEA6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9658764B18CE5C2D003126BC /* Build configuration list for PBXAggregateTarget "Build Mac Frameworks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9658764918CE5C2D003126BC /* Debug */,
+				9658764A18CE5C2D003126BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

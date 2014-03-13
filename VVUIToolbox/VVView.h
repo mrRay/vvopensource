@@ -160,6 +160,7 @@ typedef enum	{
 - (BOOL) containsSubview:(id)n;
 - (void) _setSuperview:(id)n;
 - (id) superview;
+- (id) enclosingScrollView;
 //	returns the bounds of the superview (or the container view if applicable). returns NSZeroRect if something's wrong or missing
 - (NSRect) superBounds;
 //	returns an NSUnionRect of the frames of all my subviews

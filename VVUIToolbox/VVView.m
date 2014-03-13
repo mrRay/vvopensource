@@ -272,14 +272,9 @@
 	if ([e type] != NSScrollWheel)
 		NSLog(@"\t\terr: event wasn't of type NSScrollWheel in %s",__func__);
 	else	{
-		//	find the first superview which is an instance of the VVScrollView class, tell it to scroll
-		id			viewPtr = _superview;
-		while (viewPtr!=nil && ![viewPtr isKindOfClass:[VVScrollView class]])	{
-			viewPtr = [viewPtr superview];
-		}
-		if (viewPtr != nil)	{
-			[viewPtr scrollByAmount:NSMakePoint([e scrollingDeltaX],[e scrollingDeltaY])];
-		}
+		id		scrollView = [self enclosingScrollView];
+		if (scrollView != nil)
+			[scrollView scrollByAmount:NSMakePoint([e scrollingDeltaX],[e scrollingDeltaY])];
 	}
 }
 - (void) keyDown:(NSEvent *)e	{
@@ -1058,6 +1053,12 @@
 }
 - (id) superview	{
 	return _superview;
+}
+- (id) enclosingScrollView	{
+	id			viewPtr = _superview;
+	while (viewPtr!=nil && ![viewPtr isKindOfClass:[VVScrollView class]])
+		viewPtr = [viewPtr superview];
+	return viewPtr;
 }
 - (NSRect) superBounds	{
 	if (deleted)
