@@ -273,8 +273,10 @@
 		NSLog(@"\t\terr: event wasn't of type NSScrollWheel in %s",__func__);
 	else	{
 		id		scrollView = [self enclosingScrollView];
-		if (scrollView != nil)
-			[scrollView scrollByAmount:NSMakePoint([e scrollingDeltaX],[e scrollingDeltaY])];
+		if (_spriteGLViewSysVers >= 7)	{
+			if (scrollView != nil)
+				[scrollView scrollByAmount:NSMakePoint([e scrollingDeltaX],[e scrollingDeltaY])];
+		}
 	}
 }
 - (void) keyDown:(NSEvent *)e	{

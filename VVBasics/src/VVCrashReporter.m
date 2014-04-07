@@ -205,6 +205,14 @@
 	if (modalWindow != nil)
 		[modalWindow makeKeyAndOrderFront:nil];
 }
+- (BOOL) windowShouldClose:(id)sender	{
+	//	if i'm in the middle of submitting crashes, prevent this
+	if (jobSize>0 && [crashLogArray count]>0)	{
+		return NO;
+	}
+	//	do NOT prevent it if it's closing b/c it's done submitting crash logs (or hasn't started yet)
+	return YES;
+}
 - (IBAction) replyButtonClicked:(id)sender	{
 	if ([replyButton intValue] == NSOnState)	{
 		//[emailFieldHolder setHidden:NO];

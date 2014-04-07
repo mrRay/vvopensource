@@ -81,7 +81,8 @@ In addition to frameworks for development of mac apps, this project can produce 
   3.  Switch back to XCode, and locate the "Build Phases" settings.
   4.  Add a target dependency for "Build iOS static libs (VVOpenSource)".
   5.  Add "libVVBasics.a" and "libVVOSC.a" to the "Link Binary with Libraries" section.
-  6.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import \<VVOSC/VVOSC.h\>).
+  6.  In XCode, switch to the "Build Settings" for your application, and add the flag "-ObjC".
+  7.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import \<VVOSC/VVOSC.h\>).
 
 Here's a quick video demonstrating the above steps:[http://vidvox.net/rays_oddsnends/addingVVOSC.mov].
 

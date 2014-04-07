@@ -2582,6 +2582,7 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2602,6 +2603,7 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
