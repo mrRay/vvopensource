@@ -14,6 +14,7 @@
 	#import "VVCURLDL.h"
 	#import "VVCrashReporter.h"
 	//#import "NSHostAdditions.h"
+	#import "VVSysVersion.h"
 #endif
 
 /*

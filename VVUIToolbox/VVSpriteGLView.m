@@ -18,15 +18,7 @@ long			_spriteGLViewSysVers;
 
 
 + (void) initialize	{
-	OSErr			err;
-	SInt32			vers;
-	
-	err = Gestalt(gestaltSystemVersionMinor,&vers);
-	if (err == noErr)
-		_spriteGLViewSysVers = vers;
-	else
-		_spriteGLViewSysVers = 6;
-	
+	_spriteGLViewSysVers = [VVSysVersion majorSysVersion];
 	//NSLog(@"\t\t_spriteGLViewSysVers = %ld",_spriteGLViewSysVers);
 }
 - (id) initWithFrame:(NSRect)f pixelFormat:(NSOpenGLPixelFormat *)p	{

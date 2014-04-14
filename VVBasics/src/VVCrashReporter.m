@@ -1,6 +1,8 @@
 #import "VVCrashReporter.h"
 #import "VVBasicMacros.h"
 #import "AvailabilityMacros.h"
+#import "VVSysVersion.h"
+
 
 
 
@@ -437,9 +439,8 @@
 	//	fill 'crashLogArray' with the paths of all the crash logs found on this machine
 	NSFileManager		*fm = [NSFileManager defaultManager];
 	NSString			*pathToLogFolder = nil;
-	SInt32 version = 0;
-	Gestalt( gestaltSystemVersion, &version );
-	if (version >= 0x1080)	{
+	VVOSVersion			version = [VVSysVersion majorSysVersion];
+	if (version >= VVMountainLion)	{
 		pathToLogFolder = [@"~/Library/Logs/DiagnosticReports" stringByExpandingTildeInPath];
 	}
 	else	{

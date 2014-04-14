@@ -123,6 +123,8 @@
 		9656D91B100F8A0E0064EEA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9656D918100F8A0E0064EEA6 /* AppController.m */; };
 		9656D928100F8A630064EEA6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		9656D92D100F8A780064EEA6 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
+		9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9658C25F18F86BCF004A6BCF /* VVSysVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9658C26018F86BCF004A6BCF /* VVSysVersion.m */; };
 		9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		966CCBFD14320779006D580F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 966CCBFC14320779006D580F /* MainMenu.xib */; };
 		966CCC0214320797006D580F /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
@@ -659,6 +661,8 @@
 		9656D916100F8A0E0064EEA6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVMIDI/AppSrc/AppController.h; sourceTree = "<group>"; };
 		9656D917100F8A0E0064EEA6 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVMIDI/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9656D918100F8A0E0064EEA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = VVMIDI/AppSrc/AppController.m; sourceTree = "<group>"; };
+		9658C25F18F86BCF004A6BCF /* VVSysVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSysVersion.h; path = VVBasics/src/VVSysVersion.h; sourceTree = "<group>"; };
+		9658C26018F86BCF004A6BCF /* VVSysVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSysVersion.m; path = VVBasics/src/VVSysVersion.m; sourceTree = "<group>"; };
 		966CCBD81431EFB9006D580F /* OSCQueryTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSCQueryTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		966CCBDA1431EFB9006D580F /* OSCQueryTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "OSCQueryTest-Info.plist"; path = "OSCQueryTest/OSCQueryTest-Info.plist"; sourceTree = "<group>"; };
 		966CCBFC14320779006D580F /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = OSCQueryTest/MainMenu.xib; sourceTree = "<group>"; };
@@ -939,6 +943,8 @@
 				96ED419710628A5500D8373F /* VVCURLDL.h */,
 				96ED419810628A5500D8373F /* VVCURLDL.m */,
 				96A9911F108D668C00895DC1 /* VVCrashReporter */,
+				9658C25F18F86BCF004A6BCF /* VVSysVersion.h */,
+				9658C26018F86BCF004A6BCF /* VVSysVersion.m */,
 			);
 			name = "VVBasics framework";
 			sourceTree = "<group>";
@@ -1316,6 +1322,7 @@
 				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
 				96AC180C185A41A500917830 /* MAZeroingWeakRef.h in Headers */,
 				96AC180F185A41A500917830 /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */,
+				9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1786,6 +1793,7 @@
 				5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */,
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
 				96AC180D185A41A500917830 /* MAZeroingWeakRef.m in Sources */,
+				9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
