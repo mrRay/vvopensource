@@ -27,7 +27,7 @@ typedef enum	{
 extern long			_spriteGLViewSysVers;
 //	this protocol eliminates warnings- this class is typically compiled against the 10.6 SDK, and this method for NSOpenGLView first appears in the 10.7 SDK.
 @protocol HiddenNSOpenGLViewAdditions
-- (NSRect) convertRectToBacking:(NSRect)n;
+- (VVRECT) convertRectToBacking:(VVRECT)n;
 - (void) setWantsBestResolutionOpenGLSurface:(BOOL)n;
 - (BOOL) wantsBestResolutionOpenGLSurface;
 @end
@@ -77,7 +77,7 @@ extern long			_spriteGLViewSysVers;
 - (void) finishedDrawing;
 //- (void) reshapeGL;
 - (void) updateSprites;
-- (NSRect) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
+- (VVRECT) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
 - (double) localToBackingBoundsMultiplier;
 
 - (void) _lock;
@@ -86,7 +86,7 @@ extern long			_spriteGLViewSysVers;
 - (void) addVVSubview:(id)n;
 - (void) removeVVSubview:(id)n;
 - (BOOL) containsSubview:(id)n;
-- (id) vvSubviewHitTest:(NSPoint)p;
+- (id) vvSubviewHitTest:(VVPOINT)p;
 - (void) reconcileVVSubviewDragTypes;
 
 @property (readonly) BOOL deleted;
@@ -98,6 +98,7 @@ extern long			_spriteGLViewSysVers;
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (retain,readwrite) NSColor *clearColor;
+- (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
 @property (assign,readwrite) BOOL drawBorder;
 @property (retain,readwrite) NSColor *borderColor;
 @property (readonly) VVSpriteManager *spriteManager;

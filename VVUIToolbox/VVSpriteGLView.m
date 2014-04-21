@@ -21,7 +21,7 @@ long			_spriteGLViewSysVers;
 	_spriteGLViewSysVers = [VVSysVersion majorSysVersion];
 	//NSLog(@"\t\t_spriteGLViewSysVers = %ld",_spriteGLViewSysVers);
 }
-- (id) initWithFrame:(NSRect)f pixelFormat:(NSOpenGLPixelFormat *)p	{
+- (id) initWithFrame:(VVRECT)f pixelFormat:(NSOpenGLPixelFormat *)p	{
 	//NSLog(@"%s",__func__);
 	if (self = [super initWithFrame:f pixelFormat:p])	{
 		[self generalInit];
@@ -199,8 +199,8 @@ long			_spriteGLViewSysVers;
 		[super setWantsBestResolutionOpenGLSurface:n];
 		
 		if (n)	{
-			NSRect		bounds = [self bounds];
-			NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+			VVRECT		bounds = [self bounds];
+			VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
 			localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
 		}
 		else
@@ -243,7 +243,7 @@ long			_spriteGLViewSysVers;
 	[vvSubviews unlock];
 }
 /*
-- (NSView *) hitTest:(NSPoint)p	{
+- (NSView *) hitTest:(VVPOINT)p	{
 	NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || vvSubviews==nil)
 		return nil;
@@ -340,7 +340,7 @@ long			_spriteGLViewSysVers;
 	[vvSubviews unlock];
 	return returnMe;
 }
-- (id) vvSubviewHitTest:(NSPoint)p	{
+- (id) vvSubviewHitTest:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || vvSubviews==nil)
 		return nil;
@@ -349,9 +349,9 @@ long			_spriteGLViewSysVers;
 	//	run from "top" view to bottom, checking to see if the point lies within any of the views
 	[vvSubviews rdlock];
 	for (VVView *viewPtr in [vvSubviews array])	{
-		NSRect			tmpFrame = [viewPtr frame];
-		//NSRectLog(@"\t\tview's frame is",tmpFrame);
-		if (NSPointInRect(p,tmpFrame))	{
+		VVRECT			tmpFrame = [viewPtr frame];
+		//VVRectLog(@"\t\tview's frame is",tmpFrame);
+		if (VVPOINTINRECT(p,tmpFrame))	{
 			returnMe = [viewPtr vvSubviewHitTest:p];
 			if (returnMe != nil)
 				break;
@@ -395,7 +395,7 @@ long			_spriteGLViewSysVers;
 	if (dragTypes==nil || [dragTypes count]<1)
 		return NSDragOperationNone;
 	//	...the reported dragging point is in window coords- convert it to my local coords
-	NSPoint				dragPoint = [sender draggingLocation];
+	VVPOINT				dragPoint = [sender draggingLocation];
 	NSView				*winCV = [[self window] contentView];
 	dragPoint = [self convertPoint:dragPoint fromView:winCV];
 	//	check to see if there's a subview under the dragged point
@@ -432,7 +432,7 @@ long			_spriteGLViewSysVers;
 	if (dragTypes==nil || [dragTypes count]<1)
 		return NSDragOperationNone;
 	//	...the reported dragging point is in the display backing coords
-	NSPoint				dragPoint = [sender draggingLocation];
+	VVPOINT				dragPoint = [sender draggingLocation];
 	NSView				*winCV = [[self window] contentView];
 	dragPoint = [self convertPoint:dragPoint fromView:winCV];
 	//	check to see if there's a subview under the dragged point
@@ -508,7 +508,7 @@ long			_spriteGLViewSysVers;
 /*------------------------------------*/
 
 
-- (void) setFrame:(NSRect)f	{
+- (void) setFrame:(VVRECT)f	{
 	//NSLog(@"%s ... %@, (%0.2f, %0.2f) %0.2f x %0.2f",__func__, self, f.origin.x, f.origin.y, f.size.width, f.size.height);
 	if (deleted)
 		return;
@@ -523,8 +523,8 @@ long			_spriteGLViewSysVers;
 	//	update the bounds to real bounds multiplier
 	BOOL		backingBoundsChanged = NO;
 	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
-		NSRect		bounds = [self bounds];
-		NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+		VVRECT		bounds = [self bounds];
+		VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
 		double		tmpDouble;
 		tmpDouble = (backingBounds.size.width/bounds.size.width);
 		if (tmpDouble != localToBackingBoundsMultiplier)
@@ -549,9 +549,9 @@ long			_spriteGLViewSysVers;
 	
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
-- (void) setFrameSize:(NSSize)n	{
+- (void) setFrameSize:(VVSIZE)n	{
 	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
-	NSSize			oldSize = [self frame].size;
+	VVSIZE			oldSize = [self frame].size;
 	[super setFrameSize:n];
 	
 	if ([self autoresizesSubviews])	{
@@ -560,8 +560,8 @@ long			_spriteGLViewSysVers;
 		[vvSubviews rdlock];
 		for (VVView *viewPtr in [vvSubviews array])	{
 			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
-			NSRect				viewNewFrame = [viewPtr frame];
-			//NSRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
+			VVRECT				viewNewFrame = [viewPtr frame];
+			//VVRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
 			int					hSubDivs = 0;
 			int					vSubDivs = 0;
 			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
@@ -588,7 +588,7 @@ long			_spriteGLViewSysVers;
 				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
 					viewNewFrame.origin.y += heightDelta/vSubDivs;
 			}
-			//NSRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
+			//VVRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
 			[viewPtr setFrame:viewNewFrame];
 		}
 		[vvSubviews unlock];
@@ -598,8 +598,8 @@ long			_spriteGLViewSysVers;
 		//NSLog(@"\t\tsized changed!");
 		//	update the bounds to real bounds multiplier
 		if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
-			NSRect		bounds = [self bounds];
-			NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+			VVRECT		bounds = [self bounds];
+			VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
 			localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
 		}
 		else
@@ -625,8 +625,8 @@ long			_spriteGLViewSysVers;
 	[self setSpritesNeedUpdate:YES];
 	//	update the bounds to real bounds multiplier
 	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
-		NSRect		bounds = [self bounds];
-		NSRect		backingBounds = [(id)self convertRectToBacking:bounds];
+		VVRECT		bounds = [self bounds];
+		VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
 		localToBackingBoundsMultiplier = (backingBounds.size.width/bounds.size.width);
 	}
 	else
@@ -660,7 +660,7 @@ long			_spriteGLViewSysVers;
 - (void) _unlock	{
 	pthread_mutex_unlock(&glLock);
 }
-- (NSRect) backingBounds	{
+- (VVRECT) backingBounds	{
 	if (_spriteGLViewSysVers >= 7)
 		return [(id)self convertRectToBacking:[self bounds]];
 	else
@@ -684,17 +684,17 @@ long			_spriteGLViewSysVers;
 	if (e != nil)
 		lastMouseEvent = [e retain];
 	mouseIsDown = YES;
-	NSPoint		locationInWindow = [e locationInWindow];
-	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-	//NSPointLog(@"\t\tlocalPoint is",localPoint);
+	VVPOINT		locationInWindow = [e locationInWindow];
+	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//VVPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
 		if (clickedSubview == (id)self)
 			clickedSubview = nil;
 		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
-		//NSRectLog(@"\t\tclickedSubview frame is",[clickedSubview frame]);
+		//VVRectLog(@"\t\tclickedSubview frame is",[clickedSubview frame]);
 		if (clickedSubview != nil)	{
 			[clickedSubview mouseDown:e];
 			return;
@@ -702,8 +702,8 @@ long			_spriteGLViewSysVers;
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager...
 	//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-	//NSPointLog(@"\t\tmodified localPoint is",localPoint);
+	localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//VVPointLog(@"\t\tmodified localPoint is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
@@ -730,14 +730,14 @@ long			_spriteGLViewSysVers;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseUp:e];
 	else	{
 		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+		localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localMouseUp:localPoint];
 	}
 }
@@ -749,10 +749,10 @@ long			_spriteGLViewSysVers;
 	if (e != nil)
 		lastMouseEvent = [e retain];
 	mouseIsDown = YES;
-	NSPoint		locationInWindow = [e locationInWindow];
-	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
-	//NSPointLog(@"\t\tlocalPoint is",localPoint);
+	VVPOINT		locationInWindow = [e locationInWindow];
+	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//VVPointLog(@"\t\tlocalPoint is",localPoint);
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
@@ -766,7 +766,7 @@ long			_spriteGLViewSysVers;
 	}
 	
 	//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-	localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	
 	mouseDownModifierFlags = [e modifierFlags];
 	mouseDownEventType = VVSpriteEventRightDown;
@@ -781,14 +781,14 @@ long			_spriteGLViewSysVers;
 	if (e != nil)
 		lastMouseEvent = [e retain];
 	mouseIsDown = NO;
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview rightMouseUp:e];
 	else	{
 		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+		localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localRightMouseUp:localPoint];
 	}
 }
@@ -800,14 +800,14 @@ long			_spriteGLViewSysVers;
 		lastMouseEvent = [e retain];
 	
 	modifierFlags = [e modifierFlags];
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	//localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseDragged:e];
 	else	{
 		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
-		localPoint = NSMakePoint(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+		localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
 		[spriteManager localMouseDragged:localPoint];
 	}
 }
@@ -820,8 +820,8 @@ long			_spriteGLViewSysVers;
 		return;
 	
 	//	find the view under the event location, call "scrollWheel:" on it
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
-	//NSPointLog(@"\t\tlocalPoint is",localPoint);
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//VVPointLog(@"\t\tlocalPoint is",localPoint);
 	if ([[self vvSubviews] count]>0)	{
 		VVView		*scrollSubview = [self vvSubviewHitTest:localPoint];
 		//NSLog(@"\t\tscrollSubview is %@",scrollSubview);
@@ -860,10 +860,13 @@ long			_spriteGLViewSysVers;
 	[super lockFocus];
 	pthread_mutex_unlock(&glLock);
 }
-- (void) drawRect:(NSRect)r	{
+- (void) setNeedsDisplay	{
+	[self setNeedsDisplay:YES];
+}
+- (void) drawRect:(VVRECT)r	{
 	//NSLog(@"*****************************");
 	//NSLog(@"%s",__func__);
-	//NSRectLog(@"\t\trect is",r);
+	//VVRectLog(@"\t\trect is",r);
 	if (deleted)
 		return;
 	
@@ -964,30 +967,30 @@ long			_spriteGLViewSysVers;
 		[vvSubviews rdlock];
 			if ([vvSubviews count]>0)	{
 				//	before i begin, enable the scissor test and get my bounds
-				//NSRectLog(@"\t\tmy reported bounds are",[self bounds]);
-				//NSRectLog(@"\t\tmy real bounds are",_bounds);
+				//VVRectLog(@"\t\tmy reported bounds are",[self bounds]);
+				//VVRectLog(@"\t\tmy real bounds are",_bounds);
 				glEnable(GL_SCISSOR_TEST);
 				//	run through all the subviews (last to first), drawing them
 				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
 				VVView				*viewPtr;
 				while (viewPtr = [it nextObject])	{
 					//NSLog(@"\t\tview is %@",viewPtr);
-					//NSRect				viewBounds = [viewPtr bounds];
-					NSRect				viewFrameInMyLocalBounds = [viewPtr frame];
-					//NSRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
-					NSRect				intersectRectInMyLocalBounds = NSIntersectionRect(r,viewFrameInMyLocalBounds);
+					//VVRECT				viewBounds = [viewPtr bounds];
+					VVRECT				viewFrameInMyLocalBounds = [viewPtr frame];
+					//VVRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
+					VVRECT				intersectRectInMyLocalBounds = VVINTERSECTIONRECT(r,viewFrameInMyLocalBounds);
 					if (intersectRectInMyLocalBounds.size.width>0 && intersectRectInMyLocalBounds.size.height>0)	{
 						//	update the intersect rect so it's local to the view i'm going to ask to draw
-						//intersectRectInMyLocalBounds.origin = NSMakePoint(intersectRectInMyLocalBounds.origin.x-viewFrameInMyLocalBounds.origin.x, intersectRectInMyLocalBounds.origin.y-viewFrameInMyLocalBounds.origin.y);
-						//NSRectLog(@"\t\tintersectRectInMyLocalBounds is",intersectRectInMyLocalBounds);
+						//intersectRectInMyLocalBounds.origin = VVMAKEPOINT(intersectRectInMyLocalBounds.origin.x-viewFrameInMyLocalBounds.origin.x, intersectRectInMyLocalBounds.origin.y-viewFrameInMyLocalBounds.origin.y);
+						//VVRectLog(@"\t\tintersectRectInMyLocalBounds is",intersectRectInMyLocalBounds);
 						//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
 						glMatrixMode(GL_MODELVIEW);
 						glPushMatrix();
 						glTranslatef(viewFrameInMyLocalBounds.origin.x*localToBackingBoundsMultiplier, viewFrameInMyLocalBounds.origin.y*localToBackingBoundsMultiplier, 0.0);
 						
 						//	calculate the rect (in the view's local coordinate space) of the are of the view i'm going to ask to draw
-						NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
-						viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+						VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
+						viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
 						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
 						VVViewBoundsOrientation	viewBO = [viewPtr boundsOrientation];
 						if (viewBO != VVViewBOBottom)	{
@@ -1007,18 +1010,18 @@ long			_spriteGLViewSysVers;
 							viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
 							viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
 							//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
-							viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+							viewBoundsToDraw.size = VVMAKESIZE(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
 						}
 						/*
-						NSRect					viewBoundsToDraw = intersectRectInMyLocalBounds;
-						viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+						VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
+						viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
 						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
 						[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
 						viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
 						viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
-						viewBoundsToDraw.size = NSMakeSize(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
-						//viewBoundsToDraw.origin = NSMakePoint(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
-						//NSRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
+						viewBoundsToDraw.size = VVMAKESIZE(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+						//viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
+						//VVRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
 						*/
 						
 						//	now tell the view to do its drawing!
@@ -1031,7 +1034,7 @@ long			_spriteGLViewSysVers;
 					}
 				}
 				//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
-				NSRect		bounds = [self backingBounds];
+				VVRECT		bounds = [self backingBounds];
 				glScissor(bounds.origin.x,bounds.origin.y,bounds.size.width,bounds.size.height);
 				glDisable(GL_SCISSOR_TEST);
 			}
@@ -1099,7 +1102,7 @@ long			_spriteGLViewSysVers;
 	if (deleted)
 		return;
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	//NSRect				bounds = [self bounds];
+	//VVRECT				bounds = [self bounds];
 	//long				cpSwapInterval = 1;
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	
@@ -1131,7 +1134,7 @@ long			_spriteGLViewSysVers;
 	//glDisable(GL_TEXTURE_2D);
 	glPixelZoom((GLuint)1.0,(GLuint)1.0);
 	
-	NSRect		bounds = [self backingBounds];
+	VVRECT		bounds = [self backingBounds];
 	glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
 	
 	//	moved in from drawRect:
@@ -1210,6 +1213,14 @@ long			_spriteGLViewSysVers;
 	if (deleted)
 		return nil;
 	return [NSColor colorWithDeviceRed:clearColor[0] green:clearColor[1] blue:clearColor[2] alpha:clearColor[3]];
+}
+- (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{
+	pthread_mutex_lock(&glLock);
+	clearColor[0] = r;
+	clearColor[1] = g;
+	clearColor[2] = b;
+	clearColor[3] = a;
+	pthread_mutex_unlock(&glLock);
 }
 @synthesize drawBorder;
 - (void) setBorderColor:(NSColor *)c	{

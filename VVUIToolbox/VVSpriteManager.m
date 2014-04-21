@@ -1,8 +1,9 @@
 
 #import "VVSpriteManager.h"
 #import "VVBasicMacros.h"
+#if !IPHONE
 #import <OpenGL/CGLMacro.h>
-
+#endif
 
 
 
@@ -39,8 +40,13 @@ MutLockArray		*_spriteManagerArray;
 		allowMultiSpriteInteraction = NO;
 		multiSpriteExecutesOnMultipleSprites = NO;
 		spriteArray = [[MutLockArray alloc] initWithCapacity:0];
+#if IPHONE
+		perTouchSpritesInUse = [[MutNRLockDict alloc] init];
+		perTouchMultiSpritesInUse = [[MutLockDict alloc] init];
+#else
 		spriteInUse = nil;
 		spritesInUse = nil;
+#endif
 		spriteIndexCount = 1;
 		return self;
 	}
@@ -57,8 +63,13 @@ MutLockArray		*_spriteManagerArray;
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteArray);
+#if IPHONE
+	VVRELEASE(perTouchSpritesInUse);
+	VVRELEASE(perTouchMultiSpritesInUse);
+#else
 	spriteInUse = nil;
 	VVRELEASE(spritesInUse);
+#endif
 	[super dealloc];
 }
 
@@ -68,7 +79,103 @@ MutLockArray		*_spriteManagerArray;
 /*------------------------------------*/
 
 
-- (BOOL) receivedMouseDownEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m visibleOnly:(BOOL)v	{
+#if IPHONE
+- (BOOL) receivedDownEvent:(VVSpriteEventType)e forTouch:(UITouch *)t atPoint:(VVPOINT)p visibleOnly:(BOOL)v	{
+	//NSLog(@"%s ... (%0.2f, %0.2f)",__func__,p.x,p.y);
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1)||(!_spriteManagerInitialized)||(t==nil))
+		return NO;
+	BOOL			returnMe = NO;
+	//	if i'm doing multi-sprite interaction
+	if (allowMultiSpriteInteraction)	{
+		NSLog(@"\t\tmulti-sprite interaction isn't supported on iOS yet! %s",__func__);
+	}
+	//	else this is a single-sprite interaction
+	else	{
+		[perTouchSpritesInUse rdlock];
+		[spriteArray rdlock];
+		
+		__block VVSprite		*foundSprite = nil;
+		for (VVSprite *spritePtr in [spriteArray array])	{
+			if ((![spritePtr locked]) && ([spritePtr checkPoint:p]) && ([spritePtr actionCallback]!=nil) && ([spritePtr delegate]!=nil))	{
+				if ((v && ![spritePtr hidden]) || (!v))	{
+					//	if everything checks out, set the foundSprite to this sprite
+					foundSprite = spritePtr;
+					//	run through the sprites that are already in use, making sure that the sprite i found isn't already being used by another touch
+					[[perTouchSpritesInUse dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+						if ([(ObjectHolder *)obj object] == foundSprite)	{
+							foundSprite = nil;
+							*stop = YES;
+						}
+					}];
+					//	if i found a sprite, break out of the for loop and start working with it
+					if (foundSprite != nil)
+						break;
+				}
+			}
+		}
+		
+		[spriteArray unlock];
+		[perTouchSpritesInUse unlock];
+		
+		//	if "foundSprite" is non-nil, i'm good to go and can start working with it...
+		if (foundSprite!=nil)	{
+			ObjectHolder	*tmpHolder = [ObjectHolder createWithZWRObject:foundSprite];
+			//	cast the UITouch pointer as a 64-bit int representing the address of the UITouch's pointer
+			[perTouchSpritesInUse lockSetObject:tmpHolder forKey:(id)NUMU64((unsigned long long)t)];
+			[foundSprite receivedEvent:e atPoint:p withModifierFlag:0];
+			returnMe = YES;
+		}
+	}
+	return returnMe;
+}
+- (void) receivedOtherEvent:(VVSpriteEventType)e forTouch:(UITouch *)t atPoint:(VVPOINT)p	{
+	//NSLog(@"%s ... %0.2f, %0.2f",__func__,p.x,p.y);
+	if (deleted || spriteArray==nil || [spriteArray count]<1 || !_spriteManagerInitialized || t==nil)
+		return;
+	if (allowMultiSpriteInteraction)	{
+		NSLog(@"\t\tmulti-sprite interaction isn't supported on iOS yet! %s",__func__);
+	}
+	else	{
+		//	cast the UITouch pointer as a 64-bit int representing the address of the UITouch's pointer
+		VVSprite		*spriteInUse = [perTouchSpritesInUse lockObjectForKey:(id)NUMU64((unsigned long long)t)];
+		if (spriteInUse != nil)	{
+			//[spriteInUse rightMouseUp:p];
+			[spriteInUse receivedEvent:e atPoint:p withModifierFlag:0];
+			//	if this is a mouseup, empty spritesInUse- but i don't want to empty it during a drag!
+			if (e==VVSpriteEventUp || e==VVSpriteEventRightUp)	{
+				//	cast the UITouch pointer as a 64-bit int representing the address of the UITouch's pointer
+				[perTouchSpritesInUse lockRemoveObjectForKey:(id)NUMU64((unsigned long long)t)];
+			}
+		}
+	}
+}
+- (BOOL) localTouch:(UITouch *)t downAtPoint:(VVPOINT)p	{
+	//NSLog(@"%s ... %p, (%0.2f, %0.2f)",__func__,self,p.x,p.y);
+	return [self receivedDownEvent:VVSpriteEventDown forTouch:t atPoint:p visibleOnly:NO];
+}
+- (BOOL) localTouch:(UITouch *)t visibleDownAtPoint:(VVPOINT)p	{
+	//NSLog(@"%s ... %p, (%0.2f, %0.2f)",__func__,self,p.x,p.y);
+	return [self receivedDownEvent:VVSpriteEventDown forTouch:t atPoint:p visibleOnly:YES];
+}
+- (void) localTouch:(UITouch *)t draggedAtPoint:(VVPOINT)p	{
+	//NSLog(@"%s ... %p, (%0.2f, %0.2f)",__func__,self,p.x,p.y);
+	[self receivedOtherEvent:VVSpriteEventDrag forTouch:t atPoint:p];
+}
+- (void) localTouch:(UITouch *)t upAtPoint:(VVPOINT)p	{
+	//NSLog(@"%s ... %p, (%0.2f, %0.2f)",__func__,self,p.x,p.y);
+	[self receivedOtherEvent:VVSpriteEventUp forTouch:t atPoint:p];
+}
+- (void) terminateTouch:(UITouch *)t	{
+	//NSLog(@"%s ... %p",__func__,self);
+	if (t != nil)	{
+		//	cast the UITouch pointer as a 64-bit int representing the address of the UITouch's pointer
+		NSNumber		*ptrAsNum = NUMU64((unsigned long long)t);
+		[perTouchSpritesInUse lockRemoveObjectForKey:(id)ptrAsNum];
+		[perTouchMultiSpritesInUse lockRemoveObjectForKey:(id)ptrAsNum];
+	}
+}
+#else
+- (BOOL) receivedMouseDownEvent:(VVSpriteEventType)e atPoint:(VVPOINT)p withModifierFlag:(long)m visibleOnly:(BOOL)v	{
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1)||(!_spriteManagerInitialized))
 		return NO;
 	BOOL			returnMe = NO;
@@ -154,7 +261,8 @@ MutLockArray		*_spriteManagerArray;
 	}
 	return returnMe;
 }
-- (void) receivedOtherEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m	{
+- (void) receivedOtherEvent:(VVSpriteEventType)e atPoint:(VVPOINT)p withModifierFlag:(long)m	{
+	//NSLog(@"%s ... %0.2f, %0.2f",__func__,p.x,p.y);
 	if (deleted || spriteArray==nil || [spriteArray count]<1 || !_spriteManagerInitialized)
 		return;
 	if (allowMultiSpriteInteraction)	{
@@ -181,38 +289,39 @@ MutLockArray		*_spriteManagerArray;
 	}
 }
 
-- (BOOL) localMouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (BOOL) localMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventDown atPoint:p withModifierFlag:m visibleOnly:NO];
 }
-- (BOOL) localVisibleMouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (BOOL) localVisibleMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventDown atPoint:p withModifierFlag:m visibleOnly:YES];
 }
-- (BOOL) localRightMouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (BOOL) localRightMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventRightDown atPoint:p withModifierFlag:m visibleOnly:NO];
 }
-- (BOOL) localVisibleRightMouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (BOOL) localVisibleRightMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventRightDown atPoint:p withModifierFlag:m visibleOnly:YES];
 }
-- (void) localRightMouseUp:(NSPoint)p	{
+- (void) localRightMouseUp:(VVPOINT)p	{
 	[self receivedOtherEvent:VVSpriteEventRightUp atPoint:p withModifierFlag:0];
 }
-- (void) localMouseDragged:(NSPoint)p	{
+- (void) localMouseDragged:(VVPOINT)p	{
 	[self receivedOtherEvent:VVSpriteEventDrag atPoint:p withModifierFlag:0];
 }
-- (void) localMouseUp:(NSPoint)p	{
+- (void) localMouseUp:(VVPOINT)p	{
 	[self receivedOtherEvent:VVSpriteEventUp atPoint:p withModifierFlag:0];
 }
 - (void) terminatePresentMouseSession	{
 	spriteInUse = nil;
 	[spritesInUse lockRemoveAllObjects];
 }
+#endif
 
 
 /*===================================================================================*/
 #pragma mark --------------------- management
 /*------------------------------------*/
 
-- (VVSprite *) spriteAtPoint:(NSPoint)p	{
+- (VVSprite *) spriteAtPoint:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || !_spriteManagerInitialized)
 		return nil;
@@ -232,7 +341,7 @@ MutLockArray		*_spriteManagerArray;
 	
 	return returnMe;
 }
-- (NSMutableArray *) spritesAtPoint:(NSPoint)p	{
+- (NSMutableArray *) spritesAtPoint:(VVPOINT)p	{
 	if (deleted || !_spriteManagerInitialized)
 		return nil;
 	NSMutableArray		*returnMe = nil;
@@ -247,7 +356,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray unlock];
 	return returnMe;
 }
-- (VVSprite *) visibleSpriteAtPoint:(NSPoint)p	{
+- (VVSprite *) visibleSpriteAtPoint:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || !_spriteManagerInitialized)
 		return nil;
@@ -267,7 +376,7 @@ MutLockArray		*_spriteManagerArray;
 	
 	return returnMe;
 }
-- (id) newSpriteAtBottomForRect:(NSRect)r	{
+- (id) newSpriteAtBottomForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;
@@ -275,7 +384,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray lockAddObject:returnMe];
 	return returnMe;
 }
-- (id) newSpriteAtTopForRect:(NSRect)r	{
+- (id) newSpriteAtTopForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;
@@ -326,6 +435,37 @@ MutLockArray		*_spriteManagerArray;
 		}
 		++tmpIndex;
 	}
+#if IPHONE
+	if (foundSprite != nil)	{
+		if (allowMultiSpriteInteraction)	{
+			//	run through the key/val dict of UITouch/MutLockArrays, delete the ObjectHolder containing the found sprite from each array!
+			[perTouchMultiSpritesInUse rdlock];
+			[[perTouchMultiSpritesInUse dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+				[(MutLockArray *)obj lockRemoveIdenticalPtr:foundSprite];
+			}];
+			[perTouchMultiSpritesInUse unlock];
+		}
+		else	{
+			//	run through the key/val dict of UITouch/ObjectHolders, determining which keys (which UITouches) to delete
+			[perTouchSpritesInUse wrlock];
+			__block NSMutableArray		*keysToRemove = nil;
+			[[perTouchSpritesInUse dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+				VVSprite		*objSprite = [(ObjectHolder *)obj object];
+				if (objSprite == foundSprite)	{
+					if (keysToRemove == nil)
+						keysToRemove = MUTARRAY;
+					[keysToRemove addObject:key];
+				}
+			}];
+			if (keysToRemove != nil)	{
+				for (id keyToRemove in keysToRemove)
+					[perTouchSpritesInUse removeObjectForKey:keyToRemove];
+			}
+			[perTouchSpritesInUse unlock];
+		}
+		[spriteArray removeObjectAtIndex:tmpIndex];
+	}
+#else
 	if (foundSprite != nil)	{
 		if (allowMultiSpriteInteraction)	{
 			[spritesInUse lockRemoveIdenticalPtr:foundSprite];
@@ -336,6 +476,7 @@ MutLockArray		*_spriteManagerArray;
 		}
 		[spriteArray removeObjectAtIndex:tmpIndex];
 	}
+#endif
 	[spriteArray unlock];
 }
 - (void) removeSprite:(id)z	{
@@ -344,13 +485,48 @@ MutLockArray		*_spriteManagerArray;
 	if ((spriteArray!=nil)&&([spriteArray count]>0))	{
 		[spriteArray lockRemoveIdenticalPtr:z];
 	}
-	if (allowMultiSpriteInteraction)	{
-		[spritesInUse lockRemoveIdenticalPtr:z];
+	VVSprite		*foundSprite = z;
+#if IPHONE
+	if (foundSprite != nil)	{
+		if (allowMultiSpriteInteraction)	{
+			//	run through the key/val dict of UITouch/MutLockArrays, delete the ObjectHolder containing the found sprite from each array!
+			[perTouchMultiSpritesInUse rdlock];
+			[[perTouchMultiSpritesInUse dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+				[(MutLockArray *)obj lockRemoveIdenticalPtr:foundSprite];
+			}];
+			[perTouchMultiSpritesInUse unlock];
+		}
+		else	{
+			//	run through the key/val dict of UITouch/ObjectHolders, determining which keys (which UITouches) to delete
+			[perTouchSpritesInUse wrlock];
+			__block NSMutableArray		*keysToRemove = nil;
+			[[perTouchSpritesInUse dict] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)	{
+				VVSprite		*objSprite = [(ObjectHolder *)obj object];
+				if (objSprite == foundSprite)	{
+					if (keysToRemove == nil)
+						keysToRemove = MUTARRAY;
+					[keysToRemove addObject:key];
+				}
+			}];
+			if (keysToRemove != nil)	{
+				for (id keyToRemove in keysToRemove)
+					[perTouchSpritesInUse removeObjectForKey:keyToRemove];
+			}
+			[perTouchSpritesInUse unlock];
+		}
 	}
-	else	{
-		if (spriteInUse == z)
-			spriteInUse = nil;
+#else
+	if (foundSprite != nil)	{
+		if (allowMultiSpriteInteraction)	{
+			[spritesInUse lockRemoveIdenticalPtr:foundSprite];
+		}
+		else	{
+			if (spriteInUse == foundSprite)
+				spriteInUse = nil;
+		}
 	}
+#endif
+	[spriteArray lockRemoveIdenticalPtr:z];
 }
 - (void) removeSpritesFromArray:(NSArray *)array	{
 	if (deleted || array==nil)
@@ -362,13 +538,18 @@ MutLockArray		*_spriteManagerArray;
 - (void) removeAllSprites	{
 	if (deleted)
 		return;
+#if IPHONE
+	[perTouchSpritesInUse lockRemoveAllObjects];
+	[perTouchMultiSpritesInUse lockRemoveAllObjects];
+#else
 	//	remove everything from the tracker array
 	spriteInUse = nil;
+	if (spritesInUse != nil)
+		[spritesInUse lockRemoveAllObjects];
+#endif
 	//	remove everything from the sprites in use array
 	if (spriteArray != nil)
 		[spriteArray lockRemoveAllObjects];
-	if (spritesInUse != nil)
-		[spritesInUse lockRemoveAllObjects];
 }
 /*
 - (void) moveSpriteToFront:(VVSprite *)z	{
@@ -396,7 +577,7 @@ MutLockArray		*_spriteManagerArray;
 		}
 	[spriteArray unlock];
 }
-- (void) drawRect:(NSRect)r	{
+- (void) drawRect:(VVRECT)r	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
@@ -407,16 +588,17 @@ MutLockArray		*_spriteManagerArray;
 			if ([spritePtr checkRect:r])
 				[spritePtr draw];
 			/*
-			//NSRect		tmp = [spritePtr rect];
+			//VVRECT		tmp = [spritePtr rect];
 			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
 			//if (![spritePtr hidden])	{
-				if (NSIntersectsRect([spritePtr rect],r))
+				if (VVINTERSECTSRECT([spritePtr rect],r))
 					[spritePtr draw];
 			//}
 			*/
 		}
 	[spriteArray unlock];
 }
+#if !IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
@@ -429,9 +611,11 @@ MutLockArray		*_spriteManagerArray;
 		}
 	[spriteArray unlock];
 }
-- (void) drawRect:(NSRect)r inContext:(CGLContextObj)cgl_ctx	{
+#endif
+#if !IPHONE
+- (void) drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s",__func__);
-	//NSRectLog(@"\t\tpassed rect is",r);
+	//VVRectLog(@"\t\tpassed rect is",r);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
 	[spriteArray rdlock];
@@ -441,16 +625,18 @@ MutLockArray		*_spriteManagerArray;
 			if ([spritePtr checkRect:r])
 				[spritePtr drawInContext:cgl_ctx];
 			/*
-			//NSRect		tmp = [spritePtr rect];
+			//VVRECT		tmp = [spritePtr rect];
 			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
 			//if (![spritePtr hidden])	{
-				if (NSIntersectsRect([spritePtr rect],r))
+				if (VVINTERSECTSRECT([spritePtr rect],r))
 					[spritePtr draw];
 			//}
 			*/
 		}
 	[spriteArray unlock];
 }
+#endif
+#if !IPHONE
 - (VVSprite *) spriteInUse	{
 	if (deleted)
 		return nil;
@@ -459,16 +645,23 @@ MutLockArray		*_spriteManagerArray;
 	else
 		return spriteInUse;
 }
+#endif
+#if !IPHONE
 - (void) setSpriteInUse:(VVSprite *)z	{
 	if (deleted)
 		return;
 	spriteInUse = z;
 }
+#endif
 - (void) setAllowMultiSpriteInteraction:(BOOL)n	{
+#if IPHONE
+	
+#else
 	if (n && spritesInUse==nil)
 		spritesInUse = [[MutLockArray alloc] init];
 	else if (!n && spritesInUse!=nil)
 		VVRELEASE(spritesInUse);
+#endif
 	allowMultiSpriteInteraction = n;
 }
 - (BOOL) allowMultiSpriteInteraction	{
@@ -480,11 +673,13 @@ MutLockArray		*_spriteManagerArray;
 		return nil;
 	return spriteArray;
 }
+#if !IPHONE
 - (MutLockArray *) spritesInUse	{
 	if (deleted)
 		return nil;
 	return spritesInUse;
 }
+#endif
 
 
 @end

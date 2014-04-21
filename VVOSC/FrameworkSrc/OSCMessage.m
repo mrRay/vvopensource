@@ -988,7 +988,7 @@
 }
 - (NSData *) writeToNSData	{
 	NSData			*returnMe = nil;
-	int				bufferLen = [self bufferLength];
+	NSUInteger		bufferLen = [self bufferLength];
 	if (bufferLen>0)	{
 		unsigned char	*buffer = malloc(bufferLen * sizeof(unsigned char));
 		if (buffer != nil)	{

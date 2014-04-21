@@ -586,7 +586,7 @@
 	if (p == nil)
 		return;
 	BOOL				postNotification = NO;
-	int					origCount;
+	NSUInteger			origCount;
 	[(OSCInPort *)p stop];
 	[inPortArray wrlock];
 		origCount = [inPortArray count];
@@ -606,7 +606,7 @@
 	if (p == nil)
 		return;
 	BOOL				postNotification = NO;
-	int					origCount;
+	NSUInteger			origCount;
 	//NSLog(@"\t\tfiring about-to-change notification");
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
 	

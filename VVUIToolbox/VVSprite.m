@@ -12,13 +12,13 @@
 /*===================================================================================*/
 #pragma mark --------------------- create/destroy
 /*------------------------------------*/
-+ (id) createWithRect:(NSRect)r inManager:(id)m	{
++ (id) createWithRect:(VVRECT)r inManager:(id)m	{
 	VVSprite		*returnMe = [[VVSprite alloc] initWithRect:r inManager:m];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
 }
-- (id) initWithRect:(NSRect)r inManager:(id)m	{
+- (id) initWithRect:(VVRECT)r inManager:(id)m	{
 	if ((m==nil)||(r.size.width==0)||(r.size.height==0)||(r.origin.x==NSNotFound)||(r.origin.y==NSNotFound))	{
 		[self release];
 		return nil;
@@ -34,18 +34,20 @@
 		delegate = nil;
 		drawCallback = nil;
 		actionCallback = nil;
+#if !IPHONE
 		glDrawContext = NULL;
+#endif
 		
 		rect = r;
 		bezierPath = nil;
 		pathLock = OS_SPINLOCK_INIT;
 		lastActionType = VVSpriteEventNULL;
-		lastActionCoords = NSMakePoint(NSNotFound,NSNotFound);
+		lastActionCoords = VVMAKEPOINT(NSNotFound,NSNotFound);
 		lastActionInBounds = NO;
 		trackingFlag = NO;
-		mouseDownCoords = NSMakePoint(NSNotFound,NSNotFound);
-		lastActionDelta = NSMakePoint(NSNotFound,NSNotFound);
-		mouseDownDelta = NSMakePoint(NSNotFound,NSNotFound);
+		mouseDownCoords = VVMAKEPOINT(NSNotFound,NSNotFound);
+		lastActionDelta = VVMAKEPOINT(NSNotFound,NSNotFound);
+		mouseDownDelta = VVMAKEPOINT(NSNotFound,NSNotFound);
 		mouseDownModifierFlags = 0;
 		
 		userInfo = nil;
@@ -76,15 +78,15 @@
 #pragma mark --------------------- action and draw
 /*------------------------------------*/
 
-- (BOOL) checkPoint:(NSPoint)p	{
+- (BOOL) checkPoint:(VVPOINT)p	{
 	//NSLog(@"%s",__func__);
-	//NSPointLog(@"\t\tchecking point",p);
-	//NSRectLog(@"\t\tagainst rect",rect);
+	//VVPointLog(@"\t\tchecking point",p);
+	//VVRectLog(@"\t\tagainst rect",rect);
 	BOOL		returnMe = NO;
 	OSSpinLockLock(&pathLock);
 	if (bezierPath==nil)	{
 		OSSpinLockUnlock(&pathLock);
-		returnMe = NSPointInRect(p,rect);
+		returnMe = VVPOINTINRECT(p,rect);
 	}
 	else	{
 		returnMe = [bezierPath containsPoint:p];
@@ -92,22 +94,22 @@
 	}
 	return returnMe;
 }
-- (BOOL) checkRect:(NSRect)r	{
+- (BOOL) checkRect:(VVRECT)r	{
 	BOOL		returnMe = NO;
 	OSSpinLockLock(&pathLock);
 	if (bezierPath==nil)	{
 		OSSpinLockUnlock(&pathLock);
-		returnMe = NSIntersectsRect(rect,r);
+		returnMe = VVINTERSECTSRECT(rect,r);
 	}
 	else	{
-		returnMe = NSIntersectsRect([bezierPath bounds],r);
+		returnMe = VVINTERSECTSRECT([bezierPath bounds],r);
 		OSSpinLockUnlock(&pathLock);
 	}
 	return returnMe;
 }
 
 
-- (void) receivedEvent:(VVSpriteEventType)e atPoint:(NSPoint)p withModifierFlag:(long)m	{
+- (void) receivedEvent:(VVSpriteEventType)e atPoint:(VVPOINT)p withModifierFlag:(long)m	{
 	if (deleted)
 		return;
 	
@@ -118,12 +120,12 @@
 		case VVSpriteEventDrag:
 			//	calculate the deltas
 			if (lastActionType == VVSpriteEventDown)	{
-				lastActionDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
-				mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+				lastActionDelta = VVMAKEPOINT(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+				mouseDownDelta = VVMAKEPOINT(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
 			}
 			else	{
-				lastActionDelta = NSMakePoint(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
-				mouseDownDelta = NSMakePoint(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
+				lastActionDelta = VVMAKEPOINT(p.x-lastActionCoords.x, p.y-lastActionCoords.y);
+				mouseDownDelta = VVMAKEPOINT(p.x-mouseDownCoords.x, p.y-mouseDownCoords.y);
 			}
 			break;
 		case VVSpriteEventDown:
@@ -131,8 +133,8 @@
 		case VVSpriteEventRightDown:
 			trackingFlag = NO;
 			mouseDownCoords = p;
-			lastActionDelta = NSMakePoint(0,0);
-			mouseDownDelta = NSMakePoint(0,0);
+			lastActionDelta = VVMAKEPOINT(0,0);
+			mouseDownDelta = VVMAKEPOINT(0,0);
 			mouseDownModifierFlags = m;
 			break;
 		case VVSpriteEventNULL:
@@ -155,19 +157,19 @@
 	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
 		[delegate performSelector:actionCallback withObject:self];
 }
-- (void) mouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (void) mouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	[self receivedEvent:VVSpriteEventDown atPoint:p withModifierFlag:m];
 }
-- (void) rightMouseDown:(NSPoint)p modifierFlag:(long)m	{
+- (void) rightMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	[self receivedEvent:VVSpriteEventRightDown atPoint:p withModifierFlag:m];
 }
-- (void) rightMouseUp:(NSPoint)p	{
+- (void) rightMouseUp:(VVPOINT)p	{
 	[self receivedEvent:VVSpriteEventRightUp atPoint:p withModifierFlag:0];
 }
-- (void) mouseDragged:(NSPoint)p	{
+- (void) mouseDragged:(VVPOINT)p	{
 	[self receivedEvent:VVSpriteEventDrag atPoint:p withModifierFlag:0];
 }
-- (void) mouseUp:(NSPoint)p	{
+- (void) mouseUp:(VVPOINT)p	{
 	[self receivedEvent:VVSpriteEventUp atPoint:p withModifierFlag:0];
 }
 
@@ -176,9 +178,12 @@
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
+#if !IPHONE
 	glDrawContext = NULL;
+#endif
 	[delegate performSelector:drawCallback withObject:self];
 }
+#if !IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
@@ -186,6 +191,7 @@
 	[delegate performSelector:drawCallback withObject:self];
 	glDrawContext = NULL;
 }
+#endif
 - (void) bringToFront	{
 	//NSLog(@"%s",__func__);
 	if ((deleted) || (manager==nil))
@@ -275,44 +281,60 @@
 - (SEL) actionCallback	{
 	return actionCallback;
 }
+#if !IPHONE
 - (CGLContextObj) glDrawContext	{
 	return glDrawContext;
 }
+#endif
 
 
-- (void) setRect:(NSRect)n	{
+- (void) setRect:(VVRECT)n	{
 	//NSLog(@"%s ... %ld",__func__,spriteIndex);
-	//NSRectLog(@"\trect",n);
-	NSRect		oldRect = rect;
-	NSPoint		delta = NSMakePoint(n.origin.x-oldRect.origin.x, n.origin.y-oldRect.origin.y);
+	//VVRectLog(@"\trect",n);
+	VVRECT		oldRect = rect;
+	VVPOINT		delta = VVMAKEPOINT(n.origin.x-oldRect.origin.x, n.origin.y-oldRect.origin.y);
 	rect = n;
-	lastActionCoords = NSMakePoint(lastActionCoords.x+delta.x, lastActionCoords.y+delta.y);
-	mouseDownCoords = NSMakePoint(mouseDownCoords.x+delta.x, mouseDownCoords.y+delta.y);
+	lastActionCoords = VVMAKEPOINT(lastActionCoords.x+delta.x, lastActionCoords.y+delta.y);
+	mouseDownCoords = VVMAKEPOINT(mouseDownCoords.x+delta.x, mouseDownCoords.y+delta.y);
 	
 	OSSpinLockLock(&pathLock);
 	VVRELEASE(bezierPath);
 	OSSpinLockUnlock(&pathLock);
 }
-- (NSRect) rect	{
+- (VVRECT) rect	{
 	return rect;
 }
-- (void) setBezierPath:(NSBezierPath *)n	{
+#if IPHONE
+- (void) setBezierPath:(UIBezierPath *)n
+#else
+- (void) setBezierPath:(NSBezierPath *)n
+#endif
+{
 	OSSpinLockLock(&pathLock);
 	VVRELEASE(bezierPath);
 	if (n != nil)
 		bezierPath = [n retain];
 	OSSpinLockUnlock(&pathLock);
 }
-- (NSBezierPath *) safelyGetBezierPath	{
+#if IPHONE
+- (UIBezierPath *) safelyGetBezierPath
+#else
+- (NSBezierPath *) safelyGetBezierPath
+#endif
+{
+#if IPHONE
+	UIBezierPath		*returnMe = nil;
+#else
 	NSBezierPath		*returnMe = nil;
+#endif
 	OSSpinLockLock(&pathLock);
 	if (bezierPath != nil)
 		returnMe = [bezierPath copy];
 	OSSpinLockUnlock(&pathLock);
 	return returnMe;
 }
-- (NSRect) spriteBounds	{
-	NSRect		returnMe = NSZeroRect;
+- (VVRECT) spriteBounds	{
+	VVRECT		returnMe = VVZERORECT;
 	OSSpinLockLock(&pathLock);
 	if (bezierPath==nil)
 		returnMe = rect;
@@ -324,7 +346,7 @@
 - (VVSpriteEventType) lastActionType	{
 	return lastActionType;
 }
-- (NSPoint) lastActionCoords	{
+- (VVPOINT) lastActionCoords	{
 	return lastActionCoords;
 }
 - (BOOL) lastActionInBounds	{
@@ -333,13 +355,13 @@
 - (BOOL) trackingFlag	{
 	return trackingFlag;
 }
-- (NSPoint) mouseDownCoords	{
+- (VVPOINT) mouseDownCoords	{
 	return mouseDownCoords;
 }
-- (NSPoint) lastActionDelta	{
+- (VVPOINT) lastActionDelta	{
 	return lastActionDelta;
 }
-- (NSPoint) mouseDownDelta	{
+- (VVPOINT) mouseDownDelta	{
 	return mouseDownDelta;
 }
 @synthesize mouseDownModifierFlags;

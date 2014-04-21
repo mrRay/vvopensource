@@ -5,9 +5,13 @@
 
 
 
-static NSString* const kVarSysInfoVersionFormat	 = @"%@.%@.%@ (%@)";
+/*
+		this approach for determining which system we're running (an alternative to the now-deprecated Gestalt()) on was copied from a stack overflow post from the following URL:
+		http://stackoverflow.com/questions/11055146/how-to-know-what-mac-os-the-app-is-running-on
+*/
+//static NSString* const kVarSysInfoVersionFormat	 = @"%@.%@.%@ (%@)";
 static NSString* const kVarSysInfoKeyOSVersion = @"kern.osrelease";
-static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
+//static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
 
 OSSpinLock		_majorSysVersionLock;
 VVOSVersion		_majorSysVersion = VVOSVersionError;

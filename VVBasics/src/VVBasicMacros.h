@@ -10,6 +10,42 @@
 }}
 
 
+
+
+//	NSRect/Point/Size/etc and CGRect/Point/Size are functionally identical, but cast differently.  these macros provide a single interface for this functionality to simplify things.
+#if IPHONE
+#define VVPOINT CGPoint
+#define VVMAKEPOINT CGPointMake
+#define VVZEROPOINT CGPointZero
+#define VVRECT CGRect
+#define VVMAKERECT CGRectMake
+#define VVZERORECT CGRectZero
+#define VVINTERSECTSRECT CGRectIntersectsRect
+#define VVINTERSECTIONRECT CGRectIntersection
+#define VVINTEGRALRECT CGRectIntegral
+#define VVUNIONRECT CGRectUnion
+#define VVPOINTINRECT(a,b) CGRectContainsPoint((b),(a))
+#define VVSIZE CGSize
+#define VVMAKESIZE CGSizeMake
+#else
+#define VVPOINT NSPoint
+#define VVMAKEPOINT NSMakePoint
+#define VVZEROPOINT NSZeroPoint
+#define VVRECT NSRect
+#define VVMAKERECT NSMakeRect
+#define VVZERORECT NSZeroRect
+#define VVINTERSECTSRECT NSIntersectsRect
+#define VVINTERSECTIONRECT NSIntersectionRect
+#define VVINTEGRALRECT NSIntegralRect
+#define VVUNIONRECT NSUnionRect
+#define VVPOINTINRECT NSPointInRect
+#define VVSIZE NSSize
+#define VVMAKESIZE NSMakeSize
+#endif
+
+
+
+
 //	macros for calculating rect coords
 /*
 #define VVMINX(r) (r.origin.x)
@@ -30,16 +66,18 @@
 #define VVMAXY(r) ((r.size.height>=0) ? (r.origin.y+r.size.height) : (r.origin.y))
 #define VVMIDX(r) (r.origin.x+(r.size.width/2.0))
 #define VVMIDY(r) (r.origin.y+(r.size.height/2.0))
-#define VVTOPLEFT(r) (NSMakePoint(VVMINX(r),VVMAXY(r)))
-#define VVTOPRIGHT(r) (NSMakePoint(VVMAXX(r),VVMAXY(r)))
-#define VVBOTLEFT(r) (NSMakePoint(VVMINX(r),VVMINY(r)))
-#define VVBOTRIGHT(r) (NSMakePoint(VVMAXX(r),VVMINY(r)))
-#define VVCENTER(r) (NSMakePoint(VVMIDX(r),VVMIDY(r)))
-#define VVADDPOINT(a,b) (NSMakePoint((a.x+b.x),(a.y+b.y)))
-#define VVSUBPOINT(a,b) (NSMakePoint((a.x-b.x),(a.y-b.y)))
-#define VVADDSIZE(a,b) (NSMakeSize(a.width+b.width, a.height+b.height))
-#define VVSUBSIZE(a,b) (NSMakeSize(a.width-b.width, a.height-b.height))
+#define VVTOPLEFT(r) (VVMAKEPOINT(VVMINX(r),VVMAXY(r)))
+#define VVTOPRIGHT(r) (VVMAKEPOINT(VVMAXX(r),VVMAXY(r)))
+#define VVBOTLEFT(r) (VVMAKEPOINT(VVMINX(r),VVMINY(r)))
+#define VVBOTRIGHT(r) (VVMAKEPOINT(VVMAXX(r),VVMINY(r)))
+#define VVCENTER(r) (VVMAKEPOINT(VVMIDX(r),VVMIDY(r)))
+#define VVADDPOINT(a,b) (VVMAKEPOINT((a.x+b.x),(a.y+b.y)))
+#define VVSUBPOINT(a,b) (VVMAKEPOINT((a.x-b.x),(a.y-b.y)))
+#define VVADDSIZE(a,b) (VVMAKESIZE(a.width+b.width, a.height+b.height))
+#define VVSUBSIZE(a,b) (VVMAKESIZE(a.width-b.width, a.height-b.height))
 #define VVEQUALRECTS(a,b) ((a.origin.x==b.origin.x && a.origin.y==b.origin.y && a.size.width==b.size.width && a.size.height==b.size.height) ? YES : NO)
+#define VVEQUALSIZES(a,b) ((a.width==b.width)&&(a.height==b.height))
+#define VVEQUALPOINTS(a,b) ((a.x==b.x)&&(a.y==b.y))
 #define VVISZERORECT(a) ((a.size.width==0.0 && a.size.height==0.0) ? YES : NO)
 
 //	macro for clipping a val to the normalized range (0.0 - 1.0)
@@ -64,11 +102,16 @@
 #define NSPointLog(n,r) NSLog(@"%@, (%0.2f,%0.2f)",n,r.x,r.y)
 #define NSSizeLog(n,s) NSLog(@"%@, %0.2fx%0.2f",n,s.width,s.height)
 
+#define VVRectLog(n,r) NSLog(@"%@, (%0.2f,%0.2f) : %0.2fx%0.2f",n,r.origin.x,r.origin.y,r.size.width,r.size.height)
+#define VVPointLog(n,r) NSLog(@"%@, (%0.2f,%0.2f)",n,r.x,r.y)
+#define VVSizeLog(n,s) NSLog(@"%@, %0.2fx%0.2f",n,s.width,s.height)
+
 //	macros for quickly making numbers and values
 #define NUMINT(i) [NSNumber numberWithInt:i]
 #define NUMUINT(i) [NSNumber numberWithUnsignedInteger:i]
 #define NUMLONG(i) [NSNumber numberWithLong:i]
-#define NUMU64(i) [NSNumber numberWithLongLong:i]
+#define NUMU64(i) [NSNumber numberWithUnsignedLongLong:i]
+#define NUM64(i) [NSNumber numberWithLongLong:i]
 #define NUMFLOAT(f) [NSNumber numberWithFloat:f]
 #define NUMBOOL(b) [NSNumber numberWithBool:b]
 #define NUMDOUBLE(d) [NSNumber numberWithDouble:d]
@@ -115,6 +158,41 @@
 		r.origin.x+r.size.width, r.origin.y, 0.0};							\
 	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
 	glDrawArrays(GL_QUADS,0,4);												\
+}
+
+
+#define GLDRAWRECT_TRISTRIP(r)												\
+{																			\
+	GLfloat 	vvMacroVertices[]={											\
+		r.origin.x, r.origin.y, 0.0,										\
+		r.origin.x, r.origin.y+r.size.height, 0.0,							\
+		r.origin.x+r.size.width, r.origin.y+r.size.height, 0.0,				\
+		r.origin.x+r.size.width, r.origin.y, 0.0};							\
+	glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);							\
+	glDrawArrays(GL_TRIANGLE_STRIP,0,4);									\
+}
+
+
+
+#define GLDRAWRECT_TRISTRIP_COLOR(rect,r,g,b,a)									\
+{																				\
+	GLfloat		vvMacroVertices[]={												\
+		rect.origin.x, rect.origin.y, 0.0,										\
+		rect.origin.x, rect.origin.y+rect.size.height, 0.0,						\
+		rect.origin.x+rect.size.width, rect.origin.y, 0.0,						\
+		rect.origin.x+rect.size.width, rect.origin.y+rect.size.height, 0.0};	\
+	GLfloat		vvMacroColors[]={												\
+		r, g, b, a,																\
+		r, g, b, a,																\
+		r, g, b, a,																\
+		r, g, b, a		};														\
+	glEnableVertexAttribArray(GLKVertexAttribPosition);							\
+	glEnableVertexAttribArray(GLKVertexAttribColor);							\
+	glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, vvMacroVertices);		\
+	glVertexAttribPointer(GLKVertexAttribColor, 4, GL_FLOAT, GL_FALSE, 0, vvMacroColors);			\
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);										\
+	glDisableVertexAttribArray(GLKVertexAttribPosition);						\
+	glDisableVertexAttribArray(GLKVertexAttribColor);							\
 }
 
 

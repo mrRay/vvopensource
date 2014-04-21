@@ -384,7 +384,7 @@
 	OSCNode			*foundNode = nil;
 	OSCNode			*nodeToSearch = self;
 	int				tmpIndex = 0;
-	int				lastDirectoryIndex = [a count]-2;	//	the index of the second-to-last node (or, the last node in this path which is known to have one or more sub-nodes)
+	NSUInteger		lastDirectoryIndex = [a count]-2;	//	the index of the second-to-last node (or, the last node in this path which is known to have one or more sub-nodes)
 	for (NSString *targetName in a)	{
 		foundNode = [nodeToSearch findLocalNodeNamed:targetName];
 		//	if i couldn't find a node matching the name, create one

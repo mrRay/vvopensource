@@ -44,8 +44,9 @@
 			buildPhases = (
 			);
 			dependencies = (
-				968A7EF2185BA31B0075DEB1 /* PBXTargetDependency */,
 				968A7EF0185BA3190075DEB1 /* PBXTargetDependency */,
+				1A6F728E190343BD00A6FBAD /* PBXTargetDependency */,
+				968A7EF2185BA31B0075DEB1 /* PBXTargetDependency */,
 			);
 			name = "Build iOS static libs";
 			productName = "Build iOS static libs";
@@ -53,6 +54,20 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1A254AF81904909E00526633 /* VVSpriteGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A254AF61904909E00526633 /* VVSpriteGLKView.m */; };
+		1A56BABC190560F5006F5826 /* VVUIToolbox.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96B06C2518BE0ECF000A921C /* VVUIToolbox.h */; };
+		1A56BABD190560F5006F5826 /* VVSprite.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96900D4B18BE37A90098AB25 /* VVSprite.h */; };
+		1A56BABE190560F5006F5826 /* VVSpriteGLKView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A254AF51904909E00526633 /* VVSpriteGLKView.h */; };
+		1A56BABF190560F5006F5826 /* VVSpriteManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96900D5318BE37A90098AB25 /* VVSpriteManager.h */; };
+		1A56BAC0190560F5006F5826 /* VVView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96900D5918BE37A90098AB25 /* VVView.h */; };
+		1A56BAC1190560F5006F5826 /* VVScrollView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */; };
+		1A6F726719033A9D00A6FBAD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A99011108CEA2600895DC1 /* Foundation.framework */; };
+		1A6F726C19033A9D00A6FBAD /* VVUIToolboxStatic.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A6F726B19033A9D00A6FBAD /* VVUIToolboxStatic.h */; };
+		1A6F7291190343E600A6FBAD /* VVSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D4C18BE37A90098AB25 /* VVSprite.m */; };
+		1A6F7293190343E600A6FBAD /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5418BE37A90098AB25 /* VVSpriteManager.m */; };
+		1A6F7297190343E600A6FBAD /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5A18BE37A90098AB25 /* VVView.m */; };
+		1A6F7299190343E600A6FBAD /* VVScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF19C018C4ED7000B76FA3 /* VVScrollView.m */; };
+		1A6F729B19034B6800A6FBAD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6F729A19034B6800A6FBAD /* OpenGLES.framework */; };
 		5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
 		96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */ = {isa = PBXBuildFile; fileRef = 96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -269,6 +284,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1A04C93D1905625200BF21D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96C18C2C185A1A740082DE35;
+			remoteInfo = VVBasicsStatic;
+		};
+		1A6F728D190343BD00A6FBAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A6F726519033A9D00A6FBAD;
+			remoteInfo = VVUIToolboxStatic;
+		};
 		96174622100F886F00FB60E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -468,6 +497,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1A6F726419033A9D00A6FBAD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				1A6F726C19033A9D00A6FBAD /* VVUIToolboxStatic.h in CopyFiles */,
+				1A56BABC190560F5006F5826 /* VVUIToolbox.h in CopyFiles */,
+				1A56BABD190560F5006F5826 /* VVSprite.h in CopyFiles */,
+				1A56BABE190560F5006F5826 /* VVSpriteGLKView.h in CopyFiles */,
+				1A56BABF190560F5006F5826 /* VVSpriteManager.h in CopyFiles */,
+				1A56BAC0190560F5006F5826 /* VVView.h in CopyFiles */,
+				1A56BAC1190560F5006F5826 /* VVScrollView.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9628D192100E8C2800C3944E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -586,6 +631,14 @@
 
 /* Begin PBXFileReference section */
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1A254AF51904909E00526633 /* VVSpriteGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLKView.h; sourceTree = "<group>"; };
+		1A254AF61904909E00526633 /* VVSpriteGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteGLKView.m; sourceTree = "<group>"; };
+		1A6F726619033A9D00A6FBAD /* libVVUIToolbox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVUIToolbox.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A6F726A19033A9D00A6FBAD /* VVUIToolboxStatic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VVUIToolboxStatic-Prefix.pch"; sourceTree = "<group>"; };
+		1A6F726B19033A9D00A6FBAD /* VVUIToolboxStatic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVUIToolboxStatic.h; sourceTree = "<group>"; };
+		1A6F727419033A9D00A6FBAD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		1A6F727719033A9D00A6FBAD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		1A6F729A19034B6800A6FBAD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
@@ -758,6 +811,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1A6F726319033A9D00A6FBAD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A6F729B19034B6800A6FBAD /* OpenGLES.framework in Frameworks */,
+				1A6F726719033A9D00A6FBAD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		961745F2100F86B400FB60E6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -890,6 +952,7 @@
 				96C18C2D185A1A740082DE35 /* libVVBasics.a */,
 				96C18C3E185A1A7D0082DE35 /* libVVOSC.a */,
 				96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */,
+				1A6F726619033A9D00A6FBAD /* libVVUIToolbox.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -905,6 +968,23 @@
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
+			sourceTree = "<group>";
+		};
+		1A6F726819033A9D00A6FBAD /* VVUIToolboxStatic */ = {
+			isa = PBXGroup;
+			children = (
+				1A6F726B19033A9D00A6FBAD /* VVUIToolboxStatic.h */,
+				1A6F726919033A9D00A6FBAD /* Supporting Files */,
+			);
+			path = VVUIToolboxStatic;
+			sourceTree = "<group>";
+		};
+		1A6F726919033A9D00A6FBAD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A6F726A19033A9D00A6FBAD /* VVUIToolboxStatic-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
@@ -1075,6 +1155,7 @@
 				9628D0CA100E8A0100C3944E /* VVOSC framework */,
 				96C18C40185A1A7D0082DE35 /* VVOSCStatic */,
 				96B06C1E18BE0ECF000A921C /* VVUIToolbox framework */,
+				1A6F726819033A9D00A6FBAD /* VVUIToolboxStatic */,
 			);
 			name = "Frameworks & Static Libs";
 			sourceTree = "<group>";
@@ -1131,6 +1212,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A6F729A19034B6800A6FBAD /* OpenGLES.framework */,
 				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
 				96A99011108CEA2600895DC1 /* Foundation.framework */,
 				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
@@ -1139,6 +1221,8 @@
 				96AD0AAC18577ADF00472548 /* AudioToolbox.framework */,
 				96ACD7231706416300138AE6 /* Cocoa.framework */,
 				96C18C2E185A1A740082DE35 /* Foundation.framework */,
+				1A6F727419033A9D00A6FBAD /* XCTest.framework */,
+				1A6F727719033A9D00A6FBAD /* UIKit.framework */,
 				96ACD7251706416300138AE6 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -1191,6 +1275,8 @@
 				96900D5018BE37A90098AB25 /* VVSpriteControlCell.m */,
 				96900D5118BE37A90098AB25 /* VVSpriteGLView.h */,
 				96900D5218BE37A90098AB25 /* VVSpriteGLView.m */,
+				1A254AF51904909E00526633 /* VVSpriteGLKView.h */,
+				1A254AF61904909E00526633 /* VVSpriteGLKView.m */,
 				96900D5318BE37A90098AB25 /* VVSpriteManager.h */,
 				96900D5418BE37A90098AB25 /* VVSpriteManager.m */,
 				96900D5518BE37A90098AB25 /* VVSpriteView.h */,
@@ -1366,16 +1452,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96C18C5B185A1B390082DE35 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1A6F726519033A9D00A6FBAD /* VVUIToolboxStatic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A6F728819033A9D00A6FBAD /* Build configuration list for PBXNativeTarget "VVUIToolboxStatic" */;
+			buildPhases = (
+				1A6F726219033A9D00A6FBAD /* Sources */,
+				1A6F726319033A9D00A6FBAD /* Frameworks */,
+				1A6F726419033A9D00A6FBAD /* CopyFiles */,
+				1A6F728A19033C3900A6FBAD /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A04C93E1905625200BF21D9 /* PBXTargetDependency */,
+			);
+			name = VVUIToolboxStatic;
+			productName = VVUIToolboxStatic;
+			productReference = 1A6F726619033A9D00A6FBAD /* libVVUIToolbox.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		961745F3100F86B400FB60E6 /* VVMIDI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 961745F8100F86B500FB60E6 /* Build configuration list for PBXNativeTarget "VVMIDI" */;
@@ -1595,7 +1693,6 @@
 				96C18C3A185A1A7D0082DE35 /* Sources */,
 				96C18C3B185A1A7D0082DE35 /* Frameworks */,
 				96C18C3C185A1A7D0082DE35 /* CopyFiles */,
-				96C18C5B185A1B390082DE35 /* Headers */,
 				96A3202B185A36DB000ED9F4 /* ShellScript */,
 			);
 			buildRules = (
@@ -1647,6 +1744,7 @@
 				968A7EEB185BA3100075DEB1 /* Build iOS static libs */,
 				96C18C2C185A1A740082DE35 /* VVBasicsStatic */,
 				96C18C3D185A1A7D0082DE35 /* VVOSCStatic */,
+				1A6F726519033A9D00A6FBAD /* VVUIToolboxStatic */,
 			);
 		};
 /* End PBXProject section */
@@ -1737,6 +1835,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1A6F728A19033C3900A6FBAD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh $PROJECT_DIR/scripts/AddIPHONEDefine.sh";
+		};
 		9699BBEA185A32FF0017B273 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1766,6 +1877,18 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1A6F726219033A9D00A6FBAD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A6F7293190343E600A6FBAD /* VVSpriteManager.m in Sources */,
+				1A6F7299190343E600A6FBAD /* VVScrollView.m in Sources */,
+				1A254AF81904909E00526633 /* VVSpriteGLKView.m in Sources */,
+				1A6F7291190343E600A6FBAD /* VVSprite.m in Sources */,
+				1A6F7297190343E600A6FBAD /* VVView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		961745F1100F86B400FB60E6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1932,6 +2055,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1A04C93E1905625200BF21D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96C18C2C185A1A740082DE35 /* VVBasicsStatic */;
+			targetProxy = 1A04C93D1905625200BF21D9 /* PBXContainerItemProxy */;
+		};
+		1A6F728E190343BD00A6FBAD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A6F726519033A9D00A6FBAD /* VVUIToolboxStatic */;
+			targetProxy = 1A6F728D190343BD00A6FBAD /* PBXContainerItemProxy */;
+		};
 		96174623100F886F00FB60E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics */;
@@ -2110,6 +2243,85 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1A6F728419033A9D00A6FBAD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = /tmp/VVUIToolboxStatic.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VVUIToolboxStatic/VVUIToolboxStatic-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = VVUIToolbox;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1A6F728519033A9D00A6FBAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = /tmp/VVUIToolboxStatic.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VVUIToolboxStatic/VVUIToolboxStatic-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DIPHONE";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = VVUIToolbox;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2590,7 +2802,6 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2611,7 +2822,6 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -2792,6 +3002,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1A6F728819033A9D00A6FBAD /* Build configuration list for PBXNativeTarget "VVUIToolboxStatic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A6F728419033A9D00A6FBAD /* Debug */,
+				1A6F728519033A9D00A6FBAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

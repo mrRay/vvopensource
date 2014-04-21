@@ -6,7 +6,7 @@
 @implementation VVTrackingArea
 
 
-- (id) initWithRect:(NSRect)r options:(NSTrackingAreaOptions)opt owner:(id)own userInfo:(NSDictionary *)ui	{
+- (id) initWithRect:(VVRECT)r options:(NSTrackingAreaOptions)opt owner:(id)own userInfo:(NSDictionary *)ui	{
 	if (self = [super init])	{
 		attribLock = OS_SPINLOCK_INIT;
 		rect = r;
@@ -29,13 +29,13 @@
 }
 
 
-- (void) setRect:(NSRect)n	{
+- (void) setRect:(VVRECT)n	{
 	OSSpinLockLock(&attribLock);
 	rect = n;
 	OSSpinLockUnlock(&attribLock);
 }
-- (NSRect) rect	{
-	NSRect			returnMe = NSZeroRect;
+- (VVRECT) rect	{
+	VVRECT			returnMe = VVZERORECT;
 	OSSpinLockLock(&attribLock);
 	returnMe = rect;
 	OSSpinLockUnlock(&attribLock);
@@ -64,9 +64,9 @@
 }
 
 
-- (void) updateAppleTrackingAreaWithContainerView:(NSView *)v containerViewRect:(NSRect)r	{
+- (void) updateAppleTrackingAreaWithContainerView:(NSView *)v containerViewRect:(VVRECT)r	{
 	//NSLog(@"%s ... %@",__func__,v);
-	//NSRectLog(@"\t\tcontainerViewRect is",r);
+	//VVRectLog(@"\t\tcontainerViewRect is",r);
 	if (v==nil)
 		return;
 	

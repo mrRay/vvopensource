@@ -1,6 +1,7 @@
 #import "VVScrollView.h"
+#if !IPHONE
 #import <OpenGL/CGLMacro.h>
-
+#endif
 
 
 
@@ -16,7 +17,7 @@
 	//NSLog(@"%s",__func__);
 	_documentView = nil;
 	
-	lastSubviewsUnion = NSMakeSize(1,1);
+	lastSubviewsUnion = VVMAKESIZE(1,1);
 	
 	//hLeftSprite = nil;
 	//hRightSprite = nil;
@@ -49,8 +50,8 @@
 	//NSLog(@"%s",__func__);
 	[super updateSprites];
 	
-	NSRect		ib = NSIntegralRect([self bounds]);
-	NSRect		tmpRect = tmpRect = NSMakeRect(0,0,1,1);
+	VVRECT		ib = VVINTEGRALRECT([self bounds]);
+	VVRECT		tmpRect = tmpRect = VVMAKERECT(0,0,1,1);
 	
 	if (hScrollTrack == nil)	{
 		/*
@@ -99,64 +100,64 @@
 	tmpRect.size.width -= sbw;
 	tmpRect.size.height -= sbw;
 	tmpRect.origin.y += sbw;
-	if (!NSEqualRects(tmpRect,[_documentView frame]))	{
-		//NSRectLog(@"\t\tsetting _documentView frame to",tmpRect);
+	if (!VVEQUALRECTS(tmpRect,[_documentView frame]))	{
+		//VVRectLog(@"\t\tsetting _documentView frame to",tmpRect);
 		[_documentView setFrame:tmpRect];
 	}
 	
 	//	up to now we've been working in local coords- now we start setting sprite positions, and this is in coords that take the local to backing bounds into account
-	ib = NSMakeRect(ib.origin.x*LTBBM, ib.origin.y*LTBBM, ib.size.width*LTBBM, ib.size.height*LTBBM);
+	ib = VVMAKERECT(ib.origin.x*LTBBM, ib.origin.y*LTBBM, ib.size.width*LTBBM, ib.size.height*LTBBM);
 	sbw *= LTBBM;
 	
-	NSRect		contentFrame = [_documentView subviewFramesUnion];
-	NSRect		viewBounds = [_documentView bounds];
+	VVRECT		contentFrame = [_documentView subviewFramesUnion];
+	VVRECT		viewBounds = [_documentView bounds];
 	double		scrollNormVal;
 	double		trackLength;
-	//NSRectLog(@"\t\tcontentFrame is",contentFrame);
-	//NSRectLog(@"\t\tviewBounds is",viewBounds);
+	//VVRectLog(@"\t\tcontentFrame is",contentFrame);
+	//VVRectLog(@"\t\tviewBounds is",viewBounds);
 	
 	//	h scroll track
-	tmpRect.origin = NSMakePoint(0,0);
-	tmpRect.size = NSMakeSize(ib.size.width-sbw-tmpRect.origin.x, sbw);
+	tmpRect.origin = VVMAKEPOINT(0,0);
+	tmpRect.size = VVMAKESIZE(ib.size.width-sbw-tmpRect.origin.x, sbw);
 	[hScrollTrack setRect:tmpRect];
 	
 	//	h scroll bar
 	trackLength = [hScrollTrack rect].size.width;
 	if (viewBounds.size.width < contentFrame.size.width)	{
-		tmpRect.size = NSMakeSize(viewBounds.size.width/contentFrame.size.width*trackLength, sbw);
+		tmpRect.size = VVMAKESIZE(viewBounds.size.width/contentFrame.size.width*trackLength, sbw);
 		tmpRect.origin = [hScrollTrack rect].origin;
 		scrollNormVal = (viewBounds.origin.x-contentFrame.origin.x)/contentFrame.size.width;
 		tmpRect.origin.x += trackLength*scrollNormVal;
 		[hScrollBar setRect:tmpRect];
 	}
 	else	{
-		[hScrollBar setRect:NSMakeRect(-2,-2,1,1)];
+		[hScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
 	}
 	
 	//	v scroll track
-	tmpRect.origin = NSMakePoint(ib.size.width-sbw, 0);
+	tmpRect.origin = VVMAKEPOINT(ib.size.width-sbw, 0);
 	tmpRect.size.height = ib.size.height-tmpRect.origin.y;
 	[vScrollTrack setRect:tmpRect];
 	
 	//	v scroll bar
 	trackLength = [vScrollTrack rect].size.height;
 	if (viewBounds.size.height < contentFrame.size.height)	{
-		tmpRect.size = NSMakeSize(sbw, viewBounds.size.height/contentFrame.size.height*trackLength);
+		tmpRect.size = VVMAKESIZE(sbw, viewBounds.size.height/contentFrame.size.height*trackLength);
 		tmpRect.origin = [vScrollTrack rect].origin;
 		scrollNormVal = (viewBounds.origin.y-contentFrame.origin.y)/contentFrame.size.height;
 		tmpRect.origin.y += trackLength*scrollNormVal;
 		[vScrollBar setRect:tmpRect];
 	}
 	else	{
-		[vScrollBar setRect:NSMakeRect(-2,-2,1,1)];
+		[vScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
 	}
 }
-- (void) _setFrameSize:(NSSize)n	{
-	NSSize			oldSize = _frame.size;
-	//NSSizeLog(@"\t\toldSize is",oldSize);
-	NSSize			newSize = NSMakeSize(fmax(minFrameSize.width,n.width),fmax(minFrameSize.height,n.height));
-	BOOL			changed = (NSEqualSizes(oldSize,newSize)) ? NO : YES;
-	NSPoint			normScrollVal = (changed) ? [self normalizedScrollVal] : NSZeroPoint;
+- (void) _setFrameSize:(VVSIZE)n	{
+	VVSIZE			oldSize = _frame.size;
+	//VVSizeLog(@"\t\toldSize is",oldSize);
+	VVSIZE			newSize = VVMAKESIZE(fmax(minFrameSize.width,n.width),fmax(minFrameSize.height,n.height));
+	BOOL			changed = (VVEQUALSIZES(oldSize,newSize)) ? NO : YES;
+	VVPOINT			normScrollVal = (changed) ? [self normalizedScrollVal] : VVZEROPOINT;
 	
 	[super _setFrameSize:n];
 	
@@ -170,17 +171,17 @@
 	if (s == hScrollTrack)	{
 		//NSLog(@"\t\th scroll track");
 		//	figure out the normalized scroll val from the action location within the sprite of the scroll track
-		NSRect		trackRect = [s rect];
-		//NSRectLog(@"\t\ttrackRect is",trackRect);
-		NSPoint		lastActionCoords = [s lastActionCoords];
-		lastActionCoords = NSMakePoint(lastActionCoords.x-trackRect.origin.x, lastActionCoords.y-trackRect.origin.y);
-		//NSPointLog(@"\t\tlastActionCoords is",lastActionCoords);
+		VVRECT		trackRect = [s rect];
+		//VVRectLog(@"\t\ttrackRect is",trackRect);
+		VVPOINT		lastActionCoords = [s lastActionCoords];
+		lastActionCoords = VVMAKEPOINT(lastActionCoords.x-trackRect.origin.x, lastActionCoords.y-trackRect.origin.y);
+		//VVPointLog(@"\t\tlastActionCoords is",lastActionCoords);
 		double		scrollNormVal = lastActionCoords.x/trackRect.size.width;
 		scrollNormVal = fmin(1,fmax(0,scrollNormVal));
 		//NSLog(@"\t\tscrollNormVal is %0.4f",scrollNormVal);
 		//	from the dimensions of the content in the doc and the dimensions of the doc bounds, figure out the range of possible bounds origin vals for the scroll bar
-		NSRect		contentFrame = [_documentView subviewFramesUnion];
-		NSRect		viewBounds = [_documentView bounds];
+		VVRECT		contentFrame = [_documentView subviewFramesUnion];
+		VVRECT		viewBounds = [_documentView bounds];
 		double		travelLoc = VVMINX(contentFrame);
 		double		travelLen = contentFrame.size.width-viewBounds.size.width;
 		viewBounds.origin.x = scrollNormVal * travelLen + travelLoc;
@@ -190,16 +191,16 @@
 	}
 	else if (s == hScrollBar)	{
 		//NSLog(@"\t\tscroll bar");
-		NSRect		trackRect = [hScrollTrack rect];
-		NSPoint		delta = [s mouseDownDelta];
-		NSRect		newBarFrame = [s rect];
-		newBarFrame.origin = NSMakePoint(newBarFrame.origin.x+delta.x, newBarFrame.origin.y+delta.y);
+		VVRECT		trackRect = [hScrollTrack rect];
+		VVPOINT		delta = [s mouseDownDelta];
+		VVRECT		newBarFrame = [s rect];
+		newBarFrame.origin = VVMAKEPOINT(newBarFrame.origin.x+delta.x, newBarFrame.origin.y+delta.y);
 		double		scrollNormVal = (newBarFrame.origin.x-trackRect.origin.x) / (trackRect.size.width-newBarFrame.size.width);
 		scrollNormVal = fmin(1,fmax(0,scrollNormVal));
 		//NSLog(@"\t\tscrollNormVal is %0.4f",scrollNormVal);
 		//	from the dimensions of the content in the doc and the dimensions of the doc bounds, figure out the range of possible bounds origin vals for the scroll bar
-		NSRect		contentFrame = [_documentView subviewFramesUnion];
-		NSRect		viewBounds = [_documentView bounds];
+		VVRECT		contentFrame = [_documentView subviewFramesUnion];
+		VVRECT		viewBounds = [_documentView bounds];
 		double		travelLoc = VVMINX(contentFrame);
 		double		travelLen = contentFrame.size.width-viewBounds.size.width;
 		viewBounds.origin.x = scrollNormVal * travelLen + travelLoc;
@@ -210,9 +211,12 @@
 }
 - (void) drawHSprite:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
+#if IPHONE
+	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
+#else
 	CGLContextObj		cgl_ctx = [s glDrawContext];
-	NSRect				tmpRect = [s rect];
-	//tmpRect = NSMakeRect(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
+	VVRECT				tmpRect = [s rect];
+	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
 	if (s == hScrollTrack)	{
 		glColor4f(0,0,1,1);
 		GLDRAWRECT(tmpRect);
@@ -221,23 +225,24 @@
 		glColor4f(1,1,1,1);
 		GLDRAWRECT(tmpRect);
 	}
+#endif
 }
 - (void) vSpriteAction:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
 	if (s == vScrollTrack)	{
 		//NSLog(@"\t\tv scroll track");
 		//	figure out the normalized scroll val from the action location within the sprite of the scroll track
-		NSRect		trackRect = [s rect];
-		//NSRectLog(@"\t\ttrackRect is",trackRect);
-		NSPoint		lastActionCoords = [s lastActionCoords];
-		lastActionCoords = NSMakePoint(lastActionCoords.x-trackRect.origin.x, lastActionCoords.y-trackRect.origin.y);
-		//NSPointLog(@"\t\tlastActionCoords is",lastActionCoords);
+		VVRECT		trackRect = [s rect];
+		//VVRectLog(@"\t\ttrackRect is",trackRect);
+		VVPOINT		lastActionCoords = [s lastActionCoords];
+		lastActionCoords = VVMAKEPOINT(lastActionCoords.x-trackRect.origin.x, lastActionCoords.y-trackRect.origin.y);
+		//VVPointLog(@"\t\tlastActionCoords is",lastActionCoords);
 		double		scrollNormVal = lastActionCoords.y/trackRect.size.height;
 		scrollNormVal = fmin(1,fmax(0,scrollNormVal));
 		//NSLog(@"\t\tscrollNormVal is %0.4f",scrollNormVal);
 		//	from the dimensions of the content in the doc and the dimensions of the doc bounds, figure out the range of possible bounds origin vals for the scroll bar
-		NSRect		contentFrame = [_documentView subviewFramesUnion];
-		NSRect		viewBounds = [_documentView bounds];
+		VVRECT		contentFrame = [_documentView subviewFramesUnion];
+		VVRECT		viewBounds = [_documentView bounds];
 		double		travelLoc = VVMINY(contentFrame);
 		double		travelLen = contentFrame.size.height-viewBounds.size.height;
 		viewBounds.origin.y = scrollNormVal * travelLen + travelLoc;
@@ -247,16 +252,16 @@
 	}
 	else if (s == vScrollBar)	{
 		//NSLog(@"\t\tscroll bar");
-		NSRect		trackRect = [vScrollTrack rect];
-		NSPoint		delta = [s mouseDownDelta];
-		NSRect		newBarFrame = [s rect];
-		newBarFrame.origin = NSMakePoint(newBarFrame.origin.x+delta.x, newBarFrame.origin.y+delta.y);
+		VVRECT		trackRect = [vScrollTrack rect];
+		VVPOINT		delta = [s mouseDownDelta];
+		VVRECT		newBarFrame = [s rect];
+		newBarFrame.origin = VVMAKEPOINT(newBarFrame.origin.x+delta.x, newBarFrame.origin.y+delta.y);
 		double		scrollNormVal = (newBarFrame.origin.y-trackRect.origin.y) / (trackRect.size.height-newBarFrame.size.height);
 		scrollNormVal = fmin(1,fmax(0,scrollNormVal));
 		//NSLog(@"\t\tscrollNormVal is %0.4f",scrollNormVal);
 		//	from the dimensions of the content in the doc and the dimensions of the doc bounds, figure out the range of possible bounds origin vals for the scroll bar
-		NSRect		contentFrame = [_documentView subviewFramesUnion];
-		NSRect		viewBounds = [_documentView bounds];
+		VVRECT		contentFrame = [_documentView subviewFramesUnion];
+		VVRECT		viewBounds = [_documentView bounds];
 		double		travelLoc = VVMINY(contentFrame);
 		double		travelLen = contentFrame.size.height-viewBounds.size.height;
 		viewBounds.origin.y = scrollNormVal * travelLen + travelLoc;
@@ -267,9 +272,12 @@
 }
 - (void) drawVSprite:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
+#if IPHONE
+	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
+#else
 	CGLContextObj		cgl_ctx = [s glDrawContext];
-	NSRect				tmpRect = [s rect];
-	//tmpRect = NSMakeRect(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
+	VVRECT				tmpRect = [s rect];
+	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
 	if (s == vScrollTrack)	{
 		glColor4f(0,0,1,1);
 		GLDRAWRECT(tmpRect);
@@ -278,6 +286,7 @@
 		glColor4f(1,1,1,1);
 		GLDRAWRECT(tmpRect);
 	}
+#endif
 }
 
 
@@ -286,12 +295,12 @@
 }
 
 
-- (NSPoint) normalizedScrollVal	{
+- (VVPOINT) normalizedScrollVal	{
 	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)
-		return NSZeroPoint;
-	NSPoint			returnMe = NSZeroPoint;
-	NSRect			trackRect;
-	NSRect			barRect;
+		return VVZEROPOINT;
+	VVPOINT			returnMe = VVZEROPOINT;
+	VVRECT			trackRect;
+	VVRECT			barRect;
 	
 	trackRect = [hScrollTrack rect];
 	barRect = [hScrollBar rect];
@@ -301,12 +310,12 @@
 	returnMe.y = (barRect.origin.y-trackRect.origin.y)/(trackRect.size.height-barRect.size.height);
 	return returnMe;
 }
-- (void) scrollToNormalizedVal:(NSPoint)n	{
+- (void) scrollToNormalizedVal:(VVPOINT)n	{
 	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)
 		return;
-	NSPoint			newPoint = NSMakePoint(fmin(fmax(n.x,0.0),1.0), fmin(fmax(n.y,0.0),1.0));
-	NSRect			contentFrame = [_documentView subviewFramesUnion];
-	NSRect			viewBounds = [_documentView bounds];
+	VVPOINT			newPoint = VVMAKEPOINT(fmin(fmax(n.x,0.0),1.0), fmin(fmax(n.y,0.0),1.0));
+	VVRECT			contentFrame = [_documentView subviewFramesUnion];
+	VVRECT			viewBounds = [_documentView bounds];
 	double			travelLoc;
 	double			travelLen;
 	
@@ -332,21 +341,21 @@
 	[_documentView setBoundsOrigin:viewBounds.origin];
 	[self setSpritesNeedUpdate];
 }
-- (void) scrollTopLeftToPoint:(NSPoint)n	{
-	NSRect			contentFrame = [_documentView subviewFramesUnion];
-	NSRect			viewBounds = [_documentView bounds];
-	viewBounds.origin = NSMakePoint(n.x, n.y-viewBounds.size.height);
+- (void) scrollTopLeftToPoint:(VVPOINT)n	{
+	VVRECT			contentFrame = [_documentView subviewFramesUnion];
+	VVRECT			viewBounds = [_documentView bounds];
+	viewBounds.origin = VVMAKEPOINT(n.x, n.y-viewBounds.size.height);
 	
-	NSPoint			normScrollVal;
+	VVPOINT			normScrollVal;
 	normScrollVal.x = viewBounds.origin.x / (contentFrame.size.width-viewBounds.size.width);
 	normScrollVal.y = viewBounds.origin.y / (contentFrame.size.height-viewBounds.size.height);
 	[self scrollToNormalizedVal:normScrollVal];
 }
-- (void) scrollByAmount:(NSPoint)delta	{
+- (void) scrollByAmount:(VVPOINT)delta	{
 	//NSLog(@"%s ... (%0.2f, %0.2f",__func__,delta.x,delta.y);
-	NSRect			contentFrame = [_documentView subviewFramesUnion];
+	VVRECT			contentFrame = [_documentView subviewFramesUnion];
 	//	assume 'delta' is in point coordinates- figure out how many "points" are in the full scrollable area (content view
-	NSPoint			normScrollVal = [self normalizedScrollVal];
+	VVPOINT			normScrollVal = [self normalizedScrollVal];
 	normScrollVal.x -= (delta.x/contentFrame.size.width);
 	normScrollVal.y += (delta.y/contentFrame.size.height);
 	[self scrollToNormalizedVal:normScrollVal];

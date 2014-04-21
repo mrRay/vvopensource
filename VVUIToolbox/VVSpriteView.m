@@ -22,7 +22,7 @@ int				_spriteViewCount;
 #pragma mark --------------------- creation/deletion/setup
 /*------------------------------------*/
 
-- (id) initWithFrame:(NSRect)f	{
+- (id) initWithFrame:(VVRECT)f	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	if (self = [super initWithFrame:f])	{
 		[self generalInit];
@@ -120,7 +120,7 @@ int				_spriteViewCount;
 /*------------------------------------*/
 
 
-- (void) setFrame:(NSRect)f	{
+- (void) setFrame:(VVRECT)f	{
 	[super setFrame:f];
 	//[self updateSprites];
 	spritesNeedUpdate = YES;
@@ -146,8 +146,8 @@ int				_spriteViewCount;
 	OSSpinLockUnlock(&propertyLock);
 	
 	mouseIsDown = YES;
-	NSPoint		locationInWindow = [e locationInWindow];
-	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	VVPOINT		locationInWindow = [e locationInWindow];
+	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
@@ -182,8 +182,8 @@ int				_spriteViewCount;
 	OSSpinLockUnlock(&propertyLock);
 	
 	mouseIsDown = YES;
-	NSPoint		locationInWindow = [e locationInWindow];
-	NSPoint		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	VVPOINT		locationInWindow = [e locationInWindow];
+	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
 	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
@@ -212,7 +212,7 @@ int				_spriteViewCount;
 	OSSpinLockUnlock(&propertyLock);
 	
 	modifierFlags = [e modifierFlags];
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseDragged:e];
@@ -239,7 +239,7 @@ int				_spriteViewCount;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
 		[clickedSubview mouseUp:e];
@@ -258,7 +258,7 @@ int				_spriteViewCount;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
-	NSPoint		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	/*
 	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
 	if (clickedSubview != nil)
@@ -274,7 +274,7 @@ int				_spriteViewCount;
 /*------------------------------------*/
 
 
-- (void) drawRect:(NSRect)f	{
+- (void) drawRect:(VVRECT)f	{
 	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;

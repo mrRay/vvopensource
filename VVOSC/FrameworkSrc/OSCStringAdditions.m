@@ -98,7 +98,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 	return [NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding];
 }
 - (NSString *) trimFirstAndLastSlashes	{
-	int				origLength = [self length];
+	NSUInteger		origLength = [self length];
 	NSRange			desiredRange = NSMakeRange(0,origLength);
 	switch (origLength)	{
 		case 0:
@@ -187,7 +187,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 }
 - (NSString *) stringByDeletingLastAndAddingFirstSlash	{
 	NSString	*returnMe = nil;
-	int			myLength = [self length];
+	NSUInteger	myLength = [self length];
 	if (myLength < 1)
 		return nil;
 	BOOL		endsWSlash = ([self characterAtIndex:myLength-1]=='/')?YES:NO;
