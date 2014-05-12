@@ -5,7 +5,7 @@ vvopensource
 Introduction
 ------------
 
-I write software for a living.  The more I write, the more I find myself using a couple basic classes, or putting together frameworks so I can re-use code.  This project is an ever-growing collection of simple frameworks which I can link against to reuse code I already wrote and make my life easier; hopefully, it makes your life a bit easier too.
+I write software for a living at [Vidvox](www.vidvox.net).  The more I write, the more I find myself using a couple basic classes, or putting together frameworks so I can re-use code.  This project is an ever-growing collection of simple frameworks which I can link against to reuse code I already wrote and make my life easier; hopefully, it makes your life a bit easier too.
 
 All of these frameworks are contained in a single XCode project- as I write more frameworks, I link against code in other frameworks, so collecting everything together in a single project ensures that you can get everything necessary to compile all of these frameworks in one go- there are no external dependencies.  All of the code is always being worked on, and you should never assume that anything is "finished"- I would recommend updating the trunk whenever you get a chance.  Get in touch with me if you bump into an unfinished method or other oddity/problem- the code posted here is used in any number of other applications, and I'm always willing to fix or work on it.
 

@@ -147,7 +147,8 @@
 
 
 
-
+//	this macro is from the GL red book
+#define BUFFER_OFFSET(bytes) ((GLubyte*)NULL + (bytes))
 //	this is a macro for drawing an NSRect in opengl
 #define GLDRAWRECT(r)														\
 {																			\
