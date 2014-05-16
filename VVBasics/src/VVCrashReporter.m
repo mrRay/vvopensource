@@ -289,6 +289,8 @@
 		[self performSelectorOnMainThread:@selector(sendACrashLog) withObject:nil waitUntilDone:NO];
 		return;
 	}
+	//	i need the raw crash log string to pass to my delegate, so keep a [retained] copy here until after i send the log
+	NSString			*rawCrashLogString = nil;
 	//	if there's a timer, kill it
 	if (currentCrashLogTimer != nil)	{
 		[currentCrashLogTimer invalidate];
@@ -316,10 +318,11 @@
 	else
 		[transmitString appendString:@"description=OLDERLOGVVAMPERSANDVV"];
 	//	add the crash log string
-	tmpString = [NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil];
+	//tmpString = [NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil];
+	rawCrashLogString = [[NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil] retain];
 	[transmitString appendFormat:@"crash=Host Name: %@\n",SCDynamicStoreCopyComputerName(NULL, NULL)];
-	if (tmpString!=nil)
-		[transmitString appendFormat:@"%@VVAMPERSANDVV",tmpString];
+	if (rawCrashLogString!=nil)
+		[transmitString appendFormat:@"%@VVAMPERSANDVV",rawCrashLogString];
 	else
 		[transmitString appendString:@"COULDNTLOADVVAMPERSANDVV"];
 	//	if this is the last log...
@@ -390,6 +393,11 @@
 			[runLoop addTimer:currentCrashLogTimer forMode:NSConnectionReplyMode];
 		}
 	}
+	
+	//	if i have a delegate, tell my delegate that i've sent a crash log
+	if (delegate!=nil && [delegate respondsToSelector:@selector(crashReporterWillSendLog:)])
+		[delegate crashReporterWillSendLog:rawCrashLogString];
+	VVRELEASE(rawCrashLogString);
 	
 	//	start the network operation asynchronously- i'm the delegate, so it'll notify me when it's done (whether it works or fails)
 	[url performAsync:YES withDelegate:self];

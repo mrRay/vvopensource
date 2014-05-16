@@ -9,13 +9,13 @@
 		this approach for determining which system we're running (an alternative to the now-deprecated Gestalt()) on was copied from a stack overflow post from the following URL:
 		http://stackoverflow.com/questions/11055146/how-to-know-what-mac-os-the-app-is-running-on
 */
-//static NSString* const kVarSysInfoVersionFormat	 = @"%@.%@.%@ (%@)";
+static NSString* const kVarSysInfoVersionFormat	 = @"%@.%@.%@ (%@)";
 static NSString* const kVarSysInfoKeyOSVersion = @"kern.osrelease";
-//static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
+static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
 
 OSSpinLock		_majorSysVersionLock;
 VVOSVersion		_majorSysVersion = VVOSVersionError;
-
+int				_minorSysVersion = -1;
 
 
 
@@ -67,9 +67,26 @@ VVOSVersion		_majorSysVersion = VVOSVersionError;
 	
 	OSSpinLockLock(&_majorSysVersionLock);
 	_majorSysVersion = (unsigned int)([[darwinChunks objectAtIndex:0] integerValue] - 4);
+	_minorSysVersion = [[darwinChunks objectAtIndex:1] integerValue];
 	returnMe = _majorSysVersion;
 	OSSpinLockUnlock(&_majorSysVersionLock);
 	
+	return returnMe;
+}
++ (int) minorSysVersion	{
+	int		returnMe = 0;
+	
+	OSSpinLockLock(&_majorSysVersionLock);
+	returnMe = _minorSysVersion;
+	OSSpinLockUnlock(&_majorSysVersionLock);
+	if (_minorSysVersion < 0)	{
+		
+		[self majorSysVersion];
+		
+		OSSpinLockLock(&_majorSysVersionLock);
+		returnMe = _minorSysVersion;
+		OSSpinLockUnlock(&_majorSysVersionLock);
+	}
 	return returnMe;
 }
 

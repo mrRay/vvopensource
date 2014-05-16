@@ -20,6 +20,7 @@
 
 @protocol VVCrashReporterDelegate
 - (void) crashReporterCheckDone:(BOOL)foundLogs;	//	"new"- 'f' designates whether crash reports were found or not
+- (void) crashReporterWillSendLog:(NSString *)crashString;
 @end
 
 

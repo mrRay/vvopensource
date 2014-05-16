@@ -18,7 +18,7 @@ typedef enum _VVOSVersion	{
 
 extern OSSpinLock		_majorSysVersionLock;
 extern VVOSVersion		_majorSysVersion;
-
+extern int				_minorSysVersion;
 
 
 
@@ -28,5 +28,6 @@ extern VVOSVersion		_majorSysVersion;
 
 + (NSString *) _strControlEntry:(NSString *)ctlKey;
 + (VVOSVersion) majorSysVersion;
++ (int) minorSysVersion;
 
 @end
