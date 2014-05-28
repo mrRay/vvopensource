@@ -404,7 +404,8 @@
 #else
 		CFStringRef computerName = SCDynamicStoreCopyComputerName(NULL, NULL);
 		tmpString = [NSString stringWithFormat:@"%@ %@ %d",computerName,[self inPortLabelBase],index];
-		CFRelease(computerName);
+		if (computerName != NULL)
+			CFRelease(computerName);
 #endif
 		//tmpString = [NSString stringWithFormat:@"%@ %d",[self inPortLabelBase],index];
 		
