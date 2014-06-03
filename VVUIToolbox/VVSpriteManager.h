@@ -55,8 +55,8 @@ extern MutLockArray		*_spriteManagerArray;
 - (void) terminatePresentMouseSession;	//	call this and sprites will stop responding to the mouse until it is clicked again
 #endif
 
-- (id) newSpriteAtBottomForRect:(VVRECT)r;
-- (id) newSpriteAtTopForRect:(VVRECT)r;
+- (id) makeNewSpriteAtBottomForRect:(VVRECT)r;
+- (id) makeNewSpriteAtTopForRect:(VVRECT)r;
 - (long) getUniqueSpriteIndex;
 
 - (VVSprite *) spriteAtPoint:(VVPOINT)p;

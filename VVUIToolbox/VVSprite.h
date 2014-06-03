@@ -106,10 +106,10 @@ typedef enum _VVSpriteEventType	{
 //@property (retain,readwrite) NSBezierPath *path;
 #if IPHONE
 - (void) setBezierPath:(UIBezierPath *)n;
-- (UIBezierPath *) safelyGetBezierPath;
+- (UIBezierPath *) copyBezierPath;
 #else
 - (void) setBezierPath:(NSBezierPath *)n;
-- (NSBezierPath *) safelyGetBezierPath;
+- (NSBezierPath *) copyBezierPath;
 #endif
 - (VVRECT) spriteBounds;	//	special method- either returns "rect" or (if path is non-nil) the bounds of the bezier path!
 @property (readonly) VVSpriteEventType lastActionType;

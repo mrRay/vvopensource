@@ -205,7 +205,7 @@ id				_mainVVOSCAddressSpace;
 			return;
 		//	if there isn't an 'afterNode', make one
 		else
-			afterNode = [self findNodeForAddressArray:after createIfMissing:YES];
+			[self findNodeForAddressArray:after createIfMissing:YES];
 	}
 	//	else if there's a 'beforeNode', i'm going to have to move stuff
 	else	{

@@ -440,8 +440,8 @@ double			_machTimeToNsFactor;
 				if (err != noErr)
 					NSLog(@"\t\terr %ld setting sync mode in %s",err,__func__);
 				else	{
-					CAClockSeconds freeWheelTime = 0.2;
-					size = sizeof(freeWheelTime);
+					//CAClockSeconds freeWheelTime = 0.2;
+					//size = sizeof(freeWheelTime);
 					err = CAClockAddListener(bpmClockRef, clockListenerProc, self);
 					if (err != noErr)
 						NSLog(@"\t\terr %ld adding listener in %s",err,__func__);

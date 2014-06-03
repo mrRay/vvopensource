@@ -8,7 +8,7 @@
 	NSPasteboard		*gpb = [NSPasteboard generalPasteboard];
 	NSString			*type = nil;
 	NSString			*value = nil;
-	long				temp;
+	//long				temp;
 	
 	if (gpb == nil)	{	//	return if there's no pasteboard
 		return;
@@ -22,7 +22,7 @@
 		return;
 	}
 	if ([value length] > 550)	{
-		temp = NSRunAlertPanel(@"Hang on a second....",@"You can't paste that much text in here.  Please enter a SHORT description of your setup and/or what you were doing when the crash occurred.  Please do NOT paste things like crash or console logs in here.",@"",nil,nil);
+		NSRunAlertPanel(@"Hang on a second....",@"You can't paste that much text in here.  Please enter a SHORT description of your setup and/or what you were doing when the crash occurred.  Please do NOT paste things like crash or console logs in here.",@"",nil,nil);
 	}
 	else	{
 		[super paste:sender];

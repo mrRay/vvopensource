@@ -643,7 +643,7 @@
 		//	compensate for the view's bounds (including any bounds offsets caused by orientation/rotation)
 		switch (viewBO)	{
 			case VVViewBOBottom:
-				tmpPoint = VVMAKEPOINT(0.0, 0.0);
+				//tmpPoint = VVMAKEPOINT(0.0, 0.0);
 				viewOrigin = VVMAKEPOINT(-1.0*viewOrigin.x, -1.0*viewOrigin.y);
 				break;
 			case VVViewBORight:

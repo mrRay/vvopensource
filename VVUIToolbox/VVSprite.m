@@ -317,9 +317,9 @@
 	OSSpinLockUnlock(&pathLock);
 }
 #if IPHONE
-- (UIBezierPath *) safelyGetBezierPath
+- (UIBezierPath *) copyBezierPath
 #else
-- (NSBezierPath *) safelyGetBezierPath
+- (NSBezierPath *) copyBezierPath
 #endif
 {
 #if IPHONE

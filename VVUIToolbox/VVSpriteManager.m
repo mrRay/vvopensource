@@ -228,6 +228,7 @@ MutLockArray		*_spriteManagerArray;
 				[spritesInUse removeObjectsAtIndexes:indicesToRemove];
 			}
 			[spritesInUse unlock];
+			VVRELEASE(indicesToRemove);
 		}
 		//	else 'spritesInuse' only has 0 or 1 items in it- i can just down the mousedown.
 		else	{
@@ -376,7 +377,7 @@ MutLockArray		*_spriteManagerArray;
 	
 	return returnMe;
 }
-- (id) newSpriteAtBottomForRect:(VVRECT)r	{
+- (id) makeNewSpriteAtBottomForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;
@@ -384,7 +385,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray lockAddObject:returnMe];
 	return returnMe;
 }
-- (id) newSpriteAtTopForRect:(VVRECT)r	{
+- (id) makeNewSpriteAtTopForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;

@@ -55,39 +55,39 @@
 	
 	if (hScrollTrack == nil)	{
 		/*
-		hLeftSprite = [spriteManager newSpriteAtTopForRect:tmpRect];
+		hLeftSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[hLeftSprite setDrawCallback:@selector(drawHSprite:)];
 		[hLeftSprite setActionCallback:@selector(hSpriteAction:)];
 		[hLeftSprite setDelegate:self];
-		hRightSprite = [spriteManager newSpriteAtTopForRect:tmpRect];
+		hRightSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[hRightSprite setDrawCallback:@selector(drawHSprite:)];
 		[hRightSprite setActionCallback:@selector(hSpriteAction:)];
 		[hRightSprite setDelegate:self];
 		*/
-		hScrollTrack = [spriteManager newSpriteAtTopForRect:tmpRect];
+		hScrollTrack = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[hScrollTrack setDrawCallback:@selector(drawHSprite:)];
 		[hScrollTrack setActionCallback:@selector(hSpriteAction:)];
 		[hScrollTrack setDelegate:self];
-		hScrollBar = [spriteManager newSpriteAtTopForRect:tmpRect];
+		hScrollBar = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[hScrollBar setDrawCallback:@selector(drawHSprite:)];
 		[hScrollBar setActionCallback:@selector(hSpriteAction:)];
 		[hScrollBar setDelegate:self];
 		
 		/*
-		vUpSprite = [spriteManager newSpriteAtTopForRect:tmpRect];
+		vUpSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[vUpSprite setDrawCallback:@selector(drawVSprite:)];
 		[vUpSprite setActionCallback:@selector(vSpriteAction:)];
 		[vUpSprite setDelegate:self];
-		vDownSprite = [spriteManager newSpriteAtTopForRect:tmpRect];
+		vDownSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[vDownSprite setDrawCallback:@selector(drawVSprite:)];
 		[vDownSprite setActionCallback:@selector(vSpriteAction:)];
 		[vDownSprite setDelegate:self];
 		*/
-		vScrollTrack = [spriteManager newSpriteAtTopForRect:tmpRect];
+		vScrollTrack = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[vScrollTrack setDrawCallback:@selector(drawVSprite:)];
 		[vScrollTrack setActionCallback:@selector(vSpriteAction:)];
 		[vScrollTrack setDelegate:self];
-		vScrollBar = [spriteManager newSpriteAtTopForRect:tmpRect];
+		vScrollBar = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[vScrollBar setDrawCallback:@selector(drawVSprite:)];
 		[vScrollBar setActionCallback:@selector(vSpriteAction:)];
 		[vScrollBar setDelegate:self];

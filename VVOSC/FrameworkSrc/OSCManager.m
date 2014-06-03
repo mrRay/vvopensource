@@ -606,7 +606,7 @@
 - (void) removeOutput:(id)p	{
 	if (p == nil)
 		return;
-	BOOL				postNotification = NO;
+	//BOOL				postNotification = NO;
 	NSUInteger			origCount;
 	//NSLog(@"\t\tfiring about-to-change notification");
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
@@ -614,8 +614,8 @@
 	[outPortArray wrlock];
 		origCount = [outPortArray count];
 		[outPortArray removeObject:p];
-		if (origCount != [outPortArray count])
-			postNotification = YES;
+		//if (origCount != [outPortArray count])
+		//	postNotification = YES;
 	[outPortArray unlock];
 	//NSLog(@"\t\tfiring done-changing notification");
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsChangedNotification object:self];

@@ -190,7 +190,7 @@
 	NSString				*compNodeName = [comp nodeName];
 	
 	OSSpinLockLock(&nameLock);
-		returnMe = [nodeName caseInsensitiveCompare:compNodeName];
+		returnMe = (compNodeName==nil) ? NSOrderedSame : [nodeName caseInsensitiveCompare:compNodeName];
 	OSSpinLockUnlock(&nameLock);
 	
 	return returnMe;

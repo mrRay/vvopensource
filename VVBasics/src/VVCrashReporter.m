@@ -162,7 +162,10 @@
 		SCNetworkConnectionFlags	flags = 0;
 		target = SCNetworkReachabilityCreateWithName(NULL,[domainToCheck UTF8String]);
 		BOOL						foundServer = (target==NULL)?NO:SCNetworkReachabilityGetFlags(target,&flags);
-		CFRelease(target);
+		if (target != NULL)	{
+			CFRelease(target);
+			target = NULL;
+		}
 		BOOL						reachable = foundServer && (flags & kSCNetworkReachabilityFlagsReachable) && !(flags & kSCNetworkReachabilityFlagsConnectionRequired);
 		
 		//	if it's not reachable, bail
@@ -320,7 +323,9 @@
 	//	add the crash log string
 	//tmpString = [NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil];
 	rawCrashLogString = [[NSString stringWithContentsOfFile:[crashLogArray lockFirstObject] usedEncoding:nil error:nil] retain];
-	[transmitString appendFormat:@"crash=Host Name: %@\n",SCDynamicStoreCopyComputerName(NULL, NULL)];
+	NSString		*tmpHostName = (NSString *)SCDynamicStoreCopyComputerName(NULL, NULL);
+	[transmitString appendFormat:@"crash=Host Name: %@\n",tmpHostName];
+	VVRELEASE(tmpHostName);
 	if (rawCrashLogString!=nil)
 		[transmitString appendFormat:@"%@VVAMPERSANDVV",rawCrashLogString];
 	else
