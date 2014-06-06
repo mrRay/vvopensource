@@ -94,7 +94,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 }
 + (NSString *) stringFromRawIPAddress:(unsigned long)i	{
 	struct in_addr		tmpAddr;
-	tmpAddr.s_addr = i;
+	tmpAddr.s_addr = (unsigned int)i;
 	return [NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding];
 }
 - (NSString *) trimFirstAndLastSlashes	{

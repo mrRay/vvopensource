@@ -38,7 +38,7 @@
 }
 - (void) awakeFromNib	{
 	/*	set this object as the address space's delegate.  the address space needs to dispatch replies to queries it received- the main instance of OSCAddressSpace does this by notifying its delegate (which presumably dispatches it to an OSCManager or directly to the port)		*/
-	[_mainVVOSCAddressSpace setDelegate:self];
+	[(OSCAddressSpace *)_mainVVOSCAddressSpace setDelegate:self];
 	/*	enable auto query reply in the main address space node- the OSCAddressSpace instance (which is the "top-level" OSC node) will automatically assemble replies for queries		*/
 	[_mainVVOSCAddressSpace setAutoQueryReply:YES];
 	

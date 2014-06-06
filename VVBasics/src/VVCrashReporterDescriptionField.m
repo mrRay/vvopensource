@@ -1,4 +1,5 @@
 #import "VVCrashReporterDescriptionField.h"
+#import "VVBasicMacros.h"
 
 
 @implementation VVCrashReporterDescriptionField
@@ -22,7 +23,9 @@
 		return;
 	}
 	if ([value length] > 550)	{
-		NSRunAlertPanel(@"Hang on a second....",@"You can't paste that much text in here.  Please enter a SHORT description of your setup and/or what you were doing when the crash occurred.  Please do NOT paste things like crash or console logs in here.",@"",nil,nil);
+		VVRunAlertPanel(@"Hang on a second....",
+			@"You can't paste that much text in here.  Please enter a SHORT description of your setup and/or what you were doing when the crash occurred.  Please do NOT paste things like crash or console logs in here.",
+			@"OK",nil,nil);
 	}
 	else	{
 		[super paste:sender];

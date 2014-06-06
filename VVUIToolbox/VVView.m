@@ -1592,8 +1592,12 @@
 	//	if there's a border, draw it now
 	OSSpinLockLock(&propertyLock);
 	if (drawBorder)	{
+#if IPHONE
+		GLSTROKERECT_COLOR(localBounds,borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
+#else
 		glColor4f(borderColor[0], borderColor[1], borderColor[2], borderColor[3]);
 		GLSTROKERECT(localBounds);
+#endif
 	}
 	OSSpinLockUnlock(&propertyLock);
 	

@@ -67,14 +67,16 @@
 		1A6F7293190343E600A6FBAD /* VVSpriteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5418BE37A90098AB25 /* VVSpriteManager.m */; };
 		1A6F7297190343E600A6FBAD /* VVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96900D5A18BE37A90098AB25 /* VVView.m */; };
 		1A6F7299190343E600A6FBAD /* VVScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF19C018C4ED7000B76FA3 /* VVScrollView.m */; };
-		1A6F729B19034B6800A6FBAD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6F729A19034B6800A6FBAD /* OpenGLES.framework */; };
+		1A86D6691941271400419A76 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D6681941271400419A76 /* OpenGLES.framework */; };
+		1A86D66B1941271A00419A76 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D66A1941271A00419A76 /* UIKit.framework */; };
+		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
 		5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
 		96017709108D71D6008F90CA /* VVCrashReporterEmailField.h in Headers */ = {isa = PBXBuildFile; fileRef = 96017707108D71D6008F90CA /* VVCrashReporterEmailField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9601770A108D71D6008F90CA /* VVCrashReporterEmailField.m in Sources */ = {isa = PBXBuildFile; fileRef = 96017708108D71D6008F90CA /* VVCrashReporterEmailField.m */; };
 		9601770D108D71EA008F90CA /* VVCrashReporterDescriptionField.h in Headers */ = {isa = PBXBuildFile; fileRef = 9601770B108D71EA008F90CA /* VVCrashReporterDescriptionField.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9601770E108D71EA008F90CA /* VVCrashReporterDescriptionField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9601770C108D71EA008F90CA /* VVCrashReporterDescriptionField.m */; };
-		96128609100F830600C9C833 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96128609100F830600C9C833 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		961745FF100F879000FB60E6 /* VVMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 961745FE100F879000FB60E6 /* VVMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9617460A100F87B300FB60E6 /* VVMIDIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96174604100F87B300FB60E6 /* VVMIDIManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9617460B100F87B300FB60E6 /* VVMIDINode.h in Headers */ = {isa = PBXBuildFile; fileRef = 96174605100F87B300FB60E6 /* VVMIDINode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -136,14 +138,14 @@
 		9656D919100F8A0E0064EEA6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9656D915100F8A0E0064EEA6 /* main.m */; };
 		9656D91A100F8A0E0064EEA6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9656D917100F8A0E0064EEA6 /* MainMenu.xib */; };
 		9656D91B100F8A0E0064EEA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9656D918100F8A0E0064EEA6 /* AppController.m */; };
-		9656D928100F8A630064EEA6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		9656D92D100F8A780064EEA6 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
+		9656D928100F8A630064EEA6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9656D92D100F8A780064EEA6 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9658C25F18F86BCF004A6BCF /* VVSysVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9658C26018F86BCF004A6BCF /* VVSysVersion.m */; };
 		9664239B100E9C1200630C6D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		966CCBFD14320779006D580F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 966CCBFC14320779006D580F /* MainMenu.xib */; };
-		966CCC0214320797006D580F /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		966CCC0314320797006D580F /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		966CCC0214320797006D580F /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		966CCC0314320797006D580F /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		966CCC0B14320807006D580F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC0A14320807006D580F /* main.m */; };
 		966CCC5F14322FAD006D580F /* ElementBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC5E14322FAD006D580F /* ElementBox.m */; };
 		966CCC6214322FBD006D580F /* ElementChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 966CCC6114322FBD006D580F /* ElementChain.m */; };
@@ -152,7 +154,7 @@
 		966D3E9518634F8000A7BE9E /* LICENSE in Headers */ = {isa = PBXBuildFile; fileRef = 96C00549185A477000C33FE2 /* LICENSE */; settings = {ATTRIBUTES = (Public, ); }; };
 		96765969100F818900E02974 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		9676596A100F818F00E02974 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96765988100F81AB00E02974 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		968FAA92108B6178000E470D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		968FAA94108B617C000E470D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		968FAAA9108B6A4A000E470D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 968FAAA8108B6A4A000E470D /* MainMenu.xib */; };
@@ -222,8 +224,8 @@
 		96ACD7341706416400138AE6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96ACD7321706416400138AE6 /* Credits.rtf */; };
 		96ACD7371706416400138AE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7361706416400138AE6 /* AppDelegate.m */; };
 		96ACD73A1706416400138AE6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96ACD7381706416400138AE6 /* MainMenu.xib */; };
-		96ACD73F170641A100138AE6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96ACD740170641A300138AE6 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
+		96ACD73F170641A100138AE6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96ACD740170641A300138AE6 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96ACD741170641A700138AE6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96ACD742170641AA00138AE6 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
 		96ACD74B1706422D00138AE6 /* PingTestOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD74A1706422D00138AE6 /* PingTestOSCManager.m */; };
@@ -268,14 +270,14 @@
 		96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
-		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96E26B35106C319700C5B418 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96E26B34106C319700C5B418 /* Credits.rtf */; };
 		96E7ECC3106B160C00B90822 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96E7ECC4106B161000B90822 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
 		96E7ECC5106B161100B90822 /* VVOSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
-		96E7ECF1106B163900B90822 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96E7ECF2106B163900B90822 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; };
-		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
+		96E7ECF1106B163900B90822 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96E7ECF2106B163900B90822 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96ED419910628A5500D8373F /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
 		96F2F59D12D0B9ED003715F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A99011108CEA2600895DC1 /* Foundation.framework */; };
@@ -637,8 +639,9 @@
 		1A6F726A19033A9D00A6FBAD /* VVUIToolboxStatic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VVUIToolboxStatic-Prefix.pch"; sourceTree = "<group>"; };
 		1A6F726B19033A9D00A6FBAD /* VVUIToolboxStatic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVUIToolboxStatic.h; sourceTree = "<group>"; };
 		1A6F727419033A9D00A6FBAD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		1A6F727719033A9D00A6FBAD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		1A6F729A19034B6800A6FBAD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		1A86D6681941271400419A76 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		1A86D66A1941271A00419A76 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
@@ -815,7 +818,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A6F729B19034B6800A6FBAD /* OpenGLES.framework in Frameworks */,
+				1A86D66B1941271A00419A76 /* UIKit.framework in Frameworks */,
+				1A86D6691941271400419A76 /* OpenGLES.framework in Frameworks */,
 				1A6F726719033A9D00A6FBAD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1017,6 +1021,7 @@
 				961EA8EE100E8565007E6C25 /* VVBasics-Info.plist */,
 				96BF10A8100E95200079A2E6 /* VVBasics.h */,
 				961EA950100E8834007E6C25 /* VVBasicMacros.h */,
+				1AA491C31940E36D0079B0FB /* VVBasicMacros.m */,
 				968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */,
 				961EA94E100E8834007E6C25 /* VVStopwatch.h */,
 				961EA94D100E8834007E6C25 /* VVStopwatch.m */,
@@ -1212,7 +1217,8 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1A6F729A19034B6800A6FBAD /* OpenGLES.framework */,
+				1A86D66A1941271A00419A76 /* UIKit.framework */,
+				1A86D6681941271400419A76 /* OpenGLES.framework */,
 				9691B04F10CDA6B9008A0D35 /* OpenGL.framework */,
 				96A99011108CEA2600895DC1 /* Foundation.framework */,
 				9652676F108C29AC00A2906D /* SystemConfiguration.framework */,
@@ -1222,7 +1228,6 @@
 				96ACD7231706416300138AE6 /* Cocoa.framework */,
 				96C18C2E185A1A740082DE35 /* Foundation.framework */,
 				1A6F727419033A9D00A6FBAD /* XCTest.framework */,
-				1A6F727719033A9D00A6FBAD /* UIKit.framework */,
 				96ACD7251706416300138AE6 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -1711,7 +1716,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1913,6 +1918,7 @@
 				96A9911C108D668700895DC1 /* VVCrashReporter.m in Sources */,
 				9601770A108D71D6008F90CA /* VVCrashReporterEmailField.m in Sources */,
 				9601770E108D71EA008F90CA /* VVCrashReporterDescriptionField.m in Sources */,
+				1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */,
 				5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */,
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
 				96AC180D185A41A500917830 /* MAZeroingWeakRef.m in Sources */,
@@ -2375,6 +2381,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2395,6 +2402,7 @@
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVMIDI;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2417,6 +2425,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2438,6 +2447,7 @@
 				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_NAME = VVBasics;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2459,6 +2469,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2479,6 +2490,7 @@
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = VVOSC;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2802,6 +2814,8 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2822,6 +2836,8 @@
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

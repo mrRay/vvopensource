@@ -241,7 +241,9 @@
 		//	if the email field is empty, prompt the user to enter an email address & return
 		NSString		*emailFieldStringVal = [emailField stringValue];
 		if ((emailFieldStringVal==nil) || ([emailFieldStringVal length]<1))	{
-			NSRunAlertPanel(@"Email Address Required",@"If you'd like a reply, please enter a valid email address.",@"OK",nil,nil);
+			VVRunAlertPanel(@"Email Address Required",
+				@"If you'd like a reply, please enter a valid email address.",
+				@"OK",nil,nil);
 			return;
 		}
 	}
@@ -628,11 +630,13 @@
 		[def setObject:newLastCrashDate forKey:@"lastCrashDate"];
 		[def synchronize];
 		//	 throw up an alert that describes the error
-		if (developerEmail == nil)
-			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.",@"OK",nil,nil,networkErr);
+		if (developerEmail == nil)	{
+			NSString		*tmpString = VVFMTSTRING(@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.",networkErr);
+			VVRunAlertPanel(@"Network error!",tmpString,@"OK",nil,nil);
+		}
 		else	{
-			//NSLog(@"\t\tfound dev email!");
-			NSRunAlertPanel(@"Network error!",@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.\n\n%@",@"OK",nil,nil,networkErr,developerEmail);
+			NSString		*tmpString = VVFMTSTRING(@"There's a problem contacting the server- please email the developers and say that a network error of type %d occurred.\n\n%@",networkErr,developerEmail);
+			VVRunAlertPanel(@"Network error!",tmpString,@"OK",nil,nil);
 		}
 		//	close the window
 		[self closeCrashReporter];

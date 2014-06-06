@@ -172,7 +172,7 @@
 	//	since the port this app receives on may have changed, i have to adjust the out port for the "This app" output so it continues to point to the correct address
 	id			anObj = [manager findOutputWithLabel:@"This app"];
 	if (anObj != nil)	{
-		[anObj setPort:[receivingPortField intValue]];
+		[(OSCOutPort *)anObj setPort:[receivingPortField intValue]];
 	}
 	
 	//	select the "manual output" item in the pop-up button

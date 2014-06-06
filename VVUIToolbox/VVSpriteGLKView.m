@@ -846,10 +846,19 @@
 	
 	//	if appropriate, draw the border
 	if (drawBorder)	{
+		VVRECT		localBounds = [self backingBounds];
+		GLSTROKERECT_COLOR(localBounds,borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
+		
+		
+		//glVertexPointer(3,GL_FLOAT,0,vvMacroVertices);
+		//glDrawArrays(GL_LINES,0,8);
+		
+		/*
 		glColor4f(borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		GLSTROKERECT([self backingBounds]);
+		*/
 	}
 	/*
 	//	flush!

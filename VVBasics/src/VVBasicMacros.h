@@ -1,3 +1,4 @@
+#import <Foundation/Foundation.h>
 
 //	macros for checking to see if something is nil, and if it's not releasing and setting it to nil
 #define VVRELEASE(item) {if (item != nil)	{			\
@@ -147,6 +148,13 @@
 
 
 
+
+//	not actually a macro- a function to replace NSRunAlertPanel, which is deprecated in 10.10
+NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC);
+
+
+
+
 //	this macro is from the GL red book
 #define BUFFER_OFFSET(bytes) ((GLubyte*)NULL + (bytes))
 //	this is a macro for drawing an NSRect in opengl
@@ -229,7 +237,34 @@
 	glDrawArrays(GL_LINES,0,8);												\
 }
 */
-
+#define GLSTROKERECT_COLOR(tmpLocalRect,r,g,b,a)							\
+{																			\
+	GLfloat 	vvMacroVertices[]={											\
+		tmpLocalRect.origin.x+0.5, tmpLocalRect.origin.y+0.5, 0.0,			\
+		tmpLocalRect.origin.x+tmpLocalRect.size.width-0.5, tmpLocalRect.origin.y+0.5, 0.0,										\
+		tmpLocalRect.origin.x+tmpLocalRect.size.width-0.5, tmpLocalRect.origin.y+0.5, 0.0,										\
+		tmpLocalRect.origin.x+tmpLocalRect.size.width-0.5, tmpLocalRect.origin.y+tmpLocalRect.size.height-0.5, 0.0,				\
+		tmpLocalRect.origin.x+tmpLocalRect.size.width-0.5, tmpLocalRect.origin.y+tmpLocalRect.size.height-0.5, 0.0,				\
+		tmpLocalRect.origin.x+0.5, tmpLocalRect.origin.y+tmpLocalRect.size.height-0.5, 0.0,										\
+		tmpLocalRect.origin.x+0.5, tmpLocalRect.origin.y+tmpLocalRect.size.height-0.5, 0.0,										\
+		tmpLocalRect.origin.x+0.5, tmpLocalRect.origin.y+0.5, 0.0};			\
+	GLfloat		vvMacroColors[]={											\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,															\
+		r, g, b, a,		};													\
+	glEnableVertexAttribArray(GLKVertexAttribPosition);						\
+	glEnableVertexAttribArray(GLKVertexAttribColor);						\
+	glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, vvMacroVertices);									\
+	glVertexAttribPointer(GLKVertexAttribColor, 4, GL_FLOAT, GL_FALSE, 0, vvMacroColors);										\
+	glDrawArrays(GL_LINES, 0, 8);											\
+	glDisableVertexAttribArray(GLKVertexAttribPosition);					\
+	glDisableVertexAttribArray(GLKVertexAttribColor);						\
+}
 
 //	this is a macro for drawing a line connecting two points
 #define GLDRAWLINE(p,q)									\
