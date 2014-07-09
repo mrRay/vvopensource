@@ -12,7 +12,8 @@ typedef enum _VVOSVersion	{
 	VVSnowLeopard = 6,
 	VVLion = 7,
 	VVMountainLion = 8,
-	VVMavericks = 9
+	VVMavericks = 9,
+	VVYosemite = 10
 } VVOSVersion;
 
 

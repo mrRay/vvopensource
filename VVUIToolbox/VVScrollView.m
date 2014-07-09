@@ -19,11 +19,13 @@
 	
 	lastSubviewsUnion = VVMAKESIZE(1,1);
 	
+	showHScroll = YES;
 	//hLeftSprite = nil;
 	//hRightSprite = nil;
 	hScrollTrack = nil;
 	hScrollBar = nil;
 	
+	showVScroll = YES;
 	//vUpSprite = nil;
 	//vDownSprite = nil;
 	vScrollTrack = nil;
@@ -35,6 +37,7 @@
 	[super initComplete];
 	
 	_documentView = [[VVView alloc] initWithFrame:[self bounds]];
+	[_documentView setAutoresizingMask:VVViewResizeWidth|VVViewResizeHeight];
 	[self addSubview:_documentView];
 }
 - (void) prepareToBeDeleted	{
@@ -54,16 +57,6 @@
 	VVRECT		tmpRect = tmpRect = VVMAKERECT(0,0,1,1);
 	
 	if (hScrollTrack == nil)	{
-		/*
-		hLeftSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
-		[hLeftSprite setDrawCallback:@selector(drawHSprite:)];
-		[hLeftSprite setActionCallback:@selector(hSpriteAction:)];
-		[hLeftSprite setDelegate:self];
-		hRightSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
-		[hRightSprite setDrawCallback:@selector(drawHSprite:)];
-		[hRightSprite setActionCallback:@selector(hSpriteAction:)];
-		[hRightSprite setDelegate:self];
-		*/
 		hScrollTrack = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[hScrollTrack setDrawCallback:@selector(drawHSprite:)];
 		[hScrollTrack setActionCallback:@selector(hSpriteAction:)];
@@ -73,16 +66,6 @@
 		[hScrollBar setActionCallback:@selector(hSpriteAction:)];
 		[hScrollBar setDelegate:self];
 		
-		/*
-		vUpSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
-		[vUpSprite setDrawCallback:@selector(drawVSprite:)];
-		[vUpSprite setActionCallback:@selector(vSpriteAction:)];
-		[vUpSprite setDelegate:self];
-		vDownSprite = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
-		[vDownSprite setDrawCallback:@selector(drawVSprite:)];
-		[vDownSprite setActionCallback:@selector(vSpriteAction:)];
-		[vDownSprite setDelegate:self];
-		*/
 		vScrollTrack = [spriteManager makeNewSpriteAtTopForRect:tmpRect];
 		[vScrollTrack setDrawCallback:@selector(drawVSprite:)];
 		[vScrollTrack setActionCallback:@selector(vSpriteAction:)];
@@ -93,17 +76,20 @@
 		[vScrollBar setDelegate:self];
 	}
 	
-	int			sbw = 22;	//	scroll bar width
+	int			sbw = 15;	//	scroll bar width
 	
 	//	make sure the document view is sized and positioned properly within me
 	tmpRect = ib;
-	tmpRect.size.width -= sbw;
-	tmpRect.size.height -= sbw;
+	if (showVScroll)
+		tmpRect.size.width -= sbw;
+	if (showHScroll)
+		tmpRect.size.height -= sbw;
 	tmpRect.origin.y += sbw;
 	if (!VVEQUALRECTS(tmpRect,[_documentView frame]))	{
 		//VVRectLog(@"\t\tsetting _documentView frame to",tmpRect);
 		[_documentView setFrame:tmpRect];
 	}
+	//ib = tmpRect;
 	
 	//	up to now we've been working in local coords- now we start setting sprite positions, and this is in coords that take the local to backing bounds into account
 	ib = VVMAKERECT(ib.origin.x*LTBBM, ib.origin.y*LTBBM, ib.size.width*LTBBM, ib.size.height*LTBBM);
@@ -116,40 +102,48 @@
 	//VVRectLog(@"\t\tcontentFrame is",contentFrame);
 	//VVRectLog(@"\t\tviewBounds is",viewBounds);
 	
-	//	h scroll track
-	tmpRect.origin = VVMAKEPOINT(0,0);
-	tmpRect.size = VVMAKESIZE(ib.size.width-sbw-tmpRect.origin.x, sbw);
-	[hScrollTrack setRect:tmpRect];
-	
-	//	h scroll bar
-	trackLength = [hScrollTrack rect].size.width;
-	if (viewBounds.size.width < contentFrame.size.width)	{
-		tmpRect.size = VVMAKESIZE(viewBounds.size.width/contentFrame.size.width*trackLength, sbw);
-		tmpRect.origin = [hScrollTrack rect].origin;
-		scrollNormVal = (viewBounds.origin.x-contentFrame.origin.x)/contentFrame.size.width;
-		tmpRect.origin.x += trackLength*scrollNormVal;
-		[hScrollBar setRect:tmpRect];
+	[hScrollTrack setHidden:!showHScroll];
+	[hScrollBar setHidden:!showHScroll];
+	if (showHScroll)	{
+		//	h scroll track
+		tmpRect.origin = VVMAKEPOINT(0,0);
+		tmpRect.size = VVMAKESIZE(ib.size.width-sbw-tmpRect.origin.x, sbw);
+		[hScrollTrack setRect:tmpRect];
+		
+		//	h scroll bar
+		trackLength = [hScrollTrack rect].size.width;
+		if (viewBounds.size.width < contentFrame.size.width)	{
+			tmpRect.size = VVMAKESIZE(viewBounds.size.width/contentFrame.size.width*trackLength, sbw);
+			tmpRect.origin = [hScrollTrack rect].origin;
+			scrollNormVal = (viewBounds.origin.x-contentFrame.origin.x)/contentFrame.size.width;
+			tmpRect.origin.x += trackLength*scrollNormVal;
+			[hScrollBar setRect:tmpRect];
+		}
+		else	{
+			[hScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
+		}
 	}
-	else	{
-		[hScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
-	}
 	
-	//	v scroll track
-	tmpRect.origin = VVMAKEPOINT(ib.size.width-sbw, 0);
-	tmpRect.size.height = ib.size.height-tmpRect.origin.y;
-	[vScrollTrack setRect:tmpRect];
-	
-	//	v scroll bar
-	trackLength = [vScrollTrack rect].size.height;
-	if (viewBounds.size.height < contentFrame.size.height)	{
-		tmpRect.size = VVMAKESIZE(sbw, viewBounds.size.height/contentFrame.size.height*trackLength);
-		tmpRect.origin = [vScrollTrack rect].origin;
-		scrollNormVal = (viewBounds.origin.y-contentFrame.origin.y)/contentFrame.size.height;
-		tmpRect.origin.y += trackLength*scrollNormVal;
-		[vScrollBar setRect:tmpRect];
-	}
-	else	{
-		[vScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
+	[vScrollTrack setHidden:!showVScroll];
+	[vScrollBar setHidden:!showVScroll];
+	if (showVScroll)	{
+		//	v scroll track
+		tmpRect.origin = VVMAKEPOINT(ib.size.width-sbw, 0);
+		tmpRect.size.height = ib.size.height-tmpRect.origin.y;
+		[vScrollTrack setRect:tmpRect];
+		
+		//	v scroll bar
+		trackLength = [vScrollTrack rect].size.height;
+		if (viewBounds.size.height < contentFrame.size.height)	{
+			tmpRect.size = VVMAKESIZE(sbw, viewBounds.size.height/contentFrame.size.height*trackLength);
+			tmpRect.origin = [vScrollTrack rect].origin;
+			scrollNormVal = (viewBounds.origin.y-contentFrame.origin.y)/contentFrame.size.height;
+			tmpRect.origin.y += trackLength*scrollNormVal;
+			[vScrollBar setRect:tmpRect];
+		}
+		else	{
+			[vScrollBar setRect:VVMAKERECT(-2,-2,1,1)];
+		}
 	}
 }
 - (void) _setFrameSize:(VVSIZE)n	{
@@ -168,6 +162,8 @@
 
 - (void) hSpriteAction:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
+	if ([s hidden])
+		return;
 	if (s == hScrollTrack)	{
 		//NSLog(@"\t\th scroll track");
 		//	figure out the normalized scroll val from the action location within the sprite of the scroll track
@@ -214,6 +210,8 @@
 #if IPHONE
 	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
 #else
+	if ([s hidden])
+		return;
 	CGLContextObj		cgl_ctx = [s glDrawContext];
 	VVRECT				tmpRect = [s rect];
 	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
@@ -229,6 +227,8 @@
 }
 - (void) vSpriteAction:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
+	if ([s hidden])
+		return;
 	if (s == vScrollTrack)	{
 		//NSLog(@"\t\tv scroll track");
 		//	figure out the normalized scroll val from the action location within the sprite of the scroll track
@@ -275,6 +275,8 @@
 #if IPHONE
 	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
 #else
+	if ([s hidden])
+		return;
 	CGLContextObj		cgl_ctx = [s glDrawContext];
 	VVRECT				tmpRect = [s rect];
 	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
@@ -295,6 +297,26 @@
 }
 
 
+- (void) setShowHScroll:(BOOL)n	{
+	BOOL		changed = (n==showHScroll) ? NO : YES;
+	if (changed)	{
+		showHScroll = n;
+		[self setSpritesNeedUpdate];
+	}
+}
+- (BOOL) showHScroll	{
+	return showHScroll;
+}
+- (void) setShowVScroll:(BOOL)n	{
+	BOOL		changed = (n==showVScroll) ? NO : YES;
+	if (changed)	{
+		showVScroll = n;
+		[self setSpritesNeedUpdate];
+	}
+}
+- (BOOL) showVScroll	{
+	return showVScroll;
+}
 - (VVPOINT) normalizedScrollVal	{
 	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)
 		return VVZEROPOINT;
@@ -302,17 +324,27 @@
 	VVRECT			trackRect;
 	VVRECT			barRect;
 	
-	trackRect = [hScrollTrack rect];
-	barRect = [hScrollBar rect];
-	returnMe.x = (barRect.origin.x-trackRect.origin.x)/(trackRect.size.width-barRect.size.width);
-	trackRect = [vScrollTrack rect];
-	barRect = [vScrollBar rect];
-	returnMe.y = (barRect.origin.y-trackRect.origin.y)/(trackRect.size.height-barRect.size.height);
+	if (showHScroll)	{
+		trackRect = [hScrollTrack rect];
+		barRect = [hScrollBar rect];
+		returnMe.x = (barRect.origin.x-trackRect.origin.x)/(trackRect.size.width-barRect.size.width);
+	}
+	else
+		returnMe.x = 0.0;
+	if (showVScroll)	{
+		trackRect = [vScrollTrack rect];
+		barRect = [vScrollBar rect];
+		returnMe.y = (barRect.origin.y-trackRect.origin.y)/(trackRect.size.height-barRect.size.height);
+	}
+	else
+		returnMe.y = 0.0;
 	return returnMe;
 }
 - (void) scrollToNormalizedVal:(VVPOINT)n	{
-	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)
+	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)	{
+		NSLog(@"\t\terr: bailing, %s",__func__);
 		return;
+	}
 	VVPOINT			newPoint = VVMAKEPOINT(fmin(fmax(n.x,0.0),1.0), fmin(fmax(n.y,0.0),1.0));
 	VVRECT			contentFrame = [_documentView subviewFramesUnion];
 	VVRECT			viewBounds = [_documentView bounds];
@@ -359,6 +391,13 @@
 	normScrollVal.x -= (delta.x/contentFrame.size.width);
 	normScrollVal.y += (delta.y/contentFrame.size.height);
 	[self scrollToNormalizedVal:normScrollVal];
+}
+
+
+- (NSRect) documentVisibleRect	{
+	if (_documentView==nil)
+		return NSZeroRect;
+	return [_documentView visibleRect];
 }
 
 

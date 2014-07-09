@@ -14,11 +14,13 @@
 	
 	VVSIZE			lastSubviewsUnion;	//	updated every time sprites are updated- the size of the last union rect for all my subviews
 	
+	BOOL			showHScroll;
 	//VVSprite		*hLeftSprite;
 	//VVSprite		*hRightSprite;
 	VVSprite		*hScrollTrack;
 	VVSprite		*hScrollBar;
 	
+	BOOL			showVScroll;
 	//VVSprite		*vUpSprite;
 	//VVSprite		*vDownSprite;
 	VVSprite		*vScrollTrack;
@@ -32,9 +34,13 @@
 
 - (VVView *) documentView;
 
+@property (assign,readwrite) BOOL showHScroll;
+@property (assign,readwrite) BOOL showVScroll;
 - (VVPOINT) normalizedScrollVal;
 - (void) scrollToNormalizedVal:(VVPOINT)n;
 - (void) scrollTopLeftToPoint:(VVPOINT)n;
 - (void) scrollByAmount:(VVPOINT)delta;
+
+- (NSRect) documentVisibleRect;
 
 @end
