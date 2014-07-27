@@ -107,7 +107,9 @@
 	if (showHScroll)	{
 		//	h scroll track
 		tmpRect.origin = VVMAKEPOINT(0,0);
-		tmpRect.size = VVMAKESIZE(ib.size.width-sbw-tmpRect.origin.x, sbw);
+		tmpRect.size = VVMAKESIZE(ib.size.width-tmpRect.origin.x, sbw);
+		if (showVScroll)
+			tmpRect.size.width -= sbw;
 		[hScrollTrack setRect:tmpRect];
 		
 		//	h scroll bar
@@ -129,6 +131,8 @@
 	if (showVScroll)	{
 		//	v scroll track
 		tmpRect.origin = VVMAKEPOINT(ib.size.width-sbw, 0);
+		if (showVScroll)
+			tmpRect.origin.y -= sbw;
 		tmpRect.size.height = ib.size.height-tmpRect.origin.y;
 		[vScrollTrack setRect:tmpRect];
 		

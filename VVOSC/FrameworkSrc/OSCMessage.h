@@ -12,6 +12,7 @@
 
 ///	Corresponds to an OSC message: contains zero or more values, and the address path the values have to get sent to.
 /*!
+\ingroup VVOSC
 According to the OSC spec, a message consists of an address path (where the message should be sent) and zero or more arguments.  An OSCMessage must be created with an address path- once the OSCMessage exists, you may add as many arguments to it as you'd like.
 */
 @interface OSCMessage : NSObject <NSCopying> {

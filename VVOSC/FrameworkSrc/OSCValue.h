@@ -11,6 +11,7 @@
 
 ///	OSCValue encapsulates any value you can send or receive via OSC.  It is NOT mutable at this time.
 /*!
+\ingroup VVOSC
 When you send or receive values via OSC, you'll be working with OSCValue objects in an OSCMessage.  Internally, OSCValue isn't mutable, and it attempts to store its value in its native format (int for an int, float for a float) instead of relying on NSNumber.  The exceptions to this are NSColor/UIColor and NSString.
 */
 

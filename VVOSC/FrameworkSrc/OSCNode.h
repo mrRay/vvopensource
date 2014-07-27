@@ -12,6 +12,9 @@
 
 
 ///	Delegates of OSCNode must respond to all three of these methods.
+/**
+\ingroup VVOSC
+*/
 @protocol OSCNodeDelegateProtocol
 ///	The receiver is passed the node which received the message as well as the received message.
 - (void) node:(id)n receivedOSCMessage:(OSCMessage *)msg;
@@ -23,6 +26,9 @@
 
 
 ///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode.
+/**
+\ingroup VVOSC
+*/
 @protocol OSCNodeQueryDelegate
 ///	The receiver should return an auto-released array of NSString instances corresponding to the sub-nodes in response to the query.
 - (NSMutableArray *) namespaceArrayForNode:(id)n;
@@ -41,16 +47,13 @@
 
 ///	OSCNode describes a single destination for OSC addresses.  The OSC address space is made up of many different nodes.  This class is optional- it is not used for basic OSC message sending/receiving, and only gets used if you start working with OSCAddressSpace.
 /*!
+\ingroup VVOSC
 The OSC specification describes a slash-delineated address space- as messages are received, they are dispatched to the described address.  An OSCNode represents a single unique destination in the OSC address space.  OSCNodes may have subnodes and have a non-retaining reference to their parent node (unless they're top-level, in which case their parent node is nil).  They retain a copy of the last message dispatched directly to this node for convenience.  OSCNodes pass the OSC messages they receive to your application via the node's delegates- an instance of OSCNode has zero or more delegates.  These delegates must support the OSCNodeDelegateProtocol, and the delegate should be removed from the node before the delegate is released.  Correspondingly, the node will inform all its delegates of its impending release so weak references to the node may be destroyed.
 
 If you want to work with an instance of OSCNode, you need to acquire or work with it from the main OSCAddressSpace.  Do not just start creating OSCNode instances on your own; there's no point, they're only useful if they're part of an address space.  This documentation exists in case you want to explore the address space or get/set properties of an OSCNode.  The documentation only covers a fraction of the contents of the header files.
 
 Generally speaking, it's a good idea for each instance of OSCNode to have a discrete type, as this makes it easier to browse and filter the hierarchy of OSCNode instances that make up the OSC address space.  Most of the documented methods here are simply for querying basic properties of the OSCNode instance or doing simple message dispatch.
 */
-
-
-
-
 @interface OSCNode : NSObject {
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;

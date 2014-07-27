@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'QT and Hap Test App' target in the 'QT and Hap Test App' project
+//
+
+#ifdef __OBJC__
+	#import <Cocoa/Cocoa.h>
+#endif

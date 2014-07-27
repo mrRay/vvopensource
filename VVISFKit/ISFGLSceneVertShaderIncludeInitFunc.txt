@@ -1,0 +1,6 @@
+
+	gl_Position = ftransform();
+	vv_VertNorm = gl_Normal.xyz;
+	vv_VertPos = gl_Vertex.xyz;
+	vv_FragNormCoord = vec2((gl_Position.x+1.0)/2.0, (gl_Position.y+1.0)/2.0);
+	vec2	vv_fragCoord = floor(vv_FragNormCoord * RENDERSIZE);

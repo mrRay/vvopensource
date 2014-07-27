@@ -10,7 +10,9 @@
 
 
 ///	This class is used to measure how long it takes to do things; much easier to work with than NSDate.
-
+/**
+\ingroup VVBasics
+*/
 @interface VVStopwatch : NSObject {
 	struct timeval		startTime;
 	OSSpinLock			timeLock;

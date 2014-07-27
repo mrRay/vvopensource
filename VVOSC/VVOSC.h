@@ -39,9 +39,12 @@ When instances of OSCInPort and OSCManager receive OSC data, they pass it to the
 */
 
 
+/**
+\defgroup VVOSC VVOSC framework
+*/
 /*!
-\mainpage
-
+\page VVOSC
+\ingroup VVOSC
 \htmlonly
 
 <style type="text/css">

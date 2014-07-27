@@ -1788,9 +1788,13 @@
 - (void) setClearColor:(NSColor *)n	{
 	NSColor				*devColor = nil;
 	NSColorSpace		*devCS = [NSColorSpace deviceRGBColorSpace];
+	CGFloat				tmpColor[4];
 	devColor = ([n colorSpace]==devCS) ? n : [n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-	if (devColor != nil)
-		[devColor getComponents:(CGFloat *)clearColor];
+	if (devColor != nil)	{
+		[devColor getComponents:tmpColor];
+		for (int i=0; i<4; ++i)
+			clearColor[i] = tmpColor[i];
+	}
 }
 #endif
 - (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{

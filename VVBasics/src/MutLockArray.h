@@ -1,4 +1,3 @@
-
 #if IPHONE
 #import <UIKit/UIKit.h>
 #else
@@ -9,7 +8,8 @@
 
 
 ///	Similar to NSMutableArray, but thread-safe.  Internally, uses an NSMutableArray and a rwlock.
-/*
+/**
+\ingroup VVBasics
 This class exists because NSMutableArray is not thread-safe by default: if you call methods on it from two different threads at the same time, it will try to execute both, often crashing in the process.  I found myself writing a lot of lock/array pairs, so simplified everything by combining them into a single class.  MutLockArray has methods which allow you to work with a mutable array in a transparent and thread-safe manner- it will automatically establish the read-/write-locks necessary to perform the relevant task.  By avoiding the "lock" methods, you can also work with the array without performing any locking- so you can get a read-/write-lock, perform a number of actions, and then unlock.
 
 It is important to remember, when working with it, that MutLockArray is NOT a subclass of NSMutableArray; rather, it is a subclass of NSObject with an instance of an NSMutableArray and a rwlock for working with it safely.  This means that you can't pass an instance of MutLockArray to anything which is expecting to be passed an NSMutableArray- internally, apple's frameworks will probably be doing some dark voodoo bullshit which will result in a spectacular failure.  If you want to work with an actual NSMutableArray, check out the "array", "createArrayCopy", and "lockCreateArrayCopy" methods below.

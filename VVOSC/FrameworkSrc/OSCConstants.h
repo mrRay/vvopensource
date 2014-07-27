@@ -6,6 +6,7 @@
 
 ///	OSCValueType
 /*!
+\ingroup VVOSC
 OSCValues have distinct types; these are used to describe the type of an OSCValue.
 */
 typedef enum	{
@@ -29,6 +30,7 @@ typedef enum	{
 
 ///	OSCSMPTEFPS
 /*!
+\ingroup VVOSC
 OSCValues of type OSCValSMPTE have 4 bits used to describe the timecode fps.  This enum lists the various timecode framerates.  Note that OSC describes values- this is timecode, and framerates of 29.97 etc. are typically achieved in a number of means completely independent of the timecode, which is just a means of referring to frames.
 */
 typedef enum	{
@@ -45,6 +47,7 @@ typedef enum	{
 
 ///	OSCMIDIType
 /*!
+\ingroup VVOSC
 The OSC spec has a data type for MIDI messages- these describe the various different "midiStatus" types if an OSCValue instance is a MIDI-type value.  Refer to the documentation for the VVMIDI framework (especially VVMIDI.h) for a more in-depth description of how MIDI works.
 */
 typedef enum	{
@@ -76,6 +79,7 @@ typedef enum	{
 
 ///	OSCNodeType
 /*!
+\ingroup VVOSC
 The OSC spec describes an address space capable of pattern matching and message dispatch.  Building this sort of model is easier in many practical regards if the various endpoints in the address space may be given a dedicated type- this allows a degree of filtering, sorting, and automatic behavior.  OSCNodeType enumerates the different kinds of OSCNode instances.
 */
 typedef enum	{
@@ -109,6 +113,7 @@ typedef enum	{
 
 ///	OSCMessageType
 /*!
+\ingroup VVOSC
 	Nearly all OSC messages you'll encounter are "control" messages- they're sending zero or more values to an OSC address.  Other OSC message types exist to support the experimental query protocol.
 */
 typedef enum	{
@@ -120,6 +125,7 @@ typedef enum	{
 } OSCMessageType;
 ///	OSCQueryType
 /*!
+\ingroup VVOSC
 	These are the different kinds of queries in the experimental OSC query protocol
 */
 typedef enum	{

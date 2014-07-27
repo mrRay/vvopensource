@@ -21,8 +21,12 @@
 	the following stuff is for doxygen
 */
 
+/**
+\defgroup VVBasics VVBasics framework
+*/
 /*!
-\mainpage
+\page VVBasics
+\ingroup VVBasics
 
 \htmlonly
 

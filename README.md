@@ -1,3 +1,4 @@
+\mainpage
 vvopensource
 ============
 
@@ -23,15 +24,35 @@ What does this project include/do/make?
 
   * VVOSC is an Objective-C framework for quickly and easily working with OSC data.  Capable of doing everything necessary to send and receive OSC data.  There are also targets for compiling, assembling, and installing an SDK which allows you to link against and use VVOSC on iPhones.
 
-  * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
-
   * VVMIDI is an Objective-C framework for quickly and easily working with MIDI data.
 
+  * VVUIToolbox is an objective-c framework that I use extensively to ease the process of creating UI items.  It contains a number of objects that standardize the act of creating, drawing, and interacting with sprites that work transparently with both NS and GL views.
+  
+  * VVBufferPool is an objective-c framework for creating and managing GL-backed resources.  This framework is used as the basis for the rendering engines I build for various proejcts, and is focused on the general goal of simplifying the task of "rendering to a texture" in an extensible manner to better work with a variety of APIs and formats.
+  
+  * DDMathParser is the [DDMathParser project by Dave DeLong](https://github.com/davedelong/DDMathParser) packaged up as a framework.  this is a slightly older version of DDMathParser (the last version capable of compiling 32-bit binaries capable of running on 10.6).  DDMathParser is used by VVISFKit to parse and evaluate mathematical expressions- it's a really neat project, you should check it out!
+  
+  * JSONKit is the [JSONKit project by John Engelhart](https://github.com/johnezang/JSONKit) packaged up as a framework.  VVISFKit uses JSONKit to read JSON blobs (NSJSONSerialization wasn't available until 10.7 and everything in this project can compile and run in 10.6).
+  
+  * VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://vidvox.net/rays_oddsnends/ISF.html).
+  
+  * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
+  
   * MIDITestApp is a Cocoa application (created using VVMIDI) used to demonstrate the sending and receiving of MIDI data.
   
   * MIDIviaOSC is a Cocoa application (created using VVMIDI and VVOSC) that lets you send MIDI data to another computer on the internet via OSC
 
   * the CrashReporterTestApp is a Cocoa application (created using VVBasics) which demonstrates the use of the VVCrashReporter class and can also be used to test your server-side implementation
+  
+  * GLScene Test App demonstrates how to do use the VVBufferPool framework to easily render-to-texture with a VVBuffer using generic GL drawing commands, as well as how to create a VVBuffer/GL texture from an image file.
+  
+  * QCGLScene Test App demonstrates how to use VVBufferPool to render QC compositions to GL textures, as well as how to do MSAA rendering for smoother output images under some circumstances
+  
+  * CIGLScene Test App demonstrates how to use VVBufferPool to convert CIImages to GL textures- this makes it very, very easy to work with CIFilters and GL textures.
+  
+  * ISFGLScene Test App demonstrates how to use VVBufferPool and VVISFKit to open, interact with, and render ISF files to GL textures
+  
+  * QT and Hap Test App demonstrates how to use VVBufferPool to render QuickTime movies to GL textures.  Also shows how to use VVBufferPool to decode Hap video frames.
 
 
 I'm not a programmer, I just want to download a MIDI/OSC test application!
@@ -52,14 +73,13 @@ How to use these frameworks in your Mac application
 
 The general idea is to compile the framework/frameworks you want to use, add them to your XCode project so you may link against them, and then set up a build phase to copy the framework into your application bundle.  This is fairly important: most of the time when you link against a framework, the framework is expected to be installed on your OS.  VVOSC, VVBasics, and VVMIDI are different: your application will include a compiled copy of the relevant framework(s), so you're guaranteed that the framework won't change outside of your control (which means you won't inherit bugs or have to deal with changed APIs until you're ready to do so).  Here's the exact procedure:
 
-  1.  Open the VVOpenSource project in XCode
-  2.  In XCode, make the framework you need your active target.  Make sure the build mode is set to "Release"!  If your framework links against other frameworks (for example, VVOSC requries VVBasics), the other frameworks will be compiled automatically- you don't need to worry about them.
-  3.  Build the target.  Your compiled framework(s) may be found in "./build/Release/".  You may now close the VVOpenSource project you opened in XCode.
-  3.  Open your application's project file in XCode, and drag the compiled framework(s) into your XCode project so you can link against it/them.  If more than one framework was compiled in the last step, you need to add all of them to your XCode project!
-  4.  From XCode's "Project" menu, add a new "Copy Files" build phase to your application/target.  You only need to do this once.
-  5.  Change the destination of the "Copy Files" build phase you just created so the files are being copied into the 'Frameworks' folder within your app bundle.
-  6.  Expand your application/target, and drag all of the frameworks you just added to your project into the copy files build phase you created in the last step.  Be sure to drag the frameworks *from your project* into the copy files build phase- you're not dragging from the Finder to XCode, you should be dragging from XCode to XCode!
-  7.  Double-click your application/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Runpath Search Paths" setting, and add the following paths: "@loader_path/../Frameworks" and "@executable_path/../Frameworks".
+  1.  In XCode, close the VVOpenSource project (if it is open), and then open your project.
+  2.  In the Finder, drag "VVOpenSource.xcodeproj" into your project's workspace.
+  3.  Switch back to XCode, and locate the "Build Phases" section for your project/application's target.
+  4.  Add a dependency for "vvopensource-Build Mac Frameworks".  This will ensure that all the frameworks in the vvopensource project get compiled before your project, so there won't be any missing dependencies.
+  5.  Add the frameworks you want to use to the "Link Binary with Libraries" section.
+  6.  Create a new "Copy Files" build phase, set its destination to the "Frameworks" folder, and add the frameworks you linked against in the previous step- the goal is to copy the frameworks you need into the "Frameworks" folder inside your app package.  When you click the "+" button to add the frameworks, they will be listed in the "Products" folder in the "vvopensource" project in your workspace.
+  7.  Switch to the "Build Settings" section of your project's target, locate the "Runpath Search Paths" settings, and add the following paths: "@loader_path/../Frameworks" and "@executable_path/../Frameworks".
   8.  That's it- you're done now.  You can import/include objects from the framework in your source just as you normally would.
 
 
@@ -76,9 +96,9 @@ How to use VVOSC in your iPhone application
 -------------------------------------------
 
 In addition to frameworks for development of mac apps, this project can produce static libraries for use with iOS app creation.  Here's how to use the static libs in your project:
-  1.  Open your project in XCode, and make sure that the VVOpenSource project is closed.
+  1.  In XCode, close the VVOpenSource project (if it is open), and then open your project.
   2.  In the Finder, drag "VVOpenSource.xcodeproj" into your project's workspace
-  3.  Switch back to XCode, and locate the "Build Phases" settings.
+  3.  Switch back to XCode, and locate the "Build Phases" settings for your project's target.
   4.  Add a target dependency for "Build iOS static libs (VVOpenSource)".
   5.  Add "libVVBasics.a" and "libVVOSC.a" to the "Link Binary with Libraries" section.
   6.  In XCode, switch to the "Build Settings" for your application, and under the "Other Linker Flags" setting add the flag "-ObjC".
@@ -96,13 +116,11 @@ At some point it was brought to my attention that the LGPL doesn't cover static 
 Documentation and sample code
 -----------------------------
 
-VVBasics uses Doxygen; a copy of the generated documentation is hosted here:
+Doxygen was used to generate documentation for most things in this project, which can be found here:
 
-[http://vidvox.com/rays_oddsnends/vvbasics_doc/index.html]
+[http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html]
 
-VVOSC uses Doxygen; a copy of the generated documentation is hosted here:
-
-[http://vidvox.com/rays_oddsnends/vvosc_doc/index.html]
+...if you're reading this on the doc page, start by checking out the "Modules", which breaks down the documentation by framework!
 
 
 Licensing

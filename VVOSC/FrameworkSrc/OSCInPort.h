@@ -22,6 +22,7 @@
 
 ///	OSCInPort handles everything needed to receive OSC data on a given port
 /*!
+\ingroup VVOSC
 You should never create or destroy an instance of this class manually.  OSCInPort instances should be created/destroyed by the OSCManager.
 
 Each OSCInPort is running in its own separate thread- so make sure anything called as a result of received OSC input is thread-safe!  When OSCInPort receives data, it gets parsed and passed to the in port's delegate as a series of OSCMessages consisting of an address path and an OSCValue.  By default, the inport's delegate is the manager which created it- and by default, managers pass this data on to *their* delegates (your objects/app).

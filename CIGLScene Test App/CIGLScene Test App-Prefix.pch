@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'CIGLScene Test App' target in the 'CIGLScene Test App' project
+//
+
+#ifdef __OBJC__
+	#import <Cocoa/Cocoa.h>
+#endif

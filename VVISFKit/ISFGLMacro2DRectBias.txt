@@ -1,0 +1,9 @@
+vec4 VVSAMPLER_2DRECTBYPIXEL(sampler2DRect sampler, vec4 samplerImgRect, vec2 samplerImgSize, bool samplerFlip, vec2 loc, float bias)	{
+	return (samplerFlip)
+		? texture2DRect	(sampler,vec2(((loc.x/samplerImgSize.x*samplerImgRect.z)+samplerImgRect.x), (samplerImgRect.w-(loc.y/samplerImgSize.y*samplerImgRect.w)+samplerImgRect.y)))
+		: texture2DRect	(sampler,vec2(((loc.x/samplerImgSize.x*samplerImgRect.z)+samplerImgRect.x), ((loc.y/samplerImgSize.y*samplerImgRect.w)+samplerImgRect.y)));
+}
+vec4 VVSAMPLER_2DRECTBYNORM(sampler2DRect sampler, vec4 samplerImgRect, vec2 samplerImgSize, bool samplerFlip, vec2 normLoc, float bias)	{
+	vec4		returnMe = VVSAMPLER_2DRECTBYPIXEL(	sampler,samplerImgRect,samplerImgSize,samplerFlip,vec2(normLoc.x*samplerImgRect.z, normLoc.y*samplerImgRect.w), bias);
+	return returnMe;
+}

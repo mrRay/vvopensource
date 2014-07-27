@@ -15,6 +15,7 @@
 
 ///	Main VVOSC class- manages in & out port creation, zero configuration networking (bonjour/zeroconf)
 /*!
+\ingroup VVOSC
 The OSCManager will probably be the main class that you're working with: it creates/deletes inputs (which receive data) and outputs (which send data), passes any OSC data received to its delegate (your application), optionally handles distribution of all received OSC messages, and does other manager-ish things.  You should only need one instance of OSCManager in your application.  One of your objects should be OSCManager's delegate (see the "OSCDelegateProtocol" below) so you may receive OSC data.
 
 Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports are running a loop which checks a socket for data received since the last loop.  By default, the OSCInPort's delegate is the OSCManager which created it.  Every time the loop runs, it passes the received data off to its delegate (the manager) as the raw address/value pairs in the order they're received.  When the OSCManager receives data from its in port it immediately passes the received data to its delegate, which should respond to one of the following methods (referred to as the 'OSCDelegateProtocol'):

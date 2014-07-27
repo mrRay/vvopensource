@@ -27,6 +27,7 @@ extern id				_mainVVOSCAddressSpace;
 
 ///	OSCAddressSpace is the primary means of interacting with the OSC address space described in the OSC specification.  This class is optional- it's not needed for basic OSC message sending/receiving.
 /*!
+\ingroup VVOSC
 There should only ever be one instance of OSCAddressSpace, which is automatically created when the class is initialized- you should not create another instance of this class.  The main instance may be retrieved by the class method +[OSCAddressSpace mainAddressSpace] or by the class variable _mainVVOSCAddressSpace.
 
 OSCAddressSpace is your application's main way of dealing with the OSC address space- if you need to dispatch a message, set, rename, or delete a node, you should do via the main instance of this class.  OSCAddressSpace is a subclass of OSCNode- the entire address space is made up of OSCNodes (nodes within nodes), and each "node" represents a discrete destination address.  The single instance of OSCAddressSpace is just the topmost node (for the address "/").

@@ -13,6 +13,7 @@
 
 ///	Used to parse raw OSC data or to assemble raw OSC data from OSCMessages/OSCBundles
 /*!
+\ingroup VVOSC
 An OSC packet is the basic unit of transmitting OSC data- the OSCPacket class is mostly used internally to either parse received raw data or to assemble raw data from OSCMessages/OSCBundles for sending.
 */
 
