@@ -14,7 +14,7 @@ All of these frameworks are contained in a single XCode project- as I write more
 How to get help
 ---------------
 
-Please open an "issue".  If i'm really busy (a frequent occurrence) it may take a while for me to get back to you- sorry in advance!
+Please open an "issue".  If i'm really busy (a frequent occurrence) it may take a while for me to get back to you- sorry in advance!  Documentation is generated with 'Doxygen', and can be found here: [http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html](http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html)
 
 
 What does this project include/do/make?
