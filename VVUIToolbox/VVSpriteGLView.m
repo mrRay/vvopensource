@@ -956,10 +956,14 @@ long			_spriteGLViewSysVers;
 		
 		//	tell the sprite manager to start drawing the sprites
 		if (spriteManager != nil)	{
-			if (_spriteGLViewSysVers >= 7)
-				[spriteManager drawRect:[(id)self convertRectToBacking:r]];
-			else
-				[spriteManager drawRect:r];
+			if (_spriteGLViewSysVers >= 7)	{
+				//[spriteManager drawRect:[(id)self convertRectToBacking:r]];
+				[spriteManager drawRect:[(id)self convertRectToBacking:r] inContext:cgl_ctx];
+			}
+			else	{
+				//[spriteManager drawRect:r];
+				[spriteManager drawRect:r inContext:cgl_ctx];
+			}
 		}
 		
 		
