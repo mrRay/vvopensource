@@ -16,6 +16,8 @@
 @interface VVStopwatch : NSObject {
 	struct timeval		startTime;
 	OSSpinLock			timeLock;
+	BOOL				paused;
+	double				prePauseTimeSinceStart;
 }
 
 ///	Returns an auto-released instance of VVStopwatch; the stopwatch is started on creation.
@@ -33,6 +35,11 @@
 - (void) copyStartTimeToTimevalStruct:(struct timeval *)dst;
 ///	Populates the starting time with the passed timeval struct
 - (void) setStartTimeStruct:(struct timeval *)src;
+
+- (void) pause;
+- (BOOL) paused;
+- (void) resume;
+- (BOOL) running;
 
 @end
 
