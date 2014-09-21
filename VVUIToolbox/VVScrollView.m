@@ -398,9 +398,9 @@
 }
 
 
-- (NSRect) documentVisibleRect	{
+- (VVRECT) documentVisibleRect	{
 	if (_documentView==nil)
-		return NSZeroRect;
+		return VVZERORECT;
 	return [_documentView visibleRect];
 }
 
