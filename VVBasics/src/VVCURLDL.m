@@ -141,6 +141,9 @@
 			curl_easy_setopt(curlHandle,CURLOPT_HTTPHEADER,headers);
 		}
 		*/
+		
+		//curl_easy_setopt(curlHandle, CURLOPT_VERBOSE, 1L);
+		
 		//	if there's a log/pass, set them up
 		if (log!=nil && pass!=nil)	{
 			NSString		*tmpString = [NSString stringWithFormat:@"%@:%@",log,pass];
@@ -158,6 +161,9 @@
 			if (firstFormPtr != nil)	{
 				//NSLog(@"\tsending form data");
 				curl_easy_setopt(curlHandle,CURLOPT_HTTPPOST,firstFormPtr);
+			}
+			else	{
+				curl_easy_setopt(curlHandle,CURLOPT_HTTPGET,1L);
 			}
 		}
 		
@@ -241,7 +247,7 @@
 - (void) appendStringToHeader:(NSString *)s	{
 	if (s == nil)
 		return;
-	curl_slist_append(headerList,[s UTF8String]);
+	headerList = curl_slist_append(headerList,[s UTF8String]);
 }
 - (void) addFormNSString:(NSString *)s forName:(NSString *)n	{
 	if (s==nil || n==nil)
