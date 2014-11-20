@@ -24,6 +24,7 @@
 		pass = nil;
 		postData = nil;
 		//headerArray = nil;
+		httpResponseCode = 0;
 		responseData = nil;
 		headerList = nil;
 		firstFormPtr = nil;
@@ -175,8 +176,14 @@
 		//	perform the transfer
 		err = curl_easy_perform(curlHandle);
 		//	there's a 60-second timeout on this perform!
+		
+		//	get the http response code
+		curl_easy_getinfo(curlHandle, CURLINFO_RESPONSE_CODE, &httpResponseCode);
+		
 		if (err)	{
-			NSLog(@"\terr %u at curl_easy_perform for %@: %s",err,urlString,errBuffer);
+			NSLog(@"\terr %u at curl_easy_perform for %@",err,urlString);
+			//NSLog(@"\t\terrBuffer is %s",errBuffer);
+			
 			//	returns error code 6 when the machine isn't connected to a network
 			//	returns error code 6 is the network doesn't have internet access
 			//	returns error code 7 when littlesnitch prevents
@@ -273,6 +280,7 @@
 @synthesize firstFormPtr;
 @synthesize lastFormPtr;
 @synthesize returnOnMain;
+@synthesize httpResponseCode;
 @synthesize responseData;
 @synthesize err;
 

@@ -34,6 +34,7 @@
 	NSString				*log;
 	NSString				*pass;
 	
+	long					httpResponseCode;
 	NSMutableData			*responseData;
 	
 	struct curl_slist		*headerList;	//	nil by default- if non-nil, supplied to the handle as CURLOPT_HTTPHEADER
@@ -76,6 +77,7 @@
 @property (assign,readwrite) struct curl_httppost *firstFormPtr;
 @property (assign,readwrite) struct curl_httppost *lastFormPtr;
 @property (assign,readwrite) BOOL returnOnMain;
+@property (readonly) long httpResponseCode;
 @property (readonly) NSMutableData *responseData;
 @property (readonly) NSString *responseString;
 @property (readonly) CURLcode err;
