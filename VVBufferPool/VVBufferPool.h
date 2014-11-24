@@ -94,6 +94,11 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 /**
 @param s The size of the texture you want to create, in pixels, as an NSSize structure
 */
+///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel 2D texture with a BGRA internal format.
+/**
+@param s The size of the texture you want to create, in pixels, as an NSSize structure.
+*/
+- (VVBuffer *) allocBGR2DTexSized:(NSSize)s;
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel 2D texture with power-of-two dimensions and a BGRA internal format.
 /**
 @param s The size of the texture you want to create, in pixels, as an NSSize structure.  Note that the actual texture may be larger (as per the function name, the texture will be power-of-two with equal width and height).

@@ -314,7 +314,12 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		case VVBufferType_DispList:
 			return [NSString stringWithFormat:@"<VVBuffer:DispList %u>",descriptor.name];
 		case VVBufferType_Tex:
-			return [NSString stringWithFormat:@"<VVBuffer:Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+		{
+			if (descriptor.target==GL_TEXTURE_2D)
+				return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+			else if (descriptor.target==GL_TEXTURE_RECTANGLE_EXT)
+				return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+		}
 	}
     return nil;
 }

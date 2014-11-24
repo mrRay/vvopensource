@@ -516,6 +516,23 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
+- (VVBuffer *) allocBGR2DTexSized:(NSSize)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_2D;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_BGRA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	return returnMe;
+}
 - (VVBuffer *) allocBGR2DPOTTexSized:(NSSize)s	{
 	//	rounds up the size to the nearest POT
 	NSSize		texSize;

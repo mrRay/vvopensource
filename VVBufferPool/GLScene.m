@@ -298,6 +298,8 @@ BOOL			_nvidiaGPUFlag = NO;
 		//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 		renderTarget = nil;
 		renderSelector = nil;
+		renderBlockLock = OS_SPINLOCK_INIT;
+		renderBlock = nil;
 		fbo = 0;
 		tex = 0;
 		texTarget = 0;
@@ -343,6 +345,12 @@ BOOL			_nvidiaGPUFlag = NO;
 	OSSpinLockLock(&renderThreadLock);
 	renderThreadDeleteArray = nil;
 	OSSpinLockUnlock(&renderThreadLock);
+	OSSpinLockLock(&renderBlockLock);
+	if (renderBlock != nil)	{
+		Block_release(renderBlock);
+		renderBlock = nil;
+	}
+	OSSpinLockUnlock(&renderBlockLock);
 	[super dealloc];
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
@@ -422,6 +430,15 @@ BOOL			_nvidiaGPUFlag = NO;
 	
 	//	make sure there's a context!
 	if (context != nil)	{
+		//	if there's a render block, safely retain it, execute it, then release it
+		OSSpinLockLock(&renderBlockLock);
+		void			(^localRenderBlock)(void) = (renderBlock==nil) ? nil : Block_copy(renderBlock);
+		OSSpinLockUnlock(&renderBlockLock);
+		if (localRenderBlock != nil)	{
+			localRenderBlock();
+			Block_release(localRenderBlock);
+			localRenderBlock = nil;
+		}
 		//	if there's a render target/selector, call them
 		if ((renderTarget!=nil) && (renderSelector!=nil) && ([renderTarget respondsToSelector:renderSelector]))
 			[renderTarget performSelector:renderSelector withObject:self];
@@ -804,6 +821,17 @@ BOOL			_nvidiaGPUFlag = NO;
 }
 @synthesize renderTarget;
 @synthesize renderSelector;
+- (void) setRenderBlock:(void (^)(void))n	{
+	OSSpinLockLock(&renderBlockLock);
+	if (renderBlock != nil)	{
+		Block_release(renderBlock);
+		renderBlock = nil;
+	}
+	if (n != nil)	{
+		renderBlock = Block_copy(n);
+	}
+	OSSpinLockUnlock(&renderBlockLock);
+}
 @synthesize flushMode;
 @synthesize swapInterval;
 

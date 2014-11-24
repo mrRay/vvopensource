@@ -45,6 +45,8 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	
 	id						renderTarget;	//	NOT RETAINED- the target of my render method
 	SEL						renderSelector;	//	this method gets called when i render; ONLY does the actual drawing- does NOT do setup/cleanup (use _renderPrep and _renderCleanup)!
+	OSSpinLock				renderBlockLock;
+	void					(^renderBlock)(void);	//	RETAINED.  if you don't want to use a delegate/callback method for specifying drawing commands, you can use this block instead- it will get called when this scene is told to render
 	
 	GLuint					fbo;	//	the framebuffer my context renders into- only valid when the render method is called!
 	GLuint					tex;	//	the fbo renders into this texture- only valid when the render method is called!
@@ -137,6 +139,8 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 @property (assign, readwrite) id renderTarget;
 ///	Every time this scene renders, the "renderSelector" is called on "renderTarget".  You put your drawing code in the "renderSelector".
 @property (assign, readwrite) SEL renderSelector;
+///	Every time this scene renders, the "renderBlock" is executed.  You put your drawing code in this block.
+- (void) setRenderBlock:(void (^)(void))n;
 @property (assign, readwrite) VVGLFlushMode flushMode;
 @property (assign, readwrite) int swapInterval;
 
