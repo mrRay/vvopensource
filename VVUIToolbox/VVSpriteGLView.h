@@ -8,20 +8,36 @@
 
 
 
-typedef enum	{
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, VVFenceMode)	{
+	VVFenceModeEveryRefresh = 0,	//	every time a display callback runs, drawing commands are sent to the GPU.
+	VVFenceModeDBSkip = 1,	//	the apple gl fence extension is used to make sure that drawing commands for the back buffer have finished before more drawing commands are sent to the back buffer (the front buffer can receive commands, though)
+	VVFenceModeSBSkip = 2,	//	the apple gl fence extension is used to make sure that drawing commands for the single buffer have finished before more drawing commands are sent to it
+	VVFenceModeFinish = 3	//	glFinish is used instead of glFlush
+};
+typedef NS_ENUM(NSInteger, VVFlushMode)	{
+	VVFlushModeGL = 0,	//	glFlush()
+	VVFlushModeCGL = 1,	//	CGLFlushDrawable()
+	VVFlushModeNS = 2,	//	[context flushBuffer]
+	VVFlushModeApple = 3,	//	glFlushRenderAPPLE()
+	VVFlushModeFinish = 4	//	glFinish()
+};
+#else
+typedef enum VVFenceMode	{
 	VVFenceModeEveryRefresh = 0,	//	every time a display callback runs, drawing commands are sent to the GPU.
 	VVFenceModeDBSkip = 1,	//	the apple gl fence extension is used to make sure that drawing commands for the back buffer have finished before more drawing commands are sent to the back buffer (the front buffer can receive commands, though)
 	VVFenceModeSBSkip = 2,	//	the apple gl fence extension is used to make sure that drawing commands for the single buffer have finished before more drawing commands are sent to it
 	VVFenceModeFinish = 3	//	glFinish is used instead of glFlush
 } VVFenceMode;
-
-typedef enum	{
+typedef enum VVFlushMode	{
 	VVFlushModeGL = 0,	//	glFlush()
 	VVFlushModeCGL = 1,	//	CGLFlushDrawable()
 	VVFlushModeNS = 2,	//	[context flushBuffer]
 	VVFlushModeApple = 3,	//	glFlushRenderAPPLE()
 	VVFlushModeFinish = 4	//	glFinish()
 } VVFlushMode;
+#endif
+
 
 //	i need a simple (read: fast) var describing which OS this is
 extern long			_spriteGLViewSysVers;

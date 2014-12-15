@@ -10,7 +10,7 @@
 /**
 \ingroup VVISFKit
 */
-typedef enum	{
+typedef NS_ENUM(NSInteger, ISFAttribValType)	{
 	ISFAT_Event,	//!<	no data, just an event.  sends a 1 the next render after the event is received, a 0 any other time it's rendered
 	ISFAT_Bool,	//!<	a boolean choice, sends 1 or 0 to the shader
 	ISFAT_Long,	//!<	sends a long
@@ -18,7 +18,7 @@ typedef enum	{
 	ISFAT_Point2D,	//!<	sends a 2 element vector
 	ISFAT_Color,	//!<	sends a 4 element vector representing an RGBA color
 	ISFAT_Image	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
-} ISFAttribValType;
+};
 ///	union describing a value for one of the listed attribute types
 /**
 \ingroup VVISFKit

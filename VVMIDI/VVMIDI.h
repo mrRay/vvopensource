@@ -71,7 +71,11 @@
 #define VVMIDIResetVal	 0xFF			//	no data bytes! never received/don't send!
 */
 
-typedef enum	{
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, VVMIDIMsgType)	{
+#else
+typedef enum VVMIDIMsgType	{
+#endif
 	VVMIDIMsgUnknown = 0x00,
 	//	these are all STATUS MESSAGES: all status mesages have bit 7 set.  ONLY status msgs have bit 7 set to 1!
 	//	these status messages go to a specific channel (these are voice messages)
@@ -101,7 +105,11 @@ typedef enum	{
 	VVMIDIUndefinedRealtime1Val = 0xFD,
 	VVMIDIActiveSenseVal = 0xFE,		//	no data bytes! sent every 300 ms. to make sure device is active
 	VVMIDIResetVal  = 0xFF,			//	no data bytes! never received/don't send!
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+};
+#else
 } VVMIDIMsgType;
+#endif
 
 
 

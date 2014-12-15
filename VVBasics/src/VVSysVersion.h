@@ -8,7 +8,21 @@
 /**
 \ingroup VVBasics
 */
-typedef enum _VVOSVersion	{
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, VVOSVersion)	{
+	VVOSVersionError=0,
+	//VVJaguar = 0x1020,
+	//VVPanther = 0x1030,
+	VVTiger = 4,	//!<	10.4
+	VVLeopard = 5,	//!<	10.5
+	VVSnowLeopard = 6,	//!<	10.6
+	VVLion = 7,	//!<	10.7
+	VVMountainLion = 8,	//!<	10.8
+	VVMavericks = 9,	//!<	10.9
+	VVYosemite = 10	//!<	10.10
+};
+#else
+typedef enum VVOSVersion	{
 	VVOSVersionError=0,
 	//VVJaguar = 0x1020,
 	//VVPanther = 0x1030,
@@ -20,6 +34,9 @@ typedef enum _VVOSVersion	{
 	VVMavericks = 9,	//!<	10.9
 	VVYosemite = 10	//!<	10.10
 } VVOSVersion;
+#endif
+
+
 
 
 extern OSSpinLock		_majorSysVersionLock;

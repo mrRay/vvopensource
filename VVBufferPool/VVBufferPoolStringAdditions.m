@@ -1,8 +1,21 @@
 #import "VVBufferPoolStringAdditions.h"
 
+
+
+
 @implementation NSString (VVBufferPoolStringAdditions)
 
 
++ (NSString *) stringFromFourCC:(OSType)n	{
+	char		destCharPtr[5];
+	destCharPtr[0] = (n>>24) & 0xFF;
+	destCharPtr[1] = (n>>16) & 0xFF;
+	destCharPtr[2] = (n>>8) & 0xFF;
+	destCharPtr[3] = (n) & 0xFF;
+	destCharPtr[4] = 0;
+	return [NSString stringWithCString:destCharPtr encoding:NSASCIIStringEncoding];
+	
+}
 - (BOOL) containsString:(NSString *)s	{
 	NSUInteger			passedStringLength = [s length];
 	if ((s == nil) || (passedStringLength > [self length]))

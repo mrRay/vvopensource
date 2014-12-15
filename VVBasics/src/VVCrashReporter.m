@@ -130,8 +130,11 @@
 	VVRELEASE(consoleLog);
 	delegate = nil;
 	//	explicitly release all the objects in the array of top level objects
+#if (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1080))
+#else
 	if ((nibTopLevelObjects!=nil)&&([nibTopLevelObjects count]>0))
 		[nibTopLevelObjects makeObjectsPerformSelector:@selector(release)];
+#endif
 	//	release the actual array of top level objects
 	VVRELEASE(nibTopLevelObjects);
 	//	release the nib

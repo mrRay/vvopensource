@@ -198,7 +198,7 @@ BOOL			_nvidiaGPUFlag = NO;
 	GLuint								glDisplayMask = [GLScene glDisplayMaskForAllScreens];
 	NSOpenGLPixelFormatAttribute		attrs[] = {
 		NSOpenGLPFAAccelerated,
-		NSOpenGLPFAPixelBuffer,
+		//NSOpenGLPFAPixelBuffer,
 		//NSOpenGLPFAAllRenderers,
 		//NSOpenGLPFAScreenMask,CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay),
 		NSOpenGLPFAScreenMask,glDisplayMask,

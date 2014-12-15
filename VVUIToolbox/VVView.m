@@ -362,6 +362,18 @@
 - (void) keyUp:(NSEvent *)e	{
 	NSLog(@"%s ... %@",__func__,e);
 }
+- (NSDraggingSession *) beginDraggingSessionWithItems:(NSArray *)items event:(NSEvent *)event source:(id<NSDraggingSource>)source	{
+	if (deleted)
+		return nil;
+	NSDraggingSession		*returnMe = nil;
+	if (_containerView != nil)	{
+		returnMe = [_containerView
+			beginDraggingSessionWithItems:items
+			event:event
+			source:source];
+	}
+	return returnMe;
+}
 #endif
 
 
@@ -1223,8 +1235,18 @@
 /*------------------------------------*/
 
 
-@synthesize autoresizesSubviews;
-@synthesize autoresizingMask;
+- (void) setAutoresizesSubviews:(BOOL)n	{
+	autoresizesSubviews = n;
+}
+- (BOOL) autoresizesSubviews	{
+	return autoresizesSubviews;
+}
+- (void) setAutoresizingMask:(VVViewResizeMask)n	{
+	autoresizingMask = n;
+}
+- (VVViewResizeMask) autoresizingMask	{
+	return autoresizingMask;
+}
 - (void) addSubview:(id)n	{
 	if (deleted || n==nil || subviews==nil)
 		return;

@@ -12,13 +12,13 @@ extern NSMutableArray	*_gpuVendorArray;
 extern BOOL				_integratedGPUFlag;	//	whether or not the scene is rendering on an integrated GPU
 extern BOOL				_nvidiaGPUFlag;	//	whether or not the scene is rendering on an NVIDIA GPU
 
-typedef enum	{
+typedef NS_ENUM(NSInteger, VVGLFlushMode)	{
 	VVGLFlushModeGL = 0,	//	glFlush()
 	VVGLFlushModeCGL = 1,	//	CGLFlushDrawable()
 	VVGLFlushModeNS = 2,	//	[context flushBuffer]
 	VVGLFlushModeApple = 3,	//	glFlushRenderAPPLE()
 	VVGLFlushModeFinish = 4	//	glFinish()
-} VVGLFlushMode;
+};
 
 
 

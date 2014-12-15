@@ -29,7 +29,24 @@
 
 
 
-typedef enum	{
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, VVViewResizeMask)	{
+	VVViewResizeNone = 0,	//	can't be resized
+	VVViewResizeMinXMargin = 1,	//	min x margin can be resized
+	VVViewResizeMaxXMargin = 2,	//	max x margin can be resized
+	VVViewResizeMinYMargin = 4,	//	...etc...
+	VVViewResizeMaxYMargin = 8,
+	VVViewResizeWidth = 16,
+	VVViewResizeHeight = 32
+};
+typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
+	VVViewBOBottom = 0,
+	VVViewBORight,
+	VVViewBOTop,
+	VVViewBOLeft
+};
+#else
+typedef enum VVViewResizeMask	{
 	VVViewResizeNone = 0,	//	can't be resized
 	VVViewResizeMinXMargin = 1,	//	min x margin can be resized
 	VVViewResizeMaxXMargin = 2,	//	max x margin can be resized
@@ -38,20 +55,22 @@ typedef enum	{
 	VVViewResizeWidth = 16,
 	VVViewResizeHeight = 32
 } VVViewResizeMask;
-
-typedef enum	{
+typedef enum VVViewBoundsOrientation	{
 	VVViewBOBottom = 0,
 	VVViewBORight,
 	VVViewBOTop,
 	VVViewBOLeft
 } VVViewBoundsOrientation;
+#endif
+
+
 
 
 #if !IPHONE
 #if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 1070)
 @interface VVView : NSObject <NSDraggingDestination>	{
 #else	//	else __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
-@interface VVView : NSObject	{
+@interface VVView : NSObject <NSDraggingSource>	{
 #endif
 #else	//	else IPHONE
 @interface VVView : NSObject	{
@@ -65,26 +84,31 @@ typedef enum	{
 #endif
 	BOOL				needsDisplay;
 	
+	
+	OSSpinLock			geometryLock;
 	VVRECT				_frame;	//	the area i occupy in my superview's coordinate space
 	VVSIZE				minFrameSize;	//	frame's size cannot be set less than this
 	double				localToBackingBoundsMultiplier;
 	VVPOINT					_boundsOrigin;
 	VVViewBoundsOrientation	_boundsOrientation;
+	
+	
 #if IPHONE
 	OSSpinLock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
 	GLKBaseEffect		*boundsProjectionEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
 	BOOL				boundsProjectionEffectNeedsUpdate;	//	if YES, the effect needs update.
-#endif
-
-#if !IPHONE
+#else
 	MutLockArray		*trackingAreas;
 #endif
 	
+	
+	OSSpinLock			hierarchyLock;
 	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
+	
 	
 	OSSpinLock			propertyLock;	//	locks the items below it (mouse event, clear color stuff)
 #if !IPHONE
@@ -95,6 +119,8 @@ typedef enum	{
 	BOOL				drawBorder;
 	GLfloat				borderColor[4];
 	
+	
+	OSSpinLock			mouseLock;
 	long				mouseDownModifierFlags;
 	VVSpriteEventType	mouseDownEventType;
 	long				modifierFlags;
@@ -126,6 +152,7 @@ typedef enum	{
 - (void) scrollWheel:(NSEvent *)e;
 - (void) keyDown:(NSEvent *)e;
 - (void) keyUp:(NSEvent *)e;
+- (NSDraggingSession *) beginDraggingSessionWithItems:(NSArray *)items event:(NSEvent *)event source:(id<NSDraggingSource>)source;
 #endif
 
 //- (id) hitTest:(VVPOINT)n;	//	the point it's passed is in coords local to self!
@@ -183,9 +210,10 @@ typedef enum	{
 //	returns YES if at least one of its views has a window and a non-zero visible rect
 - (BOOL) hasVisibleView;
 
-@property (assign,readwrite) BOOL autoresizesSubviews;
-@property (assign,readwrite) VVViewResizeMask autoresizingMask;
-
+- (void) setAutoresizesSubviews:(BOOL)n;
+- (BOOL) autoresizesSubviews;
+- (void) setAutoresizingMask:(VVViewResizeMask)n;
+- (VVViewResizeMask) autoresizingMask;
 - (void) addSubview:(id)n;
 - (void) removeSubview:(id)n;
 - (void) removeFromSuperview;

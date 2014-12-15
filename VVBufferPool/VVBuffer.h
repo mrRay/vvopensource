@@ -11,7 +11,7 @@
 
 
 ///	These are the different kinds of VVBuffers
-typedef enum _VVBufferType	{
+typedef NS_ENUM(NSInteger, VVBufferType)	{
 	VVBufferType_None = 0,	//!<	none/unknown/unused
 	VVBufferType_RB,	//!<	renderbuffer
 	VVBufferType_FBO,	//!<	FBO
@@ -19,9 +19,9 @@ typedef enum _VVBufferType	{
 	VVBufferType_PBO,	//	PBO
 	VVBufferType_VBO,	//	VBO
 	VVBufferType_DispList,	//	display list
-} VVBufferType;
+};
 ///	This desribes the internal format of the GL resource represented by a VVBuffer
-typedef enum _VVBufferIntFormat	{
+typedef NS_ENUM(NSInteger, VVBufferIntFormat)	{
 	VVBufferIF_None = 0,	//!<	none/unknown/unused
 	VVBufferIF_Lum8 = GL_LUMINANCE8,	//!<	single channel, 8 bit per pixel
 	VVBufferIF_LumFloat = GL_LUMINANCE32F_ARB,	//!<	single channel, 32 bit float per pixel
@@ -34,9 +34,9 @@ typedef enum _VVBufferIntFormat	{
 	VVBufferIF_RGB_DXT1 = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,	//!<	Hap
 	VVBufferIF_RGBA_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!<	Hap Alpha
 	VVBufferIF_YCoCg_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!< HapQ. not a typo, same as RGBA_DXT5!
-} VVBufferIntFormat;
+};
 ///	This describes the pixel format of the GL resource represented by a VVBuffer
-typedef enum _VVBufferPixFormat	{
+typedef NS_ENUM(NSInteger, VVBufferPixFormat)	{
 	VVBufferPF_None = 0,	//!<	non/unknown/unused
 	VVBufferPF_Depth = GL_DEPTH_COMPONENT,	//!<	depth
 	VVBufferPF_Lum = GL_LUMINANCE,	//!<	luminance
@@ -44,32 +44,32 @@ typedef enum _VVBufferPixFormat	{
 	VVBufferPF_RGBA = GL_RGBA,	//!<	RGBA
 	VVBufferPF_BGRA = GL_BGRA,	//!< BGRA.  faston os x, (probably most common)
 	VVBufferPF_YCBCR_422 = GL_YCBCR_422_APPLE,	//!<	packed YCbCr
-} VVBufferPixFormat;
+};
 ///	This describes the pixel type of the GL resource represented by a VVBuffer
-typedef enum _VVBufferPixType	{
+typedef NS_ENUM(NSInteger, VVBufferPixType)	{
 	VVBufferPT_None = 0,	//!<	none/unknown/unused
 	VVBufferPT_Float = GL_FLOAT,	//!<	float- used for rendering high-precision stuff
 	VVBufferPT_U_Byte = GL_UNSIGNED_BYTE,	//!<	usually used for depth buffer/luminance/single-channel stuff
 	VVBufferPT_U_Int_8888_Rev = GL_UNSIGNED_INT_8_8_8_8_REV,	//!<	standard four channel/8 bits per channel/unsigned byte format.  fast on os x, (probably most common)
 	VVBufferPT_U_Short_88 = GL_UNSIGNED_SHORT_8_8_APPLE,	//!<	two channel/8 bits per channel/unsigned byte format.  usually used for YCbCr textures.
-} VVBufferPixType;
+};
 ///	The origin of any CPU-based content
-typedef enum _VVBufferCPUBack	{
+typedef NS_ENUM(NSInteger, VVBufferCPUBack)	{
 	VVBufferCPUBack_None = 0,	//!<	there is no CPU-based backing
 	VVBufferCPUBack_Internal,	//!<	buffer backing is CPU-based, and the CPU resource was created by this framework
 	VVBufferCPUBack_External,	//!<	buffer backing is CPU-based, and the CPU resource was created outside this framework
-} VVBufferCPUBack;
+};
 ///	The origin of any GPU-based content
-typedef enum _VVBufferGPUBack	{
+typedef NS_ENUM(NSInteger, VVBufferGPUBack)	{
 	VVBufferGPUBack_None = 0,	//!<	there is no GPU-based resource
 	VVBufferGPUBack_Internal,	//!<	the GPU-based resource was created by this framework (and should be deleted by this framework)
 	VVBufferGPUBack_External,	//!<	the GPU-based resource was created outside of this framework, and this buffer should be freed immediately when done
-} VVBufferGPUBack;
+};
 ///	The "VVBufferBackID" is an arbitrary enum that isn't used functionally by this framework.  This enum- and VVBuffer's corresponding "backingID" member- exist to help track where a VVBuffer came from (if it was made from pixels, from another object, etc).
 /**
 If you want to extend VVBuffer/VVBufferPool to be compatible with other graphics APIs, you can just #define new constants/numbers (start at 100 or something so there aren't any conflicts) and use them to track the additional image types you're working with.  The only time this is really used is to determine if the backing is appropriate when calling accessor methods (take a look at the source for -[VVBuffer cvTexRef] for an example).
 */
-typedef enum _VVBufferBackID	{
+typedef NS_ENUM(NSInteger, VVBufferBackID)	{
 	VVBufferBackID_None = 0,	//!<	the buffer was wholly created by this framework- there's no backing
 	VVBufferBackID_GWorld,	//<	the buffer was created from a gworld
 	VVBufferBackID_Pixels,	//!<	the buffer was created from a pointer to pixels which were also allocated by this framework
@@ -78,7 +78,7 @@ typedef enum _VVBufferBackID	{
 	VVBufferBackID_NSBitImgRep,	//!<	the buffer was created from an NSBitmapImageRep
 	VVBufferBackID_RemoteIOSrf,	//!<	the buffer was created from an remote IOSurfaceRef (the IOSurface was generated in another process)
 	VVBufferBackID_External	//!<	the buffer was created from some kind of external pointer passed in from another API (this can be used to work with other APIs without actually extending VVBuffer/VVBufferPool)
-} VVBufferBackID;
+};
 ///	This C struct describes the basic characteristics of a VVBuffer's internal GL properties
 typedef struct _VVBufferDescriptor	{
 	VVBufferType		type;			//!<	what kind of buffer (what kind of GL resource) this holds

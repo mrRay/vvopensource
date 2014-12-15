@@ -8,11 +8,11 @@
 
 
 ///	so far, there are only two different types of ISF filters- "source" or "filter"
-typedef enum	{
+typedef NS_ENUM(NSInteger, ISFFunctionality)	{
 	ISFF_All = 0,	//!< all image filters
 	ISFF_Source = 1,	//!< generative sources
 	ISFF_Filter = 2	//!< image filters
-} ISFFunctionality;
+};
 
 
 

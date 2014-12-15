@@ -174,9 +174,10 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	if (deleted || d==nil)
 		return nil;
 	VVBuffer		*returnMe = nil;
+	
 	//	if i wasn't passed a backing ptr, try to find a free buffer matching the passed descriptor
 	if (b==nil)
-		returnMe = [self _findFreeBufferMatchingDescriptor:d sized:s];
+		returnMe = [self copyFreeBufferMatchingDescriptor:d sized:s];
 	//	if i found an unused buffer in the array, return it immediately
 	if (returnMe != nil)	{
 		//NSLog(@"\t\tfound free buffer!");
@@ -416,7 +417,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	return returnMe;
 }
 
-- (VVBuffer *) _findFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s	{
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s	{
 	//NSLog(@"%s",__func__);
 	if (deleted || d==nil)
 		return nil;
@@ -474,6 +475,69 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	remember: i'm returning a RETAINED instance of VVBuffer that must be EXPLICITLY FREED!
 	return returnMe;
 }
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s backingSize:(NSSize)bs	{
+	//NSLog(@"%s ... (%f x %f), (%f x %f)",__func__,s.width,s.height,bs.width,bs.height);
+	if (deleted || d==nil)
+		return nil;
+	VVBuffer		*returnMe = nil;
+	//	lock the array of buffers- i'll either be doing nothing, or taking something out of it
+	[freeBuffers wrlock];
+		//NSLog(@"\t\tfreeBuffers are %@",freeBuffers);
+		int				tmpIndex = 0;
+		//	run through all the buffers
+		for (VVBuffer *bufferPtr in [freeBuffers array])	{
+			VVBufferDescriptor		*tmpDesc = [bufferPtr descriptorPtr];
+			if (VVBufferDescriptorCompareForRecycling(d,tmpDesc))	{
+				//NSLog(@"\t\tdescriptor for buffer %@ matches....",bufferPtr);
+				//	some buffer types need to be matched by size!
+				BOOL				sizeIsOK = NO;
+				BOOL				backingSizeIsOK = NO;
+				switch (tmpDesc->type)	{
+					case VVBufferType_FBO:
+					case VVBufferType_DispList:
+						sizeIsOK = YES;
+						backingSizeIsOK = YES;
+						break;
+					case VVBufferType_None:	//	need to check size because RGB/RGBA CPU buffers use this type!
+					case VVBufferType_RB:
+					case VVBufferType_Tex:
+					case VVBufferType_PBO:
+						//NSLog(@"\t\t(%f x %f), (%f x %f)",[bufferPtr size].width,[bufferPtr size].height,[bufferPtr backingSize].width,[bufferPtr backingSize].height);
+						if (NSEqualSizes(s,[bufferPtr size]))
+							sizeIsOK = YES;
+						if (NSEqualSizes(bs,[bufferPtr backingSize]))
+							backingSizeIsOK = YES;
+						break;
+					case VVBufferType_VBO:
+						sizeIsOK = NO;
+						backingSizeIsOK = NO;
+						break;
+				}
+				
+				if (sizeIsOK && backingSizeIsOK)	{
+					IOSurfaceRef		srf = [bufferPtr localSurfaceRef];
+					//NSLog(@"\t\tsrf is %p, d->localSurfaceID is %lu",srf,d->localSurfaceID);
+					if ((d->localSurfaceID!=0 && srf!=nil) || (d->localSurfaceID==0 && srf==nil))	{
+						//	retain the buffer (so it doesn't get freed)
+						returnMe = [bufferPtr retain];
+						//	remove the buffer from the array
+						[freeBuffers removeObjectAtIndex:tmpIndex];
+						//	set the buffer's idleCount to 0, so it's "fresh" (so it gets returned to the pool when it's no longer needed)
+						[returnMe setIdleCount:0];
+						//	break out of the foor loop
+						break;
+					}
+				}
+			}
+			++tmpIndex;
+		}
+	//	unlock the array of buffers
+	[freeBuffers unlock];
+	if (returnMe != nil)
+		[VVBufferPool timestampThisBuffer:returnMe];
+	//	remember: i'm returning a RETAINED instance of VVBuffer that must be EXPLICITLY FREED!
+	return returnMe;
+}
 
 
 /*===================================================================================*/
@@ -496,7 +560,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:tmpSize backingPtr:nil backingSize:tmpSize];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:tmpSize];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:tmpSize backingPtr:nil backingSize:tmpSize];
 	return returnMe;
 }
 - (VVBuffer *) allocBGRTexSized:(NSSize)s	{
@@ -513,7 +579,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocBGR2DTexSized:(NSSize)s	{
@@ -530,7 +598,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocBGR2DPOTTexSized:(NSSize)s	{
@@ -561,7 +631,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:texSize backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:texSize];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:texSize backingPtr:nil backingSize:s];
 	[returnMe setSrcRect:NSMakeRect(0,0,s.width,s.height)];
 	[returnMe setBackingSize:s];
 	return returnMe;
@@ -580,7 +652,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocBGRFloat2DPOTTexSized:(NSSize)s	{
@@ -597,7 +671,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocDepthSized:(NSSize)s	{
@@ -614,7 +690,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocMSAAColorSized:(NSSize)s numOfSamples:(int)n	{
@@ -631,7 +709,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = n;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 - (VVBuffer *) allocMSAADepthSized:(NSSize)s numOfSamples:(int)n	{
@@ -648,7 +728,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = n;
 	desc.localSurfaceID = 0;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 
@@ -757,7 +839,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.internalFormat = VVBufferIF_RGBA8;
 	desc.pixelFormat = VVBufferPF_RGBA;
 	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
-	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.cpuBackingType = VVBufferCPUBack_External;
 	desc.gpuBackingType = VVBufferGPUBack_Internal;
 	desc.name = 0;
 	desc.texRangeFlag = NO;
@@ -1050,7 +1132,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.texClientStorageFlag = NO;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 1;
-	VVBuffer		*returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
 //	this method is called when i need to create a GL texture for an IOSurfaceRef received from another app- so don't 
@@ -1152,7 +1236,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 
 //	this method is called by instances of VVBuffer if its idleCount is 0 on dealloc
 - (void) _returnBufferToPool:(VVBuffer *)b	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,b);
 	//NSLog(@"\t\t%@",b);
 	//NSLog(@"\t\treturning asset %@ to pool",b);
 	if (b==nil)
@@ -1163,6 +1247,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	tmpRect.size = [b size];
 	[newBuffer setSize:tmpRect.size];
 	[newBuffer setSrcRect:tmpRect];	//	reset the srcRect to the full size of the buffer!
+	[newBuffer setBackingSize:[b backingSize]];
 	
 	//	IMPORTANT! when a buffer is freed, it releases its "pixels".  to retain pixels, i must set the "old" pixels to nil before freeing its buffer!
 	//[newBuffer setPixels:[b pixels]];
@@ -1181,7 +1266,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 }
 //	this method is called by instances of VVBuffer if its idleCount is > 0 on dealloc
 - (void) _releaseBufferResource:(VVBuffer *)b	{
-	//NSLog(@"%s",__func__);
+	//NSLog(@"%s ... %@",__func__,b);
 	//NSLog(@"\t\treleasing asset %@",b);
 	if (b == nil)
 		return;

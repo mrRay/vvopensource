@@ -84,7 +84,8 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 //	returns a RETAINED (retainCount is 1) instance of VVBuffer!  must be explicitly released when done!
 - (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s backingPtr:(void *)b backingSize:(NSSize)bs;
 //	returns a RETAINED (retainCount is 1) instance of VVBuffer, or nil!
-- (VVBuffer *) _findFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s;
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s;
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s backingSize:(NSSize)bs;
 
 /*		shortcuts for creating resources which are (relatively commonly) used.  all these return RETAINED (retainCount is 1) instances of VVBuffer- they must be released manually by whatever creates them!		*/
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL framebuffer.  Framebuffers have textures or renderbuffers associated with them as color (image) or depth attachments.

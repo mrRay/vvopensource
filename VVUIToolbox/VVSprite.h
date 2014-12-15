@@ -19,7 +19,18 @@
 
 
 
-typedef enum _VVSpriteEventType	{
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, VVSpriteEventType)	{
+	VVSpriteEventNULL = 0,
+	VVSpriteEventDown = 1,
+	VVSpriteEventDrag = 2,
+	VVSpriteEventUp = 3,
+	VVSpriteEventDouble = 4,
+	VVSpriteEventRightDown = 5,
+	VVSpriteEventRightUp = 6
+};
+#else
+typedef enum VVSpriteEventType	{
 	VVSpriteEventNULL = 0,
 	VVSpriteEventDown = 1,
 	VVSpriteEventDrag = 2,
@@ -28,6 +39,7 @@ typedef enum _VVSpriteEventType	{
 	VVSpriteEventRightDown = 5,
 	VVSpriteEventRightUp = 6
 } VVSpriteEventType;
+#endif
 
 
 

@@ -5,6 +5,8 @@
 
 @interface NSString (VVBufferPoolStringAdditions)
 
++ (NSString *) stringFromFourCC:(OSType)n;
+
 - (BOOL) containsString:(NSString *)s;
 - (BOOL) containsString:(NSString *)s options:(NSStringCompareOptions)mask;
 

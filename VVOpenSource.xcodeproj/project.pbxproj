@@ -4068,7 +4068,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Debug;
 		};
@@ -4085,7 +4085,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Release;
 		};
@@ -4363,6 +4363,7 @@
 				INFOPLIST_FILE = "VVISFKit/VVISFKit-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -4396,6 +4397,7 @@
 				INFOPLIST_FILE = "VVISFKit/VVISFKit-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -5288,6 +5290,7 @@
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -5322,6 +5325,7 @@
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
