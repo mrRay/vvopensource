@@ -189,7 +189,6 @@
 		964F4487198ADA7400EF1FAE /* HapSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 964F4485198ADA7400EF1FAE /* HapSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		964F4488198ADA7400EF1FAE /* HapSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 964F4486198ADA7400EF1FAE /* HapSupport.m */; };
 		964F44A4198ADADD00EF1FAE /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964F4483198AD9CD00EF1FAE /* QTKit.framework */; };
-		964F44A5198ADADD00EF1FAE /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964F4481198AD9C900EF1FAE /* QuickTime.framework */; };
 		964F44A6198ADB0A00EF1FAE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9628FFC5198182B400FB6C56 /* CoreVideo.framework */; };
 		964FF27E1981B5AF00CCC808 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		964FF2841981B5AF00CCC808 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 964FF2821981B5AF00CCC808 /* InfoPlist.strings */; };
@@ -1609,7 +1608,6 @@
 				9628FFC6198182B400FB6C56 /* CoreVideo.framework in Frameworks */,
 				96C8073B19817C1600FA7825 /* Cocoa.framework in Frameworks */,
 				964F44A4198ADADD00EF1FAE /* QTKit.framework in Frameworks */,
-				964F44A5198ADADD00EF1FAE /* QuickTime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2977,7 +2975,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -3976,7 +3974,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = NO;
@@ -4019,7 +4016,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = NO;
@@ -4990,7 +4986,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -5025,7 +5020,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -5055,7 +5049,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -5090,7 +5083,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -5289,6 +5281,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=i386]" = (
+					"-framework",
+					QuickTime,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -5324,6 +5321,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=i386]" = (
+					"-framework",
+					QuickTime,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

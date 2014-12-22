@@ -46,6 +46,7 @@
 /*
  Searches the list of installed codecs for a given codec
  */
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 static Boolean HapQTCodecIsAvailable(OSType codecType)
 {
     CodecNameSpecListPtr list;
@@ -60,6 +61,7 @@ static Boolean HapQTCodecIsAvailable(OSType codecType)
     
     return false;
 }
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
 
 /*
  Much of QuickTime is deprecated in recent MacOS but no equivalent functionality exists in modern APIs,

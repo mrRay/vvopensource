@@ -13,7 +13,7 @@
 #import "VVSpriteGLView.h"
 #endif
 #import "VVScrollView.h"
-#import <math.h>
+#import <tgmath.h>
 
 
 
@@ -1511,10 +1511,10 @@
 	//VVRectLog(@"\t\tfirst-pass container coords are",clipRect);
 	//	make sure the passed clip rect has positive dimensions (adjust origin if dimensions are negative to compensate)
 	VVRECT			tmpClipRect;
-	tmpClipRect.origin.x = roundf(VVMINX(clipRect));
-	tmpClipRect.size.width = roundf(VVMAXX(clipRect)-tmpClipRect.origin.x);
-	tmpClipRect.origin.y = roundf(VVMINY(clipRect));
-	tmpClipRect.size.height = roundf(VVMAXY(clipRect)-tmpClipRect.origin.y);
+	tmpClipRect.origin.x = round(VVMINX(clipRect));
+	tmpClipRect.size.width = round(VVMAXX(clipRect)-tmpClipRect.origin.x);
+	tmpClipRect.origin.y = round(VVMINY(clipRect));
+	tmpClipRect.size.height = round(VVMAXY(clipRect)-tmpClipRect.origin.y);
 	//VVRectLog(@"\t\tclipRect in container coords is",tmpClipRect);
 	//	use scissor to clip drawing to the passed rect
 	glScissor(tmpClipRect.origin.x*localToBackingBoundsMultiplier, tmpClipRect.origin.y*localToBackingBoundsMultiplier, tmpClipRect.size.width*localToBackingBoundsMultiplier, tmpClipRect.size.height*localToBackingBoundsMultiplier);
