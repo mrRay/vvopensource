@@ -126,6 +126,7 @@
 		}
 		else	{
 			NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
+			NSLog(@"\t\tfile was %@",pathToFile);
 			return NO;
 		}
 		

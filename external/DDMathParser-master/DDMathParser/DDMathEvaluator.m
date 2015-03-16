@@ -93,7 +93,8 @@ static DDMathEvaluator * _sharedEvaluator = nil;
 	
     _DDFunctionContainer *container = [self functionContainerWithName:functionName];
     for (NSString *alias in [container aliases]) {
-        [functionMap removeObjectForKey:name];
+		[functionMap removeObjectForKey:name];
+		alias = alias;
     }
     [functions removeObject:container];
 }

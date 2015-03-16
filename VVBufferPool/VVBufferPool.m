@@ -137,25 +137,25 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if (self = [super initWithSharedContext:c pixelFormat:p sized:s])	{
-		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
-		pthread_mutexattr_t		attr;
-		
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
-		pthread_mutex_init(&contextLock, &attr);
-		pthread_mutexattr_destroy(&attr);
-		
-		freeBuffers = [[MutLockArray arrayWithCapacity:0] retain];
-		
-		housekeepingThread = [[VVThreadLoop alloc] initWithTimeInterval:1.0 target:self selector:@selector(housekeeping)];
-		//[housekeepingThread start];
-		
-		return self;
+	self = [super initWithSharedContext:c pixelFormat:p sized:s];
+	if (self!=nil)	{
 	}
-	if (self != nil)
-		[self release];
-	return nil;
+	return self;
+}
+- (void) generalInit	{
+	[super generalInit];
+	context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+	pthread_mutexattr_t		attr;
+	
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&contextLock, &attr);
+	pthread_mutexattr_destroy(&attr);
+	
+	freeBuffers = [[MutLockArray arrayWithCapacity:0] retain];
+	
+	housekeepingThread = [[VVThreadLoop alloc] initWithTimeInterval:1.0 target:self selector:@selector(housekeeping)];
+	//[housekeepingThread start];
 }
 - (void) dealloc	{
 	pthread_mutex_destroy(&contextLock);
@@ -305,6 +305,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			glTexParameteri(newBufferDesc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(newBufferDesc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(newBufferDesc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			//glTexParameteri(newBufferDesc.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			//glTexParameteri(newBufferDesc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			
 			if (newBufferDesc.pixelFormat == VVBufferPF_Depth)
 				glTexParameteri(newBufferDesc.target, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
@@ -744,6 +746,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		return nil;
 	NSSize					imageSize = [img size];
 	NSSize					bitmapSize;
+	/*
 	if (prefer2D)	{
 		int			tmpInt = 1;
 		while (tmpInt < imageSize.width)
@@ -754,8 +757,19 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			tmpInt <<= 1;
 		bitmapSize.height = tmpInt;
 	}
-	else
+	else	{
+	*/
 		bitmapSize = imageSize;
+	/*
+	}
+	*/
+	NSArray			*reps = [img representations];
+	for (NSImageRep *rep in reps)	{
+		if ([rep isKindOfClass:[NSBitmapImageRep class]])	{
+			bitmapSize.width = fmax(bitmapSize.width, [rep pixelsWide]);
+			bitmapSize.height = fmax(bitmapSize.height, [rep pixelsHigh]);
+		}
+	}
 	NSRect					bitmapRect = NSMakeRect(0,0,bitmapSize.width,bitmapSize.height);
 	//	make a bitmap image rep
 	NSBitmapImageRep		*rep = [[NSBitmapImageRep alloc]
@@ -819,6 +833,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		return nil;
 	NSSize					repSize = [rep size];
 	NSSize					gpuSize;
+	/*
 	if (prefer2D)	{
 		int						tmpInt;
 		tmpInt = 1;
@@ -830,12 +845,16 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			tmpInt <<= 1;
 		gpuSize.height = tmpInt;
 	}
-	else
+	else	{
+	*/
 		gpuSize = repSize;
+	/*
+	}
+	*/
 	
 	VVBufferDescriptor		desc;
 	desc.type = VVBufferType_Tex;
-	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.target = (prefer2D) ? GL_TEXTURE_2D : GL_TEXTURE_RECTANGLE_EXT;
 	desc.internalFormat = VVBufferIF_RGBA8;
 	desc.pixelFormat = VVBufferPF_RGBA;
 	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
@@ -1225,6 +1244,115 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	don't forget to release the surface (it's retained by the buffer i'm returning!)
 	CFRelease(newSurface);
 	newSurface = nil;
+	return returnMe;
+}
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n	{
+	//	make sure that i was passed six images, and that all six images are the same size
+	if (n==nil || [n count]!=6)	{
+		NSLog(@"\t\terr: bailing, not passed 6 images, %s",__func__);
+		return nil;
+	}
+	NSSize			imageSize = [[n objectAtIndex:0] size];
+	for (NSImage *imagePtr in n)	{
+		BOOL			hasBitmapRep = NO;
+		for (NSImageRep *imageRep in [imagePtr representations])	{
+			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
+				hasBitmapRep = YES;
+				break;
+			}
+		}
+		if (!hasBitmapRep)	{
+			NSLog(@"\t\terr: image doesn't have a bitmap rep, bailing, %s",__func__);
+			return nil;
+		}
+		if (!NSEqualSizes([imagePtr size], imageSize))	{
+			NSLog(@"\t\terr: image sizes are not uniform, bailing, %s",__func__);
+			return nil;
+		}
+	}
+	
+	VVBuffer		*returnMe = nil;
+	
+	//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_CUBE_MAP;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	
+	//	actually upload the bitmap data to the texture
+	pthread_mutex_lock(&contextLock);
+	
+	CGLContextObj		cgl_ctx = [context CGLContextObj];
+	
+	glEnable(desc.target);
+	glGenTextures(1,&desc.name);
+	glBindTexture(desc.target, desc.name);
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, GL_FALSE);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, GL_FALSE);
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+	glTexParameteri(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFlush();
+	
+	int				faceCount=0;
+	unsigned long	bytesPerRow = 32 * imageSize.width / 8;
+	void			*clipboardData = malloc(bytesPerRow * imageSize.height);
+	//	run through all the images
+	for (NSImage *imagePtr in n)	{
+		//	for each image, run through the bitmap reps until i find a bitmap image rep
+		for (NSImageRep *imageRep in [imagePtr representations])	{
+			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
+				//	the bitmap data in the image rep is padded and shit, copy it to a buffer and then upload the buffer
+				void			*repBufferData = [(NSBitmapImageRep *)imageRep bitmapData];
+				NSInteger		repBytesPerRow = [(NSBitmapImageRep *)imageRep bytesPerRow];
+				for (int i=0; i<imageSize.height; ++i)	{
+					memcpy(clipboardData+(bytesPerRow*i), repBufferData+(repBytesPerRow*i), bytesPerRow);
+				}
+				//	upload the bitmap image rep's data to the texture
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceCount,
+					0,
+					desc.internalFormat,
+					imageSize.width,
+					imageSize.height,
+					0,
+					desc.pixelFormat,
+					desc.pixelType,
+					clipboardData);
+				break;
+			}
+		}
+		
+		glFlush();
+		
+		++faceCount;
+	}
+	free(clipboardData);
+	
+	glBindTexture(desc.target, 0);
+	glDisable(desc.target);
+	
+	pthread_mutex_unlock(&contextLock);
+	
+	//	finish creating the VVBuffer instance from stuff
+	returnMe = [[VVBuffer alloc] initWithPool:self];
+	[returnMe setDescriptorFromPtr:&desc];
+	[returnMe setSize:imageSize];
+	[returnMe setSrcRect:NSMakeRect(0,0,imageSize.width,imageSize.height)];
+	[returnMe setBackingSize:imageSize];
+	[returnMe setPreferDeletion:YES];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	
 	return returnMe;
 }
 

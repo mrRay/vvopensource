@@ -17,13 +17,22 @@
 		//	...other stuff in the VVBufferPool framework- like the views, the buffer copier, etc- will 
 		//	automatically use the global buffer pool's shared context to set themselves up to function with the pool.
 		
-		//	load the included QC composition, which was created by apple and is included in the app bundle
+		
+		//	set up the QC backend to use the shared context to render
+		[QCGLScene prepCommonQCBackendToRenderOnContext:sharedContext pixelFormat:[GLScene defaultPixelFormat]];
+		qcScene = [[QCGLScene alloc] initCommonBackendSceneSized:NSMakeSize(320,240)];
+		msaaQCScene = [[QCGLScene alloc] initCommonBackendSceneSized:NSMakeSize(320,240)];
+		/*
+		//	set up the QC backend such taht each scene will create its own context, all of which share the shared context
 		qcScene = [[QCGLScene alloc] initWithSharedContext:sharedContext pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(320,240)];
 		msaaQCScene = [[QCGLScene alloc] initWithSharedContext:sharedContext pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(320,240)];
+		*/
+		
+		
+		//	load the included QC composition, which was created by apple and is included in the app bundle
 		NSString		*compPath = [[NSBundle mainBundle] pathForResource:@"Blue" ofType:@"qtz"];
 		[qcScene useFile:compPath];
 		[msaaQCScene useFile:compPath];
-		
 		//	make a stopwatch that we'll use to crudely animate the speed of the composition
 		swatch = [[VVStopwatch alloc] init];
 		[swatch start];

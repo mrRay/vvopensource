@@ -26,6 +26,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (_ISFImportedImages==nil)	{
 		_ISFImportedImages = [[MutLockDict alloc] init];
 		
+		//	load the various supporting txt files which contain data which will be used to assemble frag and vertex shaders from ISF files 
 		NSBundle		*mb = [NSBundle bundleForClass:[ISFGLScene class]];
 		_ISFVertPassthru = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLScenePassthru" ofType:@"vs"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFVertVarDec = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLSceneVertShaderIncludeVarDec" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
@@ -127,6 +128,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
 	
+	pthread_mutex_lock(&renderLock);
+	VVRELEASE(vertexShaderString);
+	VVRELEASE(fragmentShaderString);
+	pthread_mutex_unlock(&renderLock);
+	
 	if (_ISFVertPassthru==nil ||
 	_ISFVertVarDec==nil ||
 	_ISFVertInitFunc==nil ||
@@ -140,7 +146,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		return;
 	}
 	
-	NSString		*rawFile = [NSString stringWithContentsOfFile:p encoding:NSUTF8StringEncoding error:nil];
+	NSString		*rawFile = (p==nil) ? nil : [NSString stringWithContentsOfFile:p encoding:NSUTF8StringEncoding error:nil];
 	if (rawFile == nil)	{
 		if (throwExceptions && p!=nil)
 			[NSException raise:@"Invalid File" format:@"file %@ couldn't be loaded, encoding unrecognized",p];
@@ -159,14 +165,25 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	Class			colorClass = [NSColor class];
 	openCommentRange = [rawFile rangeOfString:@"/*"];
 	closeCommentRange = [rawFile rangeOfString:@"*/"];
-	if (openCommentRange.length!=0 && closeCommentRange.length!=0)	{
-		//	remove the JSON blob, save everything else as the raw shader source string
+	if (openCommentRange.length<=0 || closeCommentRange.length<=0)	{
+		if (throwExceptions)
+			[NSException raise:@"Missing JSON Blob" format:@"file %@ was missing the initial JSON blob describing it",p];
+		return;
+	}
+	else	{
+		//	remove the JSON blob, save it as one string- save everything else as the raw shader source string
 		fragShaderSource = [[rawFile substringWithRange:NSMakeRange(closeCommentRange.location+closeCommentRange.length, [rawFile length]-(closeCommentRange.location+closeCommentRange.length))] retain];
 		jsonString = [[rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))] retain];
 		//	parse the JSON dict, turning it into a dictionary and values
 		id				jsonObject = [jsonString objectFromJSONString];
 		//	run through the dictionaries and values parsed from JSON, creating the appropriate attributes
-		if ([jsonObject isKindOfClass:dictClass])	{
+		if (![jsonObject isKindOfClass:dictClass])	{
+			NSLog(@"\t\terr: jsonObject was wrong class, %@",filePath);
+			if (throwExceptions)
+				[NSException raise:@"Malformed JSON Blob" format:@"JSON blob in file %@ was malformed in some way",p];
+			return;
+		}
+		else	{
 			fileDescription = [jsonObject objectForKey:@"DESCRIPTION"];
 			if (fileDescription != nil && [fileDescription isKindOfClass:stringClass])
 				[fileDescription retain];
@@ -225,150 +242,192 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				NSString		*parentDirectory = [p stringByDeletingLastPathComponent];
 				NSFileManager	*fm = [NSFileManager defaultManager];
 				
-				//	if i'm importing files from a dictionary
-				if ([anObj isKindOfClass:dictClass])	{
-					for (NSString *samplerName in [anObj allKeys])	{
-						NSDictionary	*subObj = [anObj objectForKey:samplerName];
-						if (subObj != nil)	{
-							NSString		*partialPath = [subObj objectForKey:@"PATH"];
-							NSString		*fullPath = (partialPath!=nil && [partialPath isKindOfClass:stringClass]) ? [VVFMTSTRING(@"%@/%@",parentDirectory,partialPath) stringByStandardizingPath] : nil;
-							//NSLog(@"\t\timporting file %@",partialPath);
-							if ([fm fileExistsAtPath:fullPath])	{
-								//	check the dict of imported images to see if this has already been imported
-								[_ISFImportedImages wrlock];
-								VVBuffer		*importedBuffer = [_ISFImportedImages objectForKey:fullPath];
-								if (importedBuffer != nil)	{
-									//	the num at the userInfo stores how many inputs use the buffer
-									NSNumber		*tmpNum = [importedBuffer userInfo];
-									if (tmpNum != nil)
-										[importedBuffer setUserInfo:[NSNumber numberWithInt:[tmpNum intValue]+1]];
-								}
-								[_ISFImportedImages unlock];
-								//	if the imported image doesn't exist yet, import it and save the buffer in the dict
-								if (importedBuffer == nil)	{
-									NSImage		*tmpImg = [[NSImage alloc] initWithContentsOfFile:fullPath];
-									NSSize		tmpImgSize = [tmpImg size];
-									importedBuffer = (tmpImg==nil) ? nil : [_globalVVBufferPool allocBufferForNSImage:tmpImg prefer2DTexture:(tmpImgSize.width==tmpImgSize.height)?YES:NO];
-									//NSLog(@"\t\timported file %@ to buffer %@",partialPath,importedBuffer);
-									VVRELEASE(tmpImg);
-									if (importedBuffer != nil)	{
-										//	the num at the userInfo stores how many inputs are using the buffer
-										[importedBuffer setUserInfo:[NSNumber numberWithInt:1]];
-										[_ISFImportedImages lockSetObject:importedBuffer forKey:fullPath];
-										[importedBuffer release];
-									}
-									else	{
+				
+				//	this is the block that we're going to use to parse an import dict and import its contents.
+				void		(^parseImportedImageDict)(NSDictionary *importDict) = ^(NSDictionary *importDict){
+					//	figure out the full path to the image i want to import
+					NSString		*samplerName = [importDict objectForKey:@"NAME"];
+					if (samplerName != nil)	{
+						NSString		*cubeFlag = [importDict objectForKey:@"TYPE"];
+						if (cubeFlag!=nil && ![cubeFlag isEqualToString:@"cube"])
+							cubeFlag = nil;
+						
+						VVBuffer		*importedBuffer = nil;
+						//	are we a cube map?
+						if (cubeFlag!=nil)	{
+							//	the PATH var has an array of strings with the paths to the six files...
+							NSArray			*partialPaths = [importDict objectForKey:@"PATH"];
+							if (![partialPaths isKindOfClass:[NSArray class]] || [partialPaths count]!=6)	{
+								if (throwExceptions)
+									[NSException raise:@"Conflicting filter definition" format:@"supplied PATH for an imported cube map wasn't an array or wasn't sized appropriately, %@",partialPaths];
+							}
+							
+							//	assemble an array with the full paths for all the files
+							NSMutableArray		*fullPaths = MUTARRAY;
+							NSMutableArray		*images = MUTARRAY;
+							for (NSString *partialPath in partialPaths)	{
+								NSString		*tmpFullPath = [VVFMTSTRING(@"%@/%@",parentDirectory,partialPath) stringByStandardizingPath];
+								[fullPaths addObject:tmpFullPath];
+								
+							}
+							
+							//	check to see if the cube map has already been loaded- if not, do so now
+							[_ISFImportedImages wrlock];
+							importedBuffer = [_ISFImportedImages objectForKey:[fullPaths objectAtIndex:0]];
+							if (importedBuffer!=nil)	{
+								//	the num at the userInfo stores how many inputs are using the buffer
+								NSNumber		*tmpNum = [importedBuffer userInfo];
+								if (tmpNum != nil)
+									[importedBuffer setUserInfo:[NSNumber numberWithInt:[tmpNum intValue]+1]];
+							}
+							[_ISFImportedImages unlock];
+							
+							//	if the cube map hasn't been loaded yet, do so now
+							if (importedBuffer==nil)	{
+								//	make sure all the files exist, create NSImages from them
+								for (NSString *fullPath in fullPaths)	{
+									//	if any of the files from the array of paths don't exist, throw an error
+									if (![fm fileExistsAtPath:fullPath])	{
 										if (throwExceptions)
-											[NSException raise:@"filter resource can't be loaded" format:@"file %@ was found, but can't be loaded",partialPath];
+											[NSException raise:@"Missing filter resource" format:@"can't load cube map, file %@ is missing",fullPath];
 										return;
 									}
+									//	if i can't make an image from any of the paths, throw an error
+									NSImage		*tmpImage = [[NSImage alloc] initWithContentsOfFile:fullPath];
+									if (tmpImage==nil)	{
+										if (throwExceptions)
+											[NSException raise:@"Can't load image" format:@"can't load image for file %@",fullPath];
+										return;
+									}
+									[images addObject:tmpImage];
+									[tmpImage release];
 								}
-								//NSLog(@"\t\timportedBuffer is %@",importedBuffer);
-								//	assuming i've located and imported the appropriate file, make an attrib for it and store it
-								if (importedBuffer != nil)	{
-									ISFAttrib			*newAttrib = nil;
-									ISFAttribVal		minVal;
-									ISFAttribVal		maxVal;
-									ISFAttribVal		defVal;
-									ISFAttribVal		idenVal;
-									minVal.imageVal = 0;
-									maxVal.imageVal = 0;
-									defVal.imageVal = 0;
-									idenVal.imageVal = 0;
-									newAttrib = [ISFAttrib
-										createWithName:samplerName
-										description:fullPath
-										label:nil
-										type:ISFAT_Image
-										values:minVal:maxVal:defVal:idenVal:nil:nil];
-									[newAttrib setUserInfo:importedBuffer];
-									[imageImports lockAddObject:newAttrib];
-									//NSLog(@"\t\tnewAttrib is %@",newAttrib);
+								//	load the images i assembled into a GL texture, store the cube texture in the array of imported buffers
+								importedBuffer = [_globalVVBufferPool allocCubeMapTextureForImages:images];
+								if (importedBuffer==nil)	{
+									if (throwExceptions)
+										[NSException raise:@"filter resource can't be loaded" format:@"can't make a cubemap from files %@",fullPaths];
+									return;
 								}
+								//	the num at the userInfo stores how many inputs are using the buffer
+								[importedBuffer setUserInfo:[NSNumber numberWithInt:1]];
+								[_ISFImportedImages lockSetObject:importedBuffer forKey:[fullPaths objectAtIndex:0]];
+								[importedBuffer release];
+								
+								//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+								ISFAttrib			*newAttrib = nil;
+								ISFAttribVal		minVal;
+								ISFAttribVal		maxVal;
+								ISFAttribVal		defVal;
+								ISFAttribVal		idenVal;
+								minVal.imageVal = 0;
+								maxVal.imageVal = 0;
+								defVal.imageVal = 0;
+								idenVal.imageVal = 0;
+								newAttrib = [ISFAttrib
+									createWithName:samplerName
+									description:[fullPaths objectAtIndex:0]
+									label:nil
+									type:ISFAT_Cube
+									values:minVal:maxVal:defVal:idenVal:nil:nil];
+								[newAttrib setUserInfo:importedBuffer];
+								[imageImports lockAddObject:newAttrib];
 							}
-							else	{
+						}
+						//	else it's just a normal image...
+						else	{
+							//	if the PATH object isn't a string, throw an error
+							NSString		*partialPath = [importDict objectForKey:@"PATH"];
+							if (![partialPath isKindOfClass:[NSString class]])	{
 								if (throwExceptions)
-									[NSException raise:@"Missing filter resource" format:@"can't load, file %@ is missing",partialPath];
+									[NSException raise:@"Conflicting filter definition" format:@"supplied PATH for an imported image wasn't a string, %@",partialPath];
 								return;
 							}
+							NSString		*fullPath = [VVFMTSTRING(@"%@/%@",parentDirectory,partialPath) stringByStandardizingPath];
+							
+							//	check to see if the cube map has already been loaded- if not, do so now
+							[_ISFImportedImages wrlock];
+							importedBuffer = [_ISFImportedImages objectForKey:fullPath];
+							if (importedBuffer!=nil)	{
+								//	the num at the userInfo stores how many inputs are using the buffer
+								NSNumber		*tmpNum = [importedBuffer userInfo];
+								if (tmpNum != nil)
+									[importedBuffer setUserInfo:[NSNumber numberWithInt:[tmpNum intValue]+1]];
+							}
+							[_ISFImportedImages unlock];
+							
+							//	if the image hasn't been loaded yet, do so now
+							if (importedBuffer==nil)	{
+								//	if the path doesn't describe a valid file, throw an error
+								if (![fm fileExistsAtPath:fullPath])	{
+									if (throwExceptions)
+										[NSException raise:@"Missing filter resource" format:@"can't load, file %@ is missing",partialPath];
+									return;
+								}
+								//	load the image at the path, store it in the array of imported buffers
+								NSImage		*tmpImg = [[NSImage alloc] initWithContentsOfFile:fullPath];
+								NSSize		tmpImgSize = [tmpImg size];
+								//	upload the image to a GL texture
+								importedBuffer = (tmpImg==nil) ? nil : [_globalVVBufferPool allocBufferForNSImage:tmpImg prefer2DTexture:(tmpImgSize.width==tmpImgSize.height)?YES:NO];
+								VVRELEASE(tmpImg);
+								//	throw an error if i can't load the image
+								if (importedBuffer==nil)	{
+									if (throwExceptions)
+										[NSException raise:@"filter resource can't be loaded" format:@"file %@ was found, but can't be loaded",partialPath];
+									return;
+								}
+								//	the num at the userInfo stores how many inputs are using the buffer
+								[importedBuffer setUserInfo:[NSNumber numberWithInt:1]];
+								[_ISFImportedImages lockSetObject:importedBuffer forKey:fullPath];
+								[importedBuffer release];
+								
+								//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+								ISFAttrib			*newAttrib = nil;
+								ISFAttribVal		minVal;
+								ISFAttribVal		maxVal;
+								ISFAttribVal		defVal;
+								ISFAttribVal		idenVal;
+								minVal.imageVal = 0;
+								maxVal.imageVal = 0;
+								defVal.imageVal = 0;
+								idenVal.imageVal = 0;
+								newAttrib = [ISFAttrib
+									createWithName:samplerName
+									description:fullPath
+									label:nil
+									type:ISFAT_Image
+									values:minVal:maxVal:defVal:idenVal:nil:nil];
+								[newAttrib setUserInfo:importedBuffer];
+								[imageImports lockAddObject:newAttrib];
+								//NSLog(@"\t\tnewAttrib is %@",newAttrib);
+							}
+						}
+						
+					}
+				};
+				
+				
+				//	if i'm importing files from a dictionary, execute the block on all the elements in the dict (each element is another dict describing the thing to import)
+				if ([anObj isKindOfClass:dictClass])	{
+					//	run through all of the keys in the dict
+					for (NSString *samplerName in [anObj allKeys])	{
+						//	the object for the key is the dict describing the element to import
+						NSDictionary	*subObj = [anObj objectForKey:samplerName];
+						if (subObj!=nil && [subObj isKindOfClass:dictClass])	{
+							parseImportedImageDict(subObj);
 						}
 					}
 				}
-				/*
 				//	else it's an array- an array full of dictionaries, each of which describes a file to import
 				else if ([anObj isKindOfClass:arrayClass])	{
 					//	run through all the dictionaries in 'IMPORTED' (each dict describes a file to be imported)
 					for (id subObj in (NSArray *)anObj)	{
 						if ([subObj isKindOfClass:dictClass])	{
-							//	figure out the full path to the image i want to import
-							NSString		*samplerName = [subObj objectForKey:@"NAME"];
-							if (samplerName != nil)	{
-								NSString		*partialPath = [subObj objectForKey:@"PATH"];
-								NSString		*fullPath = [VVFMTSTRING(@"%@/%@",parentDirectory,partialPath) stringByStandardizingPath];
-								//NSLog(@"\t\timporting file %@",partialPath);
-								if ([fm fileExistsAtPath:fullPath])	{
-									//	check the dict of imported images to see if this has already been imported
-									[_ISFImportedImages wrlock];
-									VVBuffer		*importedBuffer = [_ISFImportedImages objectForKey:fullPath];
-									if (importedBuffer != nil)	{
-										//	the num at the userInfo stores how many inputs are using the buffer
-										NSNumber		*tmpNum = [importedBuffer userInfo];
-										if (tmpNum != nil)
-											[importedBuffer setUserInfo:[NSNumber numberWithInt:[tmpNum intValue]+1]];
-									}
-									[_ISFImportedImages unlock];
-									//	if the imported image doesn't exist yet, import it and save the buffer in the dict
-									if (importedBuffer == nil)	{
-										NSImage		*tmpImg = [[NSImage alloc] initWithContentsOfFile:fullPath];
-										NSSize		tmpImgSize = [tmpImg size];
-										importedBuffer = (tmpImg==nil) ? nil : [_globalVVBufferPool allocBufferForNSImage:tmpImg prefer2DTexture:(tmpImgSize.width==tmpImgSize.height)?YES:NO];
-										//NSLog(@"\t\timported file %@ to buffer %@",partialPath,importedBuffer);
-										VVRELEASE(tmpImg);
-										if (importedBuffer != nil)	{
-											//	the num at the userInfo stores how many inputs are using the buffer
-											[importedBuffer setUserInfo:[NSNumber numberWithInt:1]];
-											[_ISFImportedImages lockSetObject:importedBuffer forKey:fullPath];
-											[importedBuffer release];
-										}
-										else	{
-											if (throwExceptions)
-												[NSException raise:@"filter resource can't be loaded" format:@"file %@ was found, but can't be loaded",partialPath];
-											return;
-										}
-									}
-									//NSLog(@"\t\timportedBuffer is %@",importedBuffer);
-									//	assuming i've imported or located the appropriate file, make an attrib for it and store it
-									if (importedBuffer != nil)	{
-										ISFAttrib			*newAttrib = nil;
-										ISFAttribVal		minVal;
-										ISFAttribVal		maxVal;
-										ISFAttribVal		defVal;
-										ISFAttribVal		idenVal;
-										minVal.imageVal = 0;
-										maxVal.imageVal = 0;
-										defVal.imageVal = 0;
-										idenVal.imageVal = 0;
-										newAttrib = [ISFAttrib
-											createWithName:samplerName
-											description:fullPath
-											label:nil
-											type:ISFAT_Image
-											values:minVal:maxVal:defVal:idenVal:nil:nil];
-										[newAttrib setUserInfo:importedBuffer];
-										[imageImports lockAddObject:newAttrib];
-										//NSLog(@"\t\tnewAttrib is %@",newAttrib);
-									}
-								}
-								else	{
-									if (throwExceptions)
-										[NSException raise:@"Missing filter resource" format:@"can't load, file %@ is missing",partialPath];
-									return;
-								}
-							}
+							parseImportedImageDict(subObj);
 						}
 					}
 				}
-				*/
+				
 			}
 			//	parse the PASSES array of dictionaries describing the various passes (which may need temp buffers)
 			anObj = [jsonObject objectForKey:@"PASSES"];
@@ -466,6 +525,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								isImageInput = YES;
 								if ([inputKey isEqualToString:@"inputImage"])
 									isFilterImageInput = YES;
+							}
+							else if ([typeString isEqualToString:@"cube"])	{
+								newAttribType = ISFAT_Cube;
+								minVal.imageVal = 0;
+								maxVal.imageVal = 0;
+								defVal.imageVal = 0;
+								idenVal.imageVal = 0;
 							}
 							else if ([typeString isEqualToString:@"float"])	{
 								newAttribType = ISFAT_Float;
@@ -637,21 +703,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			}
 			
 			
-			
-			
 		}
-		else	{
-			NSLog(@"\t\terr: jsonObject was wrong class, %@",filePath);
-			if (throwExceptions)
-				[NSException raise:@"Malformed JSON Blob" format:@"JSON blob in file %@ was malformed in some way",p];
-			return;
-		}
-		
-	}
-	else	{
-		if (throwExceptions)
-			[NSException raise:@"Missing JSON Blob" format:@"file %@ was missing the initial JSON blob describing it",p];
-		return;
 	}
 	
 	//	look for a vert shader that matches the name of the frag shader
@@ -903,12 +955,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSMutableArray		*imgThisPixelSamplerNames = nil;
 	NSMutableArray		*imgThisNormPixelSamplerNames = nil;
 	//	i need variable declarations for both the vertex and fragment shaders
-	NSMutableString		*varDeclarations = [self _assembleShaderSource_VarDeclarations];
-	
-	
-	
-	
-	
+	NSMutableString		*varDeclarations = [[[self _assembleShaderSource_VarDeclarations] copy] autorelease];
 	
 	//	check the source string to see if it requires any of the macro functions, add them if necessary
 	//BOOL			requiresMacroFunctions = NO;
@@ -926,7 +973,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSMutableString		*newFragShaderSrc = [NSMutableString stringWithCapacity:0];
 	{
 		//	copy the variable declarations to the frag shader src
-		[newFragShaderSrc appendString:[[varDeclarations copy] autorelease]];
+		[newFragShaderSrc appendString:varDeclarations];
 		
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
@@ -1134,7 +1181,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//	load any specific vars or function declarations for the vertex shader from an included file
 		[newVertShaderSrc appendString:_ISFVertVarDec];
 		//	append the variable declarations i assembled earlier with the frag shader
-		[newVertShaderSrc appendString:[[varDeclarations copy] autorelease]];
+		[newVertShaderSrc appendString:varDeclarations];
 		
 		//	add the variables for values corresponding to buffers from IMG_THIS_PIXEL and IMG_THIS_NORM_PIXEL in the frag shader
 		if (imgThisPixelSamplerNames!=nil || imgThisNormPixelSamplerNames!=nil)	{
@@ -1386,6 +1433,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				//	a bool describing whether the image in the texture should be flipped vertically
 				[varDeclarations appendString:VVFMTSTRING(@"uniform bool\t\t_%@_flip;\n",attribName)];
 				break;
+			case ISFAT_Cube:
+				//	make a sampler for the cubemap texture
+				[varDeclarations appendString:VVFMTSTRING(@"uniform samplerCube\t\t%@;\n",attribName)];
+				//	just pass in the imgSize
+				[varDeclarations appendString:VVFMTSTRING(@"uniform vec2\t\t_%@_imgSize;\n",attribName)];
+				break;
 		}
 	}
 	[inputs unlock];
@@ -1393,19 +1446,27 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[imageImports rdlock];
 	for (ISFAttrib *attrib in [imageImports array])	{
 		//NSLog(@"\t\tassembling source for attrib %@",attrib);
-		if ([attrib attribType]==ISFAT_Image)	{
+		ISFAttribValType	attribType = [attrib attribType];
+		if (attribType==ISFAT_Image || attribType==ISFAT_Cube)	{
 			NSString		*attribName = [attrib attribName];
 			VVBuffer		*attribBuffer = [attrib userInfo];
-			if (attribBuffer==nil || [attribBuffer target]==GL_TEXTURE_RECTANGLE_EXT)
+			GLuint			attribBufferTarget = (attribBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [attribBuffer target];
+			if (attribBufferTarget==GL_TEXTURE_RECTANGLE_EXT)
 				[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2DRect\t\t%@;\n",attribName)];
+			else if (attribBufferTarget==GL_TEXTURE_CUBE_MAP)
+				[varDeclarations appendString:VVFMTSTRING(@"uniform samplerCube\t\t%@;\n",attribName)];
 			else
 				[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2D\t\t%@;\n",attribName)];
-			//	a vec4 describing the image rect IN NATIVE GL TEXTURE COORDS (2D is normalized, RECT is not)
-			[varDeclarations appendString:VVFMTSTRING(@"uniform vec4\t\t_%@_imgRect;\n",attribName)];
-			//	a vec2 describing the size in pixels of the image
+			
+			//	both cubes and normal images need the imgSize
 			[varDeclarations appendString:VVFMTSTRING(@"uniform vec2\t\t_%@_imgSize;\n",attribName)];
-			//	a bool describing whether the image in the texture should be flipped vertically
-			[varDeclarations appendString:VVFMTSTRING(@"uniform bool\t\t_%@_flip;\n",attribName)];
+			//	only normal images need the imgRect and flip
+			if (attribBufferTarget!=GL_TEXTURE_CUBE_MAP)	{
+				//	a vec4 describing the image rect IN NATIVE GL TEXTURE COORDS (2D is normalized, RECT is not)
+				[varDeclarations appendString:VVFMTSTRING(@"uniform vec4\t\t_%@_imgRect;\n",attribName)];
+				//	a bool describing whether the image in the texture should be flipped vertically
+				[varDeclarations appendString:VVFMTSTRING(@"uniform bool\t\t_%@_flip;\n",attribName)];
+			}
 		}
 	}
 	[imageImports unlock];
@@ -1480,6 +1541,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				break;
 			case ISFAT_Image:
 				break;
+			case ISFAT_Cube:
+				break;
 		}
 	}
 	[inputs unlock];
@@ -1512,23 +1575,35 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSMutableString		*tmpMutString = [NSMutableString stringWithCapacity:0];
 	[imageInputs rdlock];
 	for (ISFAttrib *attrib in [imageInputs array])	{
-		VVBuffer		*tmpBuffer = [attrib userInfo];
-		GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
-		if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
-			[tmpMutString appendString:@"R"];
-		else
-			[tmpMutString appendString:@"2"];
+		ISFAttribValType		attribType = [attrib attribType];
+		if (attribType==ISFAT_Image)	{
+			VVBuffer		*tmpBuffer = [attrib userInfo];
+			GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
+			if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
+				[tmpMutString appendString:@"R"];
+			else
+				[tmpMutString appendString:@"2"];
+		}
+		else if (attribType==ISFAT_Cube)	{
+			[tmpMutString appendString:@"C"];
+		}
 	}
 	[imageInputs unlock];
 	
 	[imageImports rdlock];
 	for (ISFAttrib *attrib in [imageImports array])	{
-		VVBuffer		*tmpBuffer = [attrib userInfo];
-		GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
-		if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
-			[tmpMutString appendString:@"R"];
-		else
-			[tmpMutString appendString:@"2"];
+		ISFAttribValType		attribType = [attrib attribType];
+		if (attribType==ISFAT_Image)	{
+			VVBuffer		*tmpBuffer = [attrib userInfo];
+			GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
+			if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
+				[tmpMutString appendString:@"R"];
+			else
+				[tmpMutString appendString:@"2"];
+		}
+		else if (attribType==ISFAT_Cube)	{
+			[tmpMutString appendString:@"C"];
+		}
 	}
 	[imageImports unlock];
 	
@@ -1580,7 +1655,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	run through the inputs, applying the current values to the shader
 	[inputs rdlock];
 	CGLContextObj	cgl_ctx = [context CGLContextObj];
-	GLint		samplerLoc = 0;
+	__block GLint		samplerLoc = 0;
 	int			textureCount = 0;
 	VVBuffer	*tmpBuffer = nil;
 	NSRect		tmpRect;
@@ -1588,86 +1663,49 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	for (ISFAttrib *attrib in [inputs array])	{
 		ISFAttribValType	attribType = [attrib attribType];
 		ISFAttribVal		attribVal = [attrib currentVal];
-		const char				*attribNameC = nil;
+		__block const char		*attribNameC = nil;
+		
+		void		(^findNewUniformsBlock)(void) = ^(void)	{
+			if (findNewUniforms)	{
+				attribNameC = [[attrib attribName] UTF8String];
+				samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
+				if (samplerLoc >= 0)
+					[attrib setUniformLocation:samplerLoc forIndex:0];
+			}
+			else
+				samplerLoc = [attrib uniformLocationForIndex:0];
+		};
 		
 		switch (attribType)	{
 			case ISFAT_Event:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform1i(samplerLoc, ((attribVal.eventVal)?1:0));
 				attribVal.eventVal = NO;
 				[attrib setCurrentVal:attribVal];
 				break;
 			case ISFAT_Bool:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform1i(samplerLoc, ((attribVal.boolVal)?1:0));
 				break;
 			case ISFAT_Long:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform1i(samplerLoc, attribVal.longVal);
 				break;
 			case ISFAT_Float:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform1f(samplerLoc, attribVal.floatVal);
 				break;
 			case ISFAT_Point2D:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform2f(samplerLoc, attribVal.point2DVal[0], attribVal.point2DVal[1]);
 				break;
 			case ISFAT_Color:
-				if (findNewUniforms)	{
-					attribNameC = [[attrib attribName] UTF8String];
-					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
-					if (samplerLoc >= 0)
-						[attrib setUniformLocation:samplerLoc forIndex:0];
-				}
-				else
-					samplerLoc = [attrib uniformLocationForIndex:0];
-				
+				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform4f(samplerLoc, attribVal.colorVal[0], attribVal.colorVal[1], attribVal.colorVal[2], attribVal.colorVal[3]);
 				break;
@@ -1717,6 +1755,35 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					samplerLoc = [attrib uniformLocationForIndex:3];
 					if (samplerLoc >= 0)
 						glUniform1i(samplerLoc,(([tmpBuffer flipped])?1:0));
+				}
+				break;
+			case ISFAT_Cube:
+				if (findNewUniforms)	{
+					attribNameC = [[attrib attribName] UTF8String];
+					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
+					if (samplerLoc >= 0)
+						[attrib setUniformLocation:samplerLoc forIndex:0];
+					
+					sprintf(tmpCString,"_%s_imgSize",attribNameC);
+					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,tmpCString);
+					if (samplerLoc >= 0)
+						[attrib setUniformLocation:samplerLoc forIndex:2];
+				}
+				tmpBuffer = [attrib userInfo];
+				if (tmpBuffer != nil)	{
+					//	pass the actual texture to the program
+					glActiveTexture(GL_TEXTURE0 + textureCount);
+					glBindTexture([tmpBuffer target],[tmpBuffer name]);
+					
+					samplerLoc = [attrib uniformLocationForIndex:0];
+					if (samplerLoc >= 0)
+						glUniform1i(samplerLoc,textureCount);
+					++textureCount;
+					//	pass the size to the program
+					tmpRect = [tmpBuffer srcRect];
+					samplerLoc = [attrib uniformLocationForIndex:2];
+					if (samplerLoc >= 0)
+						glUniform2f(samplerLoc,tmpRect.size.width,tmpRect.size.height);
 				}
 				break;
 		}
@@ -1775,6 +1842,36 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				samplerLoc = [attrib uniformLocationForIndex:3];
 				if (samplerLoc >= 0)
 					glUniform1i(samplerLoc,(([tmpBuffer flipped])?1:0));
+			}
+		}
+		else if (attribType == ISFAT_Cube)	{
+			const char				*attribNameC = nil;
+			if (findNewUniforms)	{
+				attribNameC = [[attrib attribName] UTF8String];
+				samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
+				if (samplerLoc >= 0)
+					[attrib setUniformLocation:samplerLoc forIndex:0];
+				
+				sprintf(tmpCString,"_%s_imgSize",attribNameC);
+				samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,tmpCString);
+				if (samplerLoc >= 0)
+					[attrib setUniformLocation:samplerLoc forIndex:2];
+			}
+			tmpBuffer = [attrib userInfo];
+			if (tmpBuffer != nil)	{
+				//	pass the actual texture to the program
+				glActiveTexture(GL_TEXTURE0 + textureCount);
+				glBindTexture([tmpBuffer target],[tmpBuffer name]);
+				
+				samplerLoc = [attrib uniformLocationForIndex:0];
+				if (samplerLoc >= 0)
+					glUniform1i(samplerLoc,textureCount);
+				++textureCount;
+				//	pass the size to the program
+				tmpRect = [tmpBuffer srcRect];
+				samplerLoc = [attrib uniformLocationForIndex:2];
+				if (samplerLoc >= 0)
+					glUniform2f(samplerLoc,tmpRect.size.width,tmpRect.size.height);
 			}
 		}
 	}
@@ -2037,7 +2134,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	try to find the buffer in the image inputs
 	[imageInputs rdlock];
 	for (ISFAttrib *attrib in [imageInputs array])	{
-		if ([attrib attribType] == ISFAT_Image)
+		ISFAttribValType	type = [attrib attribType];
+		if (type==ISFAT_Image || type==ISFAT_Cube)
 			[attrib setUserInfo:nil];
 	}
 	[imageInputs unlock];
@@ -2096,6 +2194,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					break;
 				}
 				case ISFAT_Image:
+					[attrib setUserInfo:n];
+					break;
+				case ISFAT_Cube:
 					[attrib setUserInfo:n];
 					break;
 			}
@@ -2187,6 +2288,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (deleted || jsonString==nil)
 		return nil;
 	return jsonString;
+}
+- (NSString *) vertShaderSource	{
+	if (deleted || vertShaderSource==nil)
+		return nil;
+	return [[vertShaderSource retain] autorelease];
+}
+- (NSString *) fragShaderSource	{
+	if (deleted || fragShaderSource==nil)
+		return nil;
+	return [[fragShaderSource retain] autorelease];
 }
 
 

@@ -18,35 +18,30 @@
 	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if ((c==nil)||(s.width<1)||(s.height<1))
-		goto BAIL;
-	if (self = [super initWithSharedContext:c pixelFormat:p sized:s])	{
-		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
-		pthread_mutexattr_t		attr;
-		pthread_mutexattr_init(&attr);
-			pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-		pthread_mutex_init(&renderLock, &attr);
-		pthread_mutexattr_destroy(&attr);
-		vertexShaderUpdated = NO;
-		fragmentShaderUpdated = NO;
-		program = 0;
-		vertexShader = 0;
-		fragmentShader = 0;
-		vertexShaderString = nil;
-		fragmentShaderString = nil;
-		//samplerTarget = nil;
-		//samplerSelector = nil;
-		errDictLock = OS_SPINLOCK_INIT;
-		errDict = nil;
-		return self;
+	self = [super initWithSharedContext:c pixelFormat:p sized:s];
+	if (self!=nil)	{
 	}
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	NSLog(@"\t\terr: %@",c);
-	NSLog(@"\t\terr: %f x %f",s.width,s.height);
-	if (self != nil)
-		[self release];
-	return nil;
+	return self;
+}
+- (void) generalInit	{
+	[super generalInit];
+	context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+	pthread_mutexattr_t		attr;
+	pthread_mutexattr_init(&attr);
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&renderLock, &attr);
+	pthread_mutexattr_destroy(&attr);
+	vertexShaderUpdated = NO;
+	fragmentShaderUpdated = NO;
+	program = 0;
+	vertexShader = 0;
+	fragmentShader = 0;
+	vertexShaderString = nil;
+	fragmentShaderString = nil;
+	//samplerTarget = nil;
+	//samplerSelector = nil;
+	errDictLock = OS_SPINLOCK_INIT;
+	errDict = nil;
 }
 - (void) prepareToBeDeleted	{
 	pthread_mutex_lock(&renderLock);

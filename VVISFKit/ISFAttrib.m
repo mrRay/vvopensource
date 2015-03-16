@@ -30,6 +30,9 @@
 		case ISFAT_Image:
 			typeString = @"Image";
 			break;
+		case ISFAT_Cube:
+			typeString = @"Cube";
+			break;
 	}
 	return [NSString stringWithFormat:@"<ISFAttrib %@ named %@>",typeString,attribName];
 }
@@ -106,6 +109,9 @@
 				//maxVal.imageVal = max.imageVal;
 				//defaultVal.imageVal = def.imageVal;
 				//identityVal.imageVal = iden.imageVal;
+				break;
+			case ISFAT_Cube:
+				currentVal.imageVal = def.imageVal;
 				break;
 		}
 		isFilterInputImage = NO;
@@ -185,6 +191,9 @@
 				currentVal.colorVal[i] = n.colorVal[i];
 			break;
 		case ISFAT_Image:
+			currentVal.imageVal = n.imageVal;
+			break;
+		case ISFAT_Cube:
 			currentVal.imageVal = n.imageVal;
 			break;
 	}

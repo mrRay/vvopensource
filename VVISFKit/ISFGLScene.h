@@ -10,13 +10,13 @@
 
 //	key is path to the file, object is VVBuffer instance.  the userInfo of this VVBuffer instance has an NSNumber, which serves as its "retain count": it's incremented when the buffer is loaded/created, and decremented when it's deleted- when it hits 0, the file is removed from the dict entirely.
 extern MutLockDict		*_ISFImportedImages;
-extern NSString			*_ISFVertPassthru;
-extern NSString			*_ISFVertVarDec;
-extern NSString 		*_ISFVertInitFunc;
-extern NSString			*_ISFMacro2DString;
-extern NSString			*_ISFMacro2DBiasString;
-extern NSString			*_ISFMacro2DRectString;
-extern NSString			*_ISFMacro2DRectBiasString;
+extern NSString			*_ISFVertPassthru;	//	passthru vertex shader
+extern NSString			*_ISFVertVarDec;	//	string declaring functions and variables for the vertex shader, imported from a .txt file in this framework.  "pasted" into the assembled vertex shader.
+extern NSString 		*_ISFVertInitFunc;	//	string of source code that performs variable initialization and general environment setup for the vertex shader, imported from a .txt file in this framework, and "pasted" into the vertex shader during its assembly.
+extern NSString			*_ISFMacro2DString;	//	string of source containing function bodies that fetch pixel data from a (2D) GL texture.  IMGNORM and IMGPIXEL actually call one of these "Macro" functions.
+extern NSString			*_ISFMacro2DBiasString;	//	same as above, slightly different texture format
+extern NSString			*_ISFMacro2DRectString;	//	same as above, slightly different texture format
+extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly different texture format
 
 
 
@@ -50,9 +50,9 @@ extern NSString			*_ISFMacro2DRectBiasString;
 	NSString			*vertShaderSource;	//	the raw vert shader source before being find-and-replaced
 	NSString			*fragShaderSource;	//	the raw frag shader source before being find-and-replaced
 	NSString			*compiledInputTypeString;	//	a sequence of characters, either "2" or "R", one character for each input image. describes whether the shader was compiled to work with 2D textures or RECT textures.
-	long				renderSizeUniformLoc;
-	long				passIndexUniformLoc;
-	long				timeUniformLoc;
+	long				renderSizeUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the render size
+	long				passIndexUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the pass index
+	long				timeUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the time in seconds
 }
 
 - (id) initWithSharedContext:(NSOpenGLContext *)c;
@@ -136,6 +136,8 @@ extern NSString			*_ISFMacro2DRectBiasString;
 @property (readonly) int passCount;
 @property (readonly) int imageInputsCount;
 @property (readonly) NSString *jsonString;
+@property (readonly) NSString *vertShaderSource;
+@property (readonly) NSString *fragShaderSource;
 
 - (void) _renderLock;
 - (void) _renderUnlock;

@@ -525,7 +525,7 @@
 			NSLog(@"\t\terror setting non-regex ASL query in %s",__func__);
 	}
 	r = asl_search(NULL, q);
-	while (NULL != (m = aslresponse_next(r)))	{
+	while (NULL != (m = asl_next(r)))	{
 		//NSLog(@"\t\t********");
 		//for (i=0; (NULL != (key = asl_key(m,i))); ++i)	{
 		//	val = asl_get(m,key);
@@ -538,7 +538,7 @@
 			[mutArray addObject:[NSString stringWithFormat:@"%s::%s",timeString,msgString]];
 		}
 	}
-	aslresponse_free(r);
+	asl_release(r);
 	while ([mutArray count] > 200)	{
 		[mutArray removeObjectAtIndex:0];
 	}

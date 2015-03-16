@@ -33,6 +33,7 @@
 	
 	NSString				*log;
 	NSString				*pass;
+	NSString				*acceptedEncoding;	//	passed to libcurl as CURLOPT_ACCEPT_ENCODING
 	
 	long					httpResponseCode;
 	NSMutableData			*responseData;
@@ -67,6 +68,7 @@
 - (void) appendDataToPOST:(NSData *)d;
 - (void) appendStringToPOST:(NSString *)s;
 - (void) setLogin:(NSString *)user password:(NSString *)pass;
+@property (retain,readwrite) NSString *acceptedEncoding;
 
 - (void) writePtr:(void *)ptr size:(size_t)s;
 - (void) appendStringToHeader:(NSString *)s;

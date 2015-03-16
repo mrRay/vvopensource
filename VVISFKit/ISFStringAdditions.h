@@ -7,5 +7,6 @@
 
 - (NSString *) stringByDeletingLastAndAddingFirstSlash;
 - (NSRange) lexFunctionCallInRange:(NSRange)funcNameRange addVariablesToArray:(NSMutableArray *)varArray;
+- (NSUInteger) numberOfLines;
 
 @end

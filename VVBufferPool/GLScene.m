@@ -275,6 +275,16 @@ BOOL			_nvidiaGPUFlag = NO;
 /*------------------------------------*/
 
 
+- (id) init	{
+	self = [super init];
+	if (self!=nil)	{
+		sharedContext = nil;
+		customPixelFormat = nil;
+		size = NSMakeSize(80,60);
+		[self generalInit];
+	}
+	return self;
+}
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
 }
@@ -285,51 +295,55 @@ BOOL			_nvidiaGPUFlag = NO;
 	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if ((c==nil)||(p==nil)||(s.width<1)||(s.height<1))
-		goto BAIL;
-	if (self = [super init])	{
+	if ((c==nil)||(p==nil)||(s.width<1)||(s.height<1))	{
+		NSLog(@"\t\terr: %s - BAIL",__func__);
+		NSLog(@"\t\terr: %@",c);
+		NSLog(@"\t\terr: %f x %f",s.width,s.height);
+		[self release];
+		return nil;
+	}
+	self = [super init];
+	if (self!=nil)	{
 		sharedContext = c;
 		customPixelFormat = [p retain];
-		//context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
-		context = nil;
-		//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
-		colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-		//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
-		//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-		renderTarget = nil;
-		renderSelector = nil;
-		renderBlockLock = OS_SPINLOCK_INIT;
-		renderBlock = nil;
-		fbo = 0;
-		tex = 0;
-		texTarget = 0;
-		depth = 0;
-		fboMSAA = 0;
-		colorMSAA = 0;
-		depthMSAA = 0;
 		size = s;
-		flipped = NO;
-		initialized = NO;
-		needsReshape = YES;
-		deleted = NO;
-		renderThreadLock = OS_SPINLOCK_INIT;
-		renderThreadDeleteArray = nil;
-		performClear = YES;
-		for (int i=0;i<4;++i)
-			clearColor[i] = 0.0;
-		clearColorUpdated = YES;
-		flushMode = VVGLFlushModeGL;
-		swapInterval = 0;
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RTDeleteArrayNotification:) name:RTDeleteArrayDestroyNotification object:nil];
-		return self;
+		[self generalInit];
 	}
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	NSLog(@"\t\terr: %@",c);
-	NSLog(@"\t\terr: %f x %f",s.width,s.height);
-	if (self != nil)
-		[self release];
-	return nil;
+	return self;
+}
+- (void) generalInit	{
+	//NSLog(@"%s",__func__);
+	//context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+	context = nil;
+	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+	colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
+	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+	renderTarget = nil;
+	renderSelector = nil;
+	renderBlockLock = OS_SPINLOCK_INIT;
+	renderBlock = nil;
+	fbo = 0;
+	tex = 0;
+	texTarget = 0;
+	depth = 0;
+	fboMSAA = 0;
+	colorMSAA = 0;
+	depthMSAA = 0;
+	
+	flipped = NO;
+	initialized = NO;
+	needsReshape = YES;
+	deleted = NO;
+	renderThreadLock = OS_SPINLOCK_INIT;
+	renderThreadDeleteArray = nil;
+	performClear = YES;
+	for (int i=0;i<4;++i)
+		clearColor[i] = 0.0;
+	clearColorUpdated = YES;
+	flushMode = VVGLFlushModeGL;
+	swapInterval = 0;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RTDeleteArrayNotification:) name:RTDeleteArrayDestroyNotification object:nil];
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);

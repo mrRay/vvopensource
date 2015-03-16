@@ -169,6 +169,12 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 */
 - (VVBuffer *) allocBufferForIOSurfaceID:(IOSurfaceID)n;
 
+
+
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n;
+
+
+
 //	DO NOT CALL THIS METHOD MANUALLY- ONLY FROM VVBUFFER'S DEALLOC METHOD
 //	called by instances of VVBuffer if its idleCount is 0 on dealloc
 - (void) _returnBufferToPool:(VVBuffer *)b;

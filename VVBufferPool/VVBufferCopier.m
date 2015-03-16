@@ -35,25 +35,22 @@ id _globalVVBufferCopier = nil;
 	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if ((c==nil)||(s.width<1)||(s.height<1))
-		goto BAIL;
-	if (self = [super initWithSharedContext:c pixelFormat:p sized:s])	{
-		pthread_mutexattr_t		attr;
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-		pthread_mutex_init(&renderLock, &attr);
-		pthread_mutexattr_destroy(&attr);
-		copyToIOSurface = NO;
-		copyPixFormat = VVBufferPF_BGRA;
-		copyAndResize = NO;
-		copySize = NSMakeSize(320,240);
-		return self;
+	self = [super initWithSharedContext:c pixelFormat:p sized:s];
+	if (self!=nil)	{
 	}
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	if (self != nil)
-		[self release];
-	return nil;
+	return self;
+}
+- (void) generalInit	{
+	[super generalInit];
+	pthread_mutexattr_t		attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&renderLock, &attr);
+	pthread_mutexattr_destroy(&attr);
+	copyToIOSurface = NO;
+	copyPixFormat = VVBufferPF_BGRA;
+	copyAndResize = NO;
+	copySize = NSMakeSize(320,240);
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);

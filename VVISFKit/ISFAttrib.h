@@ -17,7 +17,8 @@ typedef NS_ENUM(NSInteger, ISFAttribValType)	{
 	ISFAT_Float,	//!<	sends a float
 	ISFAT_Point2D,	//!<	sends a 2 element vector
 	ISFAT_Color,	//!<	sends a 4 element vector representing an RGBA color
-	ISFAT_Image	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
+	ISFAT_Image,	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
+	ISFAT_Cube 		//!<	a long- the texture number (like GL_TEXTURE0) of a cubemap texture to pass to the shader
 };
 ///	union describing a value for one of the listed attribute types
 /**
@@ -53,7 +54,7 @@ typedef union ISFAttribVal	{
 	NSMutableArray			*labelArray;	//	only used if it's a LONG. array containing NSStrings that correspond to the values in "valArray"
 	NSMutableArray			*valArray;	//	only used if it's a LONG. array containing NSNumbers with the values that correspond to the accompanying labels
 	BOOL					isFilterInputImage;	//	if YES, this is an image-type input and is the main input for an image filter
-	id						userInfo;	//	retained- used to retain an NSObject-based GL resource for the lifetime of the input (retains an image for image attributes)
+	id						userInfo;	//	retained- used to retain an NSObject-based GL resource for the lifetime of the input (retains an image for image attributes as a VVBuffer)
 	int						uniformLocation[4];	//	the location of this attribute in the compiled GLSL program. cached here because lookup times are costly when performed every frame.  there are 4 because images require four uniforms (one of the texture name, one for the size, one for the img rect, and one for the flippedness)
 }
 
@@ -91,7 +92,7 @@ typedef union ISFAttribVal	{
 ///	returns a YES if this attribute describes the default input for an image filter
 - (BOOL) isFilterInputImage;
 
-///	the userInfo is an arbitrary id that gets retained with the attribute- if this is an ISFAT_Image, then this is probably used to store a VVBuffer with the current value
+///	the userInfo is an arbitrary id that gets retained with the attribute- if this is an ISFAT_Image or an ISFAT_Cube, then this is probably used to store a VVBuffer with the current value
 - (void) setUserInfo:(id)n;
 ///	returns the userInfo, an arbitrary id retained with this attribute
 - (id) userInfo;

@@ -65,5 +65,14 @@
 	NSRange			rangeToReplace = NSMakeRange(funcNameRange.location, lexIndex-funcNameRange.location);
 	return rangeToReplace;
 }
+- (NSUInteger) numberOfLines	{
+	NSUInteger		numberOfLines;
+	NSUInteger		index;
+	NSUInteger		stringLength = [self length];
+	
+	for (index=0, numberOfLines=0; index<stringLength; numberOfLines++)
+		index = NSMaxRange([self lineRangeForRange:NSMakeRange(index, 0)]);
+	return numberOfLines;
+}
 
 @end

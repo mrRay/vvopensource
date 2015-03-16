@@ -4,9 +4,14 @@
 
 
 
-BOOL					_QCGLSceneInitialized;
+BOOL					_QCGLSceneInitialized = NO;
 pthread_mutex_t			universalInitializeLock;
-BOOL					_safeQCRenderFlag;
+BOOL					_safeQCRenderFlag = NO;
+
+NSOpenGLContext			*_globalQCContextGLContext = nil;
+NSOpenGLContext			*_globalQCContextSharedContext = nil;
+NSOpenGLPixelFormat		*_globalQCContextPixelFormat = nil;
+pthread_mutex_t			_globalQCContextLock;
 
 
 
@@ -16,10 +21,17 @@ BOOL					_safeQCRenderFlag;
 
 + (void) load	{
 	_QCGLSceneInitialized = NO;
+	
+	pthread_mutexattr_t		attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&_globalQCContextLock, &attr);
+	pthread_mutexattr_destroy(&attr);
 }
 + (void) initialize	{
 	if (_QCGLSceneInitialized)
 		return;
+	
 	_QCGLSceneInitialized = YES;
 	pthread_mutexattr_t		attr;
 	pthread_mutexattr_init(&attr);
@@ -30,6 +42,20 @@ BOOL					_safeQCRenderFlag;
 	NSUserDefaults		*def = [NSUserDefaults standardUserDefaults];
 	NSNumber			*tmpNum = (def==nil)?nil:[def objectForKey:@"safeQCRenderFlag"];
 	_safeQCRenderFlag = (tmpNum==nil)?YES:[tmpNum boolValue];
+}
++ (void) prepCommonQCBackendToRenderOnContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
+	if (c==nil)	{
+		NSLog(@"\t\tERR: context nil in %s",__func__);
+		return;
+	}
+	pthread_mutex_lock(&_globalQCContextLock);
+	VVRELEASE(_globalQCContextSharedContext);
+	_globalQCContextSharedContext = [c retain];
+	VVRELEASE(_globalQCContextPixelFormat);
+	_globalQCContextPixelFormat = [p retain];
+	VVRELEASE(_globalQCContextGLContext);
+	_globalQCContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
+	pthread_mutex_unlock(&_globalQCContextLock);
 }
 
 
@@ -43,28 +69,44 @@ BOOL					_safeQCRenderFlag;
 	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if ((c==nil)||(s.width<1)||(s.height<1))
-		goto BAIL;
-	if (self = [super initWithSharedContext:c pixelFormat:p sized:s])	{
-		pthread_mutexattr_t		attr;
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-		pthread_mutex_init(&renderLock, &attr);
-		pthread_mutexattr_destroy(&attr);
-		//renderThread = nil;
-		filePath = nil;
-		comp = nil;
-		renderer = nil;
-		stopwatch = [[VVStopwatch alloc] init];
-		//mouseEventDict = [[MutLockDict alloc] init];
-		mouseEventArray = [[MutLockArray alloc] init];
-		return self;
+	self = [super initWithSharedContext:c pixelFormat:p sized:s];
+	if (self!=nil)	{
 	}
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	if (self != nil)
+	return self;
+}
+- (id) initCommonBackendSceneSized:(NSSize)n	{
+	self = [super init];
+	if (self!=nil)	{
+		size = n;
+		pthread_mutex_lock(&_globalQCContextLock);
+		context = (_globalQCContextGLContext==nil) ? nil : [_globalQCContextGLContext retain];
+		if (context!=nil)	{
+			sharedContext = (_globalQCContextSharedContext==nil) ? nil : [_globalQCContextSharedContext retain];
+			customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : [_globalQCContextPixelFormat retain];
+		}
+		pthread_mutex_unlock(&_globalQCContextLock);
+	}
+	if (context==nil)	{
+		NSLog(@"\t\terr: couldn't make context, call +[QCGLScene prepCommonQCBackendToRenderOnContext:pixelFormat:] before trying to init a QCGLScene");
 		[self release];
-	return nil;
+		self = nil;
+	}
+	return self;
+}
+- (void) generalInit	{
+	[super generalInit];
+	pthread_mutexattr_t		attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&renderLock, &attr);
+	pthread_mutexattr_destroy(&attr);
+	//renderThread = nil;
+	filePath = nil;
+	comp = nil;
+	renderer = nil;
+	stopwatch = [[VVStopwatch alloc] init];
+	//mouseEventDict = [[MutLockDict alloc] init];
+	mouseEventArray = [[MutLockArray alloc] init];
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -120,12 +162,31 @@ BOOL					_safeQCRenderFlag;
 			VVRELEASE(comp);
 			//	the renderer must be created, rendered, and released all on the same thread!
 			if (renderer != nil)	{
+				BOOL			addedToRenderThread = NO;
 				OSSpinLockLock(&renderThreadLock);
-				if (renderThreadDeleteArray != nil)
+				if (renderThreadDeleteArray != nil)	{
+					addedToRenderThread = YES;
 					[renderThreadDeleteArray lockAddObject:renderer];
+				}
 				OSSpinLockUnlock(&renderThreadLock);
-				[renderer release];
-				renderer = nil;
+				if (!addedToRenderThread)	{
+					if (context!=nil)	{
+						CGLLockContext([context CGLContextObj]);
+						//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+					}
+					
+					[renderer release];
+					renderer = nil;
+					
+					if (context!=nil)	{
+						//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+						CGLUnlockContext([context CGLContextObj]);
+					}
+				}
+				else	{
+					[renderer release];
+					renderer = nil;
+				}
 			}
 			//	retain the passed path
 			if (p != nil)
@@ -167,11 +228,26 @@ BOOL					_safeQCRenderFlag;
 	if (deleted)
 		return;
 	pthread_mutex_lock(&renderLock);
-		if (context == nil)
-			context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+		if (context == nil)	{
+			pthread_mutex_lock(&_globalQCContextLock);
+			context = (_globalQCContextGLContext==nil) ? nil : [_globalQCContextGLContext retain];
+			if (context!=nil)	{
+				VVRELEASE(sharedContext);
+				sharedContext = (_globalQCContextSharedContext==nil) ? nil : [_globalQCContextSharedContext retain];
+				VVRELEASE(customPixelFormat);
+				customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : [_globalQCContextPixelFormat retain];
+			}
+			pthread_mutex_unlock(&_globalQCContextLock);
+		}
 		if (context == nil)
 			NSLog(@"\t\terr: couldn't create GL context %s",__func__);
-		[self _initialize];
+		else	{
+			CGLLockContext([context CGLContextObj]);
+			//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+			[self _initialize];
+			//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+			CGLUnlockContext([context CGLContextObj]);
+		}
 	pthread_mutex_unlock(&renderLock);
 }
 
@@ -182,8 +258,9 @@ BOOL					_safeQCRenderFlag;
 		return;
 	
 	OSSpinLockLock(&renderThreadLock);
-	if (renderThreadDeleteArray == nil)
+	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
+	}
 	OSSpinLockUnlock(&renderThreadLock);
 	
 	BOOL		mouseEventsRequireAdditionalPass = NO;
@@ -191,76 +268,81 @@ BOOL					_safeQCRenderFlag;
 	//	trying a simple lock around myself to prevent basic actions from colliding with rendering
 	pthread_mutex_lock(&renderLock);
 		if (!deleted)	{
-			fbo = f;
-			tex = t;
-			texTarget = tt;
-			depth = d;
-			fboMSAA = mf;
-			colorMSAA = mc;
-			depthMSAA = md;
+			//	if i'm here and the context is nil, then i'm not sharing a single GL context for everything- i'm expected to create the GL context, which will be used exclusively by this CIContext
+			if (context==nil)
+				[self _renderPrep];
 			
-			//	make sure the context has been set up/reshaped appropriately
-			[self _renderPrep];
-			
-			NSMutableDictionary		*args = nil;
-			
-			//	tell the QCRenderer to render
-			if (renderer != nil)	{
-				//	if there are too many mouse events, throw them all out
-				[mouseEventArray wrlock];
-				if ([mouseEventArray count]>20)
-					[mouseEventArray removeAllObjects];
-				if ([mouseEventArray count]>0)	{
-					args = [[mouseEventArray objectAtIndex:0] retain];
-					[mouseEventArray removeObjectAtIndex:0];
-				}
-				if ([mouseEventArray count]>0)
-					mouseEventsRequireAdditionalPass = YES;
-				[mouseEventArray unlock];
-				
-				/*
-				if ([mouseEventArray count]>20)	{
-					[mouseEventArray lockRemoveAllObjects];
-				}
-				//	if there are mouse events that need to be passed on, do so now
-				if ([mouseEventArray count]>0)	{
-					[mouseEventArray wrlock];
-					args = [[mouseEventArray objectAtIndex:0] retain];
-					[mouseEventArray removeObjectAtIndex:0];
-					[mouseEventArray unlock];
-				}
-				*/
-				
-				double		timeSinceStart = [stopwatch timeSinceStart];
-				
-				if (_safeQCRenderFlag)	{
-					@try	{
+			if (context!=nil)	{
+				@try	{
+					CGLLockContext([context CGLContextObj]);
+					//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+					fbo = f;
+					tex = t;
+					texTarget = tt;
+					depth = d;
+					fboMSAA = mf;
+					colorMSAA = mc;
+					depthMSAA = md;
+					
+					//	we need to reshape (reset the viewport) every frame if we're using a single GL context to back all QCRenderers...
+					needsReshape = YES;
+					
+					//	make sure the context has been set up/reshaped appropriately
+					[self _renderPrep];
+					
+					NSMutableDictionary		*args = nil;
+					
+					//	tell the QCRenderer to render
+					if (renderer != nil)	{
+						//	if there are too many mouse events, throw them all out
+						[mouseEventArray wrlock];
+						if ([mouseEventArray count]>20)
+							[mouseEventArray removeAllObjects];
+						if ([mouseEventArray count]>0)	{
+							args = [[mouseEventArray objectAtIndex:0] retain];
+							[mouseEventArray removeObjectAtIndex:0];
+						}
+						if ([mouseEventArray count]>0)
+							mouseEventsRequireAdditionalPass = YES;
+						[mouseEventArray unlock];
+						
+						/*
+						if ([mouseEventArray count]>20)	{
+							[mouseEventArray lockRemoveAllObjects];
+						}
+						//	if there are mouse events that need to be passed on, do so now
+						if ([mouseEventArray count]>0)	{
+							[mouseEventArray wrlock];
+							args = [[mouseEventArray objectAtIndex:0] retain];
+							[mouseEventArray removeObjectAtIndex:0];
+							[mouseEventArray unlock];
+						}
+						*/
+						
+						double		timeSinceStart = [stopwatch timeSinceStart];
 						[renderer renderAtTime:(timeSinceStart<=0.0)?1.0/70.0:timeSinceStart arguments:args];
 					}
-					@catch (NSException *err)	{
-						NSLog(@"\t\tsafe QC rendering enabled, caught exception %@ with filePath %@",err,filePath);
-					}
-					@finally	{
+					if (args != nil)
+						[args release];
 					
-					}
+					//	do any cleanup/flush
+					[self _renderCleanup];
 				}
-				else	{
-					[renderer renderAtTime:(timeSinceStart<=0.0)?1.0/70.0:timeSinceStart arguments:args];
+				@catch (NSException *excErr)	{
+					NSLog(@"\t\tERR: caught exception in %s",__func__);
+					NSLog(@"\t\texception was %@",excErr);
 				}
+				
+				fbo = 0;
+				tex = 0;
+				texTarget = 0;
+				depth = 0;
+				fboMSAA = 0;
+				colorMSAA = 0;
+				depthMSAA = 0;
+				//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+				CGLUnlockContext([context CGLContextObj]);
 			}
-			if (args != nil)
-				[args release];
-			
-			//	do any cleanup/flush
-			[self _renderCleanup];
-			
-			fbo = 0;
-			tex = 0;
-			texTarget = 0;
-			depth = 0;
-			fboMSAA = 0;
-			colorMSAA = 0;
-			depthMSAA = 0;
 		}
 	pthread_mutex_unlock(&renderLock);
 	
@@ -283,13 +365,17 @@ BOOL					_safeQCRenderFlag;
 		return;
 	//	now that i've made a renderer, do the render prep associated with its context
 	[super _renderPrep];
+	
+	CGLContextObj		cgl_ctx = [context CGLContextObj];
+	
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 - (void) _initialize	{
 	//NSLog(@"%s",__func__);
 	if (context == nil)
-		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
-	if (context == nil)
-		NSLog(@"\t\terr: couldn't create GL context, %s",__func__);
+		NSLog(@"\t\terr: context nil, %s",__func__);
 	//	if there's no renderer, make one
 	if (renderer == nil)	{
 		//NSLog(@"\t\tshould be making a renderer");
@@ -328,6 +414,15 @@ BOOL					_safeQCRenderFlag;
 	else
 		glOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
 }
+- (void) _renderCleanup	{
+	
+	CGLContextObj		cgl_ctx = [context CGLContextObj];
+
+	[super _renderCleanup];
+	
+	glPopAttrib();
+	glPopClientAttrib();
+}
 
 
 - (NSString *) filePath	{
@@ -346,8 +441,12 @@ BOOL					_safeQCRenderFlag;
 
 - (void) _renderLock	{
 	pthread_mutex_lock(&renderLock);
+	CGLLockContext([context CGLContextObj]);
+	//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
 }
 - (void) _renderUnlock	{
+	//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+	CGLUnlockContext([context CGLContextObj]);
 	pthread_mutex_unlock(&renderLock);
 }
 

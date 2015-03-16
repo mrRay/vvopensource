@@ -22,6 +22,7 @@
 		curlHandle = nil;
 		log = nil;
 		pass = nil;
+		acceptedEncoding = nil;
 		postData = nil;
 		//headerArray = nil;
 		httpResponseCode = 0;
@@ -44,6 +45,7 @@
 	VVRELEASE(urlString);
 	VVRELEASE(log);
 	VVRELEASE(pass);
+	VVRELEASE(acceptedEncoding);
 	VVRELEASE(postData);
 	//VVRELEASE(headerArray);
 	VVRELEASE(responseData);
@@ -145,6 +147,10 @@
 		
 		//curl_easy_setopt(curlHandle, CURLOPT_VERBOSE, 1L);
 		
+		NSString		*tmpString = [self acceptedEncoding];
+		if (tmpString!=nil)
+			curl_easy_setopt(curlHandle, CURLOPT_ACCEPT_ENCODING, [tmpString UTF8String]);
+		
 		//	if there's a log/pass, set them up
 		if (log!=nil && pass!=nil)	{
 			NSString		*tmpString = [NSString stringWithFormat:@"%@:%@",log,pass];
@@ -233,6 +239,7 @@
 	VVRELEASE(pass);
 	pass = [p retain];
 }
+@synthesize acceptedEncoding;
 /*
 - (void) appendHeaderString:(NSString *)n	{
 	if (n == nil)

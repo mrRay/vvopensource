@@ -17,13 +17,22 @@
 		//	...other stuff in the VVBufferPool framework- like the views, the buffer copier, etc- will 
 		//	automatically use the global buffer pool's shared context to set themselves up to function with the pool.
 		
+		
+		//	set up the CoreImage backend to work with the shared context.  using this approach, the CIGLScene will actually use 'sharedContext' (or whatever context you pass in its place) to do rendering, rather than creating a new GL context reserved solely for CI
+		[CIGLScene prepCommonCIBackendToRenderOnContext:sharedContext pixelFormat:[GLScene defaultPixelFormat]];
+		//	make a CIGLScene.  this is a GL context that will be used to render CIImages to GL textures.
+		ciScene = [[CIGLScene alloc] initCommonBackendSceneSized:NSMakeSize(640,480)];
+		/*
+		//	make a CIGLScene.  this is a GL context that will be used to render CIImages to GL textures.  using this approach, the CIGLScene will create its own GL context, and use that to do rendering.
+		ciScene = [[CIGLScene alloc] initWithSharedContext:sharedContext];
+		[ciScene setSize:NSMakeSize(640,480)];	//	this sets the render resolution...
+		*/
+		
+		
 		//	make a checkerboard CIFilter, set its defaults
 		checkerboardSrc = [[CIFilter filterWithName:@"CICheckerboardGenerator"] retain];
 		[checkerboardSrc setDefaults];
 		
-		//	make a CIGLScene.  this is a GL context that will be used to render CIImages to GL textures.
-		ciScene = [[CIGLScene alloc] initWithSharedContext:sharedContext];
-		[ciScene setSize:NSMakeSize(640,480)];	//	this sets the render resolution...
 		//	make a stopwatch that we'll use to crudely animate the size of the checkerboard
 		swatch = [[VVStopwatch alloc] init];
 		[swatch start];
