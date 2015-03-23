@@ -85,11 +85,11 @@ pthread_mutex_t			_globalQCContextLock;
 			customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : [_globalQCContextPixelFormat retain];
 		}
 		pthread_mutex_unlock(&_globalQCContextLock);
-	}
-	if (context==nil)	{
-		NSLog(@"\t\terr: couldn't make context, call +[QCGLScene prepCommonQCBackendToRenderOnContext:pixelFormat:] before trying to init a QCGLScene");
-		[self release];
-		self = nil;
+		if (context==nil)	{
+			NSLog(@"\t\terr: couldn't make context, call +[QCGLScene prepCommonQCBackendToRenderOnContext:pixelFormat:] before trying to init a QCGLScene");
+			[self release];
+			self = nil;
+		}
 	}
 	return self;
 }

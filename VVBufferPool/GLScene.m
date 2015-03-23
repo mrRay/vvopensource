@@ -451,7 +451,6 @@ BOOL			_nvidiaGPUFlag = NO;
 		if (localRenderBlock != nil)	{
 			localRenderBlock();
 			Block_release(localRenderBlock);
-			localRenderBlock = nil;
 		}
 		//	if there's a render target/selector, call them
 		if ((renderTarget!=nil) && (renderSelector!=nil) && ([renderTarget respondsToSelector:renderSelector]))

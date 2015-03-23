@@ -509,6 +509,11 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		descriptor.localSurfaceID = IOSurfaceGetID(localSurfaceRef);
 	}
 }
+- (NSString *) stringForXPCComm	{
+	if (localSurfaceRef==NULL)
+		return nil;
+	return VVFMTSTRING(@"%d,%f,%f,%f,%f,%d",IOSurfaceGetID(localSurfaceRef),srcRect.origin.x,srcRect.origin.y,srcRect.size.width,srcRect.size.height,flipped);
+}
 - (IOSurfaceRef) remoteSurfaceRef	{
 	return remoteSurfaceRef;
 }
@@ -541,6 +546,9 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 @synthesize idleCount;
 - (void) _incrementIdleCount	{
 	++idleCount;
+}
+- (BOOL) isVVBuffer	{
+	return YES;
 }
 
 
@@ -595,3 +603,13 @@ void VVBuffer_ReleaseGWorld(id b, void *c)	{
 #pragma GCC diagnostic warning "-Wimplicit"
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 #endif
+
+
+
+
+
+@implementation NSObject (VVBufferChecking)
+- (BOOL) isVVBuffer	{
+	return NO;
+}
+@end

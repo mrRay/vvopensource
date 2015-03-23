@@ -277,6 +277,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					NSLog(@"\t\terr at IOSurfaceCreate() in %s",__func__);
 					newBufferDesc.localSurfaceID = 0;
 				}
+				else
+					NSLog(@"\t\tcreated IOSurface in %s",__func__);
 			}
 			//	enable the tex target, gen the texture, and bind it
 			glEnable(newBufferDesc.target);
@@ -1181,6 +1183,10 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	get a ptr to the buffer descriptor, set it up
 	VVBufferDescriptor		*desc = [returnMe descriptorPtr];
 	if (desc == nil)	{
+		if (newSurface!=nil)	{
+			CFRelease(newSurface);
+			newSurface = NULL;
+		}
 		VVRELEASE(returnMe);
 		return nil;
 	}
@@ -1188,22 +1194,25 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc->target = GL_TEXTURE_RECTANGLE_EXT;
 	switch (pixelFormat)	{
 		case kCVPixelFormatType_32BGRA:	//	'BGRA'
+		case VVBufferPF_BGRA:
 			desc->internalFormat = VVBufferIF_RGBA8;
 			desc->pixelFormat = VVBufferPF_BGRA;
 			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
 			break;
 		case kCVPixelFormatType_32RGBA:	//	'RGBA'
+		case VVBufferPF_RGBA:
 			desc->internalFormat = VVBufferIF_RGBA8;
 			desc->pixelFormat = VVBufferPF_RGBA;
 			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
 			break;
 		case kCVPixelFormatType_422YpCbCr8:	//	'2vuy'
+		case VVBufferPF_YCBCR_422:
 			desc->internalFormat = VVBufferIF_RGB;
 			desc->pixelFormat = VVBufferPF_YCBCR_422;
 			desc->pixelType = VVBufferPT_U_Short_88;
 			break;
 		default:
-			NSLog(@"\t\tERR: unknown pixel format- %@- in %s",NSFileTypeForHFSTypeCode(pixelFormat),__func__);
+			NSLog(@"\t\tERR: unknown pixel format- %u- in %s",(unsigned int)pixelFormat,__func__);
 			desc->internalFormat = VVBufferIF_RGBA8;
 			desc->pixelFormat = VVBufferPF_BGRA;
 			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
@@ -1244,6 +1253,21 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	don't forget to release the surface (it's retained by the buffer i'm returning!)
 	CFRelease(newSurface);
 	newSurface = nil;
+	return returnMe;
+}
+- (VVBuffer *) allocBufferFromStringForXPCComm:(NSString *)n	{
+	//NSLog(@"%s ... %@",__func__,n);
+	if (n==nil)
+		return nil;
+	NSArray		*components = [n componentsSeparatedByString:@","];
+	if (components==nil || [components count]!=6)
+		return nil;
+	IOSurfaceID			newID = (unsigned int)[[components objectAtIndex:0] integerValue];
+	NSRect				newRect = NSMakeRect([[components objectAtIndex:1] floatValue], [[components objectAtIndex:2] floatValue], [[components objectAtIndex:3] floatValue], [[components objectAtIndex:4] floatValue]);
+	BOOL				newFlipped = ([[components objectAtIndex:5] integerValue]==0) ? FALSE : TRUE;
+	VVBuffer			*returnMe = [self allocBufferForIOSurfaceID:newID];
+	[returnMe setSrcRect:newRect];
+	[returnMe setFlipped:newFlipped];
 	return returnMe;
 }
 - (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n	{

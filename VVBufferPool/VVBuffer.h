@@ -243,12 +243,15 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 ///	If the receiver is a GL texture backed by an IOSurfaceRef, this returns the IOSurfaceRef.  If you want to send a texture to another process, you want to call -[VVBufferPool allocBufferForTexBackedIOSurfaceSized:], render into the returned buffer, and then call "localSurfaceRef" to retrieve the IOSurface to be sent to another process.
 - (IOSurfaceRef) localSurfaceRef;
 - (void) setLocalSurfaceRef:(IOSurfaceRef)n;
+///	Returns nil if this VVBuffer doesn't have a localSurfaceRef, or creates a string that describes the localSurfaceRect (the string is the format "<IOSuface ID>,<srcRect.origin.x>,<srcRect.origin.y>,<srcRect.size.width>,<srcRect.size.height>,<flipped>")
+- (NSString *) stringForXPCComm;
 - (IOSurfaceRef) remoteSurfaceRef;
 - (void) setRemoteSurfaceRef:(IOSurfaceRef)n;
 
 @property (retain,readwrite) id copySourceBuffer;
 @property (assign,readwrite) int idleCount;
 - (void) _incrementIdleCount;
+- (BOOL) isVVBuffer;
 
 
 @end
@@ -263,3 +266,10 @@ void VVBuffer_ReleaseBitmapRep(id b, void *c);
 #ifndef __LP64__
 void VVBuffer_ReleaseGWorld(id b, void *c);
 #endif
+
+
+
+
+@interface NSObject (VVBufferChecking)
+- (BOOL) isVVBuffer;
+@end

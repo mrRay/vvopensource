@@ -167,7 +167,11 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 /**
 @param n the IOSurfaceID you want to create a texture from
 */
+
+
 - (VVBuffer *) allocBufferForIOSurfaceID:(IOSurfaceID)n;
+
+- (VVBuffer *) allocBufferFromStringForXPCComm:(NSString *)n;
 
 
 
