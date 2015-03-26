@@ -111,6 +111,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 @param d a mutable dictionary, into which the output of the various render passes will be stored
 */
 - (void) renderToBuffer:(VVBuffer *)b sized:(NSSize)s renderTime:(double)t passDict:(NSMutableDictionary *)d;
+- (void) render;
 
 - (void) _assembleShaderSource;
 - (NSMutableString *) _assembleShaderSource_VarDeclarations;

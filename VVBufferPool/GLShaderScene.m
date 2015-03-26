@@ -23,9 +23,25 @@
 	}
 	return self;
 }
+- (id) initWithContext:(NSOpenGLContext *)c	{
+	return [self initWithContext:c sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
+	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+	return [self initWithContext:c sharedContext:nil sized:s];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+	self = [super initWithContext:c sharedContext:sc sized:s];
+	if (self!=nil)	{
+	}
+	return self;
+}
 - (void) generalInit	{
 	[super generalInit];
-	context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+	if (context==nil)
+		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
 	pthread_mutexattr_t		attr;
 	pthread_mutexattr_init(&attr);
 		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);

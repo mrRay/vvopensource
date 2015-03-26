@@ -89,6 +89,7 @@ extern long			_spriteGLViewSysVers;
 - (void) generalInit;
 - (void) prepareToBeDeleted;
 
+- (void) performDrawing:(VVRECT)r;
 - (void) initializeGL;
 - (void) finishedDrawing;
 //- (void) reshapeGL;

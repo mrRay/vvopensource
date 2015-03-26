@@ -864,6 +864,10 @@ long			_spriteGLViewSysVers;
 	[self setNeedsDisplay:YES];
 }
 - (void) drawRect:(VVRECT)r	{
+	[self performDrawing:r];
+}
+//	split off into its own method so i can invoke drawing without triggering any of my superclass's drawRect:-related backend
+- (void) performDrawing:(VVRECT)r	{
 	//NSLog(@"*****************************");
 	//NSLog(@"%s",__func__);
 	//VVRectLog(@"\t\trect is",r);
@@ -969,79 +973,79 @@ long			_spriteGLViewSysVers;
 		
 		//	tell the subviews to draw
 		[vvSubviews rdlock];
-			if ([vvSubviews count]>0)	{
-				//	before i begin, enable the scissor test and get my bounds
-				//VVRectLog(@"\t\tmy reported bounds are",[self bounds]);
-				//VVRectLog(@"\t\tmy real bounds are",_bounds);
-				glEnable(GL_SCISSOR_TEST);
-				//	run through all the subviews (last to first), drawing them
-				NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
-				VVView				*viewPtr;
-				while (viewPtr = [it nextObject])	{
-					//NSLog(@"\t\tview is %@",viewPtr);
-					//VVRECT				viewBounds = [viewPtr bounds];
-					VVRECT				viewFrameInMyLocalBounds = [viewPtr frame];
-					//VVRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
-					VVRECT				intersectRectInMyLocalBounds = VVINTERSECTIONRECT(r,viewFrameInMyLocalBounds);
-					if (intersectRectInMyLocalBounds.size.width>0 && intersectRectInMyLocalBounds.size.height>0)	{
-						//	update the intersect rect so it's local to the view i'm going to ask to draw
-						//intersectRectInMyLocalBounds.origin = VVMAKEPOINT(intersectRectInMyLocalBounds.origin.x-viewFrameInMyLocalBounds.origin.x, intersectRectInMyLocalBounds.origin.y-viewFrameInMyLocalBounds.origin.y);
-						//VVRectLog(@"\t\tintersectRectInMyLocalBounds is",intersectRectInMyLocalBounds);
-						//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
-						glMatrixMode(GL_MODELVIEW);
-						glPushMatrix();
-						glTranslatef(viewFrameInMyLocalBounds.origin.x*localToBackingBoundsMultiplier, viewFrameInMyLocalBounds.origin.y*localToBackingBoundsMultiplier, 0.0);
-						
-						//	calculate the rect (in the view's local coordinate space) of the are of the view i'm going to ask to draw
-						VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
-						viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
-						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
-						VVViewBoundsOrientation	viewBO = [viewPtr boundsOrientation];
-						if (viewBO != VVViewBOBottom)	{
-							switch (viewBO)	{
-								case VVViewBORight:
-									[rotTrans rotateByDegrees:-90.0];
-									break;
-								case VVViewBOTop:
-									[rotTrans rotateByDegrees:-180.0];
-									break;
-								case VVViewBOLeft:
-									[rotTrans rotateByDegrees:-270.0];
-									break;
-								case VVViewBOBottom:
-									break;
-							}
-							viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
-							viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
-							//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
-							viewBoundsToDraw.size = VVMAKESIZE(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+		if ([vvSubviews count]>0)	{
+			//	before i begin, enable the scissor test and get my bounds
+			//VVRectLog(@"\t\tmy reported bounds are",[self bounds]);
+			//VVRectLog(@"\t\tmy real bounds are",_bounds);
+			glEnable(GL_SCISSOR_TEST);
+			//	run through all the subviews (last to first), drawing them
+			NSEnumerator		*it = [[vvSubviews array] reverseObjectEnumerator];
+			VVView				*viewPtr;
+			while (viewPtr = [it nextObject])	{
+				//NSLog(@"\t\tview is %@",viewPtr);
+				//VVRECT				viewBounds = [viewPtr bounds];
+				VVRECT				viewFrameInMyLocalBounds = [viewPtr frame];
+				//VVRectLog(@"\t\tviewFrameInMyLocalBounds is",viewFrameInMyLocalBounds);
+				VVRECT				intersectRectInMyLocalBounds = VVINTERSECTIONRECT(r,viewFrameInMyLocalBounds);
+				if (intersectRectInMyLocalBounds.size.width>0 && intersectRectInMyLocalBounds.size.height>0)	{
+					//	update the intersect rect so it's local to the view i'm going to ask to draw
+					//intersectRectInMyLocalBounds.origin = VVMAKEPOINT(intersectRectInMyLocalBounds.origin.x-viewFrameInMyLocalBounds.origin.x, intersectRectInMyLocalBounds.origin.y-viewFrameInMyLocalBounds.origin.y);
+					//VVRectLog(@"\t\tintersectRectInMyLocalBounds is",intersectRectInMyLocalBounds);
+					//	apply transformation matrices so that when the view draws, its origin in GL is the correct location in the context
+					glMatrixMode(GL_MODELVIEW);
+					glPushMatrix();
+					glTranslatef(viewFrameInMyLocalBounds.origin.x*localToBackingBoundsMultiplier, viewFrameInMyLocalBounds.origin.y*localToBackingBoundsMultiplier, 0.0);
+					
+					//	calculate the rect (in the view's local coordinate space) of the are of the view i'm going to ask to draw
+					VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
+					viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+					NSAffineTransform		*rotTrans = [NSAffineTransform transform];
+					VVViewBoundsOrientation	viewBO = [viewPtr boundsOrientation];
+					if (viewBO != VVViewBOBottom)	{
+						switch (viewBO)	{
+							case VVViewBORight:
+								[rotTrans rotateByDegrees:-90.0];
+								break;
+							case VVViewBOTop:
+								[rotTrans rotateByDegrees:-180.0];
+								break;
+							case VVViewBOLeft:
+								[rotTrans rotateByDegrees:-270.0];
+								break;
+							case VVViewBOBottom:
+								break;
 						}
-						/*
-						VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
-						viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
-						NSAffineTransform		*rotTrans = [NSAffineTransform transform];
-						[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
 						viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
 						viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
+						//	...make sure the size is valid.  i don't understand why this step is necessary- i think it's a sign i may be doing something wrong.
 						viewBoundsToDraw.size = VVMAKESIZE(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
-						//viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
-						//VVRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
-						*/
-						
-						//	now tell the view to do its drawing!
-						[viewPtr
-							_drawRect:viewBoundsToDraw
-							inContext:cgl_ctx];
-						
-						glMatrixMode(GL_MODELVIEW);
-						glPopMatrix();
 					}
+					/*
+					VVRECT					viewBoundsToDraw = intersectRectInMyLocalBounds;
+					viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x-viewFrameInMyLocalBounds.origin.x, viewBoundsToDraw.origin.y-viewFrameInMyLocalBounds.origin.y);
+					NSAffineTransform		*rotTrans = [NSAffineTransform transform];
+					[rotTrans rotateByDegrees:-1.0*[viewPtr boundsRotation]];
+					viewBoundsToDraw.origin = [rotTrans transformPoint:viewBoundsToDraw.origin];
+					viewBoundsToDraw.size = [rotTrans transformSize:viewBoundsToDraw.size];
+					viewBoundsToDraw.size = VVMAKESIZE(fabs(viewBoundsToDraw.size.width), fabs(viewBoundsToDraw.size.height));
+					//viewBoundsToDraw.origin = VVMAKEPOINT(viewBoundsToDraw.origin.x+viewBounds.origin.x, viewBoundsToDraw.origin.y+viewBounds.origin.y);
+					//VVRectLog(@"\t\tviewBoundsToDraw is",viewBoundsToDraw);
+					*/
+					
+					//	now tell the view to do its drawing!
+					[viewPtr
+						_drawRect:viewBoundsToDraw
+						inContext:cgl_ctx];
+					
+					glMatrixMode(GL_MODELVIEW);
+					glPopMatrix();
 				}
-				//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
-				VVRECT		bounds = [self backingBounds];
-				glScissor(bounds.origin.x,bounds.origin.y,bounds.size.width,bounds.size.height);
-				glDisable(GL_SCISSOR_TEST);
 			}
+			//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
+			VVRECT		bounds = [self backingBounds];
+			glScissor(bounds.origin.x,bounds.origin.y,bounds.size.width,bounds.size.height);
+			glDisable(GL_SCISSOR_TEST);
+		}
 		[vvSubviews unlock];
 		
 		

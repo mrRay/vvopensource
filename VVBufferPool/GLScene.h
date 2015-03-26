@@ -90,6 +90,12 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p;
 ///	Init an instance of GLScene using the passed shared context and pixel format.  The GLScene will automatically be configured to render at the passed size.
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s;
+
+- (id) initWithContext:(NSOpenGLContext *)c;
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc;
+- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s;
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s;
+
 - (void) generalInit;
 - (void) prepareToBeDeleted;
 

@@ -47,40 +47,63 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(4,3)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+}
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
+}
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
+	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
-	if (self = [super initWithSharedContext:c pixelFormat:p sized:s])	{
-		//performClear = NO;
-		throwExceptions = NO;
-		filePath = nil;
-		fileName = nil;
-		fileDescription = nil;
-		fileCredits = nil;
-		categoryNames = [MUTARRAY retain];
-		inputs = [[MutLockArray alloc] init];
-		imageInputs = [[MutLockArray alloc] init];
-		imageImports = [[MutLockArray alloc] init];
-		renderSize = NSMakeSize(1,1);
-		swatch = [[VVStopwatch alloc] init];
-		bufferRequiresEval = NO;
-		persistentBufferArray = [[MutLockArray alloc] init];
-		tempBufferArray = [[MutLockArray alloc] init];
-		passes = [[MutLockArray alloc] init];
-		passIndex = 1;
-		jsonString = nil;
-		vertShaderSource = nil;
-		fragShaderSource = nil;
-		compiledInputTypeString = nil;
-		renderSizeUniformLoc = -1;
-		passIndexUniformLoc = -1;
-		timeUniformLoc = -1;
-		[self setRenderTarget:self];
-		[self setRenderSelector:@selector(renderCallback:)];
-		return self;
+	self = [super initWithSharedContext:c pixelFormat:p sized:s];
+	if (self!=nil)	{
 	}
-	[self release];
-	return nil;
+	return self;
+}
+- (id) initWithContext:(NSOpenGLContext *)c	{
+	return [self initWithContext:c sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
+	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+	return [self initWithContext:c sharedContext:nil sized:s];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+	self = [super initWithContext:c sharedContext:sc sized:s];
+	if (self!=nil)	{
+	}
+	return self;
+}
+- (void) generalInit	{
+	[super generalInit];
+	//performClear = NO;
+	throwExceptions = NO;
+	filePath = nil;
+	fileName = nil;
+	fileDescription = nil;
+	fileCredits = nil;
+	categoryNames = [MUTARRAY retain];
+	inputs = [[MutLockArray alloc] init];
+	imageInputs = [[MutLockArray alloc] init];
+	imageImports = [[MutLockArray alloc] init];
+	renderSize = NSMakeSize(1,1);
+	swatch = [[VVStopwatch alloc] init];
+	bufferRequiresEval = NO;
+	persistentBufferArray = [[MutLockArray alloc] init];
+	tempBufferArray = [[MutLockArray alloc] init];
+	passes = [[MutLockArray alloc] init];
+	passIndex = 1;
+	jsonString = nil;
+	vertShaderSource = nil;
+	fragShaderSource = nil;
+	compiledInputTypeString = nil;
+	renderSizeUniformLoc = -1;
+	passIndexUniformLoc = -1;
+	timeUniformLoc = -1;
+	[self setRenderTarget:self];
+	[self setRenderSelector:@selector(renderCallback:)];
 }
 - (void) dealloc	{
 	if (!deleted)
@@ -314,7 +337,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								[_ISFImportedImages lockSetObject:importedBuffer forKey:[fullPaths objectAtIndex:0]];
 								[importedBuffer release];
 								
-								//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+								
+							}
+							
+							//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+							if (importedBuffer!=nil)	{
 								ISFAttrib			*newAttrib = nil;
 								ISFAttribVal		minVal;
 								ISFAttribVal		maxVal;
@@ -380,8 +407,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								[importedBuffer setUserInfo:[NSNumber numberWithInt:1]];
 								[_ISFImportedImages lockSetObject:importedBuffer forKey:fullPath];
 								[importedBuffer release];
-								
-								//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+							}
+							
+							//	assuming i've imported or located the appropriate file, make an attrib for it and store it
+							if (importedBuffer!=nil)	{
 								ISFAttrib			*newAttrib = nil;
 								ISFAttribVal		minVal;
 								ISFAttribVal		maxVal;
@@ -409,14 +438,22 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				
 				//	if i'm importing files from a dictionary, execute the block on all the elements in the dict (each element is another dict describing the thing to import)
 				if ([anObj isKindOfClass:dictClass])	{
-					//	run through all of the keys in the dict
-					for (NSString *samplerName in [anObj allKeys])	{
-						//	the object for the key is the dict describing the element to import
-						NSDictionary	*subObj = [anObj objectForKey:samplerName];
-						if (subObj!=nil && [subObj isKindOfClass:dictClass])	{
-							parseImportedImageDict(subObj);
+					//	each key is the name by which the imported image will be available, and the object is the dict describing the image to import
+					[anObj enumerateKeysAndObjectsUsingBlock:^(id importDictKey, id importDict, BOOL *stop)	{
+						if ([importDict isKindOfClass:[NSDictionary class]])	{
+							//	if the import dict doesn't have a "NAME" key, make a new mut dict and add it
+							if ([importDict objectForKey:@"NAME"]==nil)	{
+								NSMutableDictionary		*tmpMutDict = [importDict mutableCopy];
+								[tmpMutDict setObject:importDictKey forKey:@"NAME"];
+								parseImportedImageDict(tmpMutDict);
+								[tmpMutDict autorelease];
+							}
+							//	else the import dict already had a name key, just add it straightaway
+							else	{
+								parseImportedImageDict(importDict);
+							}
 						}
-					}
+					}];
 				}
 				//	else it's an array- an array full of dictionaries, each of which describes a file to import
 				else if ([anObj isKindOfClass:arrayClass])	{
@@ -844,12 +881,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//NSSizeLog(@"\t\ttargetBufferSize is",targetBufferSize);
 		//NSLog(@"\t\ttargetBuffer is %@, size is %0.2f x %0.2f",targetBuffer,targetBufferSize.width,targetBufferSize.height);
 		
-		//	create an FBO and depth buffer
-		targetFBO = [_globalVVBufferPool allocFBO];
-		targetDepth = [_globalVVBufferPool allocDepthSized:targetBufferSize];
 		//	create a buffer of the appropriate size (if this is the last pass, observe the 2D texture preference from the method)
 		if (passIndex >= [passes count])	{
-			targetColorTex = [b retain];
+			targetColorTex = (b==nil) ? nil : [b retain];
 			//NSLog(@"\t\tlast pass, rendering into %@",targetColorTex);
 		}
 		else	{
@@ -858,24 +892,26 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				: [_globalVVBufferPool allocBGRTexSized:targetBufferSize];
 			//NSLog(@"\t\tgenerated targetColorTex %@",targetColorTex);
 		}
-		
-		if (targetFBO!=nil && targetDepth!=nil && targetColorTex!=nil)	{
-			//	render this pass!
-			[self setSize:targetBufferSize];
-			[self
-				renderInMSAAFBO:0
-				colorRB:0
-				depthRB:0
-				fbo:[targetFBO name]
-				colorTex:[targetColorTex name]
-				depthTex:[targetDepth name]
-				target:[targetColorTex target]];
+		//	if i've got a targetColorTex to render into, make a depth buffer and FBO
+		if (targetColorTex!=nil)	{
+			//	create an FBO and depth buffer
+			targetFBO = [_globalVVBufferPool allocFBO];
+			targetDepth = [_globalVVBufferPool allocDepthSized:targetBufferSize];
 		}
-		else
-			NSLog(@"\t\terr: missing component to render, %s",__func__);
+		
+		//	render this pass!
+		[self setSize:targetBufferSize];
+		[self
+			renderInMSAAFBO:0
+			colorRB:0
+			depthRB:0
+			fbo:((targetFBO==nil) ? 0 : [targetFBO name])
+			colorTex:((targetColorTex==nil) ? 0 : [targetColorTex name])
+			depthTex:((targetDepth==nil) ? 0 : [targetDepth name])
+			target:((targetColorTex==nil) ? GL_TEXTURE_RECTANGLE_EXT : [targetColorTex target])];
 		
 		//	if there's an image dict, add the frame i just rendered into to it at the appropriate index/key
-		if (d != nil)	{
+		if (d!=nil && targetColorTex!=nil)	{
 			[d setObject:targetColorTex forKey:NUMINT(passIndex-1)];
 		}
 		
@@ -899,7 +935,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	if there's a pass dict...
 	if (d != nil)	{
 		//	add the buffer i rendered into (this is the "output" buffer, and is stored at key "-1")
-		[d setObject:b forKey:NUMINT(-1)];
+		if (b!=nil)
+			[d setObject:b forKey:NUMINT(-1)];
 		//	add the buffers for the various image inputs at keys going from 100-199
 		[imageInputs rdlock];
 		for (int i=0; i<[imageInputs count]; ++i)	{
@@ -943,6 +980,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	
 	VVRELEASE(subDict);
+}
+- (void) render	{
+	[self renderToBuffer:nil sized:size renderTime:[swatch timeSinceStart] passDict:nil];
 }
 
 

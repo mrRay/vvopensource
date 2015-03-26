@@ -278,6 +278,7 @@ BOOL			_nvidiaGPUFlag = NO;
 - (id) init	{
 	self = [super init];
 	if (self!=nil)	{
+		context = nil;
 		sharedContext = nil;
 		customPixelFormat = nil;
 		size = NSMakeSize(80,60);
@@ -296,6 +297,33 @@ BOOL			_nvidiaGPUFlag = NO;
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
 	if ((c==nil)||(p==nil)||(s.width<1)||(s.height<1))	{
+		NSLog(@"\t\terr: %s - BAIL, %@",__func__,self);
+		NSLog(@"\t\terr: %@",c);
+		NSLog(@"\t\terr: %f x %f",s.width,s.height);
+		[self release];
+		return nil;
+	}
+	self = [super init];
+	if (self!=nil)	{
+		context = nil;
+		sharedContext = c;
+		customPixelFormat = [p retain];
+		size = s;
+		[self generalInit];
+	}
+	return self;
+}
+- (id) initWithContext:(NSOpenGLContext *)c	{
+	return [self initWithContext:c sharedContext:nil sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
+	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+	return [self initWithContext:c sharedContext:nil sized:s];
+}
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+	if (c==nil || (s.width<1) || (s.height<1))	{
 		NSLog(@"\t\terr: %s - BAIL",__func__);
 		NSLog(@"\t\terr: %@",c);
 		NSLog(@"\t\terr: %f x %f",s.width,s.height);
@@ -304,8 +332,8 @@ BOOL			_nvidiaGPUFlag = NO;
 	}
 	self = [super init];
 	if (self!=nil)	{
-		sharedContext = c;
-		customPixelFormat = [p retain];
+		context = (c==nil) ? nil : [c retain];
+		sharedContext = sc;
 		size = s;
 		[self generalInit];
 	}
@@ -314,7 +342,7 @@ BOOL			_nvidiaGPUFlag = NO;
 - (void) generalInit	{
 	//NSLog(@"%s",__func__);
 	//context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
-	context = nil;
+	//context = nil;
 	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
 	colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
