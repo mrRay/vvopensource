@@ -423,6 +423,48 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		return YES;
 	return NO;
 }
+- (BOOL) isNPOT2DTex	{
+	BOOL		returnMe = YES;
+	if (descriptor.target==GL_TEXTURE_2D)	{
+		int			tmpInt;
+		tmpInt = 1;
+		while (tmpInt<size.width)	{
+			tmpInt <<= 1;
+		}
+		if (tmpInt==size.width)	{
+			tmpInt = 1;
+			while (tmpInt<size.height)	{
+				tmpInt<<=1;
+			}
+			if (tmpInt==size.height)
+				returnMe = NO;
+		}
+	}
+	else
+		returnMe = NO;
+	return returnMe;
+}
+- (BOOL) isPOT2DTex	{
+	BOOL		returnMe = NO;
+	if (descriptor.target==GL_TEXTURE_2D)	{
+		int			tmpInt;
+		tmpInt = 1;
+		while (tmpInt<size.width)	{
+			tmpInt <<= 1;
+		}
+		if (tmpInt==size.width)	{
+			tmpInt = 1;
+			while (tmpInt<size.height)	{
+				tmpInt<<=1;
+			}
+			if (tmpInt==size.height)
+				returnMe = YES;
+		}
+	}
+	else
+		returnMe = NO;
+	return returnMe;
+}
 - (GLuint) name	{
 	return descriptor.name;
 }

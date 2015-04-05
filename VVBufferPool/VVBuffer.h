@@ -202,6 +202,8 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 - (NSRect) srcRectCroppedWith:(NSRect)cropRect takingFlipIntoAccount:(BOOL)f;
 ///	Returns YES if "srcRect" has an origin at 0,0 and a size that matches the texture size!
 @property (readonly) BOOL isFullFrame;
+@property (readonly) BOOL isNPOT2DTex;
+@property (readonly) BOOL isPOT2DTex;
 ///	The actual name of the underlying GL resource- when you want to draw a texture, this is what you bind.  You'll probably only need to use this if you're writing your own GL drawing commands.
 @property (readonly) GLuint name;
 ///	If this VVBuffer has an underlying GL resource, this returns the target of the resource.  By default, this is usually GL_TEXTURE_RECTANGLE_EXT, though it may also be GL_TEXTURE_2D.
