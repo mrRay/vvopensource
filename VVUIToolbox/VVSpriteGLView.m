@@ -620,6 +620,9 @@ long			_spriteGLViewSysVers;
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
+	
+	long				swap = 1;
+	[[self openGLContext] setValues:(GLint *)&swap forParameter:NSOpenGLCPSwapInterval];
 }
 - (void) _glContextNeedsRefresh:(NSNotification *)note	{
 	[self setSpritesNeedUpdate:YES];
