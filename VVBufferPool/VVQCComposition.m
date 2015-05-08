@@ -501,10 +501,10 @@
 
 
 - (NSDictionary *) publishedInputsDict	{
-	return publishedInputsDict;
+	return [[publishedInputsDict retain] autorelease];
 }
 - (NSDictionary *) publishedOutputsDict	{
-	return publishedOutputsDict;
+	return [[publishedOutputsDict retain] autorelease];
 }
 - (NSString *) compositionName	{
 	if (compositionPath == nil)
@@ -517,10 +517,10 @@
 
 
 - (NSString *) compositionPath	{
-	return compositionPath;
+	return [[compositionPath retain] autorelease];
 }
 - (NSArray *) inputKeys	{
-	return inputKeys;
+	return [[inputKeys retain] autorelease];
 	/*
 	if (publishedInputsDict == nil)
 		return nil;

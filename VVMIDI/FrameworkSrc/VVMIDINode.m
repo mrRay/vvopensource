@@ -857,20 +857,30 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 										if (err != noErr)
 											NSLog(@"\t\terr %ld getting SMPTE format in %s",err,__func__);
 										CAClockTime				tmpTime;
-										tmpTime.format = kCAClockTimeFormat_SMPTETime;
-										tmpTime.time.smpte.mSubframes = 8;	//	untested, not sure if correct
+										tmpTime.format = kCAClockTimeFormat_SMPTESeconds;
+										tmpTime.time.smpte.mSubframes = 0;	//	untested, not sure if correct
 										tmpTime.time.smpte.mSubframeDivisor = 80;	//	untested, not sure if correct
 										tmpTime.time.smpte.mCounter = 0;	//	untested, not sure if correct
 										tmpTime.time.smpte.mType = clockSMPTEFormat;	//	untested, not sure if correct
-										tmpTime.time.smpte.mFlags = kSMPTETimeValid;	//	untested, not sure if correct
-										tmpTime.time.smpte.mHours = [[sysex objectAtIndex:5] intValue];
-										tmpTime.time.smpte.mMinutes = [[sysex objectAtIndex:6] intValue];
-										tmpTime.time.smpte.mSeconds = [[sysex objectAtIndex:7] intValue];
-										tmpTime.time.smpte.mFrames = [[sysex objectAtIndex:8] intValue];
-										err = CAClockSetCurrentTime(tmpClock, &tmpTime);
-										if (err != noErr)
-											NSLog(@"\t\terr %ld at CAClockSetCurrentTime() in %s",err,__func__);
+										tmpTime.time.smpte.mFlags = 0;	//	untested, not sure if correct
+										tmpTime.time.smpte.mHours = [[sysex objectAtIndex:4] intValue];
+										tmpTime.time.smpte.mMinutes = [[sysex objectAtIndex:5] intValue];
+										tmpTime.time.smpte.mSeconds = [[sysex objectAtIndex:6] intValue];
+										tmpTime.time.smpte.mFrames = [[sysex objectAtIndex:7] intValue];
 										
+										err = CAClockStop(tmpClock);
+										if (err!=noErr)
+											NSLog(@"\t\terr %ld at CAClockStop() in %s",err,__func__);
+										else	{
+											err = CAClockSetCurrentTime(tmpClock, &tmpTime);
+											if (err != noErr)
+												NSLog(@"\t\terr %ld at CAClockSetCurrentTime() in %s",err,__func__);
+											else	{
+												err = CAClockStart(tmpClock);
+												if (err!=noErr)
+													NSLog(@"\t\terr %ld at CAClockStart() in %s",err,__func__);
+											}
+										}
 									}
 									[msgs addObject:newMsg];
 								}

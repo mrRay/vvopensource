@@ -78,6 +78,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 - (void) generalInit	{
 	[super generalInit];
+	propertyLock = OS_SPINLOCK_INIT;
 	//performClear = NO;
 	throwExceptions = NO;
 	filePath = nil;
@@ -108,10 +109,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
+	OSSpinLockLock(&propertyLock);
 	VVRELEASE(filePath);
 	VVRELEASE(fileName);
 	VVRELEASE(fileDescription);
 	VVRELEASE(fileCredits);
+	OSSpinLockUnlock(&propertyLock);
 	VVRELEASE(categoryNames);
 	VVRELEASE(inputs);
 	VVRELEASE(imageInputs);
@@ -121,10 +124,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(persistentBufferArray);
 	VVRELEASE(tempBufferArray);
 	VVRELEASE(passes);
+	OSSpinLockLock(&srcLock);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
+	OSSpinLockUnlock(&srcLock);
 	[super dealloc];
 }
 
@@ -134,11 +139,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 - (void) useFile:(NSString *)p resetTimer:(BOOL)r	{
 	//NSLog(@"%s ... %@",__func__,p);
+	OSSpinLockLock(&propertyLock);
 	VVRELEASE(filePath);
 	VVRELEASE(fileName);
 	VVRELEASE(fileDescription);
 	VVRELEASE(fileCredits);
 	VVRELEASE(categoryNames);
+	OSSpinLockUnlock(&propertyLock);
 	[inputs lockRemoveAllObjects];
 	[imageInputs lockRemoveAllObjects];
 	[self _clearImageImports];
@@ -146,10 +153,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[persistentBufferArray lockRemoveAllObjects];
 	[tempBufferArray lockRemoveAllObjects];
 	[passes lockRemoveAllObjects];
+	
+	OSSpinLockLock(&srcLock);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
+	OSSpinLockUnlock(&srcLock);
 	
 	pthread_mutex_lock(&renderLock);
 	VVRELEASE(vertexShaderString);
@@ -176,8 +186,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		return;
 	}
 	
+	OSSpinLockLock(&propertyLock);
+	NSString		*localFilePath = p;
+	NSString		*localFileName = [p lastPathComponent];
 	filePath = [p retain];
-	fileName = [[p lastPathComponent] retain];
+	fileName = [localFileName retain];
+	OSSpinLockUnlock(&propertyLock);
+	
 	//	there should be a JSON blob at the very beginning of the file describing the script's attributes and parameters- this is inside comments...
 	NSRange			openCommentRange;
 	NSRange			closeCommentRange;
@@ -195,28 +210,43 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 	else	{
 		//	remove the JSON blob, save it as one string- save everything else as the raw shader source string
+		OSSpinLockLock(&srcLock);
+		VVRELEASE(fragShaderSource);
+		VVRELEASE(jsonString);
 		fragShaderSource = [[rawFile substringWithRange:NSMakeRange(closeCommentRange.location+closeCommentRange.length, [rawFile length]-(closeCommentRange.location+closeCommentRange.length))] retain];
 		jsonString = [[rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))] retain];
 		//	parse the JSON dict, turning it into a dictionary and values
 		id				jsonObject = [jsonString objectFromJSONString];
+		OSSpinLockUnlock(&srcLock);
+		
 		//	run through the dictionaries and values parsed from JSON, creating the appropriate attributes
 		if (![jsonObject isKindOfClass:dictClass])	{
-			NSLog(@"\t\terr: jsonObject was wrong class, %@",filePath);
+			NSLog(@"\t\terr: jsonObject was wrong class, %@",localFilePath);
 			if (throwExceptions)
 				[NSException raise:@"Malformed JSON Blob" format:@"JSON blob in file %@ was malformed in some way",p];
 			return;
 		}
 		else	{
-			fileDescription = [jsonObject objectForKey:@"DESCRIPTION"];
-			if (fileDescription != nil && [fileDescription isKindOfClass:stringClass])
-				[fileDescription retain];
-			fileCredits = [jsonObject objectForKey:@"CREDIT"];
-			if (fileCredits != nil && [fileCredits isKindOfClass:stringClass])
-				[fileCredits retain];
+			NSString		*localFileDescription = [jsonObject objectForKey:@"DESCRIPTION"];
+			NSString		*localFileCredits = [jsonObject objectForKey:@"CREDIT"];
 			NSArray			*catsArray = [jsonObject objectForKey:@"CATEGORIES"];
+			
+			OSSpinLockLock(&propertyLock);
+			if (localFileDescription!=nil && [localFileDescription isKindOfClass:stringClass])	{
+				VVRELEASE(fileDescription);
+				fileDescription = [localFileDescription retain];
+			}
+			if (localFileCredits!=nil && [localFileCredits isKindOfClass:stringClass])	{
+				VVRELEASE(fileCredits);
+				fileCredits = [localFileCredits retain];
+			}
 			if (catsArray!=nil && [catsArray isKindOfClass:arrayClass])	{
+				VVRELEASE(categoryNames);
 				categoryNames = [catsArray mutableCopy];
 			}
+			OSSpinLockUnlock(&propertyLock);
+			
+			
 			//	parse the persistent buffers from the JSON dict
 			id				anObj = [jsonObject objectForKey:@"PERSISTENT_BUFFERS"];
 			if (anObj != nil)	{
@@ -748,16 +778,24 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSString		*tmpPath = nil;
 	NSFileManager	*fm = [NSFileManager defaultManager];
 	tmpPath = VVFMTSTRING(@"%@.vs",noExtPath);
-	if ([fm fileExistsAtPath:tmpPath])
+	if ([fm fileExistsAtPath:tmpPath])	{
+		OSSpinLockLock(&srcLock);
 		vertShaderSource = [[NSString stringWithContentsOfFile:tmpPath encoding:NSUTF8StringEncoding error:nil] retain];
+		OSSpinLockUnlock(&srcLock);
+	}
 	else	{
 		tmpPath = VVFMTSTRING(@"%@.vert",noExtPath);
-		if ([fm fileExistsAtPath:tmpPath])
+		if ([fm fileExistsAtPath:tmpPath])	{
+			OSSpinLockLock(&srcLock);
 			vertShaderSource = [[NSString stringWithContentsOfFile:tmpPath encoding:NSUTF8StringEncoding error:nil] retain];
+			OSSpinLockUnlock(&srcLock);
+		}
 		else	{
+			OSSpinLockLock(&srcLock);
 			//tmpPath = [[NSBundle mainBundle] pathForResource:@"ISFGLScenePassthru" ofType:@"vs"];
 			//if (tmpPath != nil)
 				vertShaderSource = [_ISFVertPassthru retain];
+			OSSpinLockUnlock(&srcLock);
 		}
 	}
 	
@@ -1017,7 +1055,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
+		OSSpinLockLock(&srcLock);
 		[modSrcString appendString:fragShaderSource];
+		OSSpinLockUnlock(&srcLock);
 		
 		//	now find-and-replace IMGPIXEL
 		//NSLog(@"**************************************");
@@ -1247,7 +1287,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
+		OSSpinLockLock(&srcLock);
 		[modSrcString appendString:vertShaderSource];
+		OSSpinLockUnlock(&srcLock);
 		
 		//	now find-and-replace IMGPIXEL
 		//NSLog(@"**************************************");
@@ -1670,13 +1712,18 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[tempBufferArray unlock];
 	
 	
+	OSSpinLockLock(&srcLock);
 	//	if the string i just assembled doesn't match the current compiledInputTypeString
 	if (compiledInputTypeString==nil || ![compiledInputTypeString isEqualToString:tmpMutString])	{
 		//NSLog(@"\t\tlast input type string doesn't match current, re-assembling shader src");
 		VVRELEASE(compiledInputTypeString);
 		compiledInputTypeString = [tmpMutString copy];
+		OSSpinLockUnlock(&srcLock);
+		
 		[self _assembleShaderSource];
 	}
+	else
+		OSSpinLockUnlock(&srcLock);
 	
 	
 	//	store these values, then check them after the super's "_renderPrep"...
@@ -2028,7 +2075,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	free(tmpCString);
 	
 	
-	
+	OSSpinLockLock(&srcLock);
 	if (findNewUniforms)	{
 		renderSizeUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "RENDERSIZE");
 		passIndexUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "PASSINDEX");
@@ -2040,7 +2087,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		glUniform1i(passIndexUniformLoc, passIndex-1);
 	if (timeUniformLoc >= 0)
 		glUniform1f(timeUniformLoc, renderTime);
-	
+	OSSpinLockUnlock(&srcLock);
 }
 - (void) renderCallback:(GLScene *)s	{
 	//NSLog(@"%s",__func__);
@@ -2306,11 +2353,41 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 
 
 @synthesize throwExceptions;
-@synthesize filePath;
-@synthesize fileName;
-@synthesize fileDescription;
-@synthesize fileCredits;
-@synthesize categoryNames;
+- (NSString *) filePath	{
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&propertyLock);
+	returnMe = (filePath==nil) ? nil : [[filePath retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
+- (NSString *) fileName	{
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&propertyLock);
+	returnMe = (fileName==nil) ? nil : [[fileName retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
+- (NSString *) fileDescription	{
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&propertyLock);
+	returnMe = (fileDescription==nil) ? nil : [[fileDescription retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
+- (NSString *) fileCredits	{
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&propertyLock);
+	returnMe = (fileCredits==nil) ? nil : [[fileCredits retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
+- (NSArray *) categoryNames	{
+	NSArray		*returnMe = nil;
+	OSSpinLockLock(&propertyLock);
+	returnMe = (categoryNames==nil) ? nil : [[categoryNames retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
 @synthesize inputs;
 @synthesize imageInputs;
 @synthesize renderSize;
@@ -2325,19 +2402,31 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	return (int)[imageInputs lockCount];
 }
 - (NSString *) jsonString	{
-	if (deleted || jsonString==nil)
+	if (deleted)
 		return nil;
-	return jsonString;
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&srcLock);
+	returnMe = (jsonString==nil) ? nil : [[jsonString retain] autorelease];
+	OSSpinLockUnlock(&srcLock);
+	return returnMe;
 }
 - (NSString *) vertShaderSource	{
-	if (deleted || vertShaderSource==nil)
+	if (deleted)
 		return nil;
-	return [[vertShaderSource retain] autorelease];
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&srcLock);
+	returnMe = (vertShaderSource==nil) ? nil : [[vertShaderSource retain] autorelease];
+	OSSpinLockUnlock(&srcLock);
+	return returnMe;
 }
 - (NSString *) fragShaderSource	{
-	if (deleted || fragShaderSource==nil)
+	if (deleted)
 		return nil;
-	return [[fragShaderSource retain] autorelease];
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&srcLock);
+	returnMe = (fragShaderSource==nil) ? nil : [[fragShaderSource retain] autorelease];
+	OSSpinLockUnlock(&srcLock);
+	return returnMe;
 }
 
 

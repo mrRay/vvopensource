@@ -426,16 +426,16 @@ pthread_mutex_t			_globalQCContextLock;
 
 
 - (NSString *) filePath	{
-	return filePath;
+	return [[filePath retain] autorelease];
 }
 - (VVQCComposition *) comp	{
-	return comp;
+	return [[comp retain] autorelease];
 }
 - (QCRenderer *) renderer	{
-	return renderer;
+	return [[renderer retain] autorelease];
 }
 - (MutLockArray *) mouseEventArray	{
-	return mouseEventArray;
+	return [[mouseEventArray retain] autorelease];
 }
 
 

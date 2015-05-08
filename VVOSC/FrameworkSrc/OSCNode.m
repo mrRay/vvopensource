@@ -143,6 +143,11 @@
 		queryDelegateArray = nil;
 	}
 	*/
+	[nodeContents rdlock];
+	for (OSCNode *nodePtr in [nodeContents array])	{
+		[nodePtr prepareToBeDeleted];
+	}
+	[nodeContents unlock];
 	autoQueryReply = NO;
 	queryDelegate = nil;
 	deleted = YES;
@@ -913,11 +918,20 @@
 	//NSLog(@"%s",__func__);
 	//	if there's a parent node and it doesn't match the current parent node then the parent node changed
 	BOOL			parentNodeChanged = (parentNode!=n && n!=nil)?YES:NO;
+	//	if the new parent node is nil, i'm removing this node from the address space and i need to inform my delegates
+	BOOL			deletingThisNode = (parentNode!=nil && n==nil) ? YES : NO;
 	parentNode = n;
 	
 	//	if the parent node changed, inform my delegates of the name change
 	if (parentNodeChanged)
 		[self informDelegatesOfNameChange];
+	//	if i'm deleting this node, inform my delegates of it
+	if (deletingThisNode)	{
+		[delegateArray wrlock];
+			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
+			[delegateArray removeAllObjects];
+		[delegateArray unlock];
+	}
 }
 - (OSCNode *) parentNode	{
 	return parentNode;

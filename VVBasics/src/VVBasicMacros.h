@@ -356,3 +356,13 @@ NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSStri
 	}									\
 }
 
+
+
+
+#define APPKIT_TMPBLOCK_MAINTHREAD	{	\
+	if (![NSThread isMainThread])	\
+		dispatch_async(dispatch_get_main_queue(), tmpBlock);	\
+	else	\
+		tmpBlock();	\
+}
+

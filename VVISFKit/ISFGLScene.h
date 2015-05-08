@@ -27,11 +27,14 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 */
 @interface ISFGLScene : GLShaderScene	{
 	BOOL				throwExceptions;	//	NO by default
+	
+	OSSpinLock			propertyLock;	//	locks the file* vars and categoryNames (everything before the empty line)
 	NSString			*filePath;	//	full path to the loaded file
 	NSString			*fileName;	//	just the file name (including its extension)
 	NSString			*fileDescription;	//	description of whatever the file does
 	NSString			*fileCredits;	//	credits
 	NSMutableArray		*categoryNames;	//	array of NSStrings of the category names this filter should be listed under
+	
 	MutLockArray		*inputs;	//	array of ISFAttrib instances for the various inputs
 	MutLockArray		*imageInputs;	//	array of ISFAttrib instances for the image inputs (the image inputs are stored in two arrays).
 	MutLockArray		*imageImports;	//	array of ISFAttrib instances that describe imported images. 'attribName' is the name of the sampler, 'attribDescription' is the path to the file.
@@ -46,6 +49,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	
 	int					passIndex;	//	only has a valid value while rendering
 	
+	OSSpinLock			srcLock;
 	NSString			*jsonString;	//	the raw JSON string copied from the source
 	NSString			*vertShaderSource;	//	the raw vert shader source before being find-and-replaced
 	NSString			*fragShaderSource;	//	the raw frag shader source before being find-and-replaced

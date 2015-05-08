@@ -395,7 +395,9 @@ pthread_mutex_t			_globalCIContextLock;
 
 @synthesize workingColorSpace;
 @synthesize outputColorSpace;
-@synthesize ciContext;
+- (CIContext *) ciContext	{
+	return [[ciContext retain] autorelease];
+}
 - (void) setCleanupDelegate:(id <CIGLSceneCleanup>)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	//NSLog(@"\t\tconforms is %d",[(NSObject *)n conformsToProtocol:@protocol(CIGLSceneCleanup)]);
