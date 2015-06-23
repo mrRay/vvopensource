@@ -148,6 +148,8 @@
 
 
 - (void) check	{
+	[self checkServerAndLogs];
+	/*
 	//	clear the crash log array
 	[crashLogArray lockRemoveAllObjects];
 	
@@ -178,6 +180,64 @@
 	
 	//	if i'm here, there are logs which need to be sent and the server's available- open the reporter!
 	[self openCrashReporter];
+	return;
+	
+	//	jump here if check gets cancelled or there's nothing to send in!
+	BAIL:
+	//	tell the delegate that the check's been finished
+	if (delegate != nil)	{
+		if ([delegate respondsToSelector:@selector(crashReporterCheckDone:)])
+			[delegate crashReporterCheckDone:((crashLogArray!=nil)&&([crashLogArray count]>0))?YES:NO];
+		else if ([delegate respondsToSelector:@selector(crashReporterCheckDone)])
+			[delegate crashReporterCheckDone];
+	}
+	*/
+}
+- (void) checkLogs	{
+	//	clear the crash log array
+	[crashLogArray lockRemoveAllObjects];
+	
+	//	if the upload URL is nil, bail
+	if (uploadURL == nil)
+		goto BAIL;
+	
+	//	assemble the crash logs- if there aren't any, bail
+	if (![self _assembleCrashLogs] || [crashLogArray count]<1)
+		goto BAIL;
+	
+	//	if i'm here, there are logs which need to be sent and the server's available- open the reporter!
+	[self openCrashReporter];
+	return;
+	
+	//	jump here if check gets cancelled or there's nothing to send in!
+	BAIL:
+	//	tell the delegate that the check's been finished
+	if (delegate != nil)	{
+		if ([delegate respondsToSelector:@selector(crashReporterCheckDone:)])
+			[delegate crashReporterCheckDone:((crashLogArray!=nil)&&([crashLogArray count]>0))?YES:NO];
+		else if ([delegate respondsToSelector:@selector(crashReporterCheckDone)])
+			[delegate crashReporterCheckDone];
+	}
+}
+- (void) checkServerAndLogs	{
+	//	check to see if the domain's reachable with the given network configuration
+	if (domainToCheck != nil)	{
+		SCNetworkReachabilityRef	target;
+		SCNetworkConnectionFlags	flags = 0;
+		target = SCNetworkReachabilityCreateWithName(NULL,[domainToCheck UTF8String]);
+		BOOL						foundServer = (target==NULL)?NO:SCNetworkReachabilityGetFlags(target,&flags);
+		if (target != NULL)	{
+			CFRelease(target);
+			target = NULL;
+		}
+		BOOL						reachable = foundServer && (flags & kSCNetworkReachabilityFlagsReachable) && !(flags & kSCNetworkReachabilityFlagsConnectionRequired);
+		
+		//	if it's not reachable, bail
+		if (!reachable)
+			goto BAIL;
+	}
+	
+	[self checkLogs];
 	return;
 	
 	//	jump here if check gets cancelled or there's nothing to send in!
