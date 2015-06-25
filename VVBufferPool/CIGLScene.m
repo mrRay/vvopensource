@@ -353,7 +353,8 @@ pthread_mutex_t			_globalCIContextLock;
 }
 - (void) _reshape	{
 	//	release the CI context (i'll have to get another one)
-	VVRELEASE(ciContext);
+	//VVRELEASE(ciContext);
+	
 	//	tell the super to do its reshape- this takes care of the actual GL stuff
 	[super _reshape];
 	
@@ -374,21 +375,21 @@ pthread_mutex_t			_globalCIContextLock;
 	
 	if (ciContext == nil)	{
 #if (defined(MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1060))
-	ciContext = [CIContext
-		contextWithCGLContext:[context CGLContextObj]
-		pixelFormat:[customPixelFormat CGLPixelFormatObj]
-		colorSpace:workingColorSpace
-		options:[NSDictionary dictionaryWithObjectsAndKeys:
-			(id)outputColorSpace, kCIContextOutputColorSpace,
-			(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
+		ciContext = [CIContext
+			contextWithCGLContext:[context CGLContextObj]
+			pixelFormat:[customPixelFormat CGLPixelFormatObj]
+			colorSpace:workingColorSpace
+			options:[NSDictionary dictionaryWithObjectsAndKeys:
+				(id)outputColorSpace, kCIContextOutputColorSpace,
+				(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
 #else
-	//NSLog(@"\t\tcreating CIContext for CGLContextObj %p",[context CGLContextObj]);
-	ciContext = [CIContext
-		contextWithCGLContext:[context CGLContextObj]
-		pixelFormat:[customPixelFormat CGLPixelFormatObj]
-		options:[NSDictionary dictionaryWithObjectsAndKeys:
-			(id)outputColorSpace, kCIContextOutputColorSpace,
-			(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
+		//NSLog(@"\t\tcreating CIContext for CGLContextObj %p",[context CGLContextObj]);
+		ciContext = [CIContext
+			contextWithCGLContext:[context CGLContextObj]
+			pixelFormat:[customPixelFormat CGLPixelFormatObj]
+			options:[NSDictionary dictionaryWithObjectsAndKeys:
+				(id)outputColorSpace, kCIContextOutputColorSpace,
+				(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
 #endif
 	}
 	if (ciContext != nil)
