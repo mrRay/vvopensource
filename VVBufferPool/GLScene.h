@@ -8,9 +8,11 @@
 
 
 extern OSSpinLock		_glSceneStatLock;
-extern NSMutableArray	*_gpuVendorArray;
+extern NSMutableArray	*_glGPUVendorArray;
+extern NSMutableArray	*_hwGPUVendorArray;
 extern BOOL				_integratedGPUFlag;	//	whether or not the scene is rendering on an integrated GPU
 extern BOOL				_nvidiaGPUFlag;	//	whether or not the scene is rendering on an NVIDIA GPU
+extern BOOL				_hasIntegratedAndDiscreteGPUsFlag;
 
 typedef NS_ENUM(NSInteger, VVGLFlushMode)	{
 	VVGLFlushModeGL = 0,	//	glFlush()

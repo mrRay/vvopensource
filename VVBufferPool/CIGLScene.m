@@ -131,6 +131,9 @@ pthread_mutex_t			_globalCIContextLock;
 }
 
 - (void) _renderPrep	{
+	if (context==_globalCIContextGLContext)
+		needsReshape = YES;
+	
 	[super _renderPrep];
 	
 	if (deleted)

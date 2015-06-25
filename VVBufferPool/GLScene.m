@@ -2,14 +2,18 @@
 #import <OpenGL/CGLMacro.h>
 #import "RenderThread.h"
 #import "VVBufferPool.h"
+#import <IOKit/IOKitLib.h>
+#import <IOKit/IOKitKeys.h>
 
 
 
 
 OSSpinLock		_glSceneStatLock;
-NSMutableArray	*_gpuVendorArray = nil;
+NSMutableArray	*_glGPUVendorArray = nil;
+NSMutableArray	*_hwGPUVendorArray = NULL;
 BOOL			_integratedGPUFlag = NO;
 BOOL			_nvidiaGPUFlag = NO;
+BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 
 
 
@@ -18,81 +22,135 @@ BOOL			_nvidiaGPUFlag = NO;
 
 + (void) load	{
 	_glSceneStatLock = OS_SPINLOCK_INIT;
-	_gpuVendorArray = nil;
+	_glGPUVendorArray = nil;
+	_hwGPUVendorArray = nil;
 	_integratedGPUFlag = NO;
 }
 + (void) initialize	{
-	if (_gpuVendorArray==nil)
+	if (_glGPUVendorArray==nil)	{
 		[self gpuVendorArray];
+	}
 }
 + (NSMutableArray *) gpuVendorArray	{
 	NSMutableArray		*returnMe = MUTARRAY;
 	
 	OSSpinLockLock(&_glSceneStatLock);
 	//	if there's no global GPU vendor array, create it
-	if (_gpuVendorArray == nil)	{
+	if (_glGPUVendorArray == nil)	{
+		_glGPUVendorArray = [[NSMutableArray arrayWithCapacity:0] retain];
 		CGDisplayCount			dCnt;
 		CGLContextObj			curr_ctx = 0;
 		CGDirectDisplayID		dspys[32];
 		CGDisplayErr			theErr;
 		short					i;
 		NSString				*tmpString = nil;
-		BOOL					tmpIntegratedFlag = NO;
-		BOOL					tmpNVIDIAFlag = NO;
 		dCnt = 0;
 		
 		theErr = CGGetActiveDisplayList(32, dspys, &dCnt);
-		if (theErr) goto BAIL; // theErr getting list
-		if (0 == dCnt) goto BAIL; // no displays
-		
-		for (i = 0; i < dCnt; i++) {
-			CGOpenGLDisplayMask		cglDisplayMask; // CGL display mask
-			
-			cglDisplayMask = CGDisplayIDToOpenGLDisplayMask(dspys[i]);
-			// build context and context specific info
-			CGLPixelFormatAttribute		attribs[] = {	kCGLPFADisplayMask,
-												//dCaps[i].cglDisplayMask,
-												cglDisplayMask,
-												(CGLPixelFormatAttribute)0		};
-			CGLPixelFormatObj			pixelFormat = NULL;
-			long						numPixelFormats = 0;
-			CGLContextObj				cglContext;
-			CGLContextObj				cgl_ctx;
-			
-			curr_ctx = CGLGetCurrentContext (); // get current CGL context
-			CGLChoosePixelFormat (attribs, &pixelFormat, (GLint *)&numPixelFormats);
-			if (pixelFormat) {
-				CGLCreateContext(pixelFormat, NULL, &cglContext);
-				CGLDestroyPixelFormat (pixelFormat);
-				CGLSetCurrentContext (cglContext);
-				if (cglContext) {
-					const GLubyte				*strVend;
+		if (theErr)
+			NSLog(@"\t\terr: %d at CGGetACtiveDisplayList() in %s",theErr,__func__);
+		else	{
+			//	first we're going to run through the GPU vendors that will be used by GL when we render in the various output screens.  these are the names of the cards that will be used- offline cards aren't going to be visible in this approach.
+			if (dCnt==0)
+				NSLog(@"\t\terr: CGGetActiveDisplayList() said there are 0 displays in %s",__func__);
+			else	{
+				BOOL					tmpIntegratedFlag = NO;
+				BOOL					tmpNVIDIAFlag = NO;
+				for (i = 0; i < dCnt; i++) {
+					CGOpenGLDisplayMask		cglDisplayMask; // CGL display mask
 					
-					cgl_ctx = cglContext;
-					strVend = glGetString (GL_VENDOR);
-					tmpString = [NSString stringWithCString:(const char *)strVend encoding:NSASCIIStringEncoding];
-					[returnMe addObject:tmpString];
-					//	calculate if this is an integrated GPU setup while i'm running through the vendor array!
-					if (!tmpIntegratedFlag && ![tmpString containsString:@"ATI"] && ![tmpString containsString:@"AMD"] && ![tmpString containsString:@"NVIDIA"])
-						tmpIntegratedFlag = YES;
-					else if ([tmpString containsString:@"NVIDIA"])
-						tmpNVIDIAFlag = YES;
+					cglDisplayMask = CGDisplayIDToOpenGLDisplayMask(dspys[i]);
+					// build context and context specific info
+					CGLPixelFormatAttribute		attribs[] = {
+						kCGLPFADisplayMask,
+						//dCaps[i].cglDisplayMask,
+						cglDisplayMask,
+						(CGLPixelFormatAttribute)0
+					};
+					CGLPixelFormatObj			pixelFormat = NULL;
+					long						numPixelFormats = 0;
+					CGLContextObj				cglContext;
+					CGLContextObj				cgl_ctx;
 					
-					CGLDestroyContext (cglContext);
+					curr_ctx = CGLGetCurrentContext (); // get current CGL context
+					CGLChoosePixelFormat (attribs, &pixelFormat, (GLint *)&numPixelFormats);
+					if (pixelFormat) {
+						CGLCreateContext(pixelFormat, NULL, &cglContext);
+						CGLDestroyPixelFormat (pixelFormat);
+						CGLSetCurrentContext (cglContext);
+						if (cglContext) {
+							const GLubyte				*strVend;
+							
+							cgl_ctx = cglContext;
+							strVend = glGetString (GL_VENDOR);
+							tmpString = [NSString stringWithCString:(const char *)strVend encoding:NSASCIIStringEncoding];
+							[returnMe addObject:tmpString];
+							//	calculate if this is an integrated GPU setup while i'm running through the vendor array!
+							if (!tmpIntegratedFlag && ![tmpString containsString:@"ATI"] && ![tmpString containsString:@"AMD"] && ![tmpString containsString:@"NVIDIA"])
+								tmpIntegratedFlag = YES;
+							else if ([tmpString containsString:@"NVIDIA"])
+								tmpNVIDIAFlag = YES;
+							
+							CGLDestroyContext (cglContext);
+						}
+					}
+					CGLSetCurrentContext (curr_ctx); // reset current CGL context
+					
 				}
+				//	update the integrated GPU flag!
+				_integratedGPUFlag = tmpIntegratedFlag;
+				//	update the nvidia GPU flag!
+				_nvidiaGPUFlag = tmpNVIDIAFlag;
 			}
-			CGLSetCurrentContext (curr_ctx); // reset current CGL context
-			
 		}
-		//	update the integrated GPU flag!
-		_integratedGPUFlag = tmpIntegratedFlag;
-		//	update the nvidia GPU flag!
-		_nvidiaGPUFlag = tmpNVIDIAFlag;
+	}
+	if (_hwGPUVendorArray==nil)	{
+		_hwGPUVendorArray = [[NSMutableArray arrayWithCapacity:0] retain];
+		//	this is the same technique used by "gfxCardStatus" by Cody Krieger to enumerate the available graphics cards
+		CFMutableDictionaryRef		deviceDict = IOServiceMatching("IOPCIDevice");
+		io_iterator_t				entryIterator;
+		kern_return_t				kernErr = kIOReturnSuccess;
+		BOOL						integratedGPUExists = NO;
+		kernErr = IOServiceGetMatchingServices(kIOMasterPortDefault, deviceDict, &entryIterator);
+		if (kernErr!=kIOReturnSuccess)
+			NSLog(@"\t\terr %d at IOServiceGetMatchingServices() in %s",kernErr,__func__);
+		else	{
+			io_registry_entry_t			device = 0;
+			while ((device=IOIteratorNext(entryIterator)))	{
+				CFMutableDictionaryRef		serviceDict = NULL;
+				kernErr = IORegistryEntryCreateCFProperties(device, &serviceDict, kCFAllocatorDefault, kNilOptions);
+				if (kernErr!=kIOReturnSuccess)
+					NSLog(@"\t\terr %d at IORegistryEntryCreateCFProperties() in %s",kernErr,__func__);
+				else	{
+					//NSLog(@"\t\tserviceDict is %@",serviceDict);
+					NSString			*ioName = [(NSDictionary *)serviceDict objectForKey:@"IOName"];
+					if (ioName!=nil && [ioName isEqualToString:@"display"])	{
+						const void			*modelData = CFDictionaryGetValue(serviceDict, @"model");
+						NSString			*hwName = (modelData==nil) ? nil : [[[NSString alloc] initWithData:modelData encoding:NSASCIIStringEncoding] autorelease];
+						if (hwName!=nil)	{
+							//NSLog(@"\t\tadding hardware string %@ to hw GPU vendor array",hwName);
+							[_hwGPUVendorArray addObject:hwName];
+							
+							if ([hwName rangeOfString:@"intel" options:NSCaseInsensitiveSearch].location != NSNotFound)
+								integratedGPUExists = YES;
+						}
+					}
+				}
+				
+				IOObjectRelease(device);
+			}
+			
+			//	if i'm not using an integrated GPU right now, but an integrated GPU exists, set this flag
+			if (!_integratedGPUFlag && integratedGPUExists)
+				_hasIntegratedAndDiscreteGPUsFlag = YES;
+			else
+				_hasIntegratedAndDiscreteGPUsFlag = NO;
+		}
 	}
 	
 	//	populate the array i'll be returning with the contents of the global GPU vendor array
-	if (_gpuVendorArray != nil)
-		[returnMe addObjectsFromArray:_gpuVendorArray];
+	if (_glGPUVendorArray != nil)
+		[returnMe addObjectsFromArray:_glGPUVendorArray];
 	
 	BAIL:
 	
@@ -104,7 +162,7 @@ BOOL			_nvidiaGPUFlag = NO;
 	BOOL		returnMe = NO;
 	
 	OSSpinLockLock(&_glSceneStatLock);
-	if (_gpuVendorArray == nil)	{
+	if (_glGPUVendorArray == nil)	{
 		OSSpinLockUnlock(&_glSceneStatLock);
 		
 		[GLScene gpuVendorArray];
@@ -119,7 +177,7 @@ BOOL			_nvidiaGPUFlag = NO;
 	BOOL		returnMe = NO;
 	
 	OSSpinLockLock(&_glSceneStatLock);
-	if (_gpuVendorArray == nil)	{
+	if (_glGPUVendorArray == nil)	{
 		OSSpinLockUnlock(&_glSceneStatLock);
 		
 		[GLScene gpuVendorArray];

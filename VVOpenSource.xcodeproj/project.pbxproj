@@ -83,6 +83,7 @@
 		1A86D6691941271400419A76 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D6681941271400419A76 /* OpenGLES.framework */; };
 		1A86D66B1941271A00419A76 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D66A1941271A00419A76 /* UIKit.framework */; };
 		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
+		1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE3C7FD1B3B858000D37189 /* IOKit.framework */; };
 		1AE8C5F61AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
 		1AE8C5F71AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
 		1AE8C5F91AF1AC29006C5018 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F81AF1AC29006C5018 /* QuickTime.framework */; };
@@ -1035,6 +1036,7 @@
 		1A86D6681941271400419A76 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		1A86D66A1941271A00419A76 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
+		1AE3C7FD1B3B858000D37189 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		1AE8C5F51AF1AC16006C5018 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = ../../../../System/Library/Frameworks/QTKit.framework; sourceTree = "<group>"; };
 		1AE8C5F81AF1AC29006C5018 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = ../../../../System/Library/Frameworks/QuickTime.framework; sourceTree = "<group>"; };
 		1AE8C5FC1AF1AC4D006C5018 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = ../../../../System/Library/Frameworks/IOSurface.framework; sourceTree = "<group>"; };
@@ -1599,6 +1601,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */,
 				9684E8AF198348A000524F3C /* Quartz.framework in Frameworks */,
 				1AE8C6091AF1AD55006C5018 /* OpenGL.framework in Frameworks */,
 				9684E8AD1983488F00524F3C /* QuartzCore.framework in Frameworks */,
@@ -2067,6 +2070,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1AE3C7FD1B3B858000D37189 /* IOKit.framework */,
 				96AD0AAC18577ADF00472548 /* AudioToolbox.framework */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
 				9617463E100F88EC00FB60E6 /* CoreMIDI.framework */,
