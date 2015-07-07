@@ -135,6 +135,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 								integratedGPUExists = YES;
 						}
 					}
+					if (serviceDict!=NULL)	{
+						CFRelease(serviceDict);
+						serviceDict = NULL;
+					}
 				}
 				
 				IOObjectRelease(device);

@@ -277,8 +277,6 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					NSLog(@"\t\terr at IOSurfaceCreate() in %s",__func__);
 					newBufferDesc.localSurfaceID = 0;
 				}
-				else
-					NSLog(@"\t\tcreated IOSurface in %s",__func__);
 			}
 			//	enable the tex target, gen the texture, and bind it
 			glEnable(newBufferDesc.target);
