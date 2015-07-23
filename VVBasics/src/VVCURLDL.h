@@ -31,6 +31,8 @@
 	NSString				*urlString;
 	CURL					*curlHandle;
 	
+	long					dnsCacheTimeout;
+	long					connectTimeout;
 	NSString				*log;
 	NSString				*pass;
 	NSString				*acceptedEncoding;	//	passed to libcurl as CURLOPT_ACCEPT_ENCODING
@@ -67,6 +69,8 @@
 //- (struct curl_httppost *) lastFormPtr;
 - (void) appendDataToPOST:(NSData *)d;
 - (void) appendStringToPOST:(NSString *)s;
+@property (assign,readwrite,setter=setDNSCacheTimeout:) long dnsCacheTimeout;
+@property (assign,readwrite) long connectTimeout;
 - (void) setLogin:(NSString *)user password:(NSString *)pass;
 @property (retain,readwrite) NSString *acceptedEncoding;
 

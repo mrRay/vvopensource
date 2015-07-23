@@ -20,6 +20,8 @@
 	if (self = [super init])	{
 		urlString = [a retain];
 		curlHandle = nil;
+		dnsCacheTimeout = 0;
+		connectTimeout = 0;
 		log = nil;
 		pass = nil;
 		acceptedEncoding = nil;
@@ -179,9 +181,15 @@
 		//	i'm going to pass a pointer to myself as the file stream, so i can get back into objective-c
 		curl_easy_setopt(curlHandle,CURLOPT_WRITEDATA,self);
 		
+		if (dnsCacheTimeout>0)
+			curl_easy_setopt(curlHandle, CURLOPT_DNS_CACHE_TIMEOUT, dnsCacheTimeout);
+		if (connectTimeout>0)
+			curl_easy_setopt(curlHandle, CURLOPT_CONNECTTIMEOUT, connectTimeout);
+		
 		//	perform the transfer
 		err = curl_easy_perform(curlHandle);
-		//	there's a 60-second timeout on this perform!
+		
+		
 		
 		//	get the http response code
 		curl_easy_getinfo(curlHandle, CURLINFO_RESPONSE_CODE, &httpResponseCode);
@@ -231,6 +239,8 @@
 		return;
 	[self appendDataToPOST:[s dataUsingEncoding:NSUTF8StringEncoding]];
 }
+@synthesize dnsCacheTimeout;
+@synthesize connectTimeout;
 - (void) setLogin:(NSString *)u password:(NSString *)p	{
 	if (u==nil || p==nil)
 		return;
