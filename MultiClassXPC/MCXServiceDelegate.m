@@ -27,7 +27,7 @@
 	//NSLog(@"%s",__func__);
 	
 	//	make the service i'll be exporting, set it up with the passed connection
-	MCXService		*exported = [[MCXService alloc] init];
+	__block MCXService		*exported = [[MCXService alloc] init];
 	[newConnection setExportedInterface:[NSXPCInterface interfaceWithProtocol:@protocol(MCXService)]];
 	[newConnection setExportedObject:exported];
 	[exported release];

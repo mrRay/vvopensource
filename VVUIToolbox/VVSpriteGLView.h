@@ -108,7 +108,8 @@ extern long			_spriteGLViewSysVers;
 
 @property (readonly) BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
-@property (assign,readwrite) BOOL flipped;
+- (BOOL) flipped;
+- (void) setFlipped:(BOOL)n;
 @property (readonly) double localToBackingBoundsMultiplier;
 @property (readonly) MutLockArray *vvSubviews;
 @property (assign, readwrite) BOOL spritesNeedUpdate;

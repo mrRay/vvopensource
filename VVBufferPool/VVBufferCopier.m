@@ -51,6 +51,7 @@ id _globalVVBufferCopier = nil;
 	copyPixFormat = VVBufferPF_BGRA;
 	copyAndResize = NO;
 	copySize = NSMakeSize(320,240);
+	copySizingMode = VVSizingModeStretch;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -139,7 +140,9 @@ id _globalVVBufferCopier = nil;
 		if (context!=nil)	{
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([tmpTex target]);
-			GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],NSMakeRect(0,0,size.width,size.height));
+			//GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],NSMakeRect(0,0,size.width,size.height));
+			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[tmpTex glReadySrcRect] inRect:NSMakeRect(0,0,size.width,size.height) sizingMode:[self copySizingMode]];
+			GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],dstRect);
 			glDisable([tmpTex target]);
 			//NSLog(@"\t\tjust copied %ld to %ld",[n name],[returnMe name]);
 			//	do any cleanup/flush my context
@@ -247,7 +250,9 @@ id _globalVVBufferCopier = nil;
 		if (context!=nil)	{
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
-			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,bSize.width,bSize.height));
+			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,bSize.width,bSize.height));
+			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:[self copySizingMode]];
+			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
 			//NSLog(@"\t\tjust copied %ld to %ld",[n name],[returnMe name]);
 			//	do any cleanup/flush my context
@@ -269,7 +274,7 @@ id _globalVVBufferCopier = nil;
 	//NSLog(@"%s ... %@ -> %@",__func__,a,b);
 	if (deleted || a==nil || b==nil)
 		return;
-	NSSize			aSize = [a size];
+	//NSSize			aSize = [a size];
 	NSSize			bSize = [b size];
 	[a retain];
 	[b retain];
@@ -296,7 +301,9 @@ id _globalVVBufferCopier = nil;
 		if (context!=nil)	{
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
-			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,aSize.width,aSize.height));
+			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,aSize.width,aSize.height));
+			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
 			//NSLog(@"\t\tjust copied %d to %d",[a name],[b name]);
 			//glColor4f(1,0,0,1);
@@ -391,6 +398,7 @@ id _globalVVBufferCopier = nil;
 @synthesize copyPixFormat;
 @synthesize copyAndResize;
 @synthesize copySize;
+@synthesize copySizingMode;
 
 
 @end

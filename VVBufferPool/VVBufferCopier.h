@@ -20,6 +20,7 @@ extern id			_globalVVBufferCopier;
 	VVBufferPixFormat	copyPixFormat;	//	VVBufferPF_BGRA by default
 	BOOL				copyAndResize;	//	NO by default. if NO, copies preserve the size of the passed buffer- if NO, resizes the buffer while copying it
 	NSSize				copySize;	//	only used if "copyAndResize" is YES;
+	VVSizingMode		copySizingMode;
 }
 
 ///	there's a global (singleton) instance of VVBufferCopier- by default this is created when you set up the global VVBufferPool, but if you want to override it and create it to work with a different context, this is how.
@@ -51,5 +52,6 @@ extern id			_globalVVBufferCopier;
 @property (assign,readwrite) BOOL copyAndResize;
 ///	the "copySize" is only used if "copyAndResize" is YES
 @property (assign,readwrite) NSSize copySize;
+@property (assign,readwrite) VVSizingMode copySizingMode;
 
 @end

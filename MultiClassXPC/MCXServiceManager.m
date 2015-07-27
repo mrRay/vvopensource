@@ -58,10 +58,11 @@
 	
 	//	make the actual connection, configure it, then resume it
 	OSSpinLockLock(&connLock);
+	__block id		bss = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
-		NSLog(@"%@ err handler for %@",[self className],connServiceIdentifier);
+		NSLog(@"%@ err handler for %@",[bss className],connServiceIdentifier);
 		//	just try to establish a connection again- this automatically kills any remnants of the old conn and fetches new listener endpoints
-		[self establishConnection];
+		[bss establishConnection];
 	};
 	conn = [[NSXPCConnection alloc] initWithServiceName:connServiceIdentifier];
 	[conn setRemoteObjectInterface:[NSXPCInterface interfaceWithProtocol:@protocol(MCXService)]];

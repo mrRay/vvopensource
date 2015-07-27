@@ -14,7 +14,7 @@
 
 
 @interface MCXServiceDelegate : NSObject <NSXPCListenerDelegate>	{
-	NSMutableDictionary		*tmpServiceDelegates;	//	used to temporarily store service delegates
+	__block NSMutableDictionary		*tmpServiceDelegates;	//	used to temporarily store service delegates
 }
 
 /*	this method may only be called before you "resume" the service listener which an instance of 

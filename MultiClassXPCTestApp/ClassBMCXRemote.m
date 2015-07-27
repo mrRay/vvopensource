@@ -52,8 +52,9 @@
 	//NSLog(@"%s",__func__);
 	//	if the mgr's classes aren't available yet, wait and then call this method again later
 	if (![_mcxTestAppServiceMgr classesAvailable])	{
+		__block id		bss = self;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			[self establishConnection];
+			[bss establishConnection];
 		});
 		return;
 	}
@@ -66,14 +67,15 @@
 		NSLog(@"\t\terr: bailing, listener nil, %s",__func__);
 		return;
 	}
+	__block id		bss = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
-		NSLog(@"%@ err handler",[self className]);
+		NSLog(@"%@ err handler",[bss className]);
 		
 		//	immediately inform the remote mgr that a listener error handler has been tripped- this clears its cache of classes and will re-launch the XPC service
 		[_mcxTestAppServiceMgr listenerErrHandlerTripped];
 		//	try to establish a connection later- this automatically waits for the remote mgr to relaunch the XPC service and re-establish its cache of classes
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.0001*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			[self establishConnection];
+			[bss establishConnection];
 		});
 		
 	};

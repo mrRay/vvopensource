@@ -33,8 +33,9 @@ MCXServiceManager		*_mcxTestAppServiceMgr = nil;
 	NSLog(@"%s",__func__);
 	//	loop a small delay while there aren't any available classes
 	if (![_mcxTestAppServiceMgr classesAvailable])	{
+		__block id		bss = self;
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			[self makeSureXPCServiceIsAvailable];
+			[bss makeSureXPCServiceIsAvailable];
 		});
 		return;
 	}
