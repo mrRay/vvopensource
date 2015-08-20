@@ -312,7 +312,7 @@
 	[nodeContents rdlock];
 		for (OSCNode *nodePtr in [nodeContents array])	{
 			if ([[nodePtr nodeName] isEqualToString:n])	{
-				returnMe = nodePtr;
+				returnMe = [[nodePtr retain] autorelease];
 				break;
 			}
 		}
@@ -370,10 +370,10 @@
 	//return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
 	NSString		*trimmedString = [p trimFirstAndLastSlashes];
 	if (trimmedString==nil || [trimmedString length]==0)
-		return self;
+		return [[self retain] autorelease];
 	NSArray			*components = [trimmedString pathComponents];
 	if (components==nil || [components count]<1)
-		return self;
+		return [[self retain] autorelease];
 	return [self findNodeForAddressArray:components createIfMissing:c];
 }
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a	{

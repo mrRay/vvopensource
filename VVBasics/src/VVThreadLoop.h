@@ -29,6 +29,8 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 	BOOL				bail;
 	BOOL				paused;
 	BOOL				executingCallback;
+	NSThread			*thread;	//	weak ref, nil on init, only valid while the thread is active and running
+	NSRunLoop			*runLoop;	//	weak ref, nil on init, only valid while the thread is active and running
 	
 	OSSpinLock			valLock;	//	ONLY used for quickly accessing 'running', 'bail', 'paused', and 'executingCallback' in a threadsafe fashion
 	
@@ -58,6 +60,8 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 - (void) setInterval:(double)i;
 ///	Whether or not the thread loop is running.
 - (BOOL) running;
+- (NSThread *) thread;
+- (NSRunLoop *) runLoop;
 
 @property (assign,readwrite) double maxInterval;
 

@@ -22,6 +22,9 @@
 	
 	USE_CUSTOM_ASSERTION_HANDLER
 	
+	if (![NSThread setThreadPriority:1.0])
+		NSLog(@"\terror setting thread priority to 1.0");
+	
 	//	add the deleteArray to the current thread's thread dictionary so other stuff can find it!
 	[[[NSThread currentThread] threadDictionary] setObject:deleteArray forKey:@"deleteArray"];
 	//	add a ptr to an object holder pointing to me
@@ -33,10 +36,16 @@
 	OSSpinLockLock(&valLock);
 	running = YES;
 	bail = NO;
+	thread = [NSThread currentThread];
+	runLoop = [NSRunLoop currentRunLoop];
+	//	add a one-year timer to the run loop, so it will run & pause when i tell the run loop to run
+	[NSTimer
+		scheduledTimerWithTimeInterval:60.0*60.0*24.0*7.0*52.0
+		target:nil
+		selector:nil
+		userInfo:nil
+		repeats:NO];
 	OSSpinLockUnlock(&valLock);
-	
-	if (![NSThread setThreadPriority:1.0])
-		NSLog(@"\terror setting thread priority to 1.0");
 	
 	STARTLOOP:
 	@try	{
@@ -95,13 +104,17 @@
 				stopTime.tv_usec = stopTime.tv_usec + 1000000;
 			}
 			executionTime = ((double)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
-			sleepDuration = interval - executionTime;
+			sleepDuration = fmin(maxInterval,fmax(0.0,interval - executionTime));
 			
 			//	only sleep if duration's > 0, sleep for a max of 1 sec
-			if (sleepDuration > 0)	{
+			if (sleepDuration > 0.0)	{
 				if (sleepDuration > maxInterval)
 					sleepDuration = maxInterval;
-				[NSThread sleepForTimeInterval:sleepDuration];
+				CFRunLoopRunInMode(kCFRunLoopDefaultMode, sleepDuration, false);
+			}
+			else	{
+				//NSLog(@"\t\tsleepDuration was 0, about to CFRunLoopRun()...");
+				CFRunLoopRunInMode(kCFRunLoopDefaultMode, maxInterval, false);
 			}
 			
 			OSSpinLockLock(&valLock);
@@ -150,6 +163,8 @@
 	
 	[pool release];
 	OSSpinLockLock(&valLock);
+	thread = nil;
+	runLoop = nil;
 	running = NO;
 	OSSpinLockUnlock(&valLock);
 	

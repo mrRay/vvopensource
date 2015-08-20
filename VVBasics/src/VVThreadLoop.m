@@ -13,8 +13,7 @@
 		return nil;
 	if (self = [super init])	{
 		[self generalInit];
-		interval = i;
-		maxInterval = 1.0;
+		[self setInterval:i];
 		targetObj = t;
 		targetSel = s;
 		return self;
@@ -25,7 +24,7 @@
 - (id) initWithTimeInterval:(double)i	{
 	if (self = [super init])	{
 		[self generalInit];
-		interval = i;
+		[self setInterval:i];
 		return self;
 	}
 	[self release];
@@ -33,10 +32,13 @@
 }
 - (void) generalInit	{
 	interval = 0.1;
+	maxInterval = 1.0;
 	running = NO;
 	bail = NO;
 	paused = NO;
 	executingCallback = NO;
+	thread = nil;
+	runLoop = nil;
 	
 	valLock = OS_SPINLOCK_INIT;
 	
@@ -71,15 +73,24 @@
 	
 	USE_CUSTOM_ASSERTION_HANDLER
 	
+	if (![NSThread setThreadPriority:1.0])
+		NSLog(@"\terror setting thread priority to 1.0");
+	
 	BOOL					tmpRunning = YES;
 	BOOL					tmpBail = NO;
 	OSSpinLockLock(&valLock);
 	running = YES;
 	bail = NO;
+	thread = [NSThread currentThread];
+	runLoop = [NSRunLoop currentRunLoop];
+	//	add a one-year timer to the run loop, so it will run & pause when i tell the run loop to run
+	[NSTimer
+		scheduledTimerWithTimeInterval:60.0*60.0*24.0*7.0*52.0
+		target:nil
+		selector:nil
+		userInfo:nil
+		repeats:NO];
 	OSSpinLockUnlock(&valLock);
-	
-	if (![NSThread setThreadPriority:1.0])
-		NSLog(@"\terror setting thread priority to 1.0");
 	
 	STARTLOOP:
 	@try	{
@@ -131,13 +142,17 @@
 				stopTime.tv_usec = stopTime.tv_usec + 1000000;
 			}
 			executionTime = ((double)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
-			sleepDuration = interval - executionTime;
+			sleepDuration = fmin(maxInterval,fmax(0.0,interval - executionTime));
 			
 			//	only sleep if duration's > 0, sleep for a max of 1 sec
-			if (sleepDuration > 0)	{
+			if (sleepDuration > 0.0)	{
 				if (sleepDuration > maxInterval)
 					sleepDuration = maxInterval;
-				[NSThread sleepForTimeInterval:sleepDuration];
+				CFRunLoopRunInMode(kCFRunLoopDefaultMode, sleepDuration, false);
+			}
+			else	{
+				//NSLog(@"\t\tsleepDuration was 0, about to CFRunLoopRun()...");
+				CFRunLoopRunInMode(kCFRunLoopDefaultMode, maxInterval, false);
 			}
 			
 			OSSpinLockLock(&valLock);
@@ -169,6 +184,8 @@
 	
 	[pool release];
 	OSSpinLockLock(&valLock);
+	thread = nil;
+	runLoop = nil;
 	running = NO;
 	OSSpinLockUnlock(&valLock);
 	//NSLog(@"\t\t%s - FINSHED",__func__);
@@ -219,12 +236,25 @@
 	return interval;
 }
 - (void) setInterval:(double)i	{
-	interval = (i > maxInterval) ? maxInterval : i;
+	double		absVal = fabs(i);
+	interval = (absVal > maxInterval) ? maxInterval : absVal;
 }
 - (BOOL) running	{
 	BOOL		returnMe = NO;
 	OSSpinLockLock(&valLock);
 	returnMe = running;
+	OSSpinLockUnlock(&valLock);
+	return returnMe;
+}
+- (NSThread *) thread	{
+	OSSpinLockLock(&valLock);
+	NSThread		*returnMe = thread;
+	OSSpinLockUnlock(&valLock);
+	return returnMe;
+}
+- (NSRunLoop *) runLoop	{
+	OSSpinLockLock(&valLock);
+	NSRunLoop		*returnMe = runLoop;
 	OSSpinLockUnlock(&valLock);
 	return returnMe;
 }
