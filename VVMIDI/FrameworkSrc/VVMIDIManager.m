@@ -4,9 +4,26 @@
 
 
 
+MIDIClientRef		_VVMIDIProcessClientRef = NULL;
+
+
+
+
 @implementation VVMIDIManager
 
 
++ (void) initialize	{
+	static OSSpinLock		initLock = OS_SPINLOCK_INIT;
+	if (OSSpinLockTry(&initLock))	{
+		OSStatus			err;
+		//	create a midi client which will receive incoming midi data
+		err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,self,&_VVMIDIProcessClientRef);
+		if (err != noErr)	{
+			NSLog(@"\t\terror %ld at MIDIClientCreate",(long)err);
+			OSSpinLockUnlock(&initLock);
+		}
+	}
+}
 - (id) init	{
 	if (self = [super init])	{
 		[self generalInit];
@@ -22,6 +39,8 @@
 	delegate = nil;
 	virtualSource = nil;
 	virtualDest = nil;
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setupChangedNotification:) name:@"VVMIDISetupChangedNotification" object:nil];
 	
 	//	create a virtual destination other apps can send to
 	[self createVirtualNodes];
@@ -110,6 +129,8 @@
 }
 
 - (void) dealloc	{
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"VVMIDISetupChangedNotification" object:nil];
+	
 	delegate = nil;
 	
 	VVRELEASE(sourceArray);
@@ -261,6 +282,9 @@
 }
 
 
+- (void) setupChangedNotification:(NSNotification *)note	{
+	[self setupChanged];
+}
 //	called when a midi device is plugged in or unplugged
 - (void) setupChanged	{
 	if ((virtualSource==nil) || (virtualDest==nil))
@@ -555,3 +579,21 @@
 
 
 @end
+
+
+
+
+void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
+	//NSLog(@"%s",__func__);
+	/*
+		NOTE: this method will be called on whatever thread this node's clientRef was created on!
+		the VVMIDIManager class attempts to ensure that this always happens on the main thread, 
+		so there's no need to have an autorelease pool here...
+	*/
+	//	multiple messages may get sent out for a single action, so it makes sense to simply ignore everything but 'kMIDIMsgSetupChanged'
+	if (msg->messageID == kMIDIMsgSetupChanged)	{
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"VVMIDISetupChangedNotification" object:nil userInfo:nil];
+		//[(VVMIDINode *)refCon setupChanged];
+	}
+}
+

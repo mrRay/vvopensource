@@ -8,6 +8,11 @@
 
 
 
+extern MIDIClientRef		_VVMIDIProcessClientRef;
+
+
+
+
 @protocol VVMIDIDelegateProtocol
 - (void) setupChanged;
 - (void) receivedMIDI:(NSArray *)a fromNode:(VVMIDINode *)n;
@@ -73,3 +78,8 @@
 - (void) setDelegate:(id)n;
 
 @end
+
+
+
+
+void myMIDINotificationProc(const MIDINotification *msg, void *refCon);

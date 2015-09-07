@@ -25,6 +25,8 @@ double			_machTimeToNsFactor;
 		// Set the time factors so we can work in ns
 		_machTimeToNsFactor = (double)timebaseInfo.numer / timebaseInfo.denom;
 	}
+	//	make sure the manager class is initialized (the manager creates the midi client)
+	[VVMIDIManager class];
 }
 - (NSString *) description	{
 	return [NSString stringWithFormat:@"<VVMIDINode: %@, %@>",name,[properties objectForKey:(NSString *)kMIDIPropertyUniqueID]];
@@ -43,15 +45,9 @@ double			_machTimeToNsFactor;
 	endpointRef = e;
 	//	load the properties for the endpoint
 	[self loadProperties];
-	//	create MIDIClientRef- this will receive the incoming midi data
-	err = MIDIClientCreate((CFStringRef)@"clientName", NULL, NULL, &clientRef);
-	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate() A",(long)err);
-		[self release];
-		return nil;
-	}
+	//	when the manager class was initialized, it created the single, global, MIDIClientRef (_VVMIDIProcessClientRef)...
 	//	create a MIDIInputPort- the client owns the port
-	err = MIDIInputPortCreate(clientRef,(CFStringRef)@"portName",myMIDIReadProc,self,&portRef);
+	err = MIDIInputPortCreate(_VVMIDIProcessClientRef,(CFStringRef)@"portName",myMIDIReadProc,self,&portRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terror %ld at MIDIInputPortCreate() A",(long)err);
 		[self release];
@@ -77,22 +73,16 @@ double			_machTimeToNsFactor;
 	
 	self = [self commonInit];
 	name = [n copy];
-	//	create a midi client which will receive incoming midi data
-	err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,self,&clientRef);
-	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate B",(long)err);
-		[self release];
-		return nil;
-	}
+	//	when the manager class was initialized, it created the single, global, MIDIClientRef (_VVMIDIProcessClientRef)...
 	//	make a new destination, attach it to the client
-	err = MIDIDestinationCreate(clientRef,(CFStringRef)n,myMIDIReadProc,self,&endpointRef);
+	err = MIDIDestinationCreate(_VVMIDIProcessClientRef,(CFStringRef)n,myMIDIReadProc,self,&endpointRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terror %ld at MIDIDestinationCreate() A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIInputPort- the client owns the port
-	err = MIDIInputPortCreate(clientRef,(CFStringRef)n,myMIDIReadProc,self,&portRef);
+	err = MIDIInputPortCreate(_VVMIDIProcessClientRef,(CFStringRef)n,myMIDIReadProc,self,&portRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terror %ld at MIDIInputPortCreate B",(long)err);
 		[self release];
@@ -119,15 +109,9 @@ double			_machTimeToNsFactor;
 	sender = YES;
 	//	load the properties for the endpoint
 	[self loadProperties];
-	//	create a MIDIClientRef- this will handle the midi data
-	err = MIDIClientCreate((CFStringRef)@"clientName",NULL,NULL,&clientRef);
-	if (err != noErr)	{
-		NSLog(@"\t\terr %ld at MIDIClientCreate C",(long)err);
-		[self release];
-		return nil;
-	}
+	//	when the manager class was initialized, it created the single, global, MIDIClientRef (_VVMIDIProcessClientRef)...
 	//	create a MIDIOutputPort- the client owns the port
-	err = MIDIOutputPortCreate(clientRef,(CFStringRef)@"portName",&portRef);
+	err = MIDIOutputPortCreate(_VVMIDIProcessClientRef,(CFStringRef)@"portName",&portRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terr %ld at MIDIOutputPortCreate A",(long)err);
 		[self release];
@@ -150,22 +134,16 @@ double			_machTimeToNsFactor;
 	
 	self = [self commonInit];
 	name = [n copy];
-	//	create a midi client which will receive midi data to work with
-	err = MIDIClientCreate((CFStringRef)n,NULL,NULL,&clientRef);
-	if (err != noErr)	{
-		NSLog(@"\t\terror %ld at MIDIClientCreate D",(long)err);
-		[self release];
-		return nil;
-	}
+	//	when the manager class was initialized, it created the single, global, MIDIClientRef (_VVMIDIProcessClientRef)...
 	//	make a new destination, so other apps know i'm here
-	err = MIDISourceCreate(clientRef,(CFStringRef)n,&endpointRef);
+	err = MIDISourceCreate(_VVMIDIProcessClientRef,(CFStringRef)n,&endpointRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terror %ld at MIDISourceCreate A",(long)err);
 		[self release];
 		return nil;
 	}
 	//	create a MIDIOutputPort- the client owns the port
-	err = MIDIOutputPortCreate(clientRef,(CFStringRef)n,&portRef);
+	err = MIDIOutputPortCreate(_VVMIDIProcessClientRef,(CFStringRef)n,&portRef);
 	if (err != noErr)	{
 		NSLog(@"\t\terror %ld at MIDIOutputPortCreate B",(long)err);
 		[self release];
@@ -196,7 +174,6 @@ double			_machTimeToNsFactor;
 	//	load up some null values so if anything goes wrong, i can know about it
 	endpointRef = 0;
 	properties = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
-	clientRef = 0;
 	portRef = 0;
 	mtcClockRef = NULL;
 	bpmClockRef = NULL;
@@ -240,9 +217,10 @@ double			_machTimeToNsFactor;
 		bpmClockRef = NULL;
 	}
 	
-	if (clientRef)	{
-		MIDIClientDispose(clientRef);
-		clientRef = 0;
+	if (portRef!=0)	{
+		MIDIPortDisconnectSource(portRef,endpointRef);
+		MIDIPortDispose(portRef);
+		portRef = 0;
 	}
 	
 	if (name != nil)	{
@@ -482,11 +460,6 @@ double			_machTimeToNsFactor;
 /*
 	this method is called whenever the midi setup is changed
 */
-- (void) setupChanged	{
-	if ((delegate != nil) && ([delegate respondsToSelector:@selector(setupChanged)]))
-		[delegate setupChanged];
-}
-
 - (void) sendMsg:(VVMIDIMessage *)m	{
 	if ((enabled!=YES) || (sender!=YES) || (m==nil))
 		return;
@@ -1078,19 +1051,6 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 	[pool release];
 	//NSLog(@"\t\tmyMIDIReadProc - FINISHED");
 }
-
-void myMIDINotificationProc(const MIDINotification *msg, void *refCon)	{
-	//NSLog(@"%s",__func__);
-	/*
-		NOTE: this method will be called on whatever thread this node's clientRef was created on!
-		the VVMIDIManager class attempts to ensure that this always happens on the main thread, 
-		so there's no need to have an autorelease pool here...
-	*/
-	//	multiple messages may get sent out for a single action, so it makes sense to simply ignore everything but 'kMIDIMsgSetupChanged'
-	if (msg->messageID == kMIDIMsgSetupChanged)
-		[(VVMIDINode *)refCon setupChanged];
-}
-
 void senderReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
 	NSLog(@"VVMIDINode:senderReadProc:");

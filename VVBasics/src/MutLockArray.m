@@ -94,11 +94,13 @@
 	return [returnMe autorelease];
 }
 - (NSMutableArray *) lockCreateArrayCopy	{
-	NSMutableArray		*returnMe = nil;
+	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	
 	pthread_rwlock_rdlock(&arrayLock);
-		//returnMe = [array mutableCopy];
+		[returnMe addObjectsFromArray:array];
+		/*
 		returnMe = [self createArrayCopy];
+		*/
 	pthread_rwlock_unlock(&arrayLock);
 	
 	return returnMe;

@@ -126,10 +126,15 @@
 }
 - (void) prepareToBeDeleted	{
 	if (delegateArray != nil)	{
+		NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+		for (id anObj in tmpArray)	{
+			[anObj nodeDeleted:self];
+		}
+		
 		[delegateArray wrlock];
-			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
+		
 		[delegateArray release];
 		delegateArray = nil;
 	}
@@ -466,11 +471,11 @@
 		[delegateArray setZwrFlag:YES];
 	}
 	//	first check to make sure that this delegate hasn't already been added
-	long		foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
-	if (foundIndex == NSNotFound)	{
-		//	if the delegate hasn't already been added, add it (this retains it)
-		[delegateArray lockAddObject:d];
-	}
+	[delegateArray wrlock];
+	long		foundIndex = [delegateArray indexOfIdenticalPtr:d];
+	if (foundIndex == NSNotFound)
+		[delegateArray addObject:d];
+	[delegateArray unlock];
 }
 - (void) removeDelegate:(id)d	{
 	//NSLog(@"%s",__func__);
@@ -500,36 +505,6 @@
 		[[delegateArray array] removeObjectAtIndex:foundHolderIndex];
 	[delegateArray unlock];
 	
-	/*
-	//	find the index of the delegate to delete
-	[delegateArray rdlock];
-	long			foundIndex = [delegateArray indexOfIdenticalPtr:d];
-	if (foundIndex != NSNotFound)	{
-		//	get the actual ObjectHolder which corresponds to the delegate, set its object to nil
-		ObjectHolder	*holder = [[delegateArray array] objectAtIndex:foundIndex];
-		if (holder != nil)
-			[holder setObject:nil];
-	}
-	[delegateArray unlock];
-	//	if i found it, remove the object from the delegate array entirely
-	if (foundIndex != NSNotFound)
-		[delegateArray lockRemoveObjectAtIndex:foundIndex];
-	else
-		NSLog(@"\t\terr: couldn't find delegate to remove- %s",__func__);
-	*/
-	
-	/*
-	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
-		return;
-	
-	//	find the delegate in my delegate array
-	long		foundIndex = [delegateArray lockIndexOfIdenticalPtr:d];
-	//	if i could find it...
-	if (foundIndex != NSNotFound)
-		[delegateArray lockRemoveObjectAtIndex:foundIndex];
-	else
-		NSLog(@"\terr: couldn't find delegate to remove- %s",__func__);
-	*/
 }
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -543,18 +518,21 @@
 			fullName = [[NSString stringWithFormat:@"%@/%@",parentFullName,nodeName] retain];
 	OSSpinLockUnlock(&nameLock);
 	
-	//	tell my delegates that there's been a name change
-	if ((delegateArray!=nil)&&([delegateArray count]>0))
-		[delegateArray lockBruteForceMakeObjectsPerformSelector:@selector(nodeNameChanged:) withObject:self];
-	//	tell all my sub-nodes that their name has also changed
-	if ((nodeContents!=nil)&&([nodeContents count]>0))
-		[nodeContents lockMakeObjectsPerformSelector:@selector(informDelegatesOfNameChange)];
-	
+	//	inform delegates of name change
+	NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+	for (id anObj in tmpArray)	{
+		[anObj nodeNameChanged:self];
+	}
+	//	inform sub-nodes of name change
+	tmpArray = [nodeContents lockCreateArrayCopy];
+	for (OSCNode *tmpNode in tmpArray)	{
+		[tmpNode informDelegatesOfNameChange];
+	}
 	[addressSpace nodeRenamed:self];
 }
 - (void) addDelegatesFromNode:(OSCNode *)n	{
 	//	put together an array of the delegates i'll be adding
-	NSArray		*delegatesToAdd = [[n delegateArray] lockCreateArrayCopy];
+	NSArray		*delegatesToAdd = [[n delegateArray] lockCreateArrayCopyFromObjects];
 	//	copy the delegates to my delegate array
 	[delegateArray lockAddObjectsFromArray:delegatesToAdd];
 	//	notify the delegates i copied that their names changed
@@ -927,10 +905,11 @@
 		[self informDelegatesOfNameChange];
 	//	if i'm deleting this node, inform my delegates of it
 	if (deletingThisNode)	{
-		[delegateArray wrlock];
-			[delegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
-			[delegateArray removeAllObjects];
-		[delegateArray unlock];
+		NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+		for (id anObj in tmpArray)	{
+			[anObj nodeDeleted:self];
+		}
+		[delegateArray lockRemoveAllObjects];
 	}
 }
 - (OSCNode *) parentNode	{
