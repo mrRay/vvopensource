@@ -18,7 +18,6 @@
 				9658765118CE5C39003126BC /* PBXTargetDependency */,
 				9658765318CE5C39003126BC /* PBXTargetDependency */,
 				9628FFC01981807E00FB6C56 /* PBXTargetDependency */,
-				9628FFBD19817EA700FB6C56 /* PBXTargetDependency */,
 				9628FFBB19817EA400FB6C56 /* PBXTargetDependency */,
 				964FF28D1981B5B500CCC808 /* PBXTargetDependency */,
 				1A7128CF1B61069900528CDB /* PBXTargetDependency */,
@@ -139,13 +138,11 @@
 		96140119198AD46D00335292 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96140118198AD46D00335292 /* AppDelegate.m */; };
 		9614011C198AD46D00335292 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9614011A198AD46D00335292 /* MainMenu.xib */; };
 		96140122198AD49F00335292 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		96140123198AD49F00335292 /* JSONKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8072619817C0A00FA7825 /* JSONKit.framework */; };
 		96140124198AD49F00335292 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96140125198AD49F00335292 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96140126198AD49F00335292 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
 		96140128198AD4B400335292 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96140129198AD4B400335292 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		9614012A198AD4B400335292 /* JSONKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8072619817C0A00FA7825 /* JSONKit.framework */; };
 		9614012B198AD4B400335292 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		9614012C198AD4B400335292 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
 		961745FF100F879000FB60E6 /* VVMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 961745FE100F879000FB60E6 /* VVMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -219,7 +216,6 @@
 		9628FFB319817DFC00FB6C56 /* VVBufferPoolStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628FF9F19817DFC00FB6C56 /* VVBufferPoolStringAdditions.m */; };
 		9628FFB419817DFC00FB6C56 /* VVSizingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628FFA019817DFC00FB6C56 /* VVSizingTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9628FFB519817DFC00FB6C56 /* VVSizingTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628FFA119817DFC00FB6C56 /* VVSizingTool.m */; };
-		9628FFB719817E2C00FB6C56 /* JSONKit-License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9628FFB619817E2C00FB6C56 /* JSONKit-License.txt */; };
 		9628FFB919817E6400FB6C56 /* DDMathParser-License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9628FFB819817E6400FB6C56 /* DDMathParser-License.txt */; };
 		9628FFC7198182DC00FB6C56 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		9628FFE21981840000FB6C56 /* GLShaderScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628FFE01981840000FB6C56 /* GLShaderScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -232,7 +228,6 @@
 		964FF27E1981B5AF00CCC808 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		964FF2841981B5AF00CCC808 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 964FF2821981B5AF00CCC808 /* InfoPlist.strings */; };
 		964FF2961981B5D700CCC808 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		964FF2971981B5D900CCC808 /* JSONKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8072619817C0A00FA7825 /* JSONKit.framework */; };
 		964FF2981981B5DB00CCC808 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		964FF2991981B5DE00CCC808 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		964FF2AD1981B62400CCC808 /* ISFAttrib.h in Headers */ = {isa = PBXBuildFile; fileRef = 964FF29A1981B62400CCC808 /* ISFAttrib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -427,8 +422,6 @@
 		96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
 		96C8071319817BFE00FA7825 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96C8071919817BFE00FA7825 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96C8071719817BFE00FA7825 /* InfoPlist.strings */; };
-		96C8072719817C0A00FA7825 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
-		96C8072D19817C0A00FA7825 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96C8072B19817C0A00FA7825 /* InfoPlist.strings */; };
 		96C8073B19817C1600FA7825 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96C8074119817C1600FA7825 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96C8073F19817C1600FA7825 /* InfoPlist.strings */; };
 		96C8077619817CB500FA7825 /* _DDFunctionContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C8074919817CB400FA7825 /* _DDFunctionContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -476,8 +469,6 @@
 		96C807A019817CB500FA7825 /* DDTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C8077319817CB500FA7825 /* DDTypes.m */; };
 		96C807A119817CB500FA7825 /* NSString+DDMathParsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C8077419817CB500FA7825 /* NSString+DDMathParsing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C807A219817CB500FA7825 /* NSString+DDMathParsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C8077519817CB500FA7825 /* NSString+DDMathParsing.m */; };
-		96C807A619817D0000FA7825 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C807A419817D0000FA7825 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96C807A719817D0000FA7825 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C807A519817D0000FA7825 /* JSONKit.m */; };
 		96C9DAF4106B0301006DD331 /* MVOMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */; };
 		96C9DAF7106B0335006DD331 /* MVOOSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C9DAF6106B0335006DD331 /* MVOOSCManager.m */; };
 		96CD2822108B8B2A00F3D5F8 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -497,7 +488,6 @@
 		96EE5D451984074300231124 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96EE5D461984074300231124 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D471984074C00231124 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		96EE5D481984074C00231124 /* JSONKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8072619817C0A00FA7825 /* JSONKit.framework */; };
 		96EE5D491984074C00231124 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96EE5D4A1984074C00231124 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D4B1984074C00231124 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
@@ -509,7 +499,6 @@
 		96EE5D551984078800231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D561984079700231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96EE5D571984079700231124 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		96EE5D581984079700231124 /* JSONKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8072619817C0A00FA7825 /* JSONKit.framework */; };
 		96EE5D591984079700231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D5A1984079700231124 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
 		96EE5D6319840D5C00231124 /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
@@ -613,13 +602,6 @@
 			remoteGlobalIDString = 96C8071119817BFE00FA7825;
 			remoteInfo = DDMathParser;
 		};
-		9628FFBC19817EA700FB6C56 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 96C8072519817C0A00FA7825;
-			remoteInfo = JSONKit;
-		};
 		9628FFBF1981807E00FB6C56 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -647,13 +629,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 96C8071119817BFE00FA7825;
 			remoteInfo = DDMathParser;
-		};
-		964FF2921981B5D000CCC808 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 96C8072519817C0A00FA7825;
-			remoteInfo = JSONKit;
 		};
 		964FF2941981B5D300CCC808 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -967,7 +942,6 @@
 			files = (
 				96140128198AD4B400335292 /* VVBasics.framework in CopyFiles */,
 				96140129198AD4B400335292 /* DDMathParser.framework in CopyFiles */,
-				9614012A198AD4B400335292 /* JSONKit.framework in CopyFiles */,
 				9614012B198AD4B400335292 /* VVBufferPool.framework in CopyFiles */,
 				9614012C198AD4B400335292 /* VVISFKit.framework in CopyFiles */,
 			);
@@ -1129,7 +1103,6 @@
 			files = (
 				96EE5D561984079700231124 /* VVBasics.framework in CopyFiles */,
 				96EE5D571984079700231124 /* DDMathParser.framework in CopyFiles */,
-				96EE5D581984079700231124 /* JSONKit.framework in CopyFiles */,
 				96EE5D591984079700231124 /* VVBufferPool.framework in CopyFiles */,
 				96EE5D5A1984079700231124 /* VVISFKit.framework in CopyFiles */,
 			);
@@ -1280,7 +1253,6 @@
 		9628FF9F19817DFC00FB6C56 /* VVBufferPoolStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferPoolStringAdditions.m; sourceTree = "<group>"; };
 		9628FFA019817DFC00FB6C56 /* VVSizingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSizingTool.h; sourceTree = "<group>"; };
 		9628FFA119817DFC00FB6C56 /* VVSizingTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSizingTool.m; sourceTree = "<group>"; };
-		9628FFB619817E2C00FB6C56 /* JSONKit-License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "JSONKit-License.txt"; path = "external/JSONKit-master/JSONKit-License.txt"; sourceTree = "<group>"; };
 		9628FFB819817E6400FB6C56 /* DDMathParser-License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "DDMathParser-License.txt"; path = "external/DDMathParser-master/DDMathParser-License.txt"; sourceTree = "<group>"; };
 		9628FFE01981840000FB6C56 /* GLShaderScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLShaderScene.h; sourceTree = "<group>"; };
 		9628FFE11981840000FB6C56 /* GLShaderScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLShaderScene.m; sourceTree = "<group>"; };
@@ -1455,10 +1427,6 @@
 		96C8071619817BFE00FA7825 /* DDMathParser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DDMathParser-Info.plist"; sourceTree = "<group>"; };
 		96C8071819817BFE00FA7825 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		96C8071A19817BFE00FA7825 /* DDMathParser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DDMathParser-Prefix.pch"; sourceTree = "<group>"; };
-		96C8072619817C0A00FA7825 /* JSONKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		96C8072A19817C0A00FA7825 /* JSONKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JSONKit-Info.plist"; sourceTree = "<group>"; };
-		96C8072C19817C0A00FA7825 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		96C8072E19817C0A00FA7825 /* JSONKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JSONKit-Prefix.pch"; sourceTree = "<group>"; };
 		96C8073A19817C1600FA7825 /* VVBufferPool.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVBufferPool.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96C8073E19817C1600FA7825 /* VVBufferPool-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VVBufferPool-Info.plist"; sourceTree = "<group>"; };
 		96C8074019817C1600FA7825 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1508,8 +1476,6 @@
 		96C8077319817CB500FA7825 /* DDTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DDTypes.m; path = "external/DDMathParser-master/DDMathParser/DDTypes.m"; sourceTree = "<group>"; };
 		96C8077419817CB500FA7825 /* NSString+DDMathParsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+DDMathParsing.h"; path = "external/DDMathParser-master/DDMathParser/NSString+DDMathParsing.h"; sourceTree = "<group>"; };
 		96C8077519817CB500FA7825 /* NSString+DDMathParsing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+DDMathParsing.m"; path = "external/DDMathParser-master/DDMathParser/NSString+DDMathParsing.m"; sourceTree = "<group>"; };
-		96C807A419817D0000FA7825 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = "external/JSONKit-master/JSONKit.h"; sourceTree = "<group>"; };
-		96C807A519817D0000FA7825 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = "external/JSONKit-master/JSONKit.m"; sourceTree = "<group>"; };
 		96C9DAF2106B0301006DD331 /* MVOMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOMIDIManager.h; path = MIDIviaOSC/MVOMIDIManager.h; sourceTree = "<group>"; };
 		96C9DAF3106B0301006DD331 /* MVOMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOMIDIManager.m; path = MIDIviaOSC/MVOMIDIManager.m; sourceTree = "<group>"; };
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
@@ -1560,7 +1526,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				96140122198AD49F00335292 /* DDMathParser.framework in Frameworks */,
-				96140123198AD49F00335292 /* JSONKit.framework in Frameworks */,
 				96140124198AD49F00335292 /* VVBasics.framework in Frameworks */,
 				96140125198AD49F00335292 /* VVBufferPool.framework in Frameworks */,
 				1AE8C5F91AF1AC29006C5018 /* QuickTime.framework in Frameworks */,
@@ -1618,7 +1583,6 @@
 			files = (
 				964FF2991981B5DE00CCC808 /* VVBufferPool.framework in Frameworks */,
 				964FF2981981B5DB00CCC808 /* VVBasics.framework in Frameworks */,
-				964FF2971981B5D900CCC808 /* JSONKit.framework in Frameworks */,
 				964FF2961981B5D700CCC808 /* DDMathParser.framework in Frameworks */,
 				964FF27E1981B5AF00CCC808 /* Cocoa.framework in Frameworks */,
 			);
@@ -1674,7 +1638,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EE5D471984074C00231124 /* DDMathParser.framework in Frameworks */,
-				96EE5D481984074C00231124 /* JSONKit.framework in Frameworks */,
 				96EE5D491984074C00231124 /* VVBasics.framework in Frameworks */,
 				96EE5D4A1984074C00231124 /* VVBufferPool.framework in Frameworks */,
 				96EE5D4B1984074C00231124 /* VVISFKit.framework in Frameworks */,
@@ -1758,14 +1721,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96C8072219817C0A00FA7825 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C8072719817C0A00FA7825 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96C8073619817C1600FA7825 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1802,7 +1757,6 @@
 				96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */,
 				1A6F726619033A9D00A6FBAD /* libVVUIToolbox.a */,
 				96C8071219817BFE00FA7825 /* DDMathParser.framework */,
-				96C8072619817C0A00FA7825 /* JSONKit.framework */,
 				96C8073A19817C1600FA7825 /* VVBufferPool.framework */,
 				964FF27D1981B5AF00CCC808 /* VVISFKit.framework */,
 				965C1CAC1983BE7D00111741 /* GLScene Test App.app */,
@@ -2266,7 +2220,6 @@
 				96C18C30185A1A740082DE35 /* VVBasicsStatic */,
 				96C8073C19817C1600FA7825 /* VVBufferPool framework */,
 				96C8071419817BFE00FA7825 /* DDMathParser framework */,
-				96C8072819817C0A00FA7825 /* JSONKit framework */,
 				964FF27F1981B5AF00CCC808 /* VVISFKit framework */,
 				96B06C1E18BE0ECF000A921C /* VVUIToolbox framework */,
 				1A6F726819033A9D00A6FBAD /* VVUIToolboxStatic */,
@@ -2433,7 +2386,6 @@
 			isa = PBXGroup;
 			children = (
 				96C00548185A447900C33FE2 /* MAZeroingWeakRef */,
-				96C807A819817D0500FA7825 /* JSONKit-master */,
 				96C807A319817CBC00FA7825 /* DDMathParser-master */,
 			);
 			name = "EXTERNAL CODE";
@@ -2499,25 +2451,6 @@
 				96C8071619817BFE00FA7825 /* DDMathParser-Info.plist */,
 				96C8071719817BFE00FA7825 /* InfoPlist.strings */,
 				96C8071A19817BFE00FA7825 /* DDMathParser-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		96C8072819817C0A00FA7825 /* JSONKit framework */ = {
-			isa = PBXGroup;
-			children = (
-				96C8072919817C0A00FA7825 /* Supporting Files */,
-			);
-			name = "JSONKit framework";
-			path = JSONKit;
-			sourceTree = "<group>";
-		};
-		96C8072919817C0A00FA7825 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				96C8072A19817C0A00FA7825 /* JSONKit-Info.plist */,
-				96C8072B19817C0A00FA7825 /* InfoPlist.strings */,
-				96C8072E19817C0A00FA7825 /* JSONKit-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2623,16 +2556,6 @@
 				96C8077519817CB500FA7825 /* NSString+DDMathParsing.m */,
 			);
 			name = "DDMathParser-master";
-			sourceTree = "<group>";
-		};
-		96C807A819817D0500FA7825 /* JSONKit-master */ = {
-			isa = PBXGroup;
-			children = (
-				9628FFB619817E2C00FB6C56 /* JSONKit-License.txt */,
-				96C807A419817D0000FA7825 /* JSONKit.h */,
-				96C807A519817D0000FA7825 /* JSONKit.m */,
-			);
-			name = "JSONKit-master";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2770,14 +2693,6 @@
 				96C8079D19817CB500FA7825 /* DDParserTypes.h in Headers */,
 				96C8079F19817CB500FA7825 /* DDTypes.h in Headers */,
 				96C807A119817CB500FA7825 /* NSString+DDMathParsing.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96C8072319817C0A00FA7825 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C807A619817D0000FA7825 /* JSONKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2992,7 +2907,6 @@
 			);
 			dependencies = (
 				964FF2951981B5D300CCC808 /* PBXTargetDependency */,
-				964FF2931981B5D000CCC808 /* PBXTargetDependency */,
 				964FF2911981B5CE00CCC808 /* PBXTargetDependency */,
 			);
 			name = VVISFKit;
@@ -3252,24 +3166,6 @@
 			productReference = 96C8071219817BFE00FA7825 /* DDMathParser.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		96C8072519817C0A00FA7825 /* JSONKit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 96C8073219817C0A00FA7825 /* Build configuration list for PBXNativeTarget "JSONKit" */;
-			buildPhases = (
-				96C8072119817C0A00FA7825 /* Sources */,
-				96C8072219817C0A00FA7825 /* Frameworks */,
-				96C8072319817C0A00FA7825 /* Headers */,
-				96C8072419817C0A00FA7825 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = JSONKit;
-			productName = JSONKit;
-			productReference = 96C8072619817C0A00FA7825 /* JSONKit.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		96C8073919817C1600FA7825 /* VVBufferPool */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 96C8074619817C1600FA7825 /* Build configuration list for PBXNativeTarget "VVBufferPool" */;
@@ -3330,7 +3226,6 @@
 				961EA8EC100E8565007E6C25 /* VVBasics */,
 				96C8073919817C1600FA7825 /* VVBufferPool */,
 				96C8071119817BFE00FA7825 /* DDMathParser */,
-				96C8072519817C0A00FA7825 /* JSONKit */,
 				964FF27C1981B5AF00CCC808 /* VVISFKit */,
 				96B06C1B18BE0ECF000A921C /* VVUIToolbox */,
 				961745F3100F86B400FB60E6 /* VVMIDI */,
@@ -3538,15 +3433,6 @@
 			files = (
 				96C8071919817BFE00FA7825 /* InfoPlist.strings in Resources */,
 				9628FFB919817E6400FB6C56 /* DDMathParser-License.txt in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96C8072419817C0A00FA7825 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C8072D19817C0A00FA7825 /* InfoPlist.strings in Resources */,
-				9628FFB719817E2C00FB6C56 /* JSONKit-License.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3899,14 +3785,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96C8072119817C0A00FA7825 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96C807A719817D0000FA7825 /* JSONKit.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		96C8073519817C1600FA7825 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3996,11 +3874,6 @@
 			target = 96C8071119817BFE00FA7825 /* DDMathParser */;
 			targetProxy = 9628FFBA19817EA400FB6C56 /* PBXContainerItemProxy */;
 		};
-		9628FFBD19817EA700FB6C56 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 96C8072519817C0A00FA7825 /* JSONKit */;
-			targetProxy = 9628FFBC19817EA700FB6C56 /* PBXContainerItemProxy */;
-		};
 		9628FFC01981807E00FB6C56 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 96C8073919817C1600FA7825 /* VVBufferPool */;
@@ -4020,11 +3893,6 @@
 			isa = PBXTargetDependency;
 			target = 96C8071119817BFE00FA7825 /* DDMathParser */;
 			targetProxy = 964FF2901981B5CE00CCC808 /* PBXContainerItemProxy */;
-		};
-		964FF2931981B5D000CCC808 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 96C8072519817C0A00FA7825 /* JSONKit */;
-			targetProxy = 964FF2921981B5D000CCC808 /* PBXContainerItemProxy */;
 		};
 		964FF2951981B5D300CCC808 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4381,14 +4249,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				96C8071819817BFE00FA7825 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		96C8072B19817C0A00FA7825 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96C8072C19817C0A00FA7825 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -5877,77 +5737,6 @@
 			};
 			name = Release;
 		};
-		96C8073319817C0A00FA7825 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JSONKit/JSONKit-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "JSONKit/JSONKit-Info.plist";
-				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		96C8073419817C0A00FA7825 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 1;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JSONKit/JSONKit-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "JSONKit/JSONKit-Info.plist";
-				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Release;
-		};
 		96C8074719817C1600FA7825 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6275,15 +6064,6 @@
 			buildConfigurations = (
 				96C8071E19817BFE00FA7825 /* Debug */,
 				96C8071F19817BFE00FA7825 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		96C8073219817C0A00FA7825 /* Build configuration list for PBXNativeTarget "JSONKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				96C8073319817C0A00FA7825 /* Debug */,
-				96C8073419817C0A00FA7825 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

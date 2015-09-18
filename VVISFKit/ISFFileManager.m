@@ -1,5 +1,4 @@
 #import "ISFFileManager.h"
-#import <JSONKit/JSONKit.h>
 #import "ISFStringAdditions.h"
 
 
@@ -102,34 +101,41 @@
 	openCommentRange = [rawFile rangeOfString:@"/*"];
 	closeCommentRange = [rawFile rangeOfString:@"*/"];
 	if (openCommentRange.length!=0 && closeCommentRange.length!=0)	{
+		//	parse the JSON string, turning it into a dictionary and values
+		NSError			*nsErr = nil;
 		NSString		*jsonString = [rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))];
-		//	parse the JSON dict, turning it into a dictionary and values
-		id				jsonObject = [jsonString objectFromJSONString];
-		if ([jsonObject isKindOfClass:[NSDictionary class]])	{
-			//	check the "INPUTS" section of the JSON dict
-			NSArray		*inputs = [jsonObject objectForKey:@"INPUTS"];
-			if (inputs==nil || ![inputs isKindOfClass:[NSArray class]])	{
-				NSLog(@"\t\terr: inputs was nil, or was the wrong type, %s",__func__);
-				return NO;
-			}
-			for (NSDictionary *inputDict in inputs)	{
-				if ([inputDict isKindOfClass:[NSDictionary class]])	{
-					NSString		*tmpString = nil;
-					tmpString = [inputDict objectForKey:@"NAME"];
-					if (tmpString!=nil && [tmpString isEqualToString:@"inputImage"])	{
-						tmpString = [inputDict objectForKey:@"TYPE"];
-						if (tmpString!=nil && [tmpString isEqualToString:@"image"])
-							return YES;
+		NSData			*jsonData = [NSData dataWithBytes:(void *)[jsonString UTF8String] length:[jsonString length]];
+		id				jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&nsErr];
+		if (jsonObject==nil)	{
+			NSLog(@"\t\terr: couldn't make jsonObject in %s, error was %@",__func__,nsErr);
+			return NO;
+		}
+		else	{
+			if ([jsonObject isKindOfClass:[NSDictionary class]])	{
+				//	check the "INPUTS" section of the JSON dict
+				NSArray		*inputs = [jsonObject objectForKey:@"INPUTS"];
+				if (inputs==nil || ![inputs isKindOfClass:[NSArray class]])	{
+					NSLog(@"\t\terr: inputs was nil, or was the wrong type, %s",__func__);
+					return NO;
+				}
+				for (NSDictionary *inputDict in inputs)	{
+					if ([inputDict isKindOfClass:[NSDictionary class]])	{
+						NSString		*tmpString = nil;
+						tmpString = [inputDict objectForKey:@"NAME"];
+						if (tmpString!=nil && [tmpString isEqualToString:@"inputImage"])	{
+							tmpString = [inputDict objectForKey:@"TYPE"];
+							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
+								return YES;
+						}
 					}
 				}
 			}
+			else	{
+				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
+				NSLog(@"\t\tfile was %@",pathToFile);
+				return NO;
+			}
 		}
-		else	{
-			NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
-			NSLog(@"\t\tfile was %@",pathToFile);
-			return NO;
-		}
-		
 	}
 	return NO;
 }

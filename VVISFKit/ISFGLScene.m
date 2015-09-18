@@ -1,5 +1,4 @@
 #import "ISFGLScene.h"
-#import <JSONKit/JSONKit.h>
 #import <DDMathParser/DDMathParser.h>
 #import "ISFAttrib.h"
 #import "ISFStringAdditions.h"
@@ -216,7 +215,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		fragShaderSource = [[rawFile substringWithRange:NSMakeRange(closeCommentRange.location+closeCommentRange.length, [rawFile length]-(closeCommentRange.location+closeCommentRange.length))] retain];
 		jsonString = [[rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))] retain];
 		//	parse the JSON dict, turning it into a dictionary and values
-		id				jsonObject = [jsonString objectFromJSONString];
+		NSError			*nsErr = nil;
+		NSData			*jsonData = [NSData dataWithBytes:(void *)[jsonString UTF8String] length:[jsonString length]];
+		id				jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&nsErr];
+		if (jsonObject==nil)	{
+			NSLog(@"\t\terror parsing json object in %s: %@",__func__,nsErr);
+		}
 		OSSpinLockUnlock(&srcLock);
 		
 		//	run through the dictionaries and values parsed from JSON, creating the appropriate attributes
