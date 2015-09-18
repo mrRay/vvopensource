@@ -114,7 +114,10 @@
 			}
 			else	{
 				//NSLog(@"\t\tsleepDuration was 0, about to CFRunLoopRun()...");
-				CFRunLoopRunInMode(kCFRunLoopDefaultMode, maxInterval, false);
+				if (interval==0.0)
+					CFRunLoopRunInMode(kCFRunLoopDefaultMode, maxInterval, false);
+				else
+					CFRunLoopRunInMode(kCFRunLoopDefaultMode, interval, false);
 			}
 			
 			OSSpinLockLock(&valLock);

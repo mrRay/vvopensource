@@ -97,10 +97,8 @@
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	
 	pthread_rwlock_rdlock(&arrayLock);
-		[returnMe addObjectsFromArray:array];
-		/*
-		returnMe = [self createArrayCopy];
-		*/
+		if (returnMe!=nil && array!=nil)
+			[returnMe addObjectsFromArray:array];
 	pthread_rwlock_unlock(&arrayLock);
 	
 	return returnMe;

@@ -367,12 +367,12 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 }
 - (void) setAuxTransMatrix:(GLfloat *)n	{
 	/*
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	if (n!=nil)	{
 		for (int i=0; i<4; ++i)	{
 			NSMutableString	*tmpString = [NSMutableString stringWithCapacity:0];
 			[tmpString appendFormat:@"\t%0.2f\t%0.2f\t%0.2f\t%0.2f",*(n+(i*4+0)),*(n+(i*4+1)),*(n+(i*4+2)),*(n+(i*4+3))];
-			NSLog(@"\t\t%@",tmpString);
+			//NSLog(@"\t\t%@",tmpString);
 		}
 	}
 	*/
