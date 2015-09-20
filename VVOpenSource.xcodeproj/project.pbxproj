@@ -110,6 +110,8 @@
 		1A86D6691941271400419A76 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D6681941271400419A76 /* OpenGLES.framework */; };
 		1A86D66B1941271A00419A76 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A86D66A1941271A00419A76 /* UIKit.framework */; };
 		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
+		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
 		1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE3C7FD1B3B858000D37189 /* IOKit.framework */; };
 		1AE8C5F61AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
 		1AE8C5F71AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
@@ -1154,6 +1156,8 @@
 		1A86D6681941271400419A76 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		1A86D66A1941271A00419A76 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
+		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
+		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
 		1AE3C7FD1B3B858000D37189 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		1AE8C5F51AF1AC16006C5018 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = ../../../../System/Library/Frameworks/QTKit.framework; sourceTree = "<group>"; };
 		1AE8C5F81AF1AC29006C5018 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = ../../../../System/Library/Frameworks/QuickTime.framework; sourceTree = "<group>"; };
@@ -2046,6 +2050,8 @@
 				964FF2A81981B62400CCC808 /* ISFRenderPass.m */,
 				964FF2A91981B62400CCC808 /* ISFStringAdditions.h */,
 				964FF2AA1981B62400CCC808 /* ISFStringAdditions.m */,
+				1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */,
+				1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */,
 				964FF2801981B5AF00CCC808 /* Supporting Files */,
 			);
 			name = "VVISFKit framework";
@@ -2644,6 +2650,7 @@
 				964FF2B51981B62400CCC808 /* ISFGLScene.h in Headers */,
 				964FF2BA1981B62400CCC808 /* ISFRenderPass.h in Headers */,
 				964FF2BC1981B62400CCC808 /* ISFStringAdditions.h in Headers */,
+				1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */,
 				964FF2BE1981B62400CCC808 /* ISFTargetBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3613,6 +3620,7 @@
 				964FF2AE1981B62400CCC808 /* ISFAttrib.m in Sources */,
 				964FF2B01981B62400CCC808 /* ISFFileManager.m in Sources */,
 				964FF2B61981B62400CCC808 /* ISFGLScene.m in Sources */,
+				1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */,
 				964FF2BB1981B62400CCC808 /* ISFRenderPass.m in Sources */,
 				964FF2BD1981B62400CCC808 /* ISFStringAdditions.m in Sources */,
 				964FF2BF1981B62400CCC808 /* ISFTargetBuffer.m in Sources */,

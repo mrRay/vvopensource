@@ -102,12 +102,10 @@
 	closeCommentRange = [rawFile rangeOfString:@"*/"];
 	if (openCommentRange.length!=0 && closeCommentRange.length!=0)	{
 		//	parse the JSON string, turning it into a dictionary and values
-		NSError			*nsErr = nil;
 		NSString		*jsonString = [rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))];
-		NSData			*jsonData = [NSData dataWithBytes:(void *)[jsonString UTF8String] length:[jsonString length]];
-		id				jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&nsErr];
+		id				jsonObject = [jsonString objectFromJSONString];
 		if (jsonObject==nil)	{
-			NSLog(@"\t\terr: couldn't make jsonObject in %s, error was %@",__func__,nsErr);
+			NSLog(@"\t\terr: couldn't make jsonObject in %s, string was %@",__func__,jsonString);
 			return NO;
 		}
 		else	{

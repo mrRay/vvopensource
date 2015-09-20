@@ -4,6 +4,7 @@
 #import "ISFGLScene.h"
 #import "ISFRenderPass.h"
 #import "ISFStringAdditions.h"
+#import "ISFObjectAdditions.h"
 #import "ISFTargetBuffer.h"
 
 /**

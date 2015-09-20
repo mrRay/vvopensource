@@ -215,11 +215,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		fragShaderSource = [[rawFile substringWithRange:NSMakeRange(closeCommentRange.location+closeCommentRange.length, [rawFile length]-(closeCommentRange.location+closeCommentRange.length))] retain];
 		jsonString = [[rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))] retain];
 		//	parse the JSON dict, turning it into a dictionary and values
-		NSError			*nsErr = nil;
-		NSData			*jsonData = [NSData dataWithBytes:(void *)[jsonString UTF8String] length:[jsonString length]];
-		id				jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&nsErr];
+		id				jsonObject = (jsonString==nil) ? nil : [jsonString objectFromJSONString];
 		if (jsonObject==nil)	{
-			NSLog(@"\t\terror parsing json object in %s: %@",__func__,nsErr);
+			NSLog(@"\t\terror parsing json object in %s, string was \"%@\"",__func__,jsonString);
 		}
 		OSSpinLockUnlock(&srcLock);
 		
