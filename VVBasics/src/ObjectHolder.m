@@ -57,7 +57,8 @@
 		return self;
 	}
 	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
+	//NSLog(@"\t\terr: %s - BAIL",__func__);
+	
 	/*
 	NSException		*exc = nil;
 	exc = [NSException

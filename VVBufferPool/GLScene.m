@@ -84,7 +84,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 							cgl_ctx = cglContext;
 							strVend = glGetString (GL_VENDOR);
 							tmpString = [NSString stringWithCString:(const char *)strVend encoding:NSASCIIStringEncoding];
-							[returnMe addObject:tmpString];
+							[_glGPUVendorArray addObject:tmpString];
 							//	calculate if this is an integrated GPU setup while i'm running through the vendor array!
 							if (!tmpIntegratedFlag && ![tmpString containsString:@"ATI"] && ![tmpString containsString:@"AMD"] && ![tmpString containsString:@"NVIDIA"])
 								tmpIntegratedFlag = YES;
