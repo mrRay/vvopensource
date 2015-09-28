@@ -302,7 +302,7 @@ id _globalVVBufferCopier = nil;
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
 			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,aSize.width,aSize.height));
-			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
 			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
 			//NSLog(@"\t\tjust copied %d to %d",[a name],[b name]);

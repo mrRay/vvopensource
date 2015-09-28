@@ -78,7 +78,7 @@
 	//NSLog(@"%s",__func__);
 	NSData			*tmpData = [self dataUsingEncoding:NSUTF8StringEncoding];
 	NSError			*nsErr = nil;
-	id				returnMe = (tmpData==nil) ? nil : [NSJSONSerialization JSONObjectWithData:tmpData options:0 error:&nsErr];
+	id				returnMe = (tmpData==nil) ? nil : [NSJSONSerialization JSONObjectWithData:tmpData options:NSJSONReadingAllowFragments error:&nsErr];
 	if (returnMe == nil)
 		NSLog(@"\t\terr: %s, %@. %@",__func__,nsErr,self);
 	return returnMe;
