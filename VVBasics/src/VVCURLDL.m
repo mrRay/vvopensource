@@ -24,6 +24,8 @@
 		connectTimeout = 0;
 		log = nil;
 		pass = nil;
+		userAgent = nil;
+		referer = nil;
 		acceptedEncoding = nil;
 		postData = nil;
 		//headerArray = nil;
@@ -47,6 +49,8 @@
 	VVRELEASE(urlString);
 	VVRELEASE(log);
 	VVRELEASE(pass);
+	VVRELEASE(userAgent);
+	VVRELEASE(referer);
 	VVRELEASE(acceptedEncoding);
 	VVRELEASE(postData);
 	//VVRELEASE(headerArray);
@@ -159,9 +163,21 @@
 			curl_easy_setopt(curlHandle,CURLOPT_USERPWD,[tmpString UTF8String]);
 		}
 		
+		//	if there's a user agent, set it up
+		if (userAgent != nil)	{
+			curl_easy_setopt(curlHandle, CURLOPT_USERAGENT, [userAgent UTF8String]);
+		}
+		
+		//	if there's a referer, set it up
+		if (referer != nil)	{
+			curl_easy_setopt(curlHandle, CURLOPT_REFERER, [referer UTF8String]);
+		}
+		
 		//	if there's post data, set up the handle to use it
 		if (postData != nil)	{
 			//NSLog(@"\tsetting POST data");
+			curl_easy_setopt(curlHandle, CURLOPT_POST, 1);
+			curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDSIZE, [postData length]);
 			curl_easy_setopt(curlHandle,CURLOPT_POSTFIELDS,[postData bytes]);
 		}
 		else	{
@@ -249,6 +265,8 @@
 	VVRELEASE(pass);
 	pass = [p retain];
 }
+@synthesize userAgent;
+@synthesize referer;
 @synthesize acceptedEncoding;
 /*
 - (void) appendHeaderString:(NSString *)n	{

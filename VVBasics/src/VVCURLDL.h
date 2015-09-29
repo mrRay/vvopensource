@@ -35,6 +35,8 @@
 	long					connectTimeout;
 	NSString				*log;
 	NSString				*pass;
+	NSString				*userAgent;	//	passed to libcurl as CURLOPT_USERAGENT
+	NSString				*referer;	//	passed to libcurl as CURLOPT_REFERER
 	NSString				*acceptedEncoding;	//	passed to libcurl as CURLOPT_ACCEPT_ENCODING
 	
 	long					httpResponseCode;
@@ -72,6 +74,8 @@
 @property (assign,readwrite,setter=setDNSCacheTimeout:) long dnsCacheTimeout;
 @property (assign,readwrite) long connectTimeout;
 - (void) setLogin:(NSString *)user password:(NSString *)pass;
+@property (retain,readwrite) NSString *userAgent;
+@property (retain,readwrite) NSString *referer;
 @property (retain,readwrite) NSString *acceptedEncoding;
 
 - (void) writePtr:(void *)ptr size:(size_t)s;
