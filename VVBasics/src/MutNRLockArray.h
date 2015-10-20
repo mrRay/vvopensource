@@ -50,5 +50,8 @@ Instead of adding (and therefore retaining) objects to an array like my supercla
 - (void) bruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
 - (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o;
 
+- (void) lockPurgeEmptyHolders;
+- (void) purgeEmptyHolders;
+
 
 @end

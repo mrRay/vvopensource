@@ -478,33 +478,31 @@
 	[delegateArray unlock];
 }
 - (void) removeDelegate:(id)d	{
-	//NSLog(@"%s",__func__);
-	
-	if ((d == nil)||(delegateArray==nil)||([delegateArray count]<1))
+	if (delegateArray==nil || [delegateArray count]<1)
 		return;
-	//NSLog(@"%s ... %p, %p",__func__,self,d);
-	
 	[delegateArray wrlock];
-	id			foundHolder = nil;
-	int			foundHolderIndex = 0;
+	NSMutableIndexSet		*ixsToRemove = nil;
+	int						tmpIndex = 0;
 	for (ObjectHolder *holder in [delegateArray array])	{
-		if (holder==d)
-			foundHolder = holder;
+		if (holder == d)	{
+			if (ixsToRemove==nil)
+				ixsToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+			[ixsToRemove addIndex:tmpIndex];
+		}
 		else	{
-			id		tmpObj = [holder object];
-			if (tmpObj==d)
-				foundHolder = holder;
+			id					holderObj = [holder object];
+			if (holderObj==d || holderObj==nil)	{
+				if (ixsToRemove==nil)
+					ixsToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+				[ixsToRemove addIndex:tmpIndex];
+			}
 		}
-		if (foundHolder != nil)	{
-			[foundHolder setObject:nil];
-			break;
-		}
-		++foundHolderIndex;
+		
+		++tmpIndex;
 	}
-	if (foundHolder != nil)
-		[[delegateArray array] removeObjectAtIndex:foundHolderIndex];
+	if (ixsToRemove != nil)
+		[[delegateArray array] removeObjectsAtIndexes:ixsToRemove];
 	[delegateArray unlock];
-	
 }
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);

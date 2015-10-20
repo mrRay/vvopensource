@@ -293,6 +293,33 @@
 		[self bruteForceMakeObjectsPerformSelector:s withObject:o];
 	pthread_rwlock_unlock(&arrayLock);
 }
+- (void) lockPurgeEmptyHolders	{
+	pthread_rwlock_wrlock(&arrayLock);
+	if (array != nil)	{
+		[self purgeEmptyHolders];
+	}
+	pthread_rwlock_unlock(&arrayLock);
+}
+- (void) purgeEmptyHolders	{
+	if (array != nil)	{
+		int						tmpIndex = 0;
+		NSMutableIndexSet		*indicesToRemove = nil;
+		for (ObjectHolder *holder in array)	{
+			id			anObj = [holder object];
+			if (anObj == nil)	{
+				if (indicesToRemove == nil)
+					indicesToRemove = [[NSMutableIndexSet alloc] init];
+				[indicesToRemove addIndex:tmpIndex];
+			}
+			++tmpIndex;
+		}
+		if (indicesToRemove != nil)	{
+			[array removeObjectsAtIndexes:indicesToRemove];
+			[indicesToRemove release];
+			indicesToRemove = nil;
+		}
+	}
+}
 
 
 @end

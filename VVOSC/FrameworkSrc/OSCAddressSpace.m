@@ -127,8 +127,8 @@ id				_mainVVOSCAddressSpace;
 	[mutString appendString:@"\n"];
 	[mutString appendString:@"********\tOSC Address Space\t********\n"];
 	if ((nodeContents != nil) && ([nodeContents count] > 0))	{
-		[nodeContents rdlock];
-		for (OSCNode *nodePtr in [nodeContents array])	{
+		NSArray				*localContents = [nodeContents lockCreateArrayCopy];
+		for (OSCNode *nodePtr in localContents)	{
 			[nodePtr _logDescriptionToString:mutString tabDepth:0];
 			[mutString appendString:@"\n"];
 		}
