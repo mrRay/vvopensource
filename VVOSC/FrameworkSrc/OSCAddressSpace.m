@@ -247,8 +247,14 @@ id				_mainVVOSCAddressSpace;
 	//	make sure the node i'm moving has been removed from its parent.  that's removed, NOT RELEASED!
 	if (n != nil)
 		beforeParent = [n parentNode];
-	if (beforeParent != nil)
+	if (beforeParent != nil)	{
+		MutNRLockArray		*delegates = [n delegateArray];
+		//	removing the local node will clear out its delegates (setting a node's parent to nil clears its delegates), so we store its delegates before doing so
+		NSMutableArray	*delegatesBeforeRemoval = [delegates lockCreateArrayCopyFromObjects];
 		[beforeParent removeLocalNode:n];
+		//	re-apply any delegates that existed before removal
+		[delegates lockAddObjectsFromArray:delegatesBeforeRemoval];
+	}
 	//	make sure the node's got the proper name (it could be different from the passed array's last object)
 	if (n != nil)
 		[n _setNodeName:[a lastObject]];
