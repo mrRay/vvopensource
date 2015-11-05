@@ -4616,7 +4616,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -4633,7 +4633,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -5776,6 +5776,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
@@ -5817,6 +5818,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
