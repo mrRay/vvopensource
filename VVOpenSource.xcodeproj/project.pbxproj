@@ -65,6 +65,11 @@
 
 /* Begin PBXBuildFile section */
 		1A254AF81904909E00526633 /* VVSpriteGLKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A254AF61904909E00526633 /* VVSpriteGLKView.m */; };
+		1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */ = {isa = PBXBuildFile; fileRef = 96671EF61986D1CA0016365C /* SampleImg.png */; };
+		1A33E1601BED434100E82A6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
+		1A33E1611BED434800E82A6F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
+		1A33E1641BED443100E82A6F /* Bad TV.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A33E1621BED443100E82A6F /* Bad TV.fs */; };
+		1A33E1651BED443100E82A6F /* CMYK Halftone-Lookaround.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */; };
 		1A56BABC190560F5006F5826 /* VVUIToolbox.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96B06C2518BE0ECF000A921C /* VVUIToolbox.h */; };
 		1A56BABD190560F5006F5826 /* VVSprite.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96900D4B18BE37A90098AB25 /* VVSprite.h */; };
 		1A56BABE190560F5006F5826 /* VVSpriteGLKView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A254AF51904909E00526633 /* VVSpriteGLKView.h */; };
@@ -102,6 +107,37 @@
 		1A7129251B610E2A00528CDB /* ServiceDelegateB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7129241B610E2A00528CDB /* ServiceDelegateB.m */; };
 		1A7129281B610E3A00528CDB /* ClassAMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7129271B610E3A00528CDB /* ClassAMCXLocal.m */; };
 		1A71292B1B610E4600528CDB /* ClassBMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A71292A1B610E4600528CDB /* ClassBMCXLocal.m */; };
+		1A7AB8CB1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */; };
+		1A7AB8CE1BED159100B2B129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CD1BED159100B2B129 /* main.m */; };
+		1A7AB8D01BED159100B2B129 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CF1BED159100B2B129 /* Assets.xcassets */; };
+		1A7AB8D31BED159100B2B129 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8D11BED159100B2B129 /* MainMenu.xib */; };
+		1A7AB8E01BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8DF1BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m */; };
+		1A7AB8E31BED17A200B2B129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8E21BED17A200B2B129 /* main.m */; };
+		1A7AB8E51BED17A200B2B129 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8E41BED17A200B2B129 /* Assets.xcassets */; };
+		1A7AB8E81BED17A200B2B129 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8E61BED17A200B2B129 /* MainMenu.xib */; };
+		1A7AB8ED1BED265F00B2B129 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A7AB8EE1BED265F00B2B129 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1A7AB8EF1BED265F00B2B129 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1A7AB8F01BED265F00B2B129 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1A7AB8F21BED267A00B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8F31BED267A00B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8F41BED267A00B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8F51BED267A00B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8F61BED268700B2B129 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A7AB8F71BED268700B2B129 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1A7AB8F81BED268700B2B129 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1A7AB8F91BED268700B2B129 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1A7AB8FB1BED269600B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8FC1BED269600B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8FD1BED269600B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8FE1BED269600B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB9001BED279300B2B129 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB8FF1BED279300B2B129 /* Syphon.framework */; };
+		1A7AB9011BED279A00B2B129 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A7AB8FF1BED279300B2B129 /* Syphon.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB9021BED291E00B2B129 /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
+		1A7AB9081BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB9051BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m */; };
+		1A7AB9091BED2AA800B2B129 /* VVBufferSyphonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB9071BED2AA800B2B129 /* VVBufferSyphonAdditions.m */; };
+		1A7AB90B1BED311200B2B129 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
+		1A7AB90D1BED311A00B2B129 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		1A827AF41AF7ECA700E4CABB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		1A827AF51AF7ECA700E4CABB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		1A827AF61AF7ECA800E4CABB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -925,6 +961,33 @@
 			name = "Embed XPC Services";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A7AB8F11BED266300B2B129 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A7AB8F21BED267A00B2B129 /* VVBasics.framework in CopyFiles */,
+				1A7AB8F31BED267A00B2B129 /* DDMathParser.framework in CopyFiles */,
+				1A7AB8F41BED267A00B2B129 /* VVBufferPool.framework in CopyFiles */,
+				1A7AB8F51BED267A00B2B129 /* VVISFKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8FA1BED268900B2B129 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A7AB9011BED279A00B2B129 /* Syphon.framework in CopyFiles */,
+				1A7AB8FB1BED269600B2B129 /* VVBasics.framework in CopyFiles */,
+				1A7AB8FC1BED269600B2B129 /* DDMathParser.framework in CopyFiles */,
+				1A7AB8FD1BED269600B2B129 /* VVBufferPool.framework in CopyFiles */,
+				1A7AB8FE1BED269600B2B129 /* VVISFKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A86C92B1B61118D00506AD4 /* Embed XPC Service */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1116,6 +1179,8 @@
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A254AF51904909E00526633 /* VVSpriteGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLKView.h; sourceTree = "<group>"; };
 		1A254AF61904909E00526633 /* VVSpriteGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteGLKView.m; sourceTree = "<group>"; };
+		1A33E1621BED443100E82A6F /* Bad TV.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "Bad TV.fs"; sourceTree = "<group>"; };
+		1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "CMYK Halftone-Lookaround.fs"; sourceTree = "<group>"; };
 		1A6F726619033A9D00A6FBAD /* libVVUIToolbox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVVUIToolbox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A6F726A19033A9D00A6FBAD /* VVUIToolboxStatic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VVUIToolboxStatic-Prefix.pch"; sourceTree = "<group>"; };
 		1A6F726B19033A9D00A6FBAD /* VVUIToolboxStatic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVUIToolboxStatic.h; sourceTree = "<group>"; };
@@ -1153,6 +1218,27 @@
 		1A7129271B610E3A00528CDB /* ClassAMCXLocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassAMCXLocal.m; sourceTree = "<group>"; };
 		1A7129291B610E4600528CDB /* ClassBMCXLocal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassBMCXLocal.h; sourceTree = "<group>"; };
 		1A71292A1B610E4600528CDB /* ClassBMCXLocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassBMCXLocal.m; sourceTree = "<group>"; };
+		1A7AB8C71BED159000B2B129 /* SyphonToAndFromVVBuffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyphonToAndFromVVBuffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A7AB8C91BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyphonToAndFromVVBufferAppDelegate.h; sourceTree = "<group>"; };
+		1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyphonToAndFromVVBufferAppDelegate.m; sourceTree = "<group>"; };
+		1A7AB8CD1BED159100B2B129 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A7AB8CF1BED159100B2B129 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A7AB8D21BED159100B2B129 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A7AB8D41BED159100B2B129 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A7AB8DC1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArbitraryGLTextureToVVBuffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A7AB8DE1BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArbitraryGLTextureToVVBufferAppDelegate.h; sourceTree = "<group>"; };
+		1A7AB8DF1BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArbitraryGLTextureToVVBufferAppDelegate.m; sourceTree = "<group>"; };
+		1A7AB8E21BED17A200B2B129 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A7AB8E41BED17A200B2B129 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A7AB8E71BED17A200B2B129 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A7AB8E91BED17A200B2B129 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A7AB8FF1BED279300B2B129 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Syphon.framework; sourceTree = "<group>"; };
+		1A7AB9041BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferPoolSyphonAdditions.h; sourceTree = "<group>"; };
+		1A7AB9051BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferPoolSyphonAdditions.m; sourceTree = "<group>"; };
+		1A7AB9061BED2AA800B2B129 /* VVBufferSyphonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferSyphonAdditions.h; sourceTree = "<group>"; };
+		1A7AB9071BED2AA800B2B129 /* VVBufferSyphonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferSyphonAdditions.m; sourceTree = "<group>"; };
+		1A7AB90A1BED311200B2B129 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		1A7AB90C1BED311A00B2B129 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		1A86D6681941271400419A76 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		1A86D66A1941271A00419A76 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
@@ -1525,6 +1611,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A7AB8C41BED159000B2B129 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A7AB90D1BED311A00B2B129 /* AppKit.framework in Frameworks */,
+				1A7AB90B1BED311200B2B129 /* CoreVideo.framework in Frameworks */,
+				1A7AB8F61BED268700B2B129 /* DDMathParser.framework in Frameworks */,
+				1A7AB8F71BED268700B2B129 /* VVBasics.framework in Frameworks */,
+				1A7AB8F81BED268700B2B129 /* VVBufferPool.framework in Frameworks */,
+				1A7AB9001BED279300B2B129 /* Syphon.framework in Frameworks */,
+				1A7AB8F91BED268700B2B129 /* VVISFKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8D91BED17A200B2B129 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A33E1611BED434800E82A6F /* AppKit.framework in Frameworks */,
+				1A33E1601BED434100E82A6F /* CoreVideo.framework in Frameworks */,
+				1A7AB8ED1BED265F00B2B129 /* DDMathParser.framework in Frameworks */,
+				1A7AB8EE1BED265F00B2B129 /* VVBasics.framework in Frameworks */,
+				1A7AB8EF1BED265F00B2B129 /* VVBufferPool.framework in Frameworks */,
+				1A7AB8F01BED265F00B2B129 /* VVISFKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96140106198AD46D00335292 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1771,6 +1884,8 @@
 				1A7128AF1B61065000528CDB /* MultiClassXPC.framework */,
 				1A7128D41B610B4700528CDB /* MultiClassXPCTestApp.app */,
 				1A7128F81B610B6F00528CDB /* MultiClassXPCTestService.xpc */,
+				1A7AB8C71BED159000B2B129 /* SyphonToAndFromVVBuffer.app */,
+				1A7AB8DC1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1782,6 +1897,8 @@
 				966D3E9618634FE900A7BE9E /* Applications */,
 				96C00547185A445B00C33FE2 /* EXTERNAL CODE */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
+				1A7AB8C81BED159100B2B129 /* SyphonToAndFromVVBuffer */,
+				1A7AB8DD1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */,
 				96ACD7221706416300138AE6 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -1889,6 +2006,55 @@
 				1A7128F91B610B7000528CDB /* MultiClassXPCTestService */,
 			);
 			name = "MultiClassXPC Test App + Service";
+			sourceTree = "<group>";
+		};
+		1A7AB8C81BED159100B2B129 /* SyphonToAndFromVVBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				1A7AB8C91BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.h */,
+				1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */,
+				1A7AB9041BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.h */,
+				1A7AB9051BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m */,
+				1A7AB9061BED2AA800B2B129 /* VVBufferSyphonAdditions.h */,
+				1A7AB9071BED2AA800B2B129 /* VVBufferSyphonAdditions.m */,
+				1A7AB8FF1BED279300B2B129 /* Syphon.framework */,
+				1A7AB8CF1BED159100B2B129 /* Assets.xcassets */,
+				1A7AB8D11BED159100B2B129 /* MainMenu.xib */,
+				1A7AB8D41BED159100B2B129 /* Info.plist */,
+				1A7AB8CC1BED159100B2B129 /* Supporting Files */,
+			);
+			path = SyphonToAndFromVVBuffer;
+			sourceTree = "<group>";
+		};
+		1A7AB8CC1BED159100B2B129 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A7AB8CD1BED159100B2B129 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1A7AB8DD1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				1A7AB8DE1BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.h */,
+				1A7AB8DF1BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m */,
+				1A33E1621BED443100E82A6F /* Bad TV.fs */,
+				1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */,
+				1A7AB8E41BED17A200B2B129 /* Assets.xcassets */,
+				1A7AB8E61BED17A200B2B129 /* MainMenu.xib */,
+				1A7AB8E91BED17A200B2B129 /* Info.plist */,
+				1A7AB8E11BED17A200B2B129 /* Supporting Files */,
+			);
+			path = ArbitraryGLTextureToVVBuffer;
+			sourceTree = "<group>";
+		};
+		1A7AB8E11BED17A200B2B129 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A7AB8E21BED17A200B2B129 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
@@ -2289,6 +2455,8 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A7AB90C1BED311A00B2B129 /* AppKit.framework */,
+				1A7AB90A1BED311200B2B129 /* CoreVideo.framework */,
 				1AE3C7FD1B3B858000D37189 /* IOKit.framework */,
 				96AD0AAC18577ADF00472548 /* AudioToolbox.framework */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
@@ -2806,6 +2974,42 @@
 			productReference = 1A7128F81B610B6F00528CDB /* MultiClassXPCTestService.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		1A7AB8C61BED159000B2B129 /* SyphonToAndFromVVBuffer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A7AB8D51BED159100B2B129 /* Build configuration list for PBXNativeTarget "SyphonToAndFromVVBuffer" */;
+			buildPhases = (
+				1A7AB8C31BED159000B2B129 /* Sources */,
+				1A7AB8C41BED159000B2B129 /* Frameworks */,
+				1A7AB8C51BED159000B2B129 /* Resources */,
+				1A7AB8FA1BED268900B2B129 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SyphonToAndFromVVBuffer;
+			productName = SyphonToAndFromVVBuffer;
+			productReference = 1A7AB8C71BED159000B2B129 /* SyphonToAndFromVVBuffer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1A7AB8DB1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A7AB8EA1BED17A200B2B129 /* Build configuration list for PBXNativeTarget "ArbitraryGLTextureToVVBuffer" */;
+			buildPhases = (
+				1A7AB8D81BED17A200B2B129 /* Sources */,
+				1A7AB8D91BED17A200B2B129 /* Frameworks */,
+				1A7AB8DA1BED17A200B2B129 /* Resources */,
+				1A7AB8F11BED266300B2B129 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ArbitraryGLTextureToVVBuffer;
+			productName = ArbitraryGLTextureToVVBuffer;
+			productReference = 1A7AB8DC1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		96140108198AD46D00335292 /* QT and Hap Test App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9614011F198AD46D00335292 /* Build configuration list for PBXNativeTarget "QT and Hap Test App" */;
@@ -3209,6 +3413,12 @@
 					1A7128F71B610B6F00528CDB = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					1A7AB8C61BED159000B2B129 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					1A7AB8DB1BED17A200B2B129 = {
+						CreatedOnToolsVersion = 7.1;
+					};
 				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
@@ -3255,6 +3465,8 @@
 				96140108198AD46D00335292 /* QT and Hap Test App */,
 				1A7128D31B610B4700528CDB /* MultiClassXPCTestApp */,
 				1A7128F71B610B6F00528CDB /* MultiClassXPCTestService */,
+				1A7AB8C61BED159000B2B129 /* SyphonToAndFromVVBuffer */,
+				1A7AB8DB1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */,
 			);
 		};
 /* End PBXProject section */
@@ -3280,6 +3492,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8C51BED159000B2B129 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A7AB8D01BED159100B2B129 /* Assets.xcassets in Resources */,
+				1A7AB9021BED291E00B2B129 /* Blue.qtz in Resources */,
+				1A7AB8D31BED159100B2B129 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8DA1BED17A200B2B129 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A7AB8E51BED17A200B2B129 /* Assets.xcassets in Resources */,
+				1A33E1641BED443100E82A6F /* Bad TV.fs in Resources */,
+				1A7AB8E81BED17A200B2B129 /* MainMenu.xib in Resources */,
+				1A33E1651BED443100E82A6F /* CMYK Halftone-Lookaround.fs in Resources */,
+				1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3538,6 +3772,26 @@
 				1A7129011B610B7000528CDB /* main.m in Sources */,
 				1A71292B1B610E4600528CDB /* ClassBMCXLocal.m in Sources */,
 				1A7129251B610E2A00528CDB /* ServiceDelegateB.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8C31BED159000B2B129 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A7AB9081BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m in Sources */,
+				1A7AB9091BED2AA800B2B129 /* VVBufferSyphonAdditions.m in Sources */,
+				1A7AB8CE1BED159100B2B129 /* main.m in Sources */,
+				1A7AB8CB1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A7AB8D81BED17A200B2B129 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A7AB8E31BED17A200B2B129 /* main.m in Sources */,
+				1A7AB8E01BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4093,6 +4347,22 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
+		1A7AB8D11BED159100B2B129 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A7AB8D21BED159100B2B129 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1A7AB8E61BED17A200B2B129 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A7AB8E71BED17A200B2B129 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
 		9614010E198AD46D00335292 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4598,6 +4868,162 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1A7AB8D61BED159100B2B129 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyphonToAndFromVVBuffer",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = SyphonToAndFromVVBuffer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SyphonToAndFromVVBuffer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1A7AB8D71BED159100B2B129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyphonToAndFromVVBuffer",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = SyphonToAndFromVVBuffer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SyphonToAndFromVVBuffer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1A7AB8EB1BED17A200B2B129 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ArbitraryGLTextureToVVBuffer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ArbitraryGLTextureToVVBuffer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1A7AB8EC1BED17A200B2B129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ArbitraryGLTextureToVVBuffer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ArbitraryGLTextureToVVBuffer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -5867,6 +6293,24 @@
 			buildConfigurations = (
 				1A7129061B610B7000528CDB /* Debug */,
 				1A7129071B610B7000528CDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A7AB8D51BED159100B2B129 /* Build configuration list for PBXNativeTarget "SyphonToAndFromVVBuffer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A7AB8D61BED159100B2B129 /* Debug */,
+				1A7AB8D71BED159100B2B129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A7AB8EA1BED17A200B2B129 /* Build configuration list for PBXNativeTarget "ArbitraryGLTextureToVVBuffer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A7AB8EB1BED17A200B2B129 /* Debug */,
+				1A7AB8EC1BED17A200B2B129 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
