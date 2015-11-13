@@ -1241,6 +1241,31 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				[newFragShaderSrc appendString:VVFMTSTRING(@"varying vec2\t\t_%@_normTexCoord;\n",tmpString)];
 		}
 		
+		searchString = @"IMG_SIZE";
+		imgBuffer = nil;
+		tmpRange = NSMakeRange(0,[modSrcString length]);
+		do	{
+			tmpRange = [modSrcString rangeOfString:searchString options:NSLiteralSearch range:tmpRange];
+			if (tmpRange.length!=0)	{
+				//requiresMacroFunctions = YES;
+				NSMutableArray		*varArray = MUTARRAY;
+				NSRange				fullFuncRangeToReplace = [(NSString *)modSrcString lexFunctionCallInRange:tmpRange addVariablesToArray:varArray];
+				NSUInteger			varArrayCount = [varArray count];
+				if (varArrayCount!=1)	{
+					NSLog(@"\t\tERR: variable count wrong searching for %@: %@",searchString,varArray);
+					break;
+				}
+				else	{
+					NSString		*newFuncString = nil;
+					NSString		*samplerName = [varArray objectAtIndex:0];
+					newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
+					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
+					tmpRange.length = [modSrcString length] - tmpRange.location;
+				}
+			}
+		} while (tmpRange.length!=0);
+		
 		//	if the frag shader requires macro functions, add them now that i'm done declaring the variables
 		if (requires2DMacro)
 			[newFragShaderSrc appendString:_ISFMacro2DString];
