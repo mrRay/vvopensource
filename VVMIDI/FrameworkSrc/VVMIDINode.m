@@ -779,7 +779,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 				
 				switch((currByte & 0xF0))	{
 					case VVMIDIControlChangeVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F)];
+						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
 						if (newMsg == nil)	{
 							break;
 						}
@@ -794,7 +794,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 					case VVMIDIProgramChangeVal:
 					case VVMIDIChannelPressureVal:
 					case VVMIDIPitchWheelVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F)];
+						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
 						if (newMsg == nil)	{
 							break;
 						}
@@ -811,14 +811,14 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIUndefinedCommon1Val:
 							case VVMIDIUndefinedCommon2Val:
 							case VVMIDITuneRequestVal:
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
+								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
 								if (newMsg != nil)	{
 									[msgs addObject:newMsg];
 									msgElementCount = 0;
 								}
 								break;
 							case VVMIDIEndSysexDumpVal:
-								newMsg = [VVMIDIMessage createWithSysexArray:sysex];
+								newMsg = [VVMIDIMessage createWithSysexArray:sysex timestamp:packet->timeStamp];
 								if (newMsg != nil)	{
 									if ([newMsg isFullFrameSMPTE])	{
 										long					err = noErr;
@@ -879,7 +879,7 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 							case VVMIDIActiveSenseVal:
 							case VVMIDIResetVal:
 								hadClockMsg = YES;
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00];
+								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
 								if (newMsg != nil)	{
 									[msgs addObject:newMsg];
 								}
