@@ -1839,9 +1839,13 @@
 - (void) setBorderColor:(NSColor *)n	{
 	NSColor				*devColor = nil;
 	NSColorSpace		*devCS = [NSColorSpace deviceRGBColorSpace];
+	CGFloat				tmpColor[4];
 	devColor = ([n colorSpace]==devCS) ? n : [n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-	if (devColor != nil)
-		[devColor getComponents:(CGFloat *)borderColor];
+	if (devColor != nil)	{
+		[devColor getComponents:tmpColor];
+		for (int i=0; i<4; ++i)
+			borderColor[i] = tmpColor[i];
+	}
 }
 #endif
 - (void) setBorderColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a	{

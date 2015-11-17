@@ -1211,10 +1211,11 @@ long			_spriteGLViewSysVers;
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-	pthread_mutex_lock(&glLock);
-	//CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	CGFloat			tmpVals[4];
 	[calibratedColor getComponents:(CGFloat *)tmpVals];
+	
+	pthread_mutex_lock(&glLock);
+	//CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	for (int i=0;i<4;++i)
 		clearColor[i] = tmpVals[i];
 	//glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
@@ -1239,9 +1240,14 @@ long			_spriteGLViewSysVers;
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	CGFloat			tmpColor[4];
+	[calibratedColor getComponents:tmpColor];
+	
 	pthread_mutex_lock(&glLock);
 	//CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	[calibratedColor getComponents:(CGFloat *)borderColor];
+	for (int i=0; i<4; ++i)
+		borderColor[i] = tmpColor[i];
 	//glClearColor(clearColor[0],clearColor[1],clearColor[2],clearColor[3]);
 	pthread_mutex_unlock(&glLock);
 }

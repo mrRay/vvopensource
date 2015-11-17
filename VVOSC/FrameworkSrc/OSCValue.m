@@ -48,7 +48,7 @@
 }
 - (NSString *) lengthyDescription	{
 #if !IPHONE
-	float		colorComps[4];
+	CGFloat		colorComps[4];
 #endif
 	switch (type)	{
 		case OSCValInt:
