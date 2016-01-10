@@ -8,7 +8,8 @@
 		3 a faint flash, typically red, sometimes emitted in the upper atmosphere over a thunderstorm owing to the collision of high-energy electrons with air molecules.
 		ORIGIN Middle English : alteration of sprit, a contraction of spirit .			*/
 
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -54,12 +55,12 @@ typedef enum VVSpriteEventType	{
 	id				delegate;			//	NOT retained!
 	SEL				drawCallback;		//	delegate method; passed a ptr to this sprite!
 	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 	CGLContextObj	glDrawContext;		//	NOT retained! if "drawInContext:" is called, this is set to the passed context- so my delegate can retrieve it and use it for GL drawing!
 #endif
 	
 	VVRECT			rect;				//	the sprite i'm tracking
-#if IPHONE
+#if TARGET_OS_IPHONE
 	UIBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used isntead of "rect" for determining mouse action and drawing intersection!
 #else
 	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
@@ -95,7 +96,7 @@ typedef enum VVSpriteEventType	{
 - (void) mouseDragged:(VVPOINT)p;
 - (void) mouseUp:(VVPOINT)p;
 - (void) draw;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx;
 #endif
 
@@ -110,13 +111,13 @@ typedef enum VVSpriteEventType	{
 @property (assign, readwrite) id delegate;
 @property (assign, readwrite) SEL drawCallback;
 @property (assign, readwrite) SEL actionCallback;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 @property (readonly) CGLContextObj glDrawContext;
 #endif
 
 @property (assign, readwrite) VVRECT rect;
 //@property (retain,readwrite) NSBezierPath *path;
-#if IPHONE
+#if TARGET_OS_IPHONE
 - (void) setBezierPath:(UIBezierPath *)n;
 - (UIBezierPath *) copyBezierPath;
 #else

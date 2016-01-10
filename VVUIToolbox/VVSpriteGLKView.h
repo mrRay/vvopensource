@@ -1,6 +1,7 @@
+#import <GLKit/GLKit.h>
 #import <Foundation/Foundation.h>
 #import "VVSpriteManager.h"
-#import <OpenGLES/EAGL.h>
+
 #import <libkern/OSAtomic.h>
 #import "VVView.h"
 

@@ -75,9 +75,15 @@
 	//	if there's a buffer, i need to copy it to a float buffer
 	if (buffer != nil)	{
 		//	make a new buffer of the appropriate type
+#if !TARGET_OS_IPHONE
 		VVBuffer		*newBuffer = (floatFlag)
-			? [_globalVVBufferPool allocBGRFloatTexSized:NSMakeSize(targetWidth,targetHeight)]
-			: [_globalVVBufferPool allocBGRTexSized:NSMakeSize(targetWidth,targetHeight)];
+			? [_globalVVBufferPool allocBGRFloatTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+			: [_globalVVBufferPool allocBGRTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#else
+		VVBuffer		*newBuffer = (floatFlag)
+		? [_globalVVBufferPool allocBGRFloat2DTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+		: [_globalVVBufferPool allocBGR2DTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#endif
 		//	copy the old buffer to the new, get rid of the old
 		if (newBuffer != nil)	{
 			[_globalVVBufferCopier ignoreSizeCopyThisBuffer:buffer toThisBuffer:newBuffer];
@@ -89,25 +95,31 @@
 - (BOOL) floatFlag	{
 	return floatFlag;
 }
-- (void) setTargetSize:(NSSize)n	{
+- (void) setTargetSize:(VVSIZE)n	{
 	[self setTargetSize:n resizeExistingBuffer:YES createNewBuffer:YES];
 }
-- (void) setTargetSize:(NSSize)n createNewBuffer:(BOOL)c	{
+- (void) setTargetSize:(VVSIZE)n createNewBuffer:(BOOL)c	{
 	[self setTargetSize:n resizeExistingBuffer:YES createNewBuffer:c];
 }
-- (void) setTargetSize:(NSSize)n resizeExistingBuffer:(BOOL)r	{
+- (void) setTargetSize:(VVSIZE)n resizeExistingBuffer:(BOOL)r	{
 	[self setTargetSize:n resizeExistingBuffer:r createNewBuffer:YES];
 }
-- (void) setTargetSize:(NSSize)n resizeExistingBuffer:(BOOL)r createNewBuffer:(BOOL)c	{
+- (void) setTargetSize:(VVSIZE)n resizeExistingBuffer:(BOOL)r createNewBuffer:(BOOL)c	{
 	//NSLog(@"%s ... %0.2f x %0.2f, %d, %d",__func__, n.width, n.height, r, c);
 	targetWidth = n.width;
 	targetHeight = n.height;
 	//	if the buffer's currently nil...
 	if (buffer==nil)	{
 		if (c)	{
+#if !TARGET_OS_IPHONE
 			buffer = (floatFlag)
 				? [_globalVVBufferPool allocBGRFloatTexSized:n]
 				: [_globalVVBufferPool allocBGRTexSized:n];
+#else
+			buffer = (floatFlag)
+				? [_globalVVBufferPool allocBGRFloat2DTexSized:n]
+				: [_globalVVBufferPool allocBGR2DTexSized:n];
+#endif
 			[_globalVVBufferCopier copyBlackFrameToThisBuffer:buffer];
 			//NSLog(@"\t\tnow working with buffer %@",buffer);
 		}
@@ -115,12 +127,18 @@
 	//	else there's a buffer...
 	else	{
 		//	if the buffer size is wrong...
-		if (!NSEqualSizes(n, [buffer srcRect].size))	{
+		if (!VVEQUALSIZES(n, [buffer srcRect].size))	{
 			//	if i'm supposed to resize, do so
 			if (r)	{
+#if !TARGET_OS_IPHONE
 				VVBuffer		*newBuffer = (floatFlag)
-					? [_globalVVBufferPool allocBGRFloatTexSized:NSMakeSize(targetWidth,targetHeight)]
-					: [_globalVVBufferPool allocBGRTexSized:NSMakeSize(targetWidth,targetHeight)];
+					? [_globalVVBufferPool allocBGRFloatTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+					: [_globalVVBufferPool allocBGRTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#else
+				VVBuffer		*newBuffer = (floatFlag)
+					? [_globalVVBufferPool allocBGRFloat2DTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+					: [_globalVVBufferPool allocBGR2DTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#endif
 				[_globalVVBufferCopier sizeVariantCopyThisBuffer:buffer toThisBuffer:newBuffer];
 				VVRELEASE(buffer);
 				buffer = newBuffer;
@@ -131,9 +149,15 @@
 				//	if i'm supposed to create a new buffer
 				if (c)	{
 					VVRELEASE(buffer);
+#if !TARGET_OS_IPHONE
 					buffer = (floatFlag)
-						? [_globalVVBufferPool allocBGRFloatTexSized:NSMakeSize(targetWidth,targetHeight)]
-						: [_globalVVBufferPool allocBGRTexSized:NSMakeSize(targetWidth,targetHeight)];
+						? [_globalVVBufferPool allocBGRFloatTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+						: [_globalVVBufferPool allocBGRTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#else
+					buffer = (floatFlag)
+						? [_globalVVBufferPool allocBGRFloat2DTexSized:VVMAKESIZE(targetWidth,targetHeight)]
+						: [_globalVVBufferPool allocBGR2DTexSized:VVMAKESIZE(targetWidth,targetHeight)];
+#endif
 					[_globalVVBufferCopier copyBlackFrameToThisBuffer:buffer];
 				}
 				//	else i'm not supposed to create a new buffer
@@ -169,7 +193,7 @@
 		return;
 	//NSLog(@"\t\twidthString is %@",targetWidthString);
 	//NSLog(@"\t\theightString is %@",targetHeightString);
-	NSSize		newSize = NSMakeSize(0,0);
+	VVSIZE		newSize = VVMAKESIZE(0,0);
 	NSNumber	*tmpNum = nil;
 	tmpNum = [d objectForKey:@"WIDTH"];
 	if (tmpNum != nil)
@@ -196,8 +220,8 @@
 @synthesize buffer;
 
 
-- (NSSize) targetSize	{
-	return NSMakeSize(targetWidth,targetHeight);
+- (VVSIZE) targetSize	{
+	return VVMAKESIZE(targetWidth,targetHeight);
 }
 
 

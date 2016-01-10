@@ -21,7 +21,7 @@ id				_mainVVOSCAddressSpace;
 	//NSLog(@"%s",__func__);
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCAddressSpaceUpdateMenus object:nil];
 }
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a	{
 	NSMenu				*returnMe = nil;
 	NSMutableIndexSet	*tmpSet = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeString+1)];
@@ -140,7 +140,7 @@ id				_mainVVOSCAddressSpace;
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		delegate = nil;
-#if IPHONE
+#if TARGET_OS_IPHONE
 
 #else
 		//	register to receive notifications that the app's about to terminate so i can stop running

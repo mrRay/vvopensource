@@ -11,6 +11,7 @@ id _globalVVBufferCopier = nil;
 @implementation VVBufferCopier
 
 
+#if !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferCopierWithSharedContext:(NSOpenGLContext *)c	{
 	if (c == nil)
 		return;
@@ -19,27 +20,42 @@ id _globalVVBufferCopier = nil;
 		[_globalVVBufferCopier release];
 		_globalVVBufferCopier = nil;
 	}
-	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharedContext:c sized:NSMakeSize(4,3)];
+	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharedContext:c sized:VVMAKESIZE(4,3)];
 	[_globalVVBufferCopier setCopyToIOSurface:NO];
 }
+#else
++ (void) createGlobalVVBufferCopierWithSharegroup:(EAGLSharegroup *)s	{
+	if (s==nil)
+		return;
+	if (_globalVVBufferCopier != nil)	{
+		[_globalVVBufferCopier prepareToBeDeleted];
+		[_globalVVBufferCopier release];
+		_globalVVBufferCopier = nil;
+	}
+	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharegroup:s sized:VVMAKESIZE(4,3)];
+	[_globalVVBufferCopier setCopyToIOSurface:NO];
+}
+#endif
 + (VVBufferCopier *) globalBufferCopier	{
 	return _globalVVBufferCopier;
 }
+/*
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	self = [super initWithSharedContext:c pixelFormat:p sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
+*/
 - (void) generalInit	{
 	[super generalInit];
 	pthread_mutexattr_t		attr;
@@ -50,8 +66,10 @@ id _globalVVBufferCopier = nil;
 	copyToIOSurface = NO;
 	copyPixFormat = VVBufferPF_BGRA;
 	copyAndResize = NO;
-	copySize = NSMakeSize(320,240);
+	copySize = VVMAKESIZE(320,240);
 	copySizingMode = VVSizingModeStretch;
+	geoXYVBO = nil;
+	geoSTVBO = nil;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
@@ -61,6 +79,8 @@ id _globalVVBufferCopier = nil;
 		[super dealloc];
 	//pthread_mutex_unlock(&renderLock);
 	pthread_mutex_destroy(&renderLock);
+	VVRELEASE(geoXYVBO);
+	VVRELEASE(geoSTVBO);
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) prepareToBeDeleted	{
@@ -99,13 +119,16 @@ id _globalVVBufferCopier = nil;
 }
 - (void) _initialize	{
 	[super _initialize];
+	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#endif
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 - (VVBuffer *) copyToNewBuffer:(VVBuffer *)n	{
 	//NSLog(@"%s ... %ld",__func__,[n name]);
@@ -123,7 +146,11 @@ id _globalVVBufferCopier = nil;
 	VVBuffer				*tmpTex = [n retain];
 	VVBuffer				*returnMe = nil;
 	
+#if !TARGET_OS_IPHONE
 	returnMe = (copyToIOSurface) ? [_globalVVBufferPool allocBufferForTexBackedIOSurfaceSized:size] : [_globalVVBufferPool allocBGRTexSized:size];
+#else
+	returnMe = [_globalVVBufferPool allocBGR2DTexSized:size];
+#endif
 	
 	if (tmpFBO!=nil && returnMe!=nil)	{
 		fbo = (tmpFBO==nil)?0:[tmpFBO name];
@@ -138,12 +165,76 @@ id _globalVVBufferCopier = nil;
 		[self _renderPrep];
 		//	make sure there's a context!
 		if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
+			VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
+			VVRECT				glSrcRect = [tmpTex glReadySrcRect];
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:glSrcRect inRect:bounds sizingMode:[self copySizingMode]];
 			glEnable([tmpTex target]);
-			//GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],NSMakeRect(0,0,size.width,size.height));
-			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[tmpTex glReadySrcRect] inRect:NSMakeRect(0,0,size.width,size.height) sizingMode:[self copySizingMode]];
-			GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],dstRect);
+			//GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],[tmpTex glReadySrcRect],VVMAKERECT(0,0,size.width,size.height));
+			GLDRAWTEXQUADMACRO([tmpTex name],[tmpTex target],[tmpTex flipped],glSrcRect,dstRect);
 			glDisable([tmpTex target]);
+#else
+			VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
+			VVRECT				glSrcRect = [tmpTex glReadySrcRect];
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:glSrcRect inRect:bounds sizingMode:[self copySizingMode]];
+			
+			//	populate my built-in projection effect with the texture data i want to draw
+			GLKEffectPropertyTexture	*effectTex = [projectionMatrixEffect texture2d0];
+			[effectTex setEnabled:YES];
+			[effectTex setName:[tmpTex name]];
+			//	tell the built-in projection effect to prepare to draw
+			[projectionMatrixEffect prepareToDraw];
+			
+			GLfloat				geoCoords[] = {
+				VVMINX(dstRect), VVMINY(dstRect),
+				VVMAXX(dstRect), VVMINY(dstRect),
+				VVMINX(dstRect), VVMAXY(dstRect),
+				VVMAXX(dstRect), VVMAXY(dstRect)
+			};
+			GLfloat				texCoords[] = {
+				VVMINX(glSrcRect), VVMINY(glSrcRect),
+				VVMAXX(glSrcRect), VVMINY(glSrcRect),
+				VVMINX(glSrcRect), VVMAXY(glSrcRect),
+				VVMAXX(glSrcRect), VVMAXY(glSrcRect)
+			};
+			//	if i don't have a VBO containing geometry for a quad, make one now
+			if (geoXYVBO == nil)	{
+				geoXYVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:geoCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			if (geoSTVBO == nil)	{
+				geoSTVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:texCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoXYVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), geoCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribPosition);
+			glVertexAttribPointer(GLKVertexAttribPosition,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoSTVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), texCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+			glVertexAttribPointer(GLKVertexAttribTexCoord0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//	draw!
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+#endif
 			//NSLog(@"\t\tjust copied %ld to %ld",[n name],[returnMe name]);
 			//	do any cleanup/flush my context
 			[self _renderCleanup];
@@ -170,9 +261,9 @@ id _globalVVBufferCopier = nil;
 - (BOOL) copyThisBuffer:(VVBuffer *)a toThisBuffer:(VVBuffer *)b	{
 	if (deleted || a==nil || b==nil)
 		return NO;
-	NSSize			aSize = [a size];
-	NSSize			bSize = [b size];
-	if ((!NSEqualSizes(aSize,bSize) && !copyAndResize) || (copyAndResize && !NSEqualSizes(bSize,copySize)))
+	VVSIZE			aSize = [a size];
+	VVSIZE			bSize = [b size];
+	if ((!VVEQUALSIZES(aSize,bSize) && !copyAndResize) || (copyAndResize && !VVEQUALSIZES(bSize,copySize)))
 		return NO;
 	[a retain];
 	[b retain];
@@ -197,10 +288,73 @@ id _globalVVBufferCopier = nil;
 		[self _renderPrep];
 		//	make sure there's a context!
 		if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
-			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,bSize.width,bSize.height));
+			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],VVMAKERECT(0,0,bSize.width,bSize.height));
 			glDisable([a target]);
+#else
+			//VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
+			VVRECT				glSrcRect = [a glReadySrcRect];
+			VVRECT				dstRect = VVMAKERECT(0,0,bSize.width,bSize.height);
+			
+			//	populate my built-in projection effect with the texture data i want to draw
+			GLKEffectPropertyTexture	*effectTex = [projectionMatrixEffect texture2d0];
+			[effectTex setEnabled:YES];
+			[effectTex setName:[a name]];
+			//	tell the built-in projection effect to prepare to draw
+			[projectionMatrixEffect prepareToDraw];
+			
+			//	these are the geometry & texture coord values we want to pass to the program
+			GLfloat			geoCoords[] = {
+				VVMINX(dstRect), VVMINY(dstRect),
+				VVMAXX(dstRect), VVMINY(dstRect),
+				VVMINX(dstRect), VVMAXY(dstRect),
+				VVMAXX(dstRect), VVMAXY(dstRect)
+			};
+			GLfloat				texCoords[] = {
+				VVMINX(glSrcRect), VVMINY(glSrcRect),
+				VVMAXX(glSrcRect), VVMINY(glSrcRect),
+				VVMINX(glSrcRect), VVMAXY(glSrcRect),
+				VVMAXX(glSrcRect), VVMAXY(glSrcRect)
+			};
+			//	if i don't have a VBO containing geometry for a quad, make one now
+			if (geoXYVBO == nil)	{
+				geoXYVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:geoCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			if (geoSTVBO == nil)	{
+				geoSTVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:texCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoXYVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), geoCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribPosition);
+			glVertexAttribPointer(GLKVertexAttribPosition,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoSTVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), texCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+			glVertexAttribPointer(GLKVertexAttribTexCoord0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//	draw!
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+#endif
 			//NSLog(@"\t\tjust copied %ld to %ld",[n name],[returnMe name]);
 			//	do any cleanup/flush my context
 			[self _renderCleanup];
@@ -223,8 +377,8 @@ id _globalVVBufferCopier = nil;
 	//NSLog(@"%s ... %@ -> %@",__func__,a,b);
 	if (deleted || a==nil || b==nil)
 		return;
-	//NSSize			aSize = [a size];
-	NSSize			bSize = [b size];
+	//VVSIZE			aSize = [a size];
+	VVSIZE			bSize = [b size];
 	[a retain];
 	[b retain];
 	
@@ -248,12 +402,72 @@ id _globalVVBufferCopier = nil;
 		[self _renderPrep];
 		//	make sure there's a context!
 		if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
-			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,bSize.width,bSize.height));
-			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:[self copySizingMode]];
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:[self copySizingMode]];
 			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
+#else
+			//VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
+			VVRECT				glSrcRect = [a glReadySrcRect];
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a glReadySrcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:[self copySizingMode]];
+			//	populate my built-in projection effect with the texture data i want to draw
+			GLKEffectPropertyTexture	*effectTex = [projectionMatrixEffect texture2d0];
+			[effectTex setEnabled:YES];
+			[effectTex setName:[a name]];
+			//	tell the built-in projection effect to prepare to draw
+			[projectionMatrixEffect prepareToDraw];
+			
+			GLfloat			geoCoords[] = {
+				VVMINX(dstRect), VVMINY(dstRect),
+				VVMAXX(dstRect), VVMINY(dstRect),
+				VVMINX(dstRect), VVMAXY(dstRect),
+				VVMAXX(dstRect), VVMAXY(dstRect)
+			};
+			GLfloat				texCoords[] = {
+				VVMINX(glSrcRect), VVMINY(glSrcRect),
+				VVMAXX(glSrcRect), VVMINY(glSrcRect),
+				VVMINX(glSrcRect), VVMAXY(glSrcRect),
+				VVMAXX(glSrcRect), VVMAXY(glSrcRect)
+			};
+			//	if i don't have a VBO containing geometry for a quad, make one now
+			if (geoXYVBO == nil)	{
+				geoXYVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:geoCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			if (geoSTVBO == nil)	{
+				geoSTVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:texCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoXYVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), geoCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribPosition);
+			glVertexAttribPointer(GLKVertexAttribPosition,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoSTVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), texCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+			glVertexAttribPointer(GLKVertexAttribTexCoord0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//	draw!
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+#endif
 			//NSLog(@"\t\tjust copied %ld to %ld",[n name],[returnMe name]);
 			//	do any cleanup/flush my context
 			[self _renderCleanup];
@@ -274,8 +488,8 @@ id _globalVVBufferCopier = nil;
 	//NSLog(@"%s ... %@ -> %@",__func__,a,b);
 	if (deleted || a==nil || b==nil)
 		return;
-	//NSSize			aSize = [a size];
-	NSSize			bSize = [b size];
+	//VVSIZE			aSize = [a size];
+	VVSIZE			bSize = [b size];
 	[a retain];
 	[b retain];
 	
@@ -299,15 +513,76 @@ id _globalVVBufferCopier = nil;
 		[self _renderPrep];
 		//	make sure there's a context!
 		if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
 			glEnable([a target]);
-			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],NSMakeRect(0,0,aSize.width,aSize.height));
-			NSRect				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:NSMakeRect(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],VVMAKERECT(0,0,aSize.width,aSize.height));
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
 			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
+#else
+			//VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
+			VVRECT				glSrcRect = [a glReadySrcRect];
+			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			//	populate my built-in projection effect with the texture data i want to draw
+			GLKEffectPropertyTexture	*effectTex = [projectionMatrixEffect texture2d0];
+			[effectTex setEnabled:YES];
+			[effectTex setName:[a name]];
+			//	tell the built-in projection effect to prepare to draw
+			[projectionMatrixEffect prepareToDraw];
+			
+			GLfloat			geoCoords[] = {
+				VVMINX(dstRect), VVMINY(dstRect),
+				VVMAXX(dstRect), VVMINY(dstRect),
+				VVMINX(dstRect), VVMAXY(dstRect),
+				VVMAXX(dstRect), VVMAXY(dstRect)
+			};
+			GLfloat				texCoords[] = {
+				VVMINX(glSrcRect), VVMINY(glSrcRect),
+				VVMAXX(glSrcRect), VVMINY(glSrcRect),
+				VVMINX(glSrcRect), VVMAXY(glSrcRect),
+				VVMAXX(glSrcRect), VVMAXY(glSrcRect)
+			};
+			//	if i don't have a VBO containing geometry for a quad, make one now
+			if (geoXYVBO == nil)	{
+				geoXYVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:geoCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			if (geoSTVBO == nil)	{
+				geoSTVBO = [_globalVVBufferPool
+					allocVBOInCurrentContextWithBytes:texCoords
+					byteSize:8*sizeof(GLfloat)
+					usage:GL_DYNAMIC_DRAW];
+			}
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoXYVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), geoCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribPosition);
+			glVertexAttribPointer(GLKVertexAttribPosition,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, [geoSTVBO name]);
+			glBufferData(GL_ARRAY_BUFFER, 8*(sizeof(GLfloat)), texCoords, GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+			glVertexAttribPointer(GLKVertexAttribTexCoord0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				NULL);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//	draw!
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+#endif
 			//NSLog(@"\t\tjust copied %d to %d",[a name],[b name]);
 			//glColor4f(1,0,0,1);
-			//GLDRAWRECT(NSMakeRect(0,0,100,100));
+			//GLDRAWRECT(VVMAKERECT(0,0,100,100));
 			//	do any cleanup/flush my context
 			[self _renderCleanup];
 			//returnMe = YES;
@@ -330,7 +605,7 @@ id _globalVVBufferCopier = nil;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
 	[b retain];
-	NSSize			bSize = [b size];
+	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
 	pthread_mutex_lock(&renderLock);
@@ -353,7 +628,7 @@ id _globalVVBufferCopier = nil;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
 	[b retain];
-	NSSize			bSize = [b size];
+	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
 	pthread_mutex_lock(&renderLock);
@@ -376,7 +651,7 @@ id _globalVVBufferCopier = nil;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
 	[b retain];
-	NSSize			bSize = [b size];
+	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
 	pthread_mutex_lock(&renderLock);

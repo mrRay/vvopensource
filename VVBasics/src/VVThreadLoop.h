@@ -1,5 +1,5 @@
-
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -30,6 +30,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 	BOOL				paused;
 	BOOL				executingCallback;
 	NSThread			*thread;	//	weak ref, nil on init, only valid while the thread is active and running
+	NSTimer				*rlTimer;
 	NSRunLoop			*runLoop;	//	weak ref, nil on init, only valid while the thread is active and running
 	
 	OSSpinLock			valLock;	//	ONLY used for quickly accessing 'running', 'bail', 'paused', and 'executingCallback' in a threadsafe fashion

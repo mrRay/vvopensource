@@ -1,7 +1,9 @@
 /**
 \file
 */
-#import <Cocoa/Cocoa.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
+#import <VVBasics/VVBasics.h>
 
 
 
@@ -33,7 +35,9 @@ typedef NS_ENUM(NSInteger,VVSizingMode)	{
 	@param m	this is the sizing mode you want to use to resize rect "a" to be inside rect "b"
 	@return	The returned value is what param/rect "a"'s coordinates would be given its dimensions and the supplied sizing mode.
 */
-+ (NSAffineTransform *) transformThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m;
+#if !TARGET_OS_IPHONE
++ (NSAffineTransform *) transformThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m;
+#endif
 ///	Uses +[VVSizingTool rectThatFitsRect:inRect:sizingMode:] to determine the new rect coordinates, then creates and returns the inverse transform of +[VVSizingTool transformThatFitsRect:inRect:sizingMode:]
 /**
 	@param a	This is the rect that you want to resize
@@ -41,13 +45,15 @@ typedef NS_ENUM(NSInteger,VVSizingMode)	{
 	@param m	this is the sizing mode you want to use to resize rect "a" to be inside rect "b"
 	@return	The returned value is what param/rect "a"'s coordinates would be given its dimensions and the supplied sizing mode.
 */
-+ (NSAffineTransform *) inverseTransformThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m;
+#if !TARGET_OS_IPHONE
++ (NSAffineTransform *) inverseTransformThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m;
+#endif
 /**
 	@param a	This is the rect that you want to resize
 	@param b	This is the area you want to resize the rect to fit inside
 	@param m	this is the sizing mode you want to use to resize rect "a" to be inside rect "b"
 	@return	The returned value is what param/rect "a"'s coordinates would be given its dimensions and the supplied sizing mode.
 */
-+ (NSRect) rectThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m;
++ (VVRECT) rectThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m;
 
 @end

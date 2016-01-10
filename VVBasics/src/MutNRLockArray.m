@@ -23,6 +23,13 @@
 	}
 	return self;
 }
+- (id) copyWithZone:(NSZone *)z	{
+	MutNRLockArray	*returnMe = [[MutNRLockArray alloc] initWithCapacity:0];
+	if (zwrFlag)
+		[returnMe setZwrFlag:YES];
+	[returnMe lockAddObjectsFromArray:self];
+	return returnMe;
+}
 - (NSMutableArray *) createArrayCopy	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	for (ObjectHolder *objPtr in array)	{

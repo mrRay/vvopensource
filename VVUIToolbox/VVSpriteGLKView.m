@@ -1,5 +1,6 @@
 #import "VVSpriteGLKView.h"
 #import "VVBasicMacros.h"
+#import "VVView.h"
 
 
 
@@ -264,6 +265,17 @@
 	[n retain];
 	[vvSubviews lockRemoveIdenticalPtr:n];
 	[n setContainerView:nil];
+	
+	//	if there's a drag and drop subview (if i'm in the middle of a drag and drop action), i have to check if it's in the subview i'm removing!
+	if (dragNDropSubview!=nil && [n containsSubview:dragNDropSubview])	{
+		[dragNDropSubview draggingExited:nil];
+		dragNDropSubview = nil;
+	}
+	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
+	NSMutableArray		*tmpArray = MUTARRAY;
+	[n _collectDragTypesInArray:tmpArray];
+	if ([tmpArray count]>0)
+		[self reconcileVVSubviewDragTypes];
 	
 	[n release];
 }
@@ -547,6 +559,21 @@
 	}
 	[vvSubviews unlock];
 }
+/*
+- (void) reshape	{
+	//NSLog(@"%s",__func__);
+	[super reshape];
+	
+	spritesNeedUpdate = YES;
+	initialized = NO;
+}
+- (void) update	{
+	[super update];
+	
+	spritesNeedUpdate = YES;
+	initialized = NO;
+}
+*/
 
 
 - (void) _lock	{
@@ -740,6 +767,7 @@
 		[self initializeGL];
 		initialized = YES;
 	}
+	//[EAGLContext makeCurrentContext:[self context]];
 	
 	//	apply the local copy of the effect which applies the orthogonal projection matrix
 	if (localEffect != nil)

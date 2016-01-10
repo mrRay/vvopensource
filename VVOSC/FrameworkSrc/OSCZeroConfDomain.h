@@ -1,5 +1,5 @@
-
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #else
@@ -14,7 +14,7 @@
 
 
 
-#if IPHONE
+#if TARGET_OS_IPHONE
 @interface OSCZeroConfDomain : NSObject <NSNetServiceBrowserDelegate,NSNetServiceDelegate> {
 #else
 @interface OSCZeroConfDomain : NSObject {

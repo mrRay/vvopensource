@@ -372,7 +372,7 @@
 			case 'r':			//	32 bit RGBA color
 				//NSLog(@"%d, %d, %d, %d",*((unsigned char *)b+tmpIndex),*((unsigned char *)b+tmpIndex+1),*((unsigned char *)b+tmpIndex+2),*((unsigned char *)b+tmpIndex+3));
 
-#if IPHONE
+#if TARGET_OS_IPHONE
 				tmpVal = [OSCValue
 					createWithColor:[UIColor
 						colorWithRed:b[tmpIndex]/255.0
@@ -701,7 +701,7 @@
 	//NSLog(@"%s ... %@",__func__,n);
 	[self addValue:[OSCValue createWithString:n]];
 }
-#if IPHONE
+#if TARGET_OS_IPHONE
 - (void) addColor:(UIColor *)c	{
 	[self addValue:[OSCValue createWithColor:c]];
 }

@@ -34,7 +34,7 @@
 		delegate = nil;
 		drawCallback = nil;
 		actionCallback = nil;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 		glDrawContext = NULL;
 #endif
 		
@@ -178,12 +178,12 @@
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 	glDrawContext = NULL;
 #endif
 	[delegate performSelector:drawCallback withObject:self];
 }
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
@@ -281,7 +281,7 @@
 - (SEL) actionCallback	{
 	return actionCallback;
 }
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (CGLContextObj) glDrawContext	{
 	return glDrawContext;
 }
@@ -304,7 +304,7 @@
 - (VVRECT) rect	{
 	return rect;
 }
-#if IPHONE
+#if TARGET_OS_IPHONE
 - (void) setBezierPath:(UIBezierPath *)n
 #else
 - (void) setBezierPath:(NSBezierPath *)n
@@ -316,13 +316,13 @@
 		bezierPath = [n retain];
 	OSSpinLockUnlock(&pathLock);
 }
-#if IPHONE
+#if TARGET_OS_IPHONE
 - (UIBezierPath *) copyBezierPath
 #else
 - (NSBezierPath *) copyBezierPath
 #endif
 {
-#if IPHONE
+#if TARGET_OS_IPHONE
 	UIBezierPath		*returnMe = nil;
 #else
 	NSBezierPath		*returnMe = nil;

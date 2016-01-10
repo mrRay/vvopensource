@@ -1,5 +1,7 @@
 #import "GLShaderScene.h"
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
+#endif
 //#import "Macros.h"
 
 
@@ -8,40 +10,45 @@
 @implementation GLShaderScene
 
 
+#if !TARGET_OS_IPHONE
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	self = [super initWithSharedContext:c pixelFormat:p sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
 - (id) initWithContext:(NSOpenGLContext *)c	{
-	return [self initWithContext:c sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sized:VVMAKESIZE(80,60)];
 }
 - (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
-	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sharedContext:sc sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithContext:c sharedContext:nil sized:s];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(VVSIZE)s	{
 	self = [super initWithContext:c sharedContext:sc sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
+#else
+#endif
 - (void) generalInit	{
 	[super generalInit];
+#if !TARGET_OS_IPHONE
 	if (context==nil)
 		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+#endif
 	pthread_mutexattr_t		attr;
 	pthread_mutexattr_init(&attr);
 		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
@@ -62,7 +69,11 @@
 - (void) prepareToBeDeleted	{
 	pthread_mutex_lock(&renderLock);
 		if (context != nil)	{
+#if !TARGET_OS_IPHONE
 			CGLContextObj		cgl_ctx = [context CGLContextObj];
+#else
+			[EAGLContext setCurrentContext:[self context]];
+#endif
 			if (program > 0)
 				glDeleteProgram(program);
 			if (vertexShader > 0)
@@ -151,7 +162,9 @@
 
 - (void) _initialize	{
 	[super _initialize];
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#endif
 	glDisable(GL_BLEND);
 }
 - (void) _renderPrep	{
@@ -165,7 +178,9 @@
 	if (context == nil)
 		return;
 	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#endif
 	
 	if (vertexShaderUpdated || fragmentShaderUpdated)	{
 		glUseProgram(0);
@@ -189,7 +204,7 @@
 		
 		BOOL			encounteredError = NO;
 		if (vertexShaderString != nil)	{
-			vertexShader = glCreateShader(GL_VERTEX_SHADER_ARB);
+			vertexShader = glCreateShader(GL_VERTEX_SHADER);
 			const char		*shaderSrc = [vertexShaderString UTF8String];
 			glShaderSource(vertexShader,1,&shaderSrc,NULL);
 			glCompileShader(vertexShader);
@@ -203,6 +218,7 @@
 				glGetShaderInfoLog(vertexShader,length,&length,log);
 				NSLog(@"\t\terror compiling vertex shader:");
 				NSLog(@"\t\terr: %s",log);
+				//NSLog(@"\t\tshader was %s",shaderSrc);
 				encounteredError = YES;
 				
 				OSSpinLockLock(&errDictLock);
@@ -218,7 +234,7 @@
 			}
 		}
 		if (fragmentShaderString != nil)	{
-			fragmentShader = glCreateShader(GL_FRAGMENT_SHADER_ARB);
+			fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 			const char		*shaderSrc = [fragmentShaderString UTF8String];
 			glShaderSource(fragmentShader,1,&shaderSrc,NULL);
 			glCompileShader(fragmentShader);
@@ -232,7 +248,7 @@
 				glGetShaderInfoLog(fragmentShader,length,&length,log);
 				NSLog(@"\t\terror compiling fragment shader:");
 				NSLog(@"\t\terr: %s",log);
-				//NSLog(@"\t\tshader is:\n%@",fragmentShaderString);
+				//NSLog(@"\t\tshader was %s",shaderSrc);
 				
 				OSSpinLockLock(&errDictLock);
 				if (errDict == nil)
@@ -264,6 +280,10 @@
 				glGetProgramInfoLog(program,length,&length,log);
 				NSLog(@"\t\terror linking program:");
 				NSLog(@"\t\terr: %s",log);
+				//NSLog(@"\t\tvert shader is:");
+				//NSLog(@"%@",vertexShaderString);
+				//NSLog(@"\t\tfrag shader is:");
+				//NSLog(@"%@",fragmentShaderString);
 				
 				OSSpinLockLock(&errDictLock);
 				if (errDict == nil)
@@ -293,7 +313,11 @@
 	if (deleted || context==nil)
 		return;
 	if (program > 0)	{
+#if !TARGET_OS_IPHONE
 		CGLContextObj		cgl_ctx = [context CGLContextObj];
+		glBindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
+#endif
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 	}
 	[super _renderCleanup];

@@ -1,7 +1,7 @@
 
 #import "VVSpriteManager.h"
 #import "VVBasicMacros.h"
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
 #endif
 
@@ -40,7 +40,7 @@ MutLockArray		*_spriteManagerArray;
 		allowMultiSpriteInteraction = NO;
 		multiSpriteExecutesOnMultipleSprites = NO;
 		spriteArray = [[MutLockArray alloc] initWithCapacity:0];
-#if IPHONE
+#if TARGET_OS_IPHONE
 		perTouchSpritesInUse = [[MutNRLockDict alloc] init];
 		perTouchMultiSpritesInUse = [[MutLockDict alloc] init];
 #else
@@ -63,7 +63,7 @@ MutLockArray		*_spriteManagerArray;
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteArray);
-#if IPHONE
+#if TARGET_OS_IPHONE
 	VVRELEASE(perTouchSpritesInUse);
 	VVRELEASE(perTouchMultiSpritesInUse);
 #else
@@ -79,7 +79,7 @@ MutLockArray		*_spriteManagerArray;
 /*------------------------------------*/
 
 
-#if IPHONE
+#if TARGET_OS_IPHONE
 - (BOOL) receivedDownEvent:(VVSpriteEventType)e forTouch:(UITouch *)t atPoint:(VVPOINT)p visibleOnly:(BOOL)v	{
 	//NSLog(@"%s ... (%0.2f, %0.2f)",__func__,p.x,p.y);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1)||(!_spriteManagerInitialized)||(t==nil))
@@ -436,7 +436,7 @@ MutLockArray		*_spriteManagerArray;
 		}
 		++tmpIndex;
 	}
-#if IPHONE
+#if TARGET_OS_IPHONE
 	if (foundSprite != nil)	{
 		if (allowMultiSpriteInteraction)	{
 			//	run through the key/val dict of UITouch/MutLockArrays, delete the ObjectHolder containing the found sprite from each array!
@@ -487,7 +487,7 @@ MutLockArray		*_spriteManagerArray;
 		[spriteArray lockRemoveIdenticalPtr:z];
 	}
 	VVSprite		*foundSprite = z;
-#if IPHONE
+#if TARGET_OS_IPHONE
 	if (foundSprite != nil)	{
 		if (allowMultiSpriteInteraction)	{
 			//	run through the key/val dict of UITouch/MutLockArrays, delete the ObjectHolder containing the found sprite from each array!
@@ -539,7 +539,7 @@ MutLockArray		*_spriteManagerArray;
 - (void) removeAllSprites	{
 	if (deleted)
 		return;
-#if IPHONE
+#if TARGET_OS_IPHONE
 	[perTouchSpritesInUse lockRemoveAllObjects];
 	[perTouchMultiSpritesInUse lockRemoveAllObjects];
 #else
@@ -599,7 +599,7 @@ MutLockArray		*_spriteManagerArray;
 		}
 	[spriteArray unlock];
 }
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
@@ -613,7 +613,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray unlock];
 }
 #endif
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx	{
 	//NSLog(@"%s",__func__);
 	//VVRectLog(@"\t\tpassed rect is",r);
@@ -637,7 +637,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray unlock];
 }
 #endif
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (VVSprite *) spriteInUse	{
 	if (deleted)
 		return nil;
@@ -647,7 +647,7 @@ MutLockArray		*_spriteManagerArray;
 		return spriteInUse;
 }
 #endif
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) setSpriteInUse:(VVSprite *)z	{
 	if (deleted)
 		return;
@@ -655,7 +655,7 @@ MutLockArray		*_spriteManagerArray;
 }
 #endif
 - (void) setAllowMultiSpriteInteraction:(BOOL)n	{
-#if IPHONE
+#if TARGET_OS_IPHONE
 	
 #else
 	if (n && spritesInUse==nil)
@@ -674,7 +674,7 @@ MutLockArray		*_spriteManagerArray;
 		return nil;
 	return spriteArray;
 }
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (MutLockArray *) spritesInUse	{
 	if (deleted)
 		return nil;

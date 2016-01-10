@@ -1,3 +1,4 @@
+#import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
 
 //	macros for checking to see if something is nil, and if it's not releasing and setting it to nil
@@ -14,13 +15,14 @@
 
 
 //	NSRect/Point/Size/etc and CGRect/Point/Size are functionally identical, but cast differently.  these macros provide a single interface for this functionality to simplify things.
-#if IPHONE
+#if TARGET_OS_IPHONE
 #define VVPOINT CGPoint
 #define VVMAKEPOINT CGPointMake
 #define VVZEROPOINT CGPointZero
 #define VVRECT CGRect
 #define VVMAKERECT CGRectMake
 #define VVZERORECT CGRectZero
+#define VVINSETRECT(a,dx,dy) CGRectMake(a.origin.x+(dx/2.0),a.origin.y+(dy/2.0),a.size.width-dx,a.size.height-dy)
 #define VVINTERSECTSRECT CGRectIntersectsRect
 #define VVINTERSECTIONRECT CGRectIntersection
 #define VVINTEGRALRECT CGRectIntegral
@@ -32,6 +34,7 @@
 #define VVPOINT NSPoint
 #define VVMAKEPOINT NSMakePoint
 #define VVZEROPOINT NSZeroPoint
+#define VVINSETRECT NSInsetRect
 #define VVRECT NSRect
 #define VVMAKERECT NSMakeRect
 #define VVZERORECT NSZeroRect
@@ -147,10 +150,15 @@
 #define POINTDISTANCE(a,b) fabs(sqrtf((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y)))
 
 
+#define VVMIX(X,Y,A) (((X)*(1.-(A)))+((Y)*(A)))
 
 
+
+
+#if !TARGET_OS_IPHONE
 //	not actually a macro- a function to replace NSRunAlertPanel, which is deprecated in 10.10
 NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC);
+#endif
 
 
 

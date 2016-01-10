@@ -60,21 +60,21 @@ pthread_mutex_t			_globalQCContextLock;
 
 
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	self = [super initWithSharedContext:c pixelFormat:p sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
-- (id) initCommonBackendSceneSized:(NSSize)n	{
+- (id) initCommonBackendSceneSized:(VVSIZE)n	{
 	self = [super init];
 	if (self!=nil)	{
 		size = n;

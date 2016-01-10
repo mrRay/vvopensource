@@ -1,8 +1,8 @@
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
 #import <Quartz/Quartz.h>
-#import <VVBufferPool/VVBufferPool.h>
+#import "VVBufferPool.h"
 @class VVQCComposition;
 #import <pthread.h>
 
@@ -39,13 +39,13 @@ extern pthread_mutex_t			_globalQCContextLock;
 ///	If you want all instances of QCGLScene to use a single specific OpenGL context to render (CGLLockContext()/CGLUnlockContext() will be called before any rendering is performed), you need to call this method and pass it the context and pixel format you'll be using to do all the rendering.  Once you've called this, instances of QCGLScene that use the common backend can be instantiated via -[QCGLScene initCommonBackendSceneSized:].
 + (void) prepCommonQCBackendToRenderOnContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p;
 ///	If you create a QCGLScene using this method, the scene won't allocate its own OpenGL context- instead, it will create its local CIContext instance from the common backend's GL context.  This is worth noting because by default, GLScene and all subclasses of it create and use their own GL contexts as a general rule.  You MUST call +[QCGLScene prepCommonQCBackendToRenderOnContext:pixelFormat:] before calling this method!
-- (id) initCommonBackendSceneSized:(NSSize)n;
+- (id) initCommonBackendSceneSized:(VVSIZE)n;
 
 //	these are the standard init methods for subclasses of GLScene- they produce instances that each have their own GL context.  they are deprecated because of a CoreImage bug i'm aware of- they still work, i just wouldn't recommend using them unless necessary.  (and no, this isn't a typo- i know this is documentation for QCGLScene, but QC uses CoreImage extensively in its backend and is subject to CoreImage-based bugs).
 - (id) initWithSharedContext:(NSOpenGLContext *)c __deprecated;
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s __deprecated;
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s __deprecated;
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p __deprecated;
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s __deprecated;
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s __deprecated;
 
 /**
 @brief Load the QC composition at the passed path. Threadsafe- this method doesn't invoke the QC runtime, instead it creates a VVQCComposition instance for the passed path so you can check out the basic properties of the composition.  The QCRenderer/QC runtime doesn't get created until you render a frame (or explicitly create a renderer)

@@ -32,7 +32,15 @@
 
 
 
-#ifndef __LP64__
+#if TARGET_OS_IPHONE
+#elif !__LP64__
+
+
+
+
+
+
+
 
 
 
@@ -205,4 +213,16 @@ CFDictionaryRef HapQTCreateCVPixelBufferOptionsDictionary()
 
 
 
-#endif	//	"ifndef __LP64__"
+
+
+
+
+
+
+
+#else
+#endif
+
+
+
+

@@ -1,4 +1,4 @@
-
+#import <TargetConditionals.h>
 #import "VVBasicMacros.h"
 
 #import "VVThreadLoop.h"
@@ -10,7 +10,7 @@
 #import "MutNRLockArray.h"
 #import "MutNRLockDict.h"
 
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 	#import "VVCURLDL.h"
 	#import "VVCrashReporter.h"
 	//#import "NSHostAdditions.h"

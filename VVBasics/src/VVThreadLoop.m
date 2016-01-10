@@ -38,6 +38,7 @@
 	paused = NO;
 	executingCallback = NO;
 	thread = nil;
+	rlTimer = nil;
 	runLoop = nil;
 	
 	valLock = OS_SPINLOCK_INIT;
@@ -84,10 +85,10 @@
 	thread = [NSThread currentThread];
 	runLoop = [NSRunLoop currentRunLoop];
 	//	add a one-year timer to the run loop, so it will run & pause when i tell the run loop to run
-	[NSTimer
+	rlTimer = [NSTimer
 		scheduledTimerWithTimeInterval:60.0*60.0*24.0*7.0*52.0
-		target:nil
-		selector:nil
+		target:self
+		selector:@selector(timerCallback:)
 		userInfo:nil
 		repeats:NO];
 	OSSpinLockUnlock(&valLock);
@@ -187,6 +188,10 @@
 	
 	[pool release];
 	OSSpinLockLock(&valLock);
+	if (rlTimer != nil)	{
+		[rlTimer invalidate];
+		rlTimer = nil;
+	}
 	thread = nil;
 	runLoop = nil;
 	running = NO;
@@ -194,6 +199,9 @@
 	//NSLog(@"\t\t%s - FINSHED",__func__);
 }
 - (void) threadProc	{
+	
+}
+- (void) timerCallback:(NSTimer *)n	{
 	
 }
 - (void) pause	{

@@ -11,7 +11,7 @@
 @implementation VVBufferGLView
 
 
-- (id) initWithFrame:(NSRect)f	{
+- (id) initWithFrame:(VVRECT)f	{
 	if (self = [super initWithFrame:f])	{
 		pthread_mutexattr_t		attr;
 		pthread_mutexattr_init(&attr);
@@ -65,7 +65,7 @@
 	OSSpinLockUnlock(&retainDrawLock);
 	[super dealloc];
 }
-- (void) drawRect:(NSRect)r	{
+- (void) drawRect:(VVRECT)r	{
 	pthread_mutex_lock(&renderLock);
 		if (!initialized)	{
 			//NSLog(@"\t\tinitializing during %s",__func__);
@@ -139,7 +139,7 @@
 			//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			
 			//	set up the view to draw
-			NSRect				bounds = [self bounds];
+			VVRECT				bounds = [self bounds];
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			glMatrixMode(GL_PROJECTION);
@@ -162,10 +162,10 @@
 			
 			if (b != nil)	{
 				[b retain];
-				//NSSize			bufferSize = [b size];
+				//VVSIZE			bufferSize = [b size];
 				//BOOL			bufferFlipped = [b flipped];
-				NSRect			destRect = [VVSizingTool
-					//rectThatFitsRect:NSMakeRect(0,0,bufferSize.width,bufferSize.height)
+				VVRECT			destRect = [VVSizingTool
+					//rectThatFitsRect:VVMAKERECT(0,0,bufferSize.width,bufferSize.height)
 					rectThatFitsRect:[b srcRect]
 					inRect:[self bounds]
 					sizingMode:sizingMode];

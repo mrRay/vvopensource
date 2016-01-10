@@ -1,5 +1,5 @@
-
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -45,7 +45,7 @@ The basic workflow for address spaces is relatively straightforward: first locat
 ///	Returns the main instance of the OSC address space (and creates it if necessary)
 + (id) mainAddressSpace;
 + (void) refreshMenu;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a;
 + (NSMenu *) makeMenuForNode:(OSCNode *)n ofType:(NSIndexSet *)ts withTarget:(id)t action:(SEL)a;
 #endif

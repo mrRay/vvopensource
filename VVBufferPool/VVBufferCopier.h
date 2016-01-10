@@ -1,5 +1,6 @@
-#import <Cocoa/Cocoa.h>
-#import <VVBufferPool/VVBufferPool.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
+#import "VVBufferPool.h"
 #import <pthread.h>
 
 
@@ -19,12 +20,18 @@ extern id			_globalVVBufferCopier;
 	BOOL				copyToIOSurface;	//	NO by default; if NO, the copied buffer won't have an associated IOSurfaceRef
 	VVBufferPixFormat	copyPixFormat;	//	VVBufferPF_BGRA by default
 	BOOL				copyAndResize;	//	NO by default. if NO, copies preserve the size of the passed buffer- if NO, resizes the buffer while copying it
-	NSSize				copySize;	//	only used if "copyAndResize" is YES;
+	VVSIZE				copySize;	//	only used if "copyAndResize" is YES;
 	VVSizingMode		copySizingMode;
+	VVBuffer			*geoXYVBO;	//	vertices for the quad used to draw the buffer
+	VVBuffer			*geoSTVBO;	//	tex coords for the quad used to draw the buffer
 }
 
 ///	there's a global (singleton) instance of VVBufferCopier- by default this is created when you set up the global VVBufferPool, but if you want to override it and create it to work with a different context, this is how.
+#if !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferCopierWithSharedContext:(NSOpenGLContext *)c;
+#else
++ (void) createGlobalVVBufferCopierWithSharegroup:(EAGLSharegroup *)s;
+#endif
 ///	returns the instance of the global (singleton) VVBufferCopier which is automatically created when you make the global VVBufferPool.  if this is nil, something's wrong- check to see if your global buffer pool is nil or not!
 + (VVBufferCopier *) globalBufferCopier;
 
@@ -51,7 +58,7 @@ extern id			_globalVVBufferCopier;
 ///	NO by default.  if YES, the buffer copier will resize anything passed to "copyToNewBuffer" or throw an error if the buffer sizes don't match and you call "copyThisBuffer:toThisBuffer:".
 @property (assign,readwrite) BOOL copyAndResize;
 ///	the "copySize" is only used if "copyAndResize" is YES
-@property (assign,readwrite) NSSize copySize;
+@property (assign,readwrite) VVSIZE copySize;
 @property (assign,readwrite) VVSizingMode copySizingMode;
 
 @end

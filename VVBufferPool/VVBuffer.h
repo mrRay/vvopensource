@@ -3,10 +3,19 @@
 \addtogroup VVBufferPool
 @{
 */
-#import <Cocoa/Cocoa.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
+#else
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES3/glext.h>
+#endif
 #import <CoreVideo/CoreVideo.h>
+#if !TARGET_OS_IPHONE
 #import <IOSurface/IOSurface.h>
+#endif
+#import <VVBasics/VVBasics.h>
 
 
 
@@ -18,41 +27,76 @@ typedef NS_ENUM(NSInteger, VVBufferType)	{
 	VVBufferType_Tex,	//!<	texture (probably most common)
 	VVBufferType_PBO,	//	PBO
 	VVBufferType_VBO,	//	VBO
+#if !TARGET_OS_IPHONE
 	VVBufferType_DispList,	//	display list
+#endif
 };
+
+
 ///	This desribes the internal format of the GL resource represented by a VVBuffer
 typedef NS_ENUM(NSInteger, VVBufferIntFormat)	{
 	VVBufferIF_None = 0,	//!<	none/unknown/unused
+#if !TARGET_OS_IPHONE
 	VVBufferIF_Lum8 = GL_LUMINANCE8,	//!<	single channel, 8 bit per pixel
 	VVBufferIF_LumFloat = GL_LUMINANCE32F_ARB,	//!<	single channel, 32 bit float per pixel
+#else
+	VVBufferIF_Lum8 = GL_LUMINANCE,
+	VVBufferIF_LumAlpha = GL_LUMINANCE_ALPHA,
+#endif
 	VVBufferIF_R = GL_RED,	//!<	single channel, 8 bit per pixel
 	VVBufferIF_RGB = GL_RGB,	//!<	three channel, 8 bit per channel
 	VVBufferIF_RGBA = GL_RGBA,	//!<	four channel, 8 bit per channel
+#if !TARGET_OS_IPHONE
 	VVBufferIF_RGBA8 = GL_RGBA8,	//!<	four channel, 8 bit per channel.  fast on os x, probably most common)
+#endif
 	VVBufferIF_Depth24 = GL_DEPTH_COMPONENT24,	//!<	depth- single channel, 24 bit per pixel
+#if !TARGET_OS_IPHONE
 	VVBufferIF_RGBA32F = GL_RGBA32F_ARB,	//!<	four channel, 32 bit per channel
+#else
+	VVBufferIF_RGBA32F = GL_RGBA32F,	//!<	four channel, 32 bit per channel.  probably can't render to this in iOS.
+	VVBufferIF_RGBA16F = GL_RGBA16F_EXT,	//!<	four channel, 16 bit per channel.
+#endif
+#if !TARGET_OS_IPHONE
 	VVBufferIF_RGB_DXT1 = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,	//!<	Hap
 	VVBufferIF_RGBA_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!<	Hap Alpha
 	VVBufferIF_YCoCg_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!< HapQ. not a typo, same as RGBA_DXT5!
+#endif
 };
+
+
 ///	This describes the pixel format of the GL resource represented by a VVBuffer
 typedef NS_ENUM(NSInteger, VVBufferPixFormat)	{
 	VVBufferPF_None = 0,	//!<	non/unknown/unused
 	VVBufferPF_Depth = GL_DEPTH_COMPONENT,	//!<	depth
 	VVBufferPF_Lum = GL_LUMINANCE,	//!<	luminance
+	VVBufferPF_LumAlpha = GL_LUMINANCE_ALPHA,
+#if !TARGET_OS_IPHONE
 	VVBufferPF_R = GL_RED,	//!<	red (same idea as luminance, just seems to be slightly more compatible with stuff)
+#endif
 	VVBufferPF_RGBA = GL_RGBA,	//!<	RGBA
+#if !TARGET_OS_IPHONE
 	VVBufferPF_BGRA = GL_BGRA,	//!< BGRA.  faston os x, (probably most common)
 	VVBufferPF_YCBCR_422 = GL_YCBCR_422_APPLE,	//!<	packed YCbCr
+#else
+	VVBufferPF_BGRA = GL_BGRA_EXT
+#endif
 };
+
+
 ///	This describes the pixel type of the GL resource represented by a VVBuffer
 typedef NS_ENUM(NSInteger, VVBufferPixType)	{
 	VVBufferPT_None = 0,	//!<	none/unknown/unused
 	VVBufferPT_Float = GL_FLOAT,	//!<	float- used for rendering high-precision stuff
 	VVBufferPT_U_Byte = GL_UNSIGNED_BYTE,	//!<	usually used for depth buffer/luminance/single-channel stuff
+#if !TARGET_OS_IPHONE
 	VVBufferPT_U_Int_8888_Rev = GL_UNSIGNED_INT_8_8_8_8_REV,	//!<	standard four channel/8 bits per channel/unsigned byte format.  fast on os x, (probably most common)
+#else
+	VVBufferPT_HalfFloat = GL_HALF_FLOAT,
+#endif
 	VVBufferPT_U_Short_88 = GL_UNSIGNED_SHORT_8_8_APPLE,	//!<	two channel/8 bits per channel/unsigned byte format.  usually used for YCbCr textures.
 };
+
+
 ///	The origin of any CPU-based content
 typedef NS_ENUM(NSInteger, VVBufferCPUBack)	{
 	VVBufferCPUBack_None = 0,	//!<	there is no CPU-based backing
@@ -79,6 +123,8 @@ typedef NS_ENUM(NSInteger, VVBufferBackID)	{
 	VVBufferBackID_RemoteIOSrf,	//!<	the buffer was created from an remote IOSurfaceRef (the IOSurface was generated in another process)
 	VVBufferBackID_External	//!<	the buffer was created from some kind of external pointer passed in from another API (this can be used to work with other APIs without actually extending VVBuffer/VVBufferPool)
 };
+
+
 ///	This C struct describes the basic characteristics of a VVBuffer's internal GL properties
 typedef struct _VVBufferDescriptor	{
 	VVBufferType		type;			//!<	what kind of buffer (what kind of GL resource) this holds
@@ -96,6 +142,21 @@ typedef struct _VVBufferDescriptor	{
 } VVBufferDescriptor;
 
 
+//	these structs simplify the process of constructing, referring to, and packing/unpacking GL-based data describing a textured quad
+typedef struct {
+	GLfloat		geo[2];
+	GLfloat		tex[2];
+} VVBufferVertex;
+typedef struct {
+	VVBufferVertex	bl;
+	VVBufferVertex	br;    
+	VVBufferVertex	tl;
+	VVBufferVertex	tr;    
+} VVBufferQuad;
+//	populates the passed VVBufferQuad struct with the passed geometry and texture coords
+void VVBufferQuadPopulate(VVBufferQuad *b, VVRECT geoRect, VVRECT texRect);
+
+
 
 
 ///	Populates the passed VVBufferDescriptor pointer with default values
@@ -107,7 +168,7 @@ BOOL VVBufferDescriptorCompare(VVBufferDescriptor *a, VVBufferDescriptor *b);
 ///	Compares the passed buffers for the purpose of recycling, returns a YES if they are close enough of a match to be used interchangeably
 BOOL VVBufferDescriptorCompareForRecycling(VVBufferDescriptor *a, VVBufferDescriptor *b);
 ///	Calculates the size (in bytes) that would be required to create a CPU-based backing for a buffer of the passed dimensions matching the passed buffer descriptor.
-unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, NSSize s);
+unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, VVSIZE s);
 
 
 
@@ -135,10 +196,10 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 	VVBufferDescriptor	descriptor;	//	struct that describes the GL resource this instance of VVBuffer represents
 	
 	BOOL				preferDeletion;	//	NO by default.  if YES, this instance will be freed immediately (rather than put back in a pool).  note that some resources will be freed immediately no matter what- even if this is NO!
-	NSSize				size;	//	the dimensions of the GL resource, expressed in pixels (even if it's a 2D texture- this is pixel-based!)
-	NSRect				srcRect;	//	rect describing the area of this buffer to use.  again, always pixel-based, even when the target is GL_TEXTURE_2D.
+	VVSIZE				size;	//	the dimensions of the GL resource, expressed in pixels (even if it's a 2D texture- this is pixel-based!)
+	VVRECT				srcRect;	//	rect describing the area of this buffer to use.  again, always pixel-based, even when the target is GL_TEXTURE_2D.
 	BOOL				flipped;	//	if YES, the area described by "srcRect" should be flipped vertically before display
-	NSSize				backingSize;	//	sometimes, the backing has a different size (gworlds backing compressed textures)
+	VVSIZE				backingSize;	//	sometimes, the backing has a different size (gworlds backing compressed textures)
 	GLfloat				*auxTransMatrix;	//	"retained", nil by default. sometimes it's convenient to store transform matrices necessary to do scaling/translation/perspective distortion with the buffers that use them.
 	GLfloat				auxOpacity;	//	like "auxTransMatrix", sometimes it's convenient to store an auxiliary "opacity" value. this opacity value isn't reflected by the contents of this VVBuffer- rather, it's intended to store a value for later application to this buffer.
 	struct timeval		contentTimestamp;	//	set by the buffer pool's class method.  this variable is *NOT* set automatically- its use is entirely optional and up to the implementation
@@ -152,8 +213,10 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 	void				*backingReleaseCallbackContext;	//	weak ref. this is an arbitrary data pointer that is stored with a buffer for use with the buffer release callback
 	
 	/*		if this instance of VVBuffer has a corresponding IOSurfaceRef, it's retained here.  these will always be valid- even if you copy a VVBuffer.		*/
+#if !TARGET_OS_IPHONE
 	IOSurfaceRef		localSurfaceRef;	//	RETAINED, nil by default.  the "local" surface ref was created by this process.
 	IOSurfaceRef		remoteSurfaceRef;	//	RETAINED, nil by default.  the "remote" surface ref was created by another process (so this should probably be released immediately).
+#endif
 	
 	/*		these variables pertain to the buffer in its pool- idle counts, the original buffer for this resource (in the case of copied buffers), that sort of thing.		*/
 	id					parentBufferPool;	//	RETAINED! the pool exists until all its buffers are gone!
@@ -169,14 +232,14 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 - (void) setDescriptorFromPtr:(VVBufferDescriptor *)n;
 @property (assign, readwrite) BOOL preferDeletion;
 ///	This returns the size of the underlying GL resource.  The value returned by this method is always using pixels as the base unit of measurement.  This value should be set by the buffer pool.  If you want to retrieve the size of the image/frame represented by the VVBuffer, get the "size" member of the "srcRect"!
-@property (readonly) NSSize size;
-- (void) setSize:(NSSize)n;
+@property (readonly) VVSIZE size;
+- (void) setSize:(VVSIZE)n;
 ///	The "srcRect" is the region of the GL resource that contains an image- this value is always measured in pixels, and measures from the bottom-left corner of the texture.  It's safe to both set and get this value, because it's non-destructive: the "srcRect" is only used when you want to do something with the VVBuffer (draw it, pass it to another object for copying/etc).
-@property (assign, readwrite) NSRect srcRect;
+@property (assign, readwrite) VVRECT srcRect;
 ///	Whether or not the image represented by this buffer is flipped vertically.  Like "srcRect", it's safe and quick to both set and get this value- changing it does not cause any graphic operatings to occur, the value is only used when you want to do something with this VVBuffer.
 @property (assign, readwrite) BOOL flipped;
 ///	If the buffer has some kind of backing, these are its dimensions.  Stored here as a different size to deal with situations where the backing has different dimensions than the GL resource created from it.  Set when the buffer is created, you probably shouldn't change this.
-@property (assign, readwrite) NSSize backingSize;
+@property (assign, readwrite) VVSIZE backingSize;
 ///	Returns a ptr to the VVBuffer's content timestamp.  Content timestamps may be generated by +[VVBufferPool timestampThisBuffer:].  This is a ptr to a simple timeval struct- timestamps may be used to aid in differentiating between frames and checking for "new" content.
 - (struct timeval *) contentTimestampPtr;
 ///	Copies the values from the receiver's content timestamp into the passed timeval struct.  Content timestamps may be generated by +[VVBufferPool timestampThisBuffer:].  This is a ptr to a simple timeval struct- timestamps may be used to aid in differentiating between frames and checking for "new" content.
@@ -190,16 +253,16 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 - (GLfloat *) auxTransMatrix;
 @property (assign, readwrite) GLfloat auxOpacity;
 ///	Takes "srcRect", and then divides its members by the size of the GL resource to normalize them.
-@property (readonly) NSRect normalizedSrcRect;
-///	If you want to draw a texture, you need to know what the texture coordinates are so you can specify where to draw the texture on your triangles/quads.  Texture coordinates depend on what "type" of texture you're working with (GL_TEXTURE_2D tex coords are always normalized, GL_TEXTURE_RECTANGLE_EXT coords are never normalized).  This method returns an NSRect populated with the texture coords you should use to draw the contents of this buffer.  This method/this value is useful if you're writing your own GL drawing code- if you're working exclusively with VVBufferPool objects, you probably won't need this as much.
-@property (readonly) NSRect glReadySrcRect;
+@property (readonly) VVRECT normalizedSrcRect;
+///	If you want to draw a texture, you need to know what the texture coordinates are so you can specify where to draw the texture on your triangles/quads.  Texture coordinates depend on what "type" of texture you're working with (GL_TEXTURE_2D tex coords are always normalized, GL_TEXTURE_RECTANGLE_EXT coords are never normalized).  This method returns an VVRECT populated with the texture coords you should use to draw the contents of this buffer.  This method/this value is useful if you're writing your own GL drawing code- if you're working exclusively with VVBufferPool objects, you probably won't need this as much.
+@property (readonly) VVRECT glReadySrcRect;
 ///	The "srcRect" value in VVBuffer describes the region of the underlying texture to use as an image.  This is essentially a zero-cost crop: you can change the dimensions and location of the "srcRect" to non-destructively change the "cropping" of the underlying image.  This is cool, but it's a pain in the butt if you want to crop something that was already cropped and may or may not be flipped.  This method simplifies the task of cropping an existing VVBuffer.
 /**
-@param cropRect A normalized NSRect describing the crop rect you want to apply to the existing image
+@param cropRect A normalized VVRECT describing the crop rect you want to apply to the existing image
 @param f YES if you want this operating to take the VVBuffer's flippedness into account
-@return Returns an NSRect with the new srcRect that you can apply to the receiver or do further calculations with.
+@return Returns an VVRECT with the new srcRect that you can apply to the receiver or do further calculations with.
 */
-- (NSRect) srcRectCroppedWith:(NSRect)cropRect takingFlipIntoAccount:(BOOL)f;
+- (VVRECT) srcRectCroppedWith:(VVRECT)cropRect takingFlipIntoAccount:(BOOL)f;
 ///	Returns YES if "srcRect" has an origin at 0,0 and a size that matches the texture size!
 @property (readonly) BOOL isFullFrame;
 @property (readonly) BOOL isNPOT2DTex;
@@ -209,20 +272,29 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 ///	If this VVBuffer has an underlying GL resource, this returns the target of the resource.  By default, this is usually GL_TEXTURE_RECTANGLE_EXT, though it may also be GL_TEXTURE_2D.
 @property (readonly) GLuint	target;
 ///	Returns a YES if this VVBuffer is safe to publish to syphon- in order to be safe to publish via Syphon, a VVBuffer must be a rectangular texture using 8 bits per channel (32bits per pixel) backed by an IOSurface.  If the VVBuffer is flipped, or isn't full-frame, this will return a NO.
+#if !TARGET_OS_IPHONE
 @property (readonly) BOOL safeToPublishToSyphon;
+#endif
 ///	Returns a YES if the passed buffer and the receiver have matching contentTimeStamps.
 - (BOOL) isContentMatchToBuffer:(VVBuffer *)n;
 
 - (GLuint *) pixels;
 ///	If the receiver was created from a CVPixelBufferRef, this will return the CVPixelBufferRef (which is retained by the buffer until it's freed).  Returns nil if the buffer wasn't created from a CVPixelBuffer.
 - (CVPixelBufferRef) cvPixBuf;
+#if !TARGET_OS_IPHONE
 ///	If the receiver was created by "wrapping" a CVOpenGLTextureRef, this will return the CVOpenGLTextureRef (which is retained by the buffer until it's freed).  Returns nil if the buffer wasn't created from a CVOpenGLTextureRef.
 - (CVOpenGLTextureRef) cvTexRef;
+#endif
+#if !TARGET_OS_IPHONE
 ///	If the receiver was created from a CVPixelBufferRef, this will return the NSBitmapImageRep (which is retained by the buffer until it's freed).  Returns nil if the buffer wasn't created from a NSBitmapImageRep.
 - (NSBitmapImageRep *) bitmapRep;
+#endif
 - (void *) externalBacking;
-#ifndef __LP64__
+
+#if TARGET_OS_IPHONE
+#elif !__LP64__
 - (GWorldPtr) gWorld;
+#else
 #endif
 
 ///	The VVBufferBackID doesn't play a functional role in the processing of VVBuffer- it's an enum that exists so you can flag what this buffer was created from.  This variable exists to make it easier to retrieve the underlying resource wrapped by the VVBuffer (for example, retrieving a CVOpenGLTextureRef, NSBitmapImageRep, etc) or determining the provenance of a buffer.
@@ -242,6 +314,7 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 */
 - (void) setBackingReleaseCallbackContext:(void *)n;
 - (void *) backingReleaseCallbackContext;
+#if !TARGET_OS_IPHONE
 ///	If the receiver is a GL texture backed by an IOSurfaceRef, this returns the IOSurfaceRef.  If you want to send a texture to another process, you want to call -[VVBufferPool allocBufferForTexBackedIOSurfaceSized:], render into the returned buffer, and then call "localSurfaceRef" to retrieve the IOSurface to be sent to another process.
 - (IOSurfaceRef) localSurfaceRef;
 - (void) setLocalSurfaceRef:(IOSurfaceRef)n;
@@ -249,6 +322,7 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 - (NSString *) stringForXPCComm;
 - (IOSurfaceRef) remoteSurfaceRef;
 - (void) setRemoteSurfaceRef:(IOSurfaceRef)n;
+#endif
 
 @property (retain,readwrite) id copySourceBuffer;
 @property (assign,readwrite) int idleCount;
@@ -265,8 +339,14 @@ void VVBuffer_ReleasePixelsCallback(id b, void *c);
 void VVBuffer_ReleaseCVGLT(id b, void *c);
 void VVBuffer_ReleaseCVPixBuf(id b, void *c);
 void VVBuffer_ReleaseBitmapRep(id b, void *c);
-#ifndef __LP64__
+
+
+
+
+#if TARGET_OS_IPHONE
+#elif !__LP64__
 void VVBuffer_ReleaseGWorld(id b, void *c);
+#else
 #endif
 
 

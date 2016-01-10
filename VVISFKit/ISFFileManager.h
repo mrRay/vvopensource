@@ -1,7 +1,12 @@
 /**
 \file
 */
+#import <TargetConditionals.h>
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 #import <VVBasics/VVBasics.h>
 
 
@@ -50,6 +55,8 @@ only returns paths corresponding to valid ISF files
 + (NSMutableArray *) defaultImageFilters;
 ///	returns an array with all the generative sources installed in the default locations for ISF files on your system
 + (NSMutableArray *) defaultGenerativeSources;
+
++ (BOOL) fileIsProbablyAnISF:(NSString *)pathToFile;
 
 + (NSMutableArray *) _filtersInDirectory:(NSString *)folder recursive:(BOOL)r matchingFunctionality:(ISFFunctionality)func;
 + (BOOL) _isAFilter:(NSString *)pathToFile;

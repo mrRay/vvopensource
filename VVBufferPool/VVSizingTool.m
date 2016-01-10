@@ -6,8 +6,9 @@
 @implementation VVSizingTool
 
 
-+ (NSAffineTransform *) transformThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m	{
-	NSRect				r = [VVSizingTool rectThatFitsRect:a inRect:b sizingMode:m];
+#if !TARGET_OS_IPHONE
++ (NSAffineTransform *) transformThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m	{
+	VVRECT				r = [VVSizingTool rectThatFitsRect:a inRect:b sizingMode:m];
 	NSAffineTransform	*returnMe = [NSAffineTransform transform];
 	NSAffineTransform	*tmp = nil;
 	
@@ -25,8 +26,10 @@
 	
 	return returnMe;
 }
-+ (NSAffineTransform *) inverseTransformThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m	{
-	NSRect				r = [VVSizingTool rectThatFitsRect:a inRect:b sizingMode:m];
+#endif
+#if !TARGET_OS_IPHONE
++ (NSAffineTransform *) inverseTransformThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m	{
+	VVRECT				r = [VVSizingTool rectThatFitsRect:a inRect:b sizingMode:m];
 	NSAffineTransform	*returnMe = [NSAffineTransform transform];
 	NSAffineTransform	*tmp = nil;
 	
@@ -44,8 +47,9 @@
 	
 	return returnMe;
 }
-+ (NSRect) rectThatFitsRect:(NSRect)a inRect:(NSRect)b sizingMode:(VVSizingMode)m	{
-	NSRect		returnMe = NSMakeRect(0,0,0,0);
+#endif
++ (VVRECT) rectThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m	{
+	VVRECT		returnMe = VVMAKERECT(0,0,0,0);
 	double		bAspect = b.size.width/b.size.height;
 	double		aAspect = a.size.width/a.size.height;
 	switch (m)	{
@@ -86,10 +90,10 @@
 			returnMe.origin.y = (b.size.height-returnMe.size.height)/2.0+b.origin.y;
 			break;
 		case VVSizingModeStretch:
-			returnMe = NSMakeRect(b.origin.x,b.origin.y,b.size.width,b.size.height);
+			returnMe = VVMAKERECT(b.origin.x,b.origin.y,b.size.width,b.size.height);
 			break;
 		case VVSizingModeCopy:
-			returnMe.size = NSMakeSize((double)(int)a.size.width,(double)(int)a.size.height);
+			returnMe.size = VVMAKESIZE((double)(int)a.size.width,(double)(int)a.size.height);
 			returnMe.origin.x = (double)(int)((b.size.width-returnMe.size.width)/2.0+b.origin.x);
 			returnMe.origin.y = (double)(int)((b.size.height-returnMe.size.height)/2.0+b.origin.y);
 			break;

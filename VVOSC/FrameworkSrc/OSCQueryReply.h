@@ -1,4 +1,5 @@
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>

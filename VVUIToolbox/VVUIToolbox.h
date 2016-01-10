@@ -1,10 +1,11 @@
+#import <TargetConditionals.h>
 #import <VVBasics/VVBasics.h>
 
 #import "VVView.h"
 #import "VVSprite.h"
 #import "VVSpriteManager.h"
 
-#if IPHONE
+#if TARGET_OS_IPHONE
 #import "VVSpriteGLKView.h"
 #else
 #import "VVSpriteView.h"

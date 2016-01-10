@@ -7,6 +7,7 @@
 
 
 MutLockDict		*_ISFImportedImages = nil;
+NSString			*_ISFESCompatibility = nil;
 NSString			*_ISFVertPassthru = nil;
 NSString			*_ISFVertVarDec = nil;
 NSString 			*_ISFVertInitFunc = nil;
@@ -27,6 +28,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		
 		//	load the various supporting txt files which contain data which will be used to assemble frag and vertex shaders from ISF files 
 		NSBundle		*mb = [NSBundle bundleForClass:[ISFGLScene class]];
+		_ISFESCompatibility = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISF_ES_Compatibility" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFVertPassthru = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLScenePassthru" ofType:@"vs"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFVertVarDec = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLSceneVertShaderIncludeVarDec" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFVertInitFunc = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLSceneVertShaderIncludeInitFunc" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
@@ -34,7 +36,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		_ISFMacro2DBiasString = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLMacro2DBias" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFMacro2DRectString = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLMacro2DRect" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
 		_ISFMacro2DRectBiasString = [[NSString stringWithContentsOfFile:[mb pathForResource:@"ISFGLMacro2DRectBias" ofType:@"txt"] encoding:NSUTF8StringEncoding error:nil] retain];
-		if (_ISFVertPassthru==nil ||
+		if (_ISFESCompatibility==nil ||
+		_ISFVertPassthru==nil ||
 		_ISFVertVarDec==nil ||
 		_ISFVertInitFunc==nil ||
 		_ISFMacro2DString==nil ||
@@ -45,50 +48,55 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		}
 	}
 }
+#if !TARGET_OS_IPHONE
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	self = [super initWithSharedContext:c pixelFormat:p sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
 - (id) initWithContext:(NSOpenGLContext *)c	{
-	return [self initWithContext:c sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sized:VVMAKESIZE(80,60)];
 }
 - (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
-	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sharedContext:sc sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithContext:c sharedContext:nil sized:s];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(VVSIZE)s	{
 	self = [super initWithContext:c sharedContext:sc sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
+#else
+#endif
 - (void) generalInit	{
 	[super generalInit];
 	propertyLock = OS_SPINLOCK_INIT;
 	//performClear = NO;
 	throwExceptions = NO;
+	loadingInProgress = NO;
 	filePath = nil;
 	fileName = nil;
 	fileDescription = nil;
 	fileCredits = nil;
+	fileFunctionality = ISFF_Source;
 	categoryNames = [MUTARRAY retain];
 	inputs = [[MutLockArray alloc] init];
 	imageInputs = [[MutLockArray alloc] init];
 	imageImports = [[MutLockArray alloc] init];
-	renderSize = NSMakeSize(1,1);
+	renderSize = VVMAKESIZE(1,1);
 	swatch = [[VVStopwatch alloc] init];
 	bufferRequiresEval = NO;
 	persistentBufferArray = [[MutLockArray alloc] init];
@@ -102,6 +110,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	renderSizeUniformLoc = -1;
 	passIndexUniformLoc = -1;
 	timeUniformLoc = -1;
+	geoXYVBO = nil;
 	[self setRenderTarget:self];
 	[self setRenderSelector:@selector(renderCallback:)];
 }
@@ -129,6 +138,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
 	OSSpinLockUnlock(&srcLock);
+	VVRELEASE(geoXYVBO);
 	[super dealloc];
 }
 
@@ -139,10 +149,20 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 - (void) useFile:(NSString *)p resetTimer:(BOOL)r	{
 	//NSLog(@"%s ... %@",__func__,p);
 	OSSpinLockLock(&propertyLock);
+	BOOL			bail = (loadingInProgress) ? YES : NO;
+	OSSpinLockUnlock(&propertyLock);
+	if (bail)	{
+		NSLog(@"\t\terr: can't use file, already loading a file, %s",__func__);
+		return;
+	}
+	
+	OSSpinLockLock(&propertyLock);
+	loadingInProgress = YES;
 	VVRELEASE(filePath);
 	VVRELEASE(fileName);
 	VVRELEASE(fileDescription);
 	VVRELEASE(fileCredits);
+	fileFunctionality = ISFF_Source;
 	VVRELEASE(categoryNames);
 	OSSpinLockUnlock(&propertyLock);
 	[inputs lockRemoveAllObjects];
@@ -165,7 +185,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(fragmentShaderString);
 	pthread_mutex_unlock(&renderLock);
 	
-	if (_ISFVertPassthru==nil ||
+	if (_ISFESCompatibility==nil ||
+	_ISFVertPassthru==nil ||
 	_ISFVertVarDec==nil ||
 	_ISFVertInitFunc==nil ||
 	_ISFMacro2DString==nil ||
@@ -175,6 +196,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		NSLog(@"ERR: missing resources that should be located with ISF's parent framework, %s",__func__);
 		if (throwExceptions)
 			[NSException raise:@"Missing Resources" format:@"Unable to load file, missing text resources that should be with ISF's framework."];
+		OSSpinLockLock(&propertyLock);
+		loadingInProgress = NO;
+		OSSpinLockUnlock(&propertyLock);
 		return;
 	}
 	
@@ -182,6 +206,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (rawFile == nil)	{
 		if (throwExceptions && p!=nil)
 			[NSException raise:@"Invalid File" format:@"file %@ couldn't be loaded, encoding unrecognized",p];
+		OSSpinLockLock(&propertyLock);
+		loadingInProgress = NO;
+		OSSpinLockUnlock(&propertyLock);
 		return;
 	}
 	
@@ -199,12 +226,19 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	Class			dictClass = [NSDictionary class];
 	Class			arrayClass = [NSArray class];
 	Class			numClass = [NSNumber class];
+#if !TARGET_OS_IPHONE
 	Class			colorClass = [NSColor class];
+#else
+	Class			colorClass = [UIColor class];
+#endif
 	openCommentRange = [rawFile rangeOfString:@"/*"];
 	closeCommentRange = [rawFile rangeOfString:@"*/"];
 	if (openCommentRange.length<=0 || closeCommentRange.length<=0)	{
 		if (throwExceptions)
 			[NSException raise:@"Missing JSON Blob" format:@"file %@ was missing the initial JSON blob describing it",p];
+		OSSpinLockLock(&propertyLock);
+		loadingInProgress = NO;
+		OSSpinLockUnlock(&propertyLock);
 		return;
 	}
 	else	{
@@ -226,6 +260,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			NSLog(@"\t\terr: jsonObject was wrong class, %@",localFilePath);
 			if (throwExceptions)
 				[NSException raise:@"Malformed JSON Blob" format:@"JSON blob in file %@ was malformed in some way",p];
+			OSSpinLockLock(&propertyLock);
+			loadingInProgress = NO;
+			OSSpinLockUnlock(&propertyLock);
 			return;
 		}
 		else	{
@@ -345,23 +382,40 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									if (![fm fileExistsAtPath:fullPath])	{
 										if (throwExceptions)
 											[NSException raise:@"Missing filter resource" format:@"can't load cube map, file %@ is missing",fullPath];
+										OSSpinLockLock(&propertyLock);
+										loadingInProgress = NO;
+										OSSpinLockUnlock(&propertyLock);
 										return;
 									}
 									//	if i can't make an image from any of the paths, throw an error
+#if !TARGET_OS_IPHONE
 									NSImage		*tmpImage = [[NSImage alloc] initWithContentsOfFile:fullPath];
+#else
+									UIImage		*tmpImage = [[UIImage alloc] initWithContentsOfFile:fullPath];
+#endif
 									if (tmpImage==nil)	{
 										if (throwExceptions)
 											[NSException raise:@"Can't load image" format:@"can't load image for file %@",fullPath];
+										OSSpinLockLock(&propertyLock);
+										loadingInProgress = NO;
+										OSSpinLockUnlock(&propertyLock);
 										return;
 									}
 									[images addObject:tmpImage];
 									[tmpImage release];
 								}
 								//	load the images i assembled into a GL texture, store the cube texture in the array of imported buffers
+#if !TARGET_OS_IPHONE
 								importedBuffer = [_globalVVBufferPool allocCubeMapTextureForImages:images];
+#else
+								importedBuffer = [_globalVVBufferPool allocCubeMapTextureInCurrentContextForImages:images];
+#endif
 								if (importedBuffer==nil)	{
 									if (throwExceptions)
 										[NSException raise:@"filter resource can't be loaded" format:@"can't make a cubemap from files %@",fullPaths];
+									OSSpinLockLock(&propertyLock);
+									loadingInProgress = NO;
+									OSSpinLockUnlock(&propertyLock);
 									return;
 								}
 								//	the num at the userInfo stores how many inputs are using the buffer
@@ -400,6 +454,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							if (![partialPath isKindOfClass:[NSString class]])	{
 								if (throwExceptions)
 									[NSException raise:@"Conflicting filter definition" format:@"supplied PATH for an imported image wasn't a string, %@",partialPath];
+								OSSpinLockLock(&propertyLock);
+								loadingInProgress = NO;
+								OSSpinLockUnlock(&propertyLock);
 								return;
 							}
 							NSString		*fullPath = [VVFMTSTRING(@"%@/%@",parentDirectory,partialPath) stringByStandardizingPath];
@@ -421,18 +478,32 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								if (![fm fileExistsAtPath:fullPath])	{
 									if (throwExceptions)
 										[NSException raise:@"Missing filter resource" format:@"can't load, file %@ is missing",partialPath];
+									OSSpinLockLock(&propertyLock);
+									loadingInProgress = NO;
+									OSSpinLockUnlock(&propertyLock);
 									return;
 								}
 								//	load the image at the path, store it in the array of imported buffers
+#if !TARGET_OS_IPHONE
 								NSImage		*tmpImg = [[NSImage alloc] initWithContentsOfFile:fullPath];
-								NSSize		tmpImgSize = [tmpImg size];
+#else
+								UIImage		*tmpImg = [[UIImage alloc] initWithContentsOfFile:fullPath];
+#endif
 								//	upload the image to a GL texture
+#if !TARGET_OS_IPHONE
+								VVSIZE		tmpImgSize = [tmpImg size];
 								importedBuffer = (tmpImg==nil) ? nil : [_globalVVBufferPool allocBufferForNSImage:tmpImg prefer2DTexture:(tmpImgSize.width==tmpImgSize.height)?YES:NO];
+#else
+								importedBuffer = (tmpImg==nil) ? nil : [_globalVVBufferPool allocBufferForUIImage:tmpImg];
+#endif
 								VVRELEASE(tmpImg);
 								//	throw an error if i can't load the image
 								if (importedBuffer==nil)	{
 									if (throwExceptions)
 										[NSException raise:@"filter resource can't be loaded" format:@"file %@ was found, but can't be loaded",partialPath];
+									OSSpinLockLock(&propertyLock);
+									loadingInProgress = NO;
+									OSSpinLockUnlock(&propertyLock);
 									return;
 								}
 								//	the num at the userInfo stores how many inputs are using the buffer
@@ -592,8 +663,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								defVal.imageVal = 0;
 								idenVal.imageVal = 0;
 								isImageInput = YES;
-								if ([inputKey isEqualToString:@"inputImage"])
+								if ([inputKey isEqualToString:@"inputImage"])	{
 									isFilterImageInput = YES;
+									fileFunctionality = ISFF_Filter;
+								}
 							}
 							else if ([typeString isEqualToString:@"cube"])	{
 								newAttribType = ISFAT_Cube;
@@ -658,7 +731,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							}
 							else if ([typeString isEqualToString:@"color"])	{
 								newAttribType = ISFAT_Color;
+#if !TARGET_OS_IPHONE
 								NSColor				*tmpColor = nil;
+#else
+								UIColor				*tmpColor = nil;
+#endif
 								for (int i=0;i<4;++i)	{
 									minVal.colorVal[i] = 0.0;
 									maxVal.colorVal[i] = 1.0;
@@ -676,7 +753,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								}
 								else if ([tmpColor isKindOfClass:colorClass])	{
 									CGFloat			tmpVals[4];
+#if !TARGET_OS_IPHONE
 									[tmpColor getComponents:tmpVals];
+#else
+									[tmpColor getRed:&tmpVals[0] green:&tmpVals[1] blue:&tmpVals[2] alpha:&tmpVals[3]];
+#endif
 									for (int i=0; i<4; ++i)
 										defVal.colorVal[i] = tmpVals[i];
 								}
@@ -694,7 +775,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								}
 								else if ([tmpColor isKindOfClass:colorClass])	{
 									CGFloat			tmpVals[4];
+#if !TARGET_OS_IPHONE
 									[tmpColor getComponents:tmpVals];
+#else
+									[tmpColor getRed:&tmpVals[0] green:&tmpVals[1] blue:&tmpVals[2] alpha:&tmpVals[3]];
+#endif
 									for (int i=0; i<4; ++i)
 										idenVal.colorVal[i] = tmpVals[i];
 								}
@@ -801,25 +886,57 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		}
 	}
 	
+	OSSpinLockLock(&propertyLock);
+	loadingInProgress = NO;
+	OSSpinLockUnlock(&propertyLock);
+	
 	[swatch start];
 }
 - (VVBuffer *) allocAndRenderABuffer	{
+#if !TARGET_OS_IPHONE
 	return [self allocAndRenderToBufferSized:size prefer2DTex:NO renderTime:[swatch timeSinceStart] passDict:nil];
+#else
+	return [self allocAndRenderToBufferSized:size prefer2DTex:YES renderTime:[swatch timeSinceStart] passDict:nil];
+#endif
 }
-- (VVBuffer *) allocAndRenderToBufferSized:(NSSize)s	{
+- (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s	{
+#if !TARGET_OS_IPHONE
 	return [self allocAndRenderToBufferSized:s prefer2DTex:NO renderTime:[swatch timeSinceStart] passDict:nil];
+#else
+	return [self allocAndRenderToBufferSized:s prefer2DTex:YES renderTime:[swatch timeSinceStart] passDict:nil];
+#endif
 }
-- (VVBuffer *) allocAndRenderToBufferSized:(NSSize)s prefer2DTex:(BOOL)wants2D	{
+- (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s prefer2DTex:(BOOL)wants2D	{
+#if !TARGET_OS_IPHONE
 	return [self allocAndRenderToBufferSized:s prefer2DTex:wants2D renderTime:[swatch timeSinceStart] passDict:nil];
+#else
+	return [self allocAndRenderToBufferSized:s prefer2DTex:YES renderTime:[swatch timeSinceStart] passDict:nil];
+#endif
 }
-- (VVBuffer *) allocAndRenderToBufferSized:(NSSize)s prefer2DTex:(BOOL)wants2D passDict:(NSMutableDictionary *)d	{
+- (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s prefer2DTex:(BOOL)wants2D passDict:(NSMutableDictionary *)d	{
+#if !TARGET_OS_IPHONE
 	return [self allocAndRenderToBufferSized:s prefer2DTex:wants2D renderTime:[swatch timeSinceStart] passDict:d];
+#else
+	return [self allocAndRenderToBufferSized:s prefer2DTex:YES renderTime:[swatch timeSinceStart] passDict:d];
+#endif
 }
-- (VVBuffer *) allocAndRenderToBufferSized:(NSSize)s prefer2DTex:(BOOL)wants2D renderTime:(double)t	{
+- (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s prefer2DTex:(BOOL)wants2D renderTime:(double)t	{
+#if !TARGET_OS_IPHONE
 	return [self allocAndRenderToBufferSized:s prefer2DTex:wants2D renderTime:t passDict:nil];
+#else
+	return [self allocAndRenderToBufferSized:s prefer2DTex:YES renderTime:t passDict:nil];
+#endif
 }
-- (VVBuffer *) allocAndRenderToBufferSized:(NSSize)s prefer2DTex:(BOOL)wants2D renderTime:(double)t passDict:(NSMutableDictionary *)d	{
+- (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s prefer2DTex:(BOOL)wants2D renderTime:(double)t passDict:(NSMutableDictionary *)d	{
 	//NSLog(@"%s ... %0.2f x %0.2f",__func__,s.width,s.height);
+	OSSpinLockLock(&propertyLock);
+	BOOL		bailBecauseLoading = (loadingInProgress==YES) ? YES : NO;
+	OSSpinLockUnlock(&propertyLock);
+	if (bailBecauseLoading)	{
+		NSLog(@"\t\terr: bailing, can't render beause loading, %s",__func__);
+		return nil;
+	}
+	
 	[passes rdlock];
 	ISFRenderPass	*lastPass = (passes==nil || [passes count]<1) ? nil  : [passes lastObject];
 	NSString		*lastPassTargetName = (lastPass==nil) ? nil : [lastPass targetName];
@@ -831,23 +948,41 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVBuffer		*returnMe = nil;
 	if (wants2D)	{
 		returnMe = (lastPassTargetBuffer!=nil && [lastPassTargetBuffer floatFlag])
-			? [_globalVVBufferPool allocBGRFloat2DPOTTexSized:s]
-			: [_globalVVBufferPool allocBGR2DPOTTexSized:s];
+			? [_globalVVBufferPool allocBGRFloat2DTexSized:s]
+			: [_globalVVBufferPool allocBGR2DTexSized:s];
 	}
 	else	{
+#if !TARGET_OS_IPHONE
 		returnMe = (lastPassTargetBuffer!=nil && [lastPassTargetBuffer floatFlag])
 			? [_globalVVBufferPool allocBGRFloatTexSized:s]
 			: [_globalVVBufferPool allocBGRTexSized:s];
+#else
+		returnMe = (lastPassTargetBuffer!=nil && [lastPassTargetBuffer floatFlag])
+		? [_globalVVBufferPool allocBGRFloat2DTexSized:s]
+		: [_globalVVBufferPool allocBGR2DTexSized:s];
+#endif
 	}
 	
 	[self renderToBuffer:returnMe sized:s renderTime:t passDict:d];
 	return returnMe;
 }
-- (void) renderToBuffer:(VVBuffer *)b sized:(NSSize)s	{
+- (void) renderToBuffer:(VVBuffer *)b sized:(VVSIZE)s	{
 	[self renderToBuffer:b sized:s renderTime:[swatch timeSinceStart] passDict:nil];
 }
-- (void) renderToBuffer:(VVBuffer *)b sized:(NSSize)s renderTime:(double)t passDict:(NSMutableDictionary *)d	{
+- (void) renderToBuffer:(VVBuffer *)b sized:(VVSIZE)s renderTime:(double)t passDict:(NSMutableDictionary *)d	{
 	//NSLog(@"%s ... %@",__func__,b);
+	OSSpinLockLock(&propertyLock);
+	BOOL		bailBecauseLoading = (loadingInProgress==YES) ? YES : NO;
+	OSSpinLockUnlock(&propertyLock);
+	if (bailBecauseLoading)	{
+		NSLog(@"\t\terr: bailing, can't render beause loading, %s",__func__);
+		return;
+	}
+	
+#if TARGET_OS_IPHONE
+	glPushGroupMarkerEXT(0, "All ISF-specific rendering");
+#endif
+	
 	pthread_mutex_lock(&renderLock);
 	renderSize = s;
 	renderTime = t;
@@ -900,9 +1035,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		if (targetBufferName != nil)	{
 			//	try to find a persistent buffer matching the target name
 			targetBuffer = [self findPersistentBufferNamed:targetBufferName];
-			//	if i couldn't find a persistent buffer matching the target name
 			if (targetBuffer != nil)
 				isPersistentBuffer = YES;
+			//	else i couldn't find a persistent buffer matching the target name
 			else	{
 				//	try to find a temp buffer matching the target name
 				targetBuffer = [self findTempBufferNamed:targetBufferName];
@@ -917,7 +1052,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			}
 			
 		}
-		NSSize					targetBufferSize = (targetBuffer==nil) ? s : [targetBuffer targetSize];
+		VVSIZE					targetBufferSize = (targetBuffer==nil) ? s : [targetBuffer targetSize];
 		//NSSizeLog(@"\t\ttargetBufferSize is",targetBufferSize);
 		//NSLog(@"\t\ttargetBuffer is %@, size is %0.2f x %0.2f",targetBuffer,targetBufferSize.width,targetBufferSize.height);
 		
@@ -927,16 +1062,22 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			//NSLog(@"\t\tlast pass, rendering into %@",targetColorTex);
 		}
 		else	{
+#if !TARGET_OS_IPHONE
 			targetColorTex = ([targetBuffer floatFlag])
 				? [_globalVVBufferPool allocBGRFloatTexSized:targetBufferSize]
 				: [_globalVVBufferPool allocBGRTexSized:targetBufferSize];
+#else
+			targetColorTex = ([targetBuffer floatFlag])
+				? [_globalVVBufferPool allocBGRFloat2DTexSized:targetBufferSize]
+				: [_globalVVBufferPool allocBGR2DTexSized:targetBufferSize];
+#endif
 			//NSLog(@"\t\tgenerated targetColorTex %@",targetColorTex);
 		}
 		//	if i've got a targetColorTex to render into, make a depth buffer and FBO
 		if (targetColorTex!=nil)	{
 			//	create an FBO and depth buffer
 			targetFBO = [_globalVVBufferPool allocFBO];
-			targetDepth = [_globalVVBufferPool allocDepthSized:targetBufferSize];
+			//targetDepth = [_globalVVBufferPool allocDepthSized:targetBufferSize];
 		}
 		
 		//	render this pass!
@@ -948,7 +1089,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			fbo:((targetFBO==nil) ? 0 : [targetFBO name])
 			colorTex:((targetColorTex==nil) ? 0 : [targetColorTex name])
 			depthTex:((targetDepth==nil) ? 0 : [targetDepth name])
+#if !TARGET_OS_IPHONE
 			target:((targetColorTex==nil) ? GL_TEXTURE_RECTANGLE_EXT : [targetColorTex target])];
+#else
+			target:((targetColorTex==nil) ? GL_TEXTURE_2D : [targetColorTex target])];
+#endif
 		
 		//	if there's an image dict, add the frame i just rendered into to it at the appropriate index/key
 		if (d!=nil && targetColorTex!=nil)	{
@@ -1020,6 +1165,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	
 	VVRELEASE(subDict);
+	
+#if TARGET_OS_IPHONE
+	glPopGroupMarkerEXT();
+#endif
 }
 - (void) render	{
 	[self renderToBuffer:nil sized:size renderTime:[swatch timeSinceStart] passDict:nil];
@@ -1052,6 +1201,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	put together a new frag shader string from the raw shader source
 	NSMutableString		*newFragShaderSrc = [NSMutableString stringWithCapacity:0];
 	{
+		//	add the compatibility define
+		[newFragShaderSrc appendString:_ISFESCompatibility];
 		//	copy the variable declarations to the frag shader src
 		[newFragShaderSrc appendString:varDeclarations];
 		
@@ -1084,6 +1235,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
@@ -1096,6 +1248,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						}
 					}
 					else	{
+#endif
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord,[varArray objectAtIndex:2]);
@@ -1105,7 +1258,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 							requires2DMacro = YES;
 						}
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1132,6 +1287,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
@@ -1144,6 +1300,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						}
 					}
 					else	{
+#endif
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord,[varArray objectAtIndex:2]);
@@ -1153,7 +1310,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 							requires2DMacro = YES;
 						}
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1183,12 +1342,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						[imgThisPixelSamplerNames addObject:samplerName];
 					
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						newFuncString = VVFMTSTRING(@"texture2DRect(%@, _%@_texCoord)",samplerName,samplerName);
 					}
 					else	{
+#endif
 						newFuncString = VVFMTSTRING(@"texture2D(%@, _%@_texCoord)",samplerName,samplerName);
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1197,8 +1360,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		} while (tmpRange.length!=0);
 		//	add the IMG_THIS_PIXEL variable names to the frag shader
 		if (imgThisPixelSamplerNames != nil)	{
-			for (NSString *tmpString in imgThisPixelSamplerNames)
+			for (NSString *tmpString in imgThisPixelSamplerNames)	{
 				[newFragShaderSrc appendString:VVFMTSTRING(@"varying vec2\t\t_%@_texCoord;\n",tmpString)];
+			}
 		}
 		
 		searchString = @"IMG_THIS_NORM_PIXEL";
@@ -1223,12 +1387,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						[imgThisNormPixelSamplerNames addObject:samplerName];
 					
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						newFuncString = VVFMTSTRING(@"texture2DRect(%@, _%@_normTexCoord)",samplerName,samplerName);
 					}
 					else	{
+#endif
 						newFuncString = VVFMTSTRING(@"texture2D(%@, _%@_normTexCoord)",samplerName,samplerName);
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1237,8 +1405,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		} while (tmpRange.length!=0);
 		//	add the IMG_THIS_NORM_PIXEL variable names to the frag shader
 		if (imgThisNormPixelSamplerNames != nil)	{
-			for (NSString *tmpString in imgThisNormPixelSamplerNames)
+			for (NSString *tmpString in imgThisNormPixelSamplerNames)	{
 				[newFragShaderSrc appendString:VVFMTSTRING(@"varying vec2\t\t_%@_normTexCoord;\n",tmpString)];
+			}
 		}
 		
 		searchString = @"IMG_SIZE";
@@ -1285,6 +1454,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	now that i've taken care of the frag shader, put together the vert shader (the vert shader's content depends on the content of the frag shader)
 	NSMutableString		*newVertShaderSrc = [NSMutableString stringWithCapacity:0];
 	{
+		//	add the compatibility define
+		[newVertShaderSrc appendString:_ISFESCompatibility];
 		//	load any specific vars or function declarations for the vertex shader from an included file
 		[newVertShaderSrc appendString:_ISFVertVarDec];
 		//	append the variable declarations i assembled earlier with the frag shader
@@ -1341,6 +1512,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
@@ -1353,6 +1525,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						}
 					}
 					else	{
+#endif
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord,[varArray objectAtIndex:2]);
@@ -1362,7 +1535,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 							requires2DMacro = YES;
 						}
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1389,6 +1564,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
@@ -1401,6 +1577,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						}
 					}
 					else	{
+#endif
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 						if (varArrayCount==3)	{
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord,[varArray objectAtIndex:2]);
@@ -1410,7 +1587,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							newFuncString = VVFMTSTRING(@"VVSAMPLER_2DBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
 							requires2DMacro = YES;
 						}
+#if !TARGET_OS_IPHONE
 					}
+#endif
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1444,12 +1623,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		if (imgThisNormPixelSamplerNames != nil)	{
 			for (NSString *samplerName in imgThisNormPixelSamplerNames)	{
 				imgBuffer = [self bufferForInputImageKey:samplerName];
+#if !TARGET_OS_IPHONE
 				if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((vv_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((vv_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((vv_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((vv_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
 				}
 				else	{
+#endif
 					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((vv_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((vv_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((vv_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((vv_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
+#if !TARGET_OS_IPHONE
 				}
+#endif
 			}
 		}
 		//	...this finishes adding the vv_vertShaderInit() method!
@@ -1531,10 +1714,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			case ISFAT_Image:	//	most of the voodoo happens here
 				//	make a sampler of the appropriate type for this input
 				attribBuffer = [attrib userInfo];
+#if !TARGET_OS_IPHONE
 				if (attribBuffer==nil || [attribBuffer target]==GL_TEXTURE_RECTANGLE_EXT)
 					[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2DRect\t\t%@;\n",attribName)];
 				else
+#endif
 					[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2D\t\t%@;\n",attribName)];
+				
 				//	a vec4 describing the image rect IN NATIVE GL TEXTURE COORDS (2D is normalized, RECT is not)
 				[varDeclarations appendString:VVFMTSTRING(@"uniform vec4\t\t_%@_imgRect;\n",attribName)];
 				//	a vec2 describing the size in pixels of the image
@@ -1559,6 +1745,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		if (attribType==ISFAT_Image || attribType==ISFAT_Cube)	{
 			NSString		*attribName = [attrib attribName];
 			VVBuffer		*attribBuffer = [attrib userInfo];
+#if !TARGET_OS_IPHONE
 			GLuint			attribBufferTarget = (attribBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [attribBuffer target];
 			if (attribBufferTarget==GL_TEXTURE_RECTANGLE_EXT)
 				[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2DRect\t\t%@;\n",attribName)];
@@ -1566,6 +1753,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				[varDeclarations appendString:VVFMTSTRING(@"uniform samplerCube\t\t%@;\n",attribName)];
 			else
 				[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2D\t\t%@;\n",attribName)];
+#else
+			GLuint			attribBufferTarget = (attribBuffer==nil) ? GL_TEXTURE_2D : [attribBuffer target];
+			if (attribBufferTarget==GL_TEXTURE_CUBE_MAP)
+				[varDeclarations appendString:VVFMTSTRING(@"uniform samplerCube\t\t%@;\n",attribName)];
+			else
+				[varDeclarations appendString:VVFMTSTRING(@"uniform sampler2D\t\t%@;\n",attribName)];
+#endif
 			
 			//	both cubes and normal images need the imgSize
 			[varDeclarations appendString:VVFMTSTRING(@"uniform vec2\t\t_%@_imgSize;\n",attribName)];
@@ -1612,12 +1806,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[varDeclarations appendString:@"uniform int\t\tPASSINDEX;\n"];
 	//	add the "RENDERSIZE" variable
 	[varDeclarations appendString:@"uniform vec2\t\tRENDERSIZE;\n"];
-	//	add the coord vars
+
+	//	add the coord vars + time var
 	//[varDeclarations appendString:@"varying vec2\t\tvv_fragCoord;\n"];
 	[varDeclarations appendString:@"varying vec2\t\tvv_FragNormCoord;\n"];
 	[varDeclarations appendString:@"varying vec3\t\tvv_VertNorm;\n"];
 	[varDeclarations appendString:@"varying vec3\t\tvv_VertPos;\n"];
-	//	add the time var
 	[varDeclarations appendString:@"uniform float\t\tTIME;\n"];
 	
 	return varDeclarations;
@@ -1686,12 +1880,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	for (ISFAttrib *attrib in [imageInputs array])	{
 		ISFAttribValType		attribType = [attrib attribType];
 		if (attribType==ISFAT_Image)	{
+#if !TARGET_OS_IPHONE
 			VVBuffer		*tmpBuffer = [attrib userInfo];
 			GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
 			if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
 				[tmpMutString appendString:@"R"];
 			else
 				[tmpMutString appendString:@"2"];
+#else
+			[tmpMutString appendString:@"2"];
+#endif
 		}
 		else if (attribType==ISFAT_Cube)	{
 			[tmpMutString appendString:@"C"];
@@ -1703,12 +1901,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	for (ISFAttrib *attrib in [imageImports array])	{
 		ISFAttribValType		attribType = [attrib attribType];
 		if (attribType==ISFAT_Image)	{
+#if !TARGET_OS_IPHONE
 			VVBuffer		*tmpBuffer = [attrib userInfo];
 			GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
 			if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
 				[tmpMutString appendString:@"R"];
 			else
 				[tmpMutString appendString:@"2"];
+#else
+			[tmpMutString appendString:@"2"];
+#endif
 		}
 		else if (attribType==ISFAT_Cube)	{
 			[tmpMutString appendString:@"C"];
@@ -1718,23 +1920,35 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	[persistentBufferArray rdlock];
 	for (ISFTargetBuffer *targetBuffer in [persistentBufferArray array])	{
+#if !TARGET_OS_IPHONE
 		VVBuffer		*tmpBuffer = [targetBuffer buffer];
 		GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
 		if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
 			[tmpMutString appendString:@"R"];
 		else
 			[tmpMutString appendString:@"2"];
+#else
+		id			asdf = targetBuffer;
+		asdf = nil;
+		[tmpMutString appendString:@"2"];
+#endif
 	}
 	[persistentBufferArray unlock];
 	
 	[tempBufferArray rdlock];
 	for (ISFTargetBuffer *targetBuffer in [tempBufferArray array])	{
+#if !TARGET_OS_IPHONE
 		VVBuffer		*tmpBuffer = [targetBuffer buffer];
 		GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
 		if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
 			[tmpMutString appendString:@"R"];
 		else
 			[tmpMutString appendString:@"2"];
+#else
+		id			asdf = targetBuffer;
+		asdf = nil;
+		[tmpMutString appendString:@"2"];
+#endif
 	}
 	[tempBufferArray unlock];
 	
@@ -1760,6 +1974,24 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	tell the super to do its _renderPrep, which will compile the shader and get it all set up if necessary
 	[super _renderPrep];
 	
+	//	if i don't have a VBO containing geometry for a quad, make one now
+	if (geoXYVBO == nil)	{
+		GLfloat				geo[] = {
+			-1., -1.,
+			1., -1.,
+			-1., 1.,
+			1., 1.
+		};
+		geoXYVBO = [_globalVVBufferPool
+#if !TARGET_OS_IPHONE
+			allocVBOWithBytes:geo
+#else
+			allocVBOInCurrentContextWithBytes:geo
+#endif
+			byteSize:8*sizeof(GLfloat)
+			usage:GL_STATIC_DRAW];
+	}
+	
 	//	...if either of these values have changed, the program has been recompiled and i need to find new uniform locations for all the attributes (the uniforms in the GLSL programs)
 	BOOL		findNewUniforms = NO;
 	if (vShaderUpdatedFlag!=vertexShaderUpdated || fShaderUpdatedFlag!=fragmentShaderUpdated)
@@ -1768,11 +2000,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	//	run through the inputs, applying the current values to the shader
 	[inputs rdlock];
+#if !TARGET_OS_IPHONE
 	CGLContextObj	cgl_ctx = [context CGLContextObj];
+#endif
 	__block GLint		samplerLoc = 0;
 	int			textureCount = 0;
 	VVBuffer	*tmpBuffer = nil;
-	NSRect		tmpRect;
+	VVRECT		tmpRect;
 	char		*tmpCString = malloc(sizeof(char)*64);
 	for (ISFAttrib *attrib in [inputs array])	{
 		ISFAttribValType	attribType = [attrib attribType];
@@ -1806,7 +2040,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			case ISFAT_Long:
 				findNewUniformsBlock();
 				if (samplerLoc>=0)
-					glUniform1i(samplerLoc, attribVal.longVal);
+					glUniform1i(samplerLoc, (int)attribVal.longVal);
 				break;
 			case ISFAT_Float:
 				findNewUniformsBlock();
@@ -2109,21 +2343,49 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		timeUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "TIME");
 	}
 	if (renderSizeUniformLoc >= 0)
-		glUniform2f(renderSizeUniformLoc, size.width, size.height);
+		glUniform2f((int)renderSizeUniformLoc, size.width, size.height);
 	if (passIndexUniformLoc >= 0)
-		glUniform1i(passIndexUniformLoc, passIndex-1);
+		glUniform1i((int)passIndexUniformLoc, passIndex-1);
 	if (timeUniformLoc >= 0)
-		glUniform1f(timeUniformLoc, renderTime);
+		glUniform1f((int)timeUniformLoc, renderTime);
 	OSSpinLockUnlock(&srcLock);
 }
 - (void) renderCallback:(GLScene *)s	{
 	//NSLog(@"%s",__func__);
-	NSRect		tmpRect = NSMakeRect(0,0,0,0);
+#if !TARGET_OS_IPHONE
+	VVRECT		tmpRect = VVMAKERECT(0,0,0,0);
 	tmpRect.size = [s size];
 	CGLContextObj		cgl_ctx = [s CGLContextObj];
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	GLDRAWRECT(tmpRect);
+#else
+	glBindBuffer(GL_ARRAY_BUFFER, [geoXYVBO name]);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		NULL);
+	/*
+	GLfloat				geo[] = {
+		-1., -1.,
+		1., -1.,
+		-1., 1.,
+		1., 1.
+	};
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		geo);
+	*/
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
 
@@ -2293,7 +2555,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					[attrib setCurrentVal:newVal];
 					break;
 				case ISFAT_Point2D:	{
-						NSPoint		tmpPoint = [n pointValue];
+#if !TARGET_OS_IPHONE
+					VVPOINT		tmpPoint = [n pointValue];
+#else
+					VVPOINT		tmpPoint = [n CGPointValue];
+#endif
 						newVal.point2DVal[0] = tmpPoint.x;
 						newVal.point2DVal[1] = tmpPoint.y;
 						[attrib setCurrentVal:newVal];
@@ -2301,7 +2567,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					break;
 				case ISFAT_Color:	{
 					CGFloat		tmpVals[4];
+#if !TARGET_OS_IPHONE
 					[n getComponents:tmpVals];
+#else
+					[n getRed:&tmpVals[0] green:&tmpVals[1] blue:&tmpVals[2] alpha:&tmpVals[3]];
+#endif
 					for (int i=0; i<4; ++i)
 						newVal.colorVal[i] = tmpVals[i];
 					[attrib setCurrentVal:newVal];
@@ -2405,6 +2675,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSString		*returnMe = nil;
 	OSSpinLockLock(&propertyLock);
 	returnMe = (fileCredits==nil) ? nil : [[fileCredits retain] autorelease];
+	OSSpinLockUnlock(&propertyLock);
+	return returnMe;
+}
+- (ISFFunctionality) fileFunctionality	{
+	OSSpinLockLock(&propertyLock);
+	ISFFunctionality		returnMe = fileFunctionality;
 	OSSpinLockUnlock(&propertyLock);
 	return returnMe;
 }

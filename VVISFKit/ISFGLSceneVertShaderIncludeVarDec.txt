@@ -1,1 +1,5 @@
+
+#ifdef GL_ES
+attribute vec4		a_position;
+#endif
 void vv_vertShaderInit();

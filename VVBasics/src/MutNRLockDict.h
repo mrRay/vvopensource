@@ -1,12 +1,5 @@
-//
-//  MutNRLockDict.h
-//  VVOpenSource
-//
-//  Created by David Lublin on 12/22/09.
-//  Copyright 2009 Vidvox. All rights reserved.
-//
-
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>

@@ -1,4 +1,5 @@
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -17,7 +18,7 @@ It is important to remember, when working with it, that MutLockArray is NOT a su
 ...and remember- when looking for stuff in an NSMutableArray, the array will use the "isEqualTo:" comparator method, which is slower than comparing the address of two pointers.  if you know the pointer address hasn't changed (if you're *not* working with NSStrings), use the "indexOfIdenticalPtr", "removeIdenticalPtr", etc. methods to work with the array.
 */
 
-@interface MutLockArray : NSObject {
+@interface MutLockArray : NSObject <NSCopying> {
 	NSMutableArray			*array;
 	pthread_rwlock_t		arrayLock;
 }

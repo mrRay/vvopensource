@@ -1,10 +1,13 @@
 #import "GLScene.h"
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
+#endif
 #import "RenderThread.h"
 #import "VVBufferPool.h"
+#if !TARGET_OS_IPHONE
 #import <IOKit/IOKitLib.h>
 #import <IOKit/IOKitKeys.h>
-
+#endif
 
 
 
@@ -27,10 +30,13 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	_integratedGPUFlag = NO;
 }
 + (void) initialize	{
+#if !TARGET_OS_IPHONE
 	if (_glGPUVendorArray==nil)	{
 		[self gpuVendorArray];
 	}
+#endif
 }
+#if !TARGET_OS_IPHONE
 + (NSMutableArray *) gpuVendorArray	{
 	NSMutableArray		*returnMe = MUTARRAY;
 	
@@ -330,6 +336,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		return nil;
 	return [returnMe autorelease];
 }
+#endif
 
 
 /*===================================================================================*/
@@ -340,24 +347,30 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 - (id) init	{
 	self = [super init];
 	if (self!=nil)	{
+#if TARGET_OS_IPHONE
+		//sharegroup = nil;
+		context = nil;
+#else
 		context = nil;
 		sharedContext = nil;
 		customPixelFormat = nil;
-		size = NSMakeSize(80,60);
+#endif
+		size = VVMAKESIZE(80,60);
 		[self generalInit];
 	}
 	return self;
 }
+#if !TARGET_OS_IPHONE
 - (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	if ((c==nil)||(p==nil)||(s.width<1)||(s.height<1))	{
 		NSLog(@"\t\terr: %s - BAIL, %@",__func__,self);
 		NSLog(@"\t\terr: %@",c);
@@ -376,15 +389,15 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	return self;
 }
 - (id) initWithContext:(NSOpenGLContext *)c	{
-	return [self initWithContext:c sharedContext:nil sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sharedContext:nil sized:VVMAKESIZE(80,60)];
 }
 - (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc	{
-	return [self initWithContext:c sharedContext:sc sized:NSMakeSize(80,60)];
+	return [self initWithContext:c sharedContext:sc sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithContext:c sharedContext:nil sized:s];
 }
-- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s	{
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(VVSIZE)s	{
 	if (c==nil || (s.width<1) || (s.height<1))	{
 		NSLog(@"\t\terr: %s - BAIL",__func__);
 		NSLog(@"\t\terr: %@",c);
@@ -396,11 +409,41 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (self!=nil)	{
 		context = (c==nil) ? nil : [c retain];
 		sharedContext = sc;
+		customPixelFormat = nil;
 		size = s;
 		[self generalInit];
 	}
 	return self;
 }
+#else
+- (id) initWithSharegroup:(EAGLSharegroup *)g sized:(VVSIZE)s	{
+	self = [super init];
+	if (self != nil)	{
+		NSLog(@"\t\tmaking an  EAGLContext in %s for %@",__func__,self);
+		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:g];
+		size = s;
+		[self generalInit];
+	}
+	return self;
+}
+- (id) initWithSharegroup:(EAGLSharegroup *)g	{
+	return [self initWithSharegroup:g sized:VVMAKESIZE(80,60)];
+}
+- (id) initWithContext:(EAGLContext *)c	{
+	return [self initWithContext:c sized:VVMAKESIZE(80,60)];
+}
+- (id) initWithContext:(EAGLContext *)c sized:(VVSIZE)s	{
+	self = [super init];
+	if (self != nil)	{
+		context = [c retain];
+		size = s;
+		[self generalInit];
+	}
+	return self;
+}
+#endif
+
+
 - (void) generalInit	{
 	//NSLog(@"%s",__func__);
 	//context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
@@ -422,6 +465,12 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	depthMSAA = 0;
 	
 	flipped = NO;
+	projectionMatrixLock = OS_SPINLOCK_INIT;
+	//projectionMatrix = GLKMatrix4Identity;
+	//projectionMatrixNeedsUpdate = YES;
+#if TARGET_OS_IPHONE
+	projectionMatrixEffect = nil;
+#endif
 	initialized = NO;
 	needsReshape = YES;
 	deleted = NO;
@@ -439,9 +488,13 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
+#if !TARGET_OS_IPHONE
 	sharedContext = nil;
 	VVRELEASE(context);	//	should have already been added to render thread's delete array & set to nil in prepareToBeDeleted!
 	VVRELEASE(customPixelFormat);
+#else
+	VVRELEASE(context);
+#endif
 	if (colorSpace != NULL)	{
 		CGColorSpaceRelease(colorSpace);
 		colorSpace = NULL;
@@ -455,6 +508,11 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		renderBlock = nil;
 	}
 	OSSpinLockUnlock(&renderBlockLock);
+#if TARGET_OS_IPHONE
+	OSSpinLockLock(&projectionMatrixLock);
+	VVRELEASE(projectionMatrixEffect);
+	OSSpinLockUnlock(&projectionMatrixLock);
+#endif
 	[super dealloc];
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
@@ -491,26 +549,53 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 
 
 - (VVBuffer *) allocAndRenderABuffer	{
+	//NSLog(@"%s",__func__);
+#if !TARGET_OS_IPHONE
 	VVBuffer		*returnMe = [_globalVVBufferPool allocBGRTexSized:size];
 	VVBuffer		*tmpDepth = [_globalVVBufferPool allocDepthSized:size];
 	VVBuffer		*tmpFbo = [_globalVVBufferPool allocFBO];
-	
-	if (returnMe!=nil && tmpDepth!=nil && tmpFbo!=nil)	{
+	//NSLog(@"\t\treturnMe is %@, tmpDepth is %@, tmpFbo is %@",returnMe,tmpDepth,tmpFbo);
+	if (returnMe!=nil && tmpDepth!=nil && tmpFbo!=nil)
+	{
 		[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:[tmpFbo name] colorTex:[returnMe name] depthTex:[tmpDepth name]];
 	}
 	
 	VVRELEASE(tmpFbo);
 	VVRELEASE(tmpDepth);
 	return returnMe;
+#else
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBGR2DTexSized:size];
+	VVBuffer		*tmpFbo = [_globalVVBufferPool allocFBO];
+	//NSLog(@"\t\treturnMe is %@, tmpFbo is %@",returnMe,tmpFbo);
+	if (returnMe!=nil && tmpFbo!=nil)
+	{
+		[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:[tmpFbo name] colorTex:[returnMe name] depthTex:0];
+	}
+	
+	VVRELEASE(tmpFbo);
+	return returnMe;
+#endif
 }
 - (void) render	{
+#if !TARGET_OS_IPHONE
 	[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:0 colorTex:0 depthTex:0 target:GL_TEXTURE_RECTANGLE_EXT];
+#else
+	[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:0 colorTex:0 depthTex:0 target:GL_TEXTURE_2D];
+#endif
 }
 - (void) renderInFBO:(GLuint)f colorTex:(GLuint)t depthTex:(GLuint)d	{
+#if !TARGET_OS_IPHONE
 	[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:f colorTex:t depthTex:d target:GL_TEXTURE_RECTANGLE_EXT];
+#else
+	[self renderInMSAAFBO:0 colorRB:0 depthRB:0 fbo:f colorTex:t depthTex:d target:GL_TEXTURE_2D];
+#endif
 }
 - (void) renderInMSAAFBO:(GLuint)mf colorRB:(GLuint)mc depthRB:(GLuint)md fbo:(GLuint)f colorTex:(GLuint)t depthTex:(GLuint)d	{
+#if !TARGET_OS_IPHONE
 	[self renderInMSAAFBO:mf colorRB:mc depthRB:md fbo:f colorTex:t depthTex:d target:GL_TEXTURE_RECTANGLE_EXT];
+#else
+	[self renderInMSAAFBO:mf colorRB:mc depthRB:md fbo:f colorTex:t depthTex:d target:GL_TEXTURE_2D];
+#endif
 }
 - (void) renderInMSAAFBO:(GLuint)mf colorRB:(GLuint)mc depthRB:(GLuint)md fbo:(GLuint)f colorTex:(GLuint)t depthTex:(GLuint)d target:(GLuint)tt	{
 	if (deleted)
@@ -578,20 +663,27 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//	make sure the context has been set up/reshaped, attaches the texture/depth buffer to the fbo
 	[self _renderPrep];
 	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	if (cgl_ctx != NULL)	{
 		glClearColor(0., 0., 0., 0.);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		clearColorUpdated = YES;
 		
-		//	make sure there's a context!
-		//if (context != nil)	{
-			//	don't do anything!
-			
-			//	do any cleanup/flush my context
-			[self _renderCleanup];
-		//}
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
 	}
+#else
+	if (context != nil)	{
+		[EAGLContext setCurrentContext:context];
+		glClearColor(0., 0., 0., 0.);
+		glClear(GL_COLOR_BUFFER_BIT);
+		clearColorUpdated = YES;
+		
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
+	}
+#endif
 	
 	fbo = 0;
 	tex = 0;
@@ -621,6 +713,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//	make sure the context has been set up/reshaped, attaches the texture/depth buffer to the fbo
 	[self _renderPrep];
 	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	if (cgl_ctx != NULL)	{
 		//NSLog(@"\t\tsetting clear color to opaque black");
@@ -628,14 +721,21 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		clearColorUpdated = YES;
 		
-		//	make sure there's a context!
-		//if (context != nil)	{
-			//	don't do anything!
-			
-			//	do any cleanup/flush my context
-			[self _renderCleanup];
-		//}
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
 	}
+#else
+	if (context != nil)	{
+		[EAGLContext setCurrentContext:context];
+		//NSLog(@"\t\tsetting clear color to opaque black");
+		glClearColor(0., 0., 0., 1.);
+		glClear(GL_COLOR_BUFFER_BIT);
+		clearColorUpdated = YES;
+		
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
+	}
+#endif
 	
 	fbo = 0;
 	tex = 0;
@@ -665,20 +765,27 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//	make sure the context has been set up/reshaped, attaches the texture/depth buffer to the fbo
 	[self _renderPrep];
 	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
-		if (cgl_ctx != NULL)	{
+	if (cgl_ctx != NULL)	{
 		glClearColor(1,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		clearColorUpdated = YES;
 		
-		//	make sure there's a context!
-		//if (context != nil)	{
-			//	don't do anything!
-			
-			//	do any cleanup/flush my context
-			[self _renderCleanup];
-		//}
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
 	}
+#else
+	if (context != nil)	{
+		[EAGLContext setCurrentContext:context];
+		glClearColor(1,0,0,1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		clearColorUpdated = YES;
+		
+		//	do any cleanup/flush my context
+		[self _renderCleanup];
+	}
+#endif
 	
 	fbo = 0;
 	tex = 0;
@@ -698,13 +805,23 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 - (void) _renderPrep	{
 	if (deleted)
 		return;
-	if (context == nil)
+	if (context == nil)	{
+#if !TARGET_OS_IPHONE
 		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+#else
+		NSLog(@"\t\terr: no context, %s",__func__);
+#endif
+	}
 	if (context == nil)	{
 		NSLog(@"\terr: context was nil %s",__func__);
 		return;
 	}
+	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#else
+	[EAGLContext setCurrentContext:context];
+#endif
 	
 	//	if the context hasn't been initialized yet, do so now
 	if (!initialized)
@@ -716,12 +833,12 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//	if i'm doing multisampling, set it up
 	if (fboMSAA > 0)	{
 		//	bind the msaa fbo
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fboMSAA);
+		glBindFramebuffer(GL_FRAMEBUFFER,fboMSAA);
 		//	attach the depth & render buffers (if they exist)
 		if (depthMSAA > 0)
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT,depthMSAA);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthMSAA);
 		if (colorMSAA > 0)
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_RENDERBUFFER_EXT,colorMSAA);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_RENDERBUFFER,colorMSAA);
 		
 		//	if the clear color was updated, set it again
 		if (clearColorUpdated)	{
@@ -729,23 +846,37 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 			clearColorUpdated = NO;
 		}
 		//	glear the texture/renderbuffer
-		if (performClear)
+		if (performClear)	{
+#if !TARGET_OS_IPHONE
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#else
+			glClear(GL_COLOR_BUFFER_BIT);
+#endif
+		}
 	}
 	//	else if i'm not doing multisampling, but i'm still rendering
 	else if (fbo > 0)	{
+		
 		//	bind the fbo
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER,fbo);
+#if !TARGET_OS_IPHONE
 		//	attach the depth & texture/color buffers if they exist
 		if (depth > 0)
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_RECTANGLE_EXT, depth, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_RECTANGLE_EXT, depth, 0);
 		else
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_RECTANGLE_EXT, 0, 0);
-		
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_RECTANGLE_EXT, 0, 0);
+#else
+		//	attach the depth & texture/color buffers if they exist
+		if (depth > 0)
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
+		else
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+#endif
+		//	bind the texture
 		if (tex > 0)
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, texTarget, tex, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texTarget, tex, 0);
 		else
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, texTarget, 0, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texTarget, 0, 0);
 		
 		//	if the clear color was updated, set it again
 		if (clearColorUpdated)	{
@@ -758,19 +889,22 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	}
 }
 - (void) _initialize	{
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#endif
 	
 	//glEnable(GL_TEXTURE_RECTANGLE_EXT);
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glEnable(GL_BLEND);
 	//glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
+#if !TARGET_OS_IPHONE
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	
+
 	const GLint			swap = swapInterval;
 	CGLSetParameter(cgl_ctx,kCGLCPSwapInterval,&swap);
-	
+#endif	
 	//glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	//glDisable(GL_DEPTH_TEST);
@@ -781,6 +915,61 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	clearColorUpdated = YES;
 }
 - (void) _reshape	{
+	//	lock and update a matrix we keep handy for doing projection transforms to an orthogonal view
+	OSSpinLockLock(&projectionMatrixLock);
+	
+	double			left = 0.0;
+	double			right = size.width;
+	double			top = size.height;
+	double			bottom = 0.0;
+	double			far = 1.0;
+	double			near = -1.0;
+	if (flipped)	{
+		top = 0.0;
+		bottom = size.height;
+	}
+	projectionMatrix[0] = 2.0/(right-left);
+	projectionMatrix[4] = 0.0;
+	projectionMatrix[8] = 0.0;
+	projectionMatrix[12] = -1.0*(right + left) / (right - left);
+	
+	projectionMatrix[1] = 0.0;
+	projectionMatrix[5] = 2.0/(top-bottom);
+	projectionMatrix[9] = 0.0;
+	projectionMatrix[13] = -1.0*(top + bottom) / (top - bottom);
+	
+	projectionMatrix[2] = 0.0;
+	projectionMatrix[6] = 0.0;
+	projectionMatrix[10] = -2.0 / (far - near);
+	projectionMatrix[14] = -1.0*(far + near) / (far - near);
+	
+	projectionMatrix[3] = 0.0;
+	projectionMatrix[7] = 0.0;
+	projectionMatrix[11] = 0.0;
+	projectionMatrix[15] = 1.0;
+	//projectionMatrix = ([self flipped])
+	//	?	GLKMatrix4MakeOrtho(0.0, size.width, size.height, 0.0, 1.0, -1.0)
+	//	:	GLKMatrix4MakeOrtho(0.0, size.width, 0.0, size.height, 1.0, -1.0);
+#if TARGET_OS_IPHONE
+	if (projectionMatrixEffect == nil)
+		projectionMatrixEffect = [[GLKBaseEffect alloc] init];
+	GLKEffectPropertyTransform		*trans = [projectionMatrixEffect transform];
+	if (trans != nil)	{
+		[trans setModelviewMatrix:GLKMatrix4Identity];
+		//[trans setProjectionMatrix:projectionMatrix];
+		GLKMatrix4		tmpMatrix = GLKMatrix4Make(
+			projectionMatrix[0],projectionMatrix[1],projectionMatrix[2],projectionMatrix[3],
+			projectionMatrix[4],projectionMatrix[5],projectionMatrix[6],projectionMatrix[7],
+			projectionMatrix[8],projectionMatrix[9],projectionMatrix[10],projectionMatrix[11],
+			projectionMatrix[12],projectionMatrix[13],projectionMatrix[14],projectionMatrix[15]);
+		[trans setProjectionMatrix:tmpMatrix];
+	}
+#endif
+	//projectionMatrixNeedsUpdate = NO;
+	OSSpinLockUnlock(&projectionMatrixLock);
+	
+	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -791,8 +980,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		glOrtho(0, size.width, 0, size.height, 1.0, -1.0);
 	else
 		glOrtho(0, size.width, size.height, 0, 1.0, -1.0);
+#else
+	//	nothing to do here, if we want orthogonal projection in iOS we have to pass the projection matrix to a program before drawing
+#endif
 	glViewport(0,0,size.width,size.height);
-	
 	needsReshape = NO;
 }
 - (void) _renderCleanup	{
@@ -803,13 +994,16 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		return;
 	}
 	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#endif
 	
 	//	flush the buffer before i unbind the framebuffer (thanks, lili!)
 	switch (flushMode)	{
 		case VVGLFlushModeGL:
 			glFlush();
 			break;
+#if !TARGET_OS_IPHONE
 		case VVGLFlushModeCGL:
 			CGLFlushDrawable(cgl_ctx);
 			break;
@@ -819,6 +1013,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		case VVGLFlushModeApple:
 			glFlushRenderAPPLE();
 			break;
+#endif
 		case VVGLFlushModeFinish:
 			glFinish();
 			break;
@@ -829,46 +1024,46 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		//	if there's an fbo, i have to blit from the msaa fbo to the normal fbo!
 		if (fbo > 0)	{
 			//	bind the non-msaa fbo
-			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER,fbo);
 			//	attach the texture to it!
 			if (tex > 0)
-				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, texTarget, tex, 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texTarget, tex, 0);
 			//	set up the fbos for a blit!
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, fboMSAA);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, fbo);
-			//	blit that sum'bitch
-			glBlitFramebufferEXT(0,0,size.width,size.height,0,0,size.width,size.height,GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, fboMSAA);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+			//	blit it
+			glBlitFramebuffer(0,0,size.width,size.height,0,0,size.width,size.height,GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			
 			//	this flush is definitely necessary here
 			glFlush();
 			
 			//	bind the normal fbo, detach the depth & tex attachments from it
-			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER,fbo);
 			if (depth > 0)
-				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,0,0,0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,0,0,0);
 			if (tex > 0)
-				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,0,0,0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,0,0,0);
 		}
 		//	bind the msaa fbo, detach the depth & color attachments from it
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fboMSAA);
+		glBindFramebuffer(GL_FRAMEBUFFER,fboMSAA);
 		if (depthMSAA > 0)
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,0,0);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,0,0);
 		if (colorMSAA > 0)
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,0,0);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,0,0);
 		
 		//	unbind any framebuffers!
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
+		glBindFramebuffer(GL_FRAMEBUFFER,0);
 	}
 	//	else i'm not doing multisampling- i may still have to do cleanup for non-msaa rendering!
 	else	{
 		if (fbo > 0)	{
 			if (depth > 0)
-				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, 0, 0, 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0, 0);
 			if (tex > 0)
-				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, 0, 0, 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0, 0);
 			
 			//	unbind the framebuffer
-			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
+			glBindFramebuffer(GL_FRAMEBUFFER,0);
 		}
 	}
 }
@@ -879,6 +1074,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 /*------------------------------------*/
 
 
+#if !TARGET_OS_IPHONE
 - (NSOpenGLContext *) sharedContext	{
 	return sharedContext;
 }
@@ -893,17 +1089,25 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 - (NSOpenGLPixelFormat *) customPixelFormat	{
 	return customPixelFormat;
 }
+#else
+- (EAGLSharegroup *) sharegroup	{
+	return [context sharegroup];
+}
+- (EAGLContext *) context	{
+	return context;
+}
+#endif
 - (CGColorSpaceRef) colorSpace	{
 	return colorSpace;
 }
-- (void) setSize:(NSSize)s	{
+- (void) setSize:(VVSIZE)s	{
 	//NSLog(@"%s ... %f x %f",__func__,s.width,s.height);
 	if ((size.width != s.width) || (size.height != s.height))	{
 		size = s;
 		needsReshape = YES;
 	}
 }
-- (NSSize) size	{
+- (VVSIZE) size	{
 	return size;
 }
 - (void) setFlipped:(BOOL)n	{
@@ -942,6 +1146,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 - (void) setPerformClear:(BOOL)n	{
 	performClear = n;
 }
+#if !TARGET_OS_IPHONE
 - (void) setClearNSColor:(NSColor *)c	{
 	if (deleted || c==nil)
 		return;
@@ -951,6 +1156,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		clearColor[i] = comps[i];
 	clearColorUpdated = YES;
 }
+#endif
 - (void) setClearColor:(GLfloat *)c	{
 	if (deleted || c==nil)
 		return;

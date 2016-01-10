@@ -1,7 +1,13 @@
-#import <Cocoa/Cocoa.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
 #import "GLScene.h"
+#if !TARGET_OS_IPHONE
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
+#else
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES3/glext.h>
+#endif
 #import <pthread.h>
 
 

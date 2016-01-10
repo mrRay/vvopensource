@@ -31,22 +31,32 @@
 
 
 
-
-#if __LP64__
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 //#error Hap QuickTime support requires 32-bit QuickTime APIs but this target is 64-bit
-#else
+#elif !__LP64__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #ifndef QTMultiGPUTextureIssue_HapSupport_h
 #define QTMultiGPUTextureIssue_HapSupport_h
 
-
-
-
 #import <CoreFoundation/CoreFoundation.h>
 #import <QuickTime/QuickTime.h>
-
-
 
 /**
  The four-character-codes used to describe the pixel-formats of DXT frames emitted by the Hap QuickTime codec.
@@ -80,9 +90,31 @@ Boolean HapQTQuickTimeMovieHasHapTrackPlayable(Movie movie);
  */
 CFDictionaryRef HapQTCreateCVPixelBufferOptionsDictionary();
 
-
-
-
 #endif	//	ifndef QTMultiGPUTextureIssue_HapSupport_h
 
-#endif	//	ifndef __LP64__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#else
+//#error Hap QuickTime support requires 32-bit QuickTime APIs but this target is 64-bit
+#endif
+
+
+
+
+

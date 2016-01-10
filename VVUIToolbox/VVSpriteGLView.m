@@ -759,7 +759,7 @@ long			_spriteGLViewSysVers;
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self vvSubviews] count]>0)	{
 		clickedSubview = [self vvSubviewHitTest:localPoint];
-		//NSLog(@"\t\tclickedSubview is %@",clickedSubview);
+		//NSLog(@"\t\tclickedSubview is %@",[clickedSubview class]);
 		if (clickedSubview == (id)self)
 			clickedSubview = nil;
 		if (clickedSubview != nil)	{
@@ -815,7 +815,23 @@ long			_spriteGLViewSysVers;
 	}
 }
 - (void) rightMouseDragged:(NSEvent *)e	{
-	[self mouseDragged:e];
+	if (deleted)
+		return;
+	VVRELEASE(lastMouseEvent);
+	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+		lastMouseEvent = [e retain];
+	
+	modifierFlags = [e modifierFlags];
+	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
+	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+	//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
+	if (clickedSubview != nil)
+		[clickedSubview rightMouseDragged:e];
+	else	{
+		//	convert the local point to use this view's bounds (may be different than frame for retina displays)
+		localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
+		[spriteManager localMouseDragged:localPoint];
+	}
 }
 - (void) scrollWheel:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
@@ -1233,6 +1249,12 @@ long			_spriteGLViewSysVers;
 	clearColor[2] = b;
 	clearColor[3] = a;
 	pthread_mutex_unlock(&glLock);
+}
+- (void) getClearColors:(GLfloat *)n	{
+	if (n==nil)
+		return;
+	for (int i=0; i<4; ++i)
+		*(n+i)=clearColor[i];
 }
 @synthesize drawBorder;
 - (void) setBorderColor:(NSColor *)c	{

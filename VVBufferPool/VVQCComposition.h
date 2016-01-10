@@ -1,6 +1,6 @@
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <Quartz/Quartz.h>
-#import <VVBufferPool/VVBufferPool.h>
+#import "VVBufferPool.h"
 
 
 

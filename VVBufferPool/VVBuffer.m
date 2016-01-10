@@ -4,11 +4,38 @@
 
 
 
+void VVBufferQuadPopulate(VVBufferQuad *b, VVRECT geoRect, VVRECT texRect)	{
+	if (b==nil)
+		return;
+	b->bl.geo[0] = VVMINX(geoRect);
+	b->bl.geo[1] = VVMINY(geoRect);
+	b->bl.tex[0] = VVMINX(texRect);
+	b->bl.tex[1] = VVMINY(texRect);
+	
+	b->br.geo[0] = VVMAXX(geoRect);
+	b->br.geo[1] = VVMINY(geoRect);
+	b->br.tex[0] = VVMAXX(texRect);
+	b->br.tex[1] = VVMINY(texRect);
+	
+	b->tl.geo[0] = VVMINX(geoRect);
+	b->tl.geo[1] = VVMAXY(geoRect);
+	b->tl.tex[0] = VVMINX(texRect);
+	b->tl.tex[1] = VVMAXY(texRect);
+	
+	b->tr.geo[0] = VVMAXX(geoRect);
+	b->tr.geo[1] = VVMAXY(geoRect);
+	b->tr.tex[0] = VVMAXX(texRect);
+	b->tr.tex[1] = VVMAXY(texRect);
+}
 void VVBufferDescriptorPopulateDefault(VVBufferDescriptor *d)	{
 	if (d == nil)
 		return;
 	d->type = VVBufferType_None;
+#if !TARGET_OS_IPHONE
 	d->target = GL_TEXTURE_RECTANGLE_EXT;
+#else
+	d->target = GL_TEXTURE_2D;
+#endif
 	d->internalFormat = VVBufferIF_None;
 	d->pixelFormat = VVBufferPF_None;
 	d->pixelType = VVBufferPT_None;
@@ -88,7 +115,7 @@ BOOL VVBufferDescriptorCompareForRecycling(VVBufferDescriptor *a, VVBufferDescri
 		return YES;
 	return YES;
 }
-unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, NSSize s)	{
+unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, VVSIZE s)	{
 	unsigned long			bytesPerRow = 4 * s.width;	//	starting with the assumption of 32 bits per pixel
 	switch (b->pixelType)	{
 		case VVBufferPT_None:
@@ -96,6 +123,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		case VVBufferPT_Float:
 			{
 				switch (b->internalFormat)	{
+#if !TARGET_OS_IPHONE
 					case VVBufferIF_Lum8:
 						bytesPerRow = 8 * 1 * s.width / 8;	//	should never exist; a pixel type of "float" should never be paired with a "lum8", as the # of bits per pixel explicitly conflicts
 						break;
@@ -103,22 +131,54 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 					case VVBufferIF_R:
 						bytesPerRow = 32 * 1 * s.width / 8;
 						break;
+#endif
 					default:
 						bytesPerRow = 32 * 4 * s.width / 8;
 						break;
 				}
 			}
 			break;
+#if TARGET_OS_IPHONE
+		case VVBufferPT_HalfFloat:
+			{
+				switch (b->internalFormat)	{
+					case VVBufferIF_None:	//	should never exist
+					case VVBufferIF_Lum8:
+					case VVBufferIF_R:
+						bytesPerRow = 32 * 1 * s.width / 8;
+						break;
+					case VVBufferIF_Depth24:
+					case VVBufferIF_LumAlpha:
+						bytesPerRow = 32 * 2 * s.width / 8;
+						break;
+					case VVBufferIF_RGB:
+						bytesPerRow = 32 * 3 * s.width / 8;
+						break;
+					case VVBufferIF_RGBA:
+					case VVBufferIF_RGBA32F:
+						bytesPerRow = 32 * 4 * s.width / 8;
+						break;
+					case VVBufferIF_RGBA16F:
+						bytesPerRow = 16 * 4 * s.width / 8;
+						break;
+				}
+			}
+			break;
+#endif
 		case VVBufferPT_U_Byte:
 			{
 				switch (b->internalFormat)	{
+#if !TARGET_OS_IPHONE
 					case VVBufferIF_Lum8:
 					case VVBufferIF_R:
 						bytesPerRow = 8 * 1 * s.width / 8;
 						break;
+#endif
+#if !TARGET_OS_IPHONE
 					case VVBufferIF_LumFloat:
 						bytesPerRow = 32 * 1 * s.width / 8;
 						break;
+#endif
 					default:
 						bytesPerRow = 8 * 4 * s.width / 8;
 						break;
@@ -126,15 +186,18 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 				break;
 			}
 			break;
+#if !TARGET_OS_IPHONE
 		case VVBufferPT_U_Int_8888_Rev:
 			bytesPerRow = 8 * 4 * s.width / 8;
 			break;
+#endif
 		case VVBufferPT_U_Short_88:
 			bytesPerRow = 8 * 2 * s.width / 8;
 			break;
 	}
 	
 	switch (b->internalFormat)	{
+#if !TARGET_OS_IPHONE
 		case VVBufferIF_RGB_DXT1:	//	4 bits per pixel
 			bytesPerRow = 4 * s.width / 8;
 			break;
@@ -142,6 +205,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		//case VVBufferIF_YCoCg_DXT5:	//	8 bits per pixel
 			bytesPerRow = 8 * s.width / 8;
 			break;
+#endif
 		default:
 			break;
 	}
@@ -177,10 +241,10 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		VVBufferDescriptorPopulateDefault(&descriptor);
 		
 		preferDeletion = NO;
-		size = NSMakeSize(0,0);
-		srcRect = NSZeroRect;
+		size = VVMAKESIZE(0,0);
+		srcRect = VVZERORECT;
 		flipped = NO;
-		backingSize = NSMakeSize(0,0);
+		backingSize = VVMAKESIZE(0,0);
 		auxTransMatrix = nil;
 		auxOpacity = 1.0;
 		contentTimestamp.tv_sec = 0;
@@ -193,8 +257,10 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		backingReleaseCallback = nil;
 		backingReleaseCallbackContext = nil;
 		
+#if !TARGET_OS_IPHONE
 		localSurfaceRef = nil;
 		remoteSurfaceRef = nil;
+#endif
 		
 		parentBufferPool = [p retain];
 		copySourceBuffer = nil;
@@ -257,6 +323,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		auxTransMatrix = nil;
 	}
 	
+#if !TARGET_OS_IPHONE
 	//	the IOSurfaceRefs in this instance of VVBuffer will exist, even if this buffer was created by copying another
 	if (localSurfaceRef != nil)	{
 		CFRelease(localSurfaceRef);
@@ -266,6 +333,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		CFRelease(remoteSurfaceRef);
 		remoteSurfaceRef = nil;
 	}
+#endif
 	
 	//	don't forget to release the pool that created me!
 	[parentBufferPool release];
@@ -290,10 +358,12 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	[returnMe setUserInfo:userInfo];
 	[returnMe setBackingID:backingID];
 	
+#if !TARGET_OS_IPHONE
 	if (localSurfaceRef != nil)
 		[returnMe setLocalSurfaceRef:localSurfaceRef];
 	if (remoteSurfaceRef != nil)
 		[returnMe setRemoteSurfaceRef:remoteSurfaceRef];
+#endif
 	
 	[returnMe setCopySourceBuffer:((copySourceBuffer==nil) ? self : copySourceBuffer)];
 	
@@ -306,19 +376,23 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		case VVBufferType_RB:
 			return [NSString stringWithFormat:@"<VVBuffer:RB %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
 		case VVBufferType_FBO:
-			return [NSString stringWithFormat:@"<VVBuffer:FBO, %d>",descriptor.name];
+			return [NSString stringWithFormat:@"<VVBuffer:FBO, %d (%p)>",descriptor.name,self];
 		case VVBufferType_PBO:
 			return [NSString stringWithFormat:@"<VVBuffer:PBO %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
 		case VVBufferType_VBO:
 			return [NSString stringWithFormat:@"<VVBuffer: VBO %u>",descriptor.name];
+#if !TARGET_OS_IPHONE
 		case VVBufferType_DispList:
 			return [NSString stringWithFormat:@"<VVBuffer:DispList %u>",descriptor.name];
+#endif
 		case VVBufferType_Tex:
 		{
 			if (descriptor.target==GL_TEXTURE_2D)
 				return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+#if !TARGET_OS_IPHONE
 			else if (descriptor.target==GL_TEXTURE_RECTANGLE_EXT)
 				return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+#endif
 		}
 	}
     return nil;
@@ -335,7 +409,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 }
 @synthesize preferDeletion;
 @synthesize size;
-- (void) setSize:(NSSize)n	{
+- (void) setSize:(VVSIZE)n	{
 	size = n;
 }
 @synthesize srcRect;
@@ -395,27 +469,28 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	return auxTransMatrix;
 }
 @synthesize auxOpacity;
-- (NSRect) normalizedSrcRect	{
-	return NSMakeRect(srcRect.origin.x/size.width, srcRect.origin.y/size.height, srcRect.size.width/size.width, srcRect.size.height/size.height);
+- (VVRECT) normalizedSrcRect	{
+	return VVMAKERECT(srcRect.origin.x/size.width, srcRect.origin.y/size.height, srcRect.size.width/size.width, srcRect.size.height/size.height);
 }
-- (NSRect) glReadySrcRect	{
+- (VVRECT) glReadySrcRect	{
+#if !TARGET_OS_IPHONE
 	if (descriptor.target == GL_TEXTURE_RECTANGLE_EXT)
 		return srcRect;
-	else
-		return NSMakeRect(srcRect.origin.x/size.width, srcRect.origin.y/size.height, srcRect.size.width/size.width, srcRect.size.height/size.height);
+#endif
+	return VVMAKERECT(srcRect.origin.x/size.width, srcRect.origin.y/size.height, srcRect.size.width/size.width, srcRect.size.height/size.height);
 }
 
-- (NSRect) srcRectCroppedWith:(NSRect)cropRect takingFlipIntoAccount:(BOOL)f	{
-	NSRect		flippedCropRect = cropRect;
+- (VVRECT) srcRectCroppedWith:(VVRECT)cropRect takingFlipIntoAccount:(BOOL)f	{
+	VVRECT		flippedCropRect = cropRect;
 	if (f && flipped)
 		flippedCropRect.origin.y = (1.0 - cropRect.size.height - cropRect.origin.y);
 	
-	NSRect		returnMe = NSZeroRect;
-	returnMe.size = NSMakeSize(srcRect.size.width*flippedCropRect.size.width, srcRect.size.height*flippedCropRect.size.height);
+	VVRECT		returnMe = VVZERORECT;
+	returnMe.size = VVMAKESIZE(srcRect.size.width*flippedCropRect.size.width, srcRect.size.height*flippedCropRect.size.height);
 	returnMe.origin.x = flippedCropRect.origin.x*srcRect.size.width + srcRect.origin.x;
 	returnMe.origin.y = flippedCropRect.origin.y*srcRect.size.height + srcRect.origin.y;
 	//if (descriptor.target == GL_TEXTURE_2D)
-	//	returnMe = NSMakeRect(returnMe.origin.x/size.width, returnMe.origin.y/size.height, returnMe.size.width/size.width, returnMe.size.height/size.height);
+	//	returnMe = VVMAKERECT(returnMe.origin.x/size.width, returnMe.origin.y/size.height, returnMe.size.width/size.width, returnMe.size.height/size.height);
 	return returnMe;
 }
 - (BOOL) isFullFrame	{
@@ -471,6 +546,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 - (GLuint) target	{
 	return descriptor.target;
 }
+#if !TARGET_OS_IPHONE
 - (BOOL) safeToPublishToSyphon	{
 	if (localSurfaceRef==nil || flipped || descriptor.pixelFormat!=VVBufferPF_BGRA)
 		return NO;
@@ -479,6 +555,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		return YES;
 	return NO;
 }
+#endif
 - (BOOL) isContentMatchToBuffer:(VVBuffer *)n	{
 	BOOL		returnMe = NO;
 	if (n == nil)
@@ -499,23 +576,30 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	CVPixelBufferRef		cvPixBuf = (backingID==VVBufferBackID_CVPixBuf) ? backingReleaseCallbackContext : nil;
 	return cvPixBuf;
 }
+#if !TARGET_OS_IPHONE
 - (CVOpenGLTextureRef) cvTexRef	{
 	CVOpenGLTextureRef		cvTexRef = (backingID==VVBufferBackID_CVTex) ? backingReleaseCallbackContext : nil;
 	return cvTexRef;
 }
+#endif
+#if !TARGET_OS_IPHONE
 - (NSBitmapImageRep *) bitmapRep	{
 	NSBitmapImageRep		*bitmapRep = (backingID==VVBufferBackID_NSBitImgRep) ? backingReleaseCallbackContext : nil;
 	return bitmapRep;
 }
+#endif
 - (void *) externalBacking	{
 	void		*externalBacking = (backingID==VVBufferBackID_External) ? backingReleaseCallbackContext : nil;
 	return externalBacking;
 }
-#ifndef __LP64__
+
+#if TARGET_OS_IPHONE
+#elif !__LP64__
 - (GWorldPtr) gWorld	{
 	GWorldPtr		gWorld = (backingID==VVBufferBackID_GWorld) ? backingReleaseCallbackContext : nil;
 	return gWorld;
 }
+#else
 #endif
 
 
@@ -543,6 +627,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 - (void *) cpuBackingPtr	{
 	return cpuBackingPtr;
 }
+#if !TARGET_OS_IPHONE
 - (IOSurfaceRef) localSurfaceRef	{
 	return localSurfaceRef;
 }
@@ -585,6 +670,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		preferDeletion = YES;
 	}
 }
+#endif
 
 
 - (id) copySourceBuffer	{
@@ -618,9 +704,15 @@ void VVBuffer_ReleasePixelsCallback(id b, void *c)	{
 		free(tmpPixels);
 }
 void VVBuffer_ReleaseCVGLT(id b, void *c)	{
+#if !TARGET_OS_IPHONE
 	CVOpenGLTextureRef	tmpRef = c;
 	if (tmpRef != nil)
 		CVOpenGLTextureRelease(tmpRef);
+#else
+	CVOpenGLESTextureRef	tmpRef = c;
+	if (tmpRef != nil)
+		CFRelease(tmpRef);
+#endif
 }
 void VVBuffer_ReleaseCVPixBuf(id b, void *c)	{
 	//NSLog(@"%s ... %p",__func__,c);
@@ -632,31 +724,37 @@ void VVBuffer_ReleaseCVPixBuf(id b, void *c)	{
 	}
 }
 void VVBuffer_ReleaseBitmapRep(id b, void *c)	{
-	NSBitmapImageRep	*tmpRep = c;
+	//NSBitmapImageRep	*tmpRep = c;
+	id					tmpRep = c;
 	if (tmpRep != nil)
 		[tmpRep release];
 }
-#ifndef __LP64__
-#pragma GCC diagnostic ignored "-Wimplicit"
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-void VVBuffer_ReleaseGWorld(id b, void *c)	{
-	GWorldPtr		gWorld = c;
-	//	get a ptr to the gworld's base address (raw pixel data) so i can free it (i have to explicitly free it because i explicitly created it)
-	PixMapHandle		pixMapHandle = (gWorld==nil) ? nil : (PixMap **)GetGWorldPixMap(gWorld);
-	void				*pixelMemory = (pixMapHandle==nil) ? nil : (*pixMapHandle)->baseAddr;
-	
-	DisposeGWorld(gWorld);
-	gWorld = nil;
-	
-	if (pixelMemory != nil)	{
-		//NSLog(@"\t\tfreeing pixel memory!");
-		free(pixelMemory);
-	}
-}
-#pragma GCC diagnostic warning "-Wimplicit"
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
-#endif
 
+
+
+
+#if TARGET_OS_IPHONE
+#elif !__LP64__
+	#pragma GCC diagnostic ignored "-Wimplicit"
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	void VVBuffer_ReleaseGWorld(id b, void *c)	{
+		GWorldPtr		gWorld = c;
+		//	get a ptr to the gworld's base address (raw pixel data) so i can free it (i have to explicitly free it because i explicitly created it)
+		PixMapHandle		pixMapHandle = (gWorld==nil) ? nil : (PixMap **)GetGWorldPixMap(gWorld);
+		void				*pixelMemory = (pixMapHandle==nil) ? nil : (*pixMapHandle)->baseAddr;
+	
+		DisposeGWorld(gWorld);
+		gWorld = nil;
+	
+		if (pixelMemory != nil)	{
+			//NSLog(@"\t\tfreeing pixel memory!");
+			free(pixelMemory);
+		}
+	}
+	#pragma GCC diagnostic warning "-Wimplicit"
+	#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+#else
+#endif
 
 
 

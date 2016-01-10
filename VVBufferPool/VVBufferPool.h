@@ -1,21 +1,31 @@
-#import <Cocoa/Cocoa.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
+#endif
 #import <pthread.h>
 #import <VVBasics/VVBasics.h>
 
 #import "VVBufferPoolStringAdditions.h"
 #import "VVBuffer.h"
 #import "VVBufferAggregate.h"
+#if !TARGET_OS_IPHONE
 #import "VVBufferGLView.h"
+#else
+#import "VVBufferGLKView.h"
+#endif
 #import "RenderThread.h"
 #import "VVSizingTool.h"
 #import "GLScene.h"
 #import "GLShaderScene.h"
 #import "CIGLScene.h"
+#import "VVBufferCopier.h"
+#if !TARGET_OS_IPHONE
 #import "VVQCComposition.h"
 #import "QCGLScene.h"
-#import "VVBufferCopier.h"
 #import "HapSupport.h"
+#endif
+
 /**
 \defgroup VVBufferPool VVBufferPool framework
 */
@@ -25,7 +35,9 @@
 
 
 extern id				_globalVVBufferPool;	//	retained, nil on launch- this is the "main" buffer pool, used to generate image resources for hardware-accelerated image processing.  can't be created automatically, b/c it needs to be based on a shared context.
+#if !TARGET_OS_IPHONE
 extern int				_msaaMaxSamples;
+#endif
 extern BOOL			_bufferPoolInitialized;
 extern VVStopwatch	*_bufferTimestampMaker;
 
@@ -60,14 +72,21 @@ the buffer pool creates VVBuffers; each buffer retains the buffer pool which cre
 /**
 Returns the max number of MSAA samples that can be taken with the GL renderer currently in use by your application
 */
+#if !TARGET_OS_IPHONE
 + (int) msaaMaxSamples;
+#endif
 + (void) setGlobalVVBufferPool:(id)n;
 
 ///Call this method and pass the GL context you wish to share to create the global (singleton) VVBufferPool.  Other classes in this framework will automatically try to configure themselves to work with the global pool or its shared context if they exist- a lot of stuff will be easier to use and require less configuration if setting up the global buffer pool is the first thing you do.
 /**
 @param n The NSOpenGLContext you want the buffer pool to share.  This context should not be freed as long as VVBufferPool exists!
 */
+#if !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n;
+#else
++ (void) createGlobalVVBufferPoolWithSharegroup:(EAGLSharegroup *)n;
++ (void) createGlobalVVBufferPool;
+#endif
 ///	Returns the global buffer pool (singleton).  The buffer pool itself should be threadsafe (you can use it from multiple threads at the same time and the pool will handle the details).
 + (id) globalVVBufferPool;
 ///	Call this method and pass a VVBuffer instance to it to give the passed VVBuffer instance a timestamp.
@@ -82,56 +101,73 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 - (void) stopHousekeepingThread;
 
 //	returns a RETAINED (retainCount is 1) instance of VVBuffer!  must be explicitly released when done!
-- (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s backingPtr:(void *)b backingSize:(NSSize)bs;
+- (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs;
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs inContext:(CGLContextObj)c;
+#else
+- (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs inContext:(EAGLContext *)c;
+- (VVBuffer *) allocBufferInCurrentContextForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs;
+#endif
 //	returns a RETAINED (retainCount is 1) instance of VVBuffer, or nil!
-- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s;
-- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(NSSize)s backingSize:(NSSize)bs;
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s;
+- (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingSize:(VVSIZE)bs;
 
 /*		shortcuts for creating resources which are (relatively commonly) used.  all these return RETAINED (retainCount is 1) instances of VVBuffer- they must be released manually by whatever creates them!		*/
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL framebuffer.  Framebuffers have textures or renderbuffers associated with them as color (image) or depth attachments.
 - (VVBuffer *) allocFBO;
+#if !TARGET_OS_IPHONE
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel RECT texture with a BGRA internal format.
-- (VVBuffer *) allocBGRTexSized:(NSSize)s;
+- (VVBuffer *) allocBGRTexSized:(VVSIZE)s;
+#endif
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure
 */
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel 2D texture with a BGRA internal format.
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure.
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure.
 */
-- (VVBuffer *) allocBGR2DTexSized:(NSSize)s;
+- (VVBuffer *) allocBGR2DTexSized:(VVSIZE)s;
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel 2D texture with power-of-two dimensions and a BGRA internal format.
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure.  Note that the actual texture may be larger (as per the function name, the texture will be power-of-two with equal width and height).
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure.  Note that the actual texture may be larger (as per the function name, the texture will be power-of-two with equal width and height).
 */
-- (VVBuffer *) allocBGR2DPOTTexSized:(NSSize)s;
+- (VVBuffer *) allocBGR2DPOTTexSized:(VVSIZE)s;
+#if !TARGET_OS_IPHONE
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns a 32-bit-float-per-channel RECT texture with a BGRA internal format.
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocBGRFloatTexSized:(NSSize)s;
+- (VVBuffer *) allocBGRFloatTexSized:(VVSIZE)s;
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns a 32-bit-float-per-channel 2D texture with power-of-two dimensions and a BGRA internal format.
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocBGRFloat2DPOTTexSized:(NSSize)s;
+#endif
+- (VVBuffer *) allocBGRFloat2DPOTTexSized:(VVSIZE)s;
+///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns a 32-bit-float-per-channel 2D texture with a BGRA internal format.
+/**
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure
+*/
+- (VVBuffer *) allocBGRFloat2DTexSized:(VVSIZE)s;
+
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture used as a depth attachment
 /**
-@param s The size of the texture you want to create, in pixels, as an NSSize structure
+@param s The size of the texture you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocDepthSized:(NSSize)s;
+- (VVBuffer *) allocDepthSized:(VVSIZE)s;
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL renderbuffer suitable for multisample antialiasing as a color (image) attachment
 /**
-@param s The size of the renderbuffer you want to create, in pixels, as an NSSize structure
+@param s The size of the renderbuffer you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocMSAAColorSized:(NSSize)s numOfSamples:(int)n;
+- (VVBuffer *) allocMSAAColorSized:(VVSIZE)s numOfSamples:(int)n;
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL renderbuffer suitable for multisample antialiasing as a depth attachment
 /**
-@param s The size of the renderbuffer you want to create, in pixels, as an NSSize structure
+@param s The size of the renderbuffer you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocMSAADepthSized:(NSSize)s numOfSamples:(int)n;
+- (VVBuffer *) allocMSAADepthSized:(VVSIZE)s numOfSamples:(int)n;
 
 
+#if !TARGET_OS_IPHONE
 - (VVBuffer *) allocBufferForNSImage:(NSImage *)img;
 ///	Allocates and returns a VVBuffer instance that represents an 8-bit per channel OpenGL texture.  The texture is automaticall populated with the contents of the passed image
 /**
@@ -146,11 +182,6 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 @param prefer2D if YES, the buffer pool will try to generate a 2D texture (instead of a RECT texture)
 */
 - (VVBuffer *) allocBufferForBitmapRep:(NSBitmapImageRep *)rep prefer2DTexture:(BOOL)prefer2D;
-///	Allocates and returns a VVBuffer instance that represents the GL texture used by the passed CVOpenGLTextureRef.  The VVBuffer actually retains the CV texture, so the underlying CV resource is retained until all VVBuffers referencing it are freed.
-/**
-@param cvt the CVOpenGLTextureRef you want to create the VVBuffer from.  the VVBuffer will just be a "wrapper"- it will retain the passed CVOpenGLTextureRef, this is close to a zero-cost operation
-*/
-- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLTextureRef)cvt;
 ///	Special method for working with Hap movie files- uploads the passed image buffer (only accepts hap image buffers) to a GL texture.  HapQ movies will still need to be converted from YCoCg to RGBA!
 /**
 @param img the CVImageBufferRef you want to create the VVBuffer from.  Note that this will only work with Hap-format image buffers!  If you're working with a HapQ movie, this buffer will need to be converted from YCoCg to RGBA, as demonstrated in the test app
@@ -160,9 +191,9 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 #endif
 ///	Allocates and returns a VVBuffer instance backed by an IOSurfaceRef.  If you want to pass a texture to another process via an IOSurface, create one of these and then render to it.
 /**
-@param s The size of the texture/IOSUrface you want to create, in pixels, as an NSSize structure
+@param s The size of the texture/IOSUrface you want to create, in pixels, as an VVSIZE structure
 */
-- (VVBuffer *) allocBufferForTexBackedIOSurfaceSized:(NSSize)s;
+- (VVBuffer *) allocBufferForTexBackedIOSurfaceSized:(VVSIZE)s;
 ///	Allocates and returns a VVBuffer instance created from an existing IOSurfaceRef.  If you want to receive textures from another process, get the IOSurfaceID from the remote process and then pass it to this method to create the VVBuffer.
 /**
 @param n the IOSurfaceID you want to create a texture from
@@ -174,8 +205,39 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 - (VVBuffer *) allocBufferFromStringForXPCComm:(NSString *)n;
 
 
+#else
+- (VVBuffer *) allocBufferForImageNamed:(NSString *)n;
+- (VVBuffer *) allocBufferForUIImage:(UIImage *)n;
+#endif
 
 - (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n;
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(CGLContextObj)c;
+#else
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(EAGLContext *)c;
+- (VVBuffer *) allocCubeMapTextureInCurrentContextForImages:(NSArray *)n;
+#endif
+
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u;	//	size in bytes
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(CGLContextObj)cgl_ctx;
+#else
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(EAGLContext *)ctx;
+- (VVBuffer *) allocVBOInCurrentContextWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u;
+#endif
+
+///	Allocates and returns a VVBuffer instance that represents the GL texture used by the passed CVOpenGLTextureRef.  The VVBuffer actually retains the CV texture, so the underlying CV resource is retained until all VVBuffers referencing it are freed.
+/**
+@param cvt the CVOpenGLTextureRef you want to create the VVBuffer from.  the VVBuffer will just be a "wrapper"- it will retain the passed CVOpenGLTextureRef, this is close to a zero-cost operation
+*/
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLTextureRef)cvt;
+#else
+- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLESTextureRef)cvt;
+#endif
+
+
+- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n;
 
 
 

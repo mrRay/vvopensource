@@ -1,4 +1,5 @@
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -20,7 +21,7 @@ extern MutLockArray		*_spriteManagerArray;
 	BOOL					allowMultiSpriteInteraction;	//	NO by default- if YES, clicking/dragging/etc works with multiple sprites!
 	BOOL					multiSpriteExecutesOnMultipleSprites;	//	only relevant if multi-sprite interaction is YES.  this is NO by default- if it's YES all sprites in "spritesInUse" will receive an action callback when any of them get an action method.  if this is NO then only the sprite that "caught" the interaction will receive an action callback!
 	MutLockArray			*spriteArray;	//	searched from beginning to end, so order is like z-index!
-#if IPHONE
+#if TARGET_OS_IPHONE
 	MutNRLockDict			*perTouchSpritesInUse;	//	key is UITouch instance, value is ObjectHolder (with a ZWR) pointing to the VVSprite the UITouch should be forwarded to
 	MutLockDict				*perTouchMultiSpritesInUse;	//	same idea as above, but only used if "allowMultiSpriteInteraction" is YES.  insted of an ObjectHolder for the val, there's a MutLockArray (which contains the ObjectHolders for sprites, each of which should be sent the UITouch values received on interaction)
 #else
@@ -32,7 +33,7 @@ extern MutLockArray		*_spriteManagerArray;
 
 - (void) prepareToBeDeleted;
 
-#if IPHONE
+#if TARGET_OS_IPHONE
 //	returns a YES if the down occurred on one or more sprites
 - (BOOL) receivedDownEvent:(VVSpriteEventType)e forTouch:(UITouch *)t atPoint:(VVPOINT)p visibleOnly:(BOOL)v;
 - (void) receivedOtherEvent:(VVSpriteEventType)e forTouch:(UITouch *)t atPoint:(VVPOINT)p;
@@ -71,12 +72,12 @@ extern MutLockArray		*_spriteManagerArray;
 
 - (void) draw;
 - (void) drawRect:(VVRECT)r;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx;
 - (void) drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx;
 #endif
 
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 - (VVSprite *) spriteInUse;
 - (void) setSpriteInUse:(VVSprite *)z;
 #endif
@@ -84,7 +85,7 @@ extern MutLockArray		*_spriteManagerArray;
 @property (assign,readwrite) BOOL allowMultiSpriteInteraction;
 @property (assign,readwrite) BOOL multiSpriteExecutesOnMultipleSprites;
 @property (readonly) MutLockArray *spriteArray;
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 @property (readonly) MutLockArray *spritesInUse;
 #endif
 

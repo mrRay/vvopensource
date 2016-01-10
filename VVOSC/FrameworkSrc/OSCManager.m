@@ -399,7 +399,7 @@
 	int				index = 1;
 	
 	while (!found)	{
-#if IPHONE
+#if TARGET_OS_IPHONE
 		tmpString = [NSString stringWithFormat:@"%@ %@ %d",[[UIDevice currentDevice] name],[self inPortLabelBase],index];
 #else
 		CFStringRef computerName = SCDynamicStoreCopyComputerName(NULL, NULL);

@@ -1,5 +1,5 @@
 #import "VVScrollView.h"
-#if !IPHONE
+#if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
 #endif
 
@@ -82,9 +82,11 @@
 	tmpRect = ib;
 	if (showVScroll)
 		tmpRect.size.width -= sbw;
-	if (showHScroll)
+	if (showHScroll)	{
 		tmpRect.size.height -= sbw;
-	tmpRect.origin.y += sbw;
+		tmpRect.origin.y += sbw;
+	}
+	tmpRect = VVINTEGRALRECT(tmpRect);
 	if (!VVEQUALRECTS(tmpRect,[_documentView frame]))	{
 		//VVRectLog(@"\t\tsetting _documentView frame to",tmpRect);
 		[_documentView setFrame:tmpRect];
@@ -96,11 +98,11 @@
 	sbw *= LTBBM;
 	
 	VVRECT		contentFrame = [_documentView subviewFramesUnion];
-	VVRECT		viewBounds = [_documentView bounds];
+	VVRECT		docViewBounds = [_documentView bounds];
 	double		scrollNormVal;
 	double		trackLength;
 	//VVRectLog(@"\t\tcontentFrame is",contentFrame);
-	//VVRectLog(@"\t\tviewBounds is",viewBounds);
+	//VVRectLog(@"\t\tdocViewBounds is",docViewBounds);
 	
 	[hScrollTrack setHidden:!showHScroll];
 	[hScrollBar setHidden:!showHScroll];
@@ -114,10 +116,10 @@
 		
 		//	h scroll bar
 		trackLength = [hScrollTrack rect].size.width;
-		if (viewBounds.size.width < contentFrame.size.width)	{
-			tmpRect.size = VVMAKESIZE(viewBounds.size.width/contentFrame.size.width*trackLength, sbw);
+		if (docViewBounds.size.width < contentFrame.size.width)	{
+			tmpRect.size = VVMAKESIZE(docViewBounds.size.width/contentFrame.size.width*trackLength, sbw);
 			tmpRect.origin = [hScrollTrack rect].origin;
-			scrollNormVal = (viewBounds.origin.x-contentFrame.origin.x)/contentFrame.size.width;
+			scrollNormVal = (docViewBounds.origin.x-contentFrame.origin.x)/contentFrame.size.width;
 			tmpRect.origin.x += trackLength*scrollNormVal;
 			[hScrollBar setRect:tmpRect];
 		}
@@ -131,17 +133,18 @@
 	if (showVScroll)	{
 		//	v scroll track
 		tmpRect.origin = VVMAKEPOINT(ib.size.width-sbw, 0);
-		if (showVScroll)
+		if (showHScroll)
 			tmpRect.origin.y -= sbw;
+		tmpRect.size.width = sbw;
 		tmpRect.size.height = ib.size.height-tmpRect.origin.y;
 		[vScrollTrack setRect:tmpRect];
 		
 		//	v scroll bar
 		trackLength = [vScrollTrack rect].size.height;
-		if (viewBounds.size.height < contentFrame.size.height)	{
-			tmpRect.size = VVMAKESIZE(sbw, viewBounds.size.height/contentFrame.size.height*trackLength);
+		if (docViewBounds.size.height < contentFrame.size.height)	{
+			tmpRect.size = VVMAKESIZE(sbw, (docViewBounds.size.height/contentFrame.size.height) * trackLength);
 			tmpRect.origin = [vScrollTrack rect].origin;
-			scrollNormVal = (viewBounds.origin.y-contentFrame.origin.y)/contentFrame.size.height;
+			scrollNormVal = (docViewBounds.origin.y-contentFrame.origin.y)/contentFrame.size.height;
 			tmpRect.origin.y += trackLength*scrollNormVal;
 			[vScrollBar setRect:tmpRect];
 		}
@@ -161,6 +164,13 @@
 	
 	if (changed)
 		[self scrollToNormalizedVal:normScrollVal];
+}
+- (id) vvSubviewHitTest:(VVPOINT)superviewPoint	{
+	id			returnMe = [super vvSubviewHitTest:superviewPoint];
+	//	we want to make sure that if the user clicks on me or my document view, it's handled as if nothing was clicked
+	if (returnMe==_documentView)
+		returnMe = self;
+	return returnMe;
 }
 
 
@@ -185,6 +195,7 @@
 		double		travelLoc = VVMINX(contentFrame);
 		double		travelLen = contentFrame.size.width-viewBounds.size.width;
 		viewBounds.origin.x = scrollNormVal * travelLen + travelLoc;
+		viewBounds = VVINTEGRALRECT(viewBounds);
 		//	apply the bounds to the document view, flag for sprite update
 		[_documentView setBoundsOrigin:viewBounds.origin];
 		[self setSpritesNeedUpdate];
@@ -204,6 +215,7 @@
 		double		travelLoc = VVMINX(contentFrame);
 		double		travelLen = contentFrame.size.width-viewBounds.size.width;
 		viewBounds.origin.x = scrollNormVal * travelLen + travelLoc;
+		viewBounds = VVINTEGRALRECT(viewBounds);
 		//	apply the bounds to the document view, flag for sprite update
 		[_documentView setBoundsOrigin:viewBounds.origin];
 		[self setSpritesNeedUpdate];
@@ -211,7 +223,7 @@
 }
 - (void) drawHSprite:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
-#if IPHONE
+#if TARGET_OS_IPHONE
 	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
 #else
 	if ([s hidden])
@@ -250,6 +262,7 @@
 		double		travelLoc = VVMINY(contentFrame);
 		double		travelLen = contentFrame.size.height-viewBounds.size.height;
 		viewBounds.origin.y = scrollNormVal * travelLen + travelLoc;
+		viewBounds = VVINTEGRALRECT(viewBounds);
 		//	apply the bounds to the document view, flag for sprite update
 		[_documentView setBoundsOrigin:viewBounds.origin];
 		[self setSpritesNeedUpdate];
@@ -269,6 +282,7 @@
 		double		travelLoc = VVMINY(contentFrame);
 		double		travelLen = contentFrame.size.height-viewBounds.size.height;
 		viewBounds.origin.y = scrollNormVal * travelLen + travelLoc;
+		viewBounds = VVINTEGRALRECT(viewBounds);
 		//	apply the bounds to the document view, flag for sprite update
 		[_documentView setBoundsOrigin:viewBounds.origin];
 		[self setSpritesNeedUpdate];
@@ -276,7 +290,7 @@
 }
 - (void) drawVSprite:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
-#if IPHONE
+#if TARGET_OS_IPHONE
 	NSLog(@"\t\tINCOMPLETE: need to draw here, %s",__func__);
 #else
 	if ([s hidden])
@@ -374,6 +388,7 @@
 		viewBounds.origin.y = (newPoint.y * travelLen) + travelLoc;
 	}
 	
+	viewBounds = VVINTEGRALRECT(viewBounds);
 	[_documentView setBoundsOrigin:viewBounds.origin];
 	[self setSpritesNeedUpdate];
 }

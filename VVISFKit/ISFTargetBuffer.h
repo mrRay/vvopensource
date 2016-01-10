@@ -1,4 +1,9 @@
+#import <TargetConditionals.h>
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 #import <VVBasics/VVBasics.h>
 #import <VVBufferPool/VVBufferPool.h>
 #import <DDMathParser/DDExpression.h>
@@ -35,10 +40,10 @@
 
 + (id) create;
 
-- (void) setTargetSize:(NSSize)n;
-- (void) setTargetSize:(NSSize)n createNewBuffer:(BOOL)c;
-- (void) setTargetSize:(NSSize)n resizeExistingBuffer:(BOOL)r;
-- (void) setTargetSize:(NSSize)n resizeExistingBuffer:(BOOL)r createNewBuffer:(BOOL)c;
+- (void) setTargetSize:(VVSIZE)n;
+- (void) setTargetSize:(VVSIZE)n createNewBuffer:(BOOL)c;
+- (void) setTargetSize:(VVSIZE)n resizeExistingBuffer:(BOOL)r;
+- (void) setTargetSize:(VVSIZE)n resizeExistingBuffer:(BOOL)r createNewBuffer:(BOOL)c;
 - (void) setTargetWidthString:(NSString *)n;
 - (void) setTargetHeightString:(NSString *)n;
 - (void) setFloatFlag:(BOOL)n;
@@ -54,7 +59,7 @@
 @property (retain,readwrite) NSString *name;
 @property (retain,readwrite) VVBuffer *buffer;
 
-- (NSSize) targetSize;
+- (VVSIZE) targetSize;
 
 - (void) setUniformLocation:(int)n forIndex:(int)i;
 - (int) uniformLocationForIndex:(int)i;

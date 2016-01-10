@@ -1,5 +1,5 @@
-
-#if IPHONE
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -58,7 +58,7 @@ According to the OSC spec, a message consists of an address path (where the mess
 - (void) addDouble:(double)n;
 ///	Add the passed string to the message
 - (void) addString:(NSString *)n;
-#if IPHONE
+#if TARGET_OS_IPHONE
 ///	Add the passed color to the message
 - (void) addColor:(UIColor *)c;
 #else

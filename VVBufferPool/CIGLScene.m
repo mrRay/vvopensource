@@ -6,10 +6,15 @@
 
 
 
+pthread_mutex_t			_globalCIContextLock;
+#if !TARGET_OS_IPHONE
 NSOpenGLContext			*_globalCIContextGLContext = nil;
 NSOpenGLContext			*_globalCIContextSharedContext = nil;
 NSOpenGLPixelFormat		*_globalCIContextPixelFormat = nil;
-pthread_mutex_t			_globalCIContextLock;
+#else
+EAGLContext			*_globalCIContextGLContext = nil;
+#endif
+
 
 
 
@@ -23,44 +28,103 @@ pthread_mutex_t			_globalCIContextLock;
 	pthread_mutex_init(&_globalCIContextLock, &attr);
 	pthread_mutexattr_destroy(&attr);
 }
+#if !TARGET_OS_IPHONE
 + (void) prepCommonCIBackendToRenderOnContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
 	if (c==nil)	{
 		NSLog(@"\t\tERR: context nil in %s",__func__);
 		return;
 	}
 	pthread_mutex_lock(&_globalCIContextLock);
+	
 	VVRELEASE(_globalCIContextSharedContext);
 	_globalCIContextSharedContext = [c retain];
+	
 	VVRELEASE(_globalCIContextPixelFormat);
 	_globalCIContextPixelFormat = [p retain];
+	
 	VVRELEASE(_globalCIContextGLContext);
 	_globalCIContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
+	
 	pthread_mutex_unlock(&_globalCIContextLock);
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c	{
-	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:NSMakeSize(80,60)];
+#else
++ (void) prepCommonCIBackendToRenderOnContext:(EAGLContext *)c	{
+	if (c==nil)	{
+		NSLog(@"\t\tERR: context nil in %s",__func__);
+		return;
+	}
+	pthread_mutex_lock(&_globalCIContextLock);
+	
+	VVRELEASE(_globalCIContextGLContext);
+	_globalCIContextGLContext = [c retain];
+	
+	pthread_mutex_unlock(&_globalCIContextLock);
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s	{
++ (void) prepCommonCIBackendToRenderOnSharegroup:(EAGLSharegroup *)s	{
+	if (s == nil)	{
+		NSLog(@"\t\tERR: sharegroup nil in %s",__func__);
+		return;
+	}
+	NSLog(@"\t\tmaking an  EAGLContext in %s for %@",__func__,self);
+	EAGLContext		*newCtx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:s];
+	if (newCtx == nil)	{
+		NSLog(@"\t\tERR: context nil in %s",__func__);
+		return;
+	}
+	
+	pthread_mutex_lock(&_globalCIContextLock);
+	
+	VVRELEASE(_globalCIContextGLContext);
+	_globalCIContextGLContext = [newCtx retain];
+	
+	pthread_mutex_unlock(&_globalCIContextLock);
+	
+	[newCtx release];
+}
+#endif
+
+#if !TARGET_OS_IPHONE
+- (id) initWithSharedContext:(NSOpenGLContext *)c	{
+	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(80,60)];
+}
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s	{
 	return [self initWithSharedContext:c pixelFormat:[GLScene defaultPixelFormat] sized:s];
 }
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p	{
-	return [self initWithSharedContext:c pixelFormat:p sized:NSMakeSize(80,60)];
+	return [self initWithSharedContext:c pixelFormat:p sized:VVMAKESIZE(80,60)];
 }
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s	{
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	self = [super initWithSharedContext:c pixelFormat:p sized:s];
 	if (self!=nil)	{
 	}
 	return self;
 }
-- (id) initCommonBackendSceneSized:(NSSize)n	{
+#else
+- (id) initWithSharegroup:(EAGLSharegroup *)g sized:(VVSIZE)s	{
+	return [super initWithSharegroup:g sized:s];
+}
+- (id) initWithSharegroup:(EAGLSharegroup *)g	{
+	return [super initWithSharegroup:g];
+}
+- (id) initWithContext:(EAGLContext *)c	{
+	return [super initWithContext:c];
+}
+- (id) initWithContext:(EAGLContext *)c sized:(VVSIZE)s	{
+	return [super initWithContext:c sized:s];
+}
+#endif
+
+- (id) initCommonBackendSceneSized:(VVSIZE)n	{
 	self = [super init];
 	if (self!=nil)	{
 		size = n;
 		pthread_mutex_lock(&_globalCIContextLock);
 		context = (_globalCIContextGLContext==nil) ? nil : [_globalCIContextGLContext retain];
 		if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 			sharedContext = (_globalCIContextSharedContext==nil) ? nil : [_globalCIContextSharedContext retain];
 			customPixelFormat = (_globalCIContextPixelFormat==nil) ? nil : [_globalCIContextPixelFormat retain];
+#endif
 		}
 		pthread_mutex_unlock(&_globalCIContextLock);
 		if (context==nil)	{
@@ -108,18 +172,22 @@ pthread_mutex_t			_globalCIContextLock;
 		}
 		OSSpinLockUnlock(&renderThreadLock);
 		if (!addedToRenderThread)	{
+#if !TARGET_OS_IPHONE
 			if (context!=nil)	{
 				CGLLockContext([context CGLContextObj]);
 				//NSLog(@"\t\tlocked context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 			}
+#endif
 			
 			[ciContext release];
 			ciContext = nil;
 			
+#if !TARGET_OS_IPHONE
 			if (context!=nil)	{
 				//NSLog(@"\t\tunlocking context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 				CGLUnlockContext([context CGLContextObj]);
 			}
+#endif
 		}
 		else	{
 			[ciContext release];
@@ -140,7 +208,7 @@ pthread_mutex_t			_globalCIContextLock;
 		return;
 	if (context == nil)
 		return;
-	
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	/*
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -168,9 +236,10 @@ pthread_mutex_t			_globalCIContextLock;
 	glMatrixMode(GL_MAX_TEXTURE_STACK_DEPTH);
 	glPushMatrix();
 	*/
-	glDisable(GL_TEXTURE_RECTANGLE_EXT);
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_RECTANGLE_EXT);
+#endif
+	//glDisable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 }
 - (void) _renderCleanup	{
 	if (cleanupDelegate != nil)	{
@@ -184,9 +253,11 @@ pthread_mutex_t			_globalCIContextLock;
 	if (context == nil)
 		return;
 	
-	CGLContextObj		cgl_ctx = [context CGLContextObj];
-	glDisable(GL_TEXTURE_RECTANGLE_EXT);
-	glDisable(GL_TEXTURE_2D);
+#if !TARGET_OS_IPHONE
+	//CGLContextObj		cgl_ctx = [context CGLContextObj];
+	//glDisable(GL_TEXTURE_RECTANGLE_EXT);
+#endif
+	//glDisable(GL_TEXTURE_2D);
 	/*
 	glPopAttrib();
 	glPopClientAttrib();
@@ -219,9 +290,13 @@ pthread_mutex_t			_globalCIContextLock;
 - (VVBuffer *) allocAndRenderBufferFromImage:(CIImage *)i	{
 	if (i==nil)
 		return nil;
-	//NSSize			imgSize = CGMAKENSSIZE([i extent].size);
+	//VVSIZE			imgSize = CGMAKENSSIZE([i extent].size);
 	//[self setSize:imgSize];
+#if !TARGET_OS_IPHONE
 	VVBuffer		*returnMe = [_globalVVBufferPool allocBGRTexSized:size];
+#else
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBGR2DTexSized:size];
+#endif
 	VVBuffer		*tmpFbo = [_globalVVBufferPool allocFBO];
 	
 	[self renderCIImage:i inFBO:[tmpFbo name] colorTex:[returnMe name] target:[returnMe target]];
@@ -245,7 +320,9 @@ pthread_mutex_t			_globalCIContextLock;
 		[self _renderPrep];
 	
 	if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 		CGLLockContext([context CGLContextObj]);
+#endif
 		//NSLog(@"\t\tlocked context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 		@try	{
 			//	make sure the context has been set up/reshaped, attaches the texture/depth buffer to the fbo
@@ -274,12 +351,18 @@ pthread_mutex_t			_globalCIContextLock;
 			NSLog(@"\t\tERR: caught exception in %s",__func__);
 			NSLog(@"\t\texception was %@",excErr);
 		}
+#if !TARGET_OS_IPHONE
 		//NSLog(@"\t\tunlocking context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 		CGLUnlockContext([context CGLContextObj]);
+#endif
 	}
 }
 - (void) renderCIImage:(CIImage *)i inFBO:(GLuint)f colorTex:(GLuint)t	{
+#if !TARGET_OS_IPHONE
 	[self renderCIImage:i inFBO:f colorTex:t target:GL_TEXTURE_RECTANGLE_EXT];
+#else
+	[self renderCIImage:i inFBO:f colorTex:t target:GL_TEXTURE_2D];
+#endif
 }
 - (void) renderCIImage:(CIImage *)i inFBO:(GLuint)f colorTex:(GLuint)t target:(GLuint)tt	{
 	if (deleted)
@@ -301,7 +384,9 @@ pthread_mutex_t			_globalCIContextLock;
 		[self _renderPrep];
 	
 	if (context!=nil)	{
+#if !TARGET_OS_IPHONE
 		CGLLockContext([context CGLContextObj]);
+#endif
 		//NSLog(@"\t\tlocked context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 		@try	{
 			//	make sure the context has been set up/reshaped, attaches the texture/depth buffer to the fbo
@@ -336,20 +421,26 @@ pthread_mutex_t			_globalCIContextLock;
 		tex = 0;
 		texTarget = 0;
 		depth = 0;
+#if !TARGET_OS_IPHONE
 		//NSLog(@"\t\tunlocking context %p on thread %p in %s",[context CGLContextObj],[NSThread currentThread],__func__);
 		CGLUnlockContext([context CGLContextObj]);
+#endif
 	}
 }
 - (void) _initialize	{
 	//	tell the super to do its thing
 	[super _initialize];
+#if !TARGET_OS_IPHONE
 	//	the only thing i want to change is the tex env mode
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
+#endif
 	
 	//glEnable(GL_BLEND);
 	glDisable(GL_BLEND);
+#if !TARGET_OS_IPHONE
 	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#endif
 }
 - (void) _reshape	{
 	//	release the CI context (i'll have to get another one)
@@ -359,6 +450,7 @@ pthread_mutex_t			_globalCIContextLock;
 	[super _reshape];
 	
 	//	CI renders upside down, so i invert the coords now!
+#if !TARGET_OS_IPHONE
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -369,6 +461,7 @@ pthread_mutex_t			_globalCIContextLock;
 		glOrtho(0, size.width, size.height, 0, 1.0, -1.0);
 	else
 		glOrtho(0, size.width, 0, size.height, 1.0, -1.0);
+#endif
 	glViewport(0,0,size.width,size.height);
 	
 	//	make a new CI context, retain it if successful
@@ -382,7 +475,7 @@ pthread_mutex_t			_globalCIContextLock;
 			options:[NSDictionary dictionaryWithObjectsAndKeys:
 				(id)outputColorSpace, kCIContextOutputColorSpace,
 				(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
-#else
+#elif !TARGET_OS_IPHONE
 		//NSLog(@"\t\tcreating CIContext for CGLContextObj %p",[context CGLContextObj]);
 		ciContext = [CIContext
 			contextWithCGLContext:[context CGLContextObj]
@@ -390,6 +483,15 @@ pthread_mutex_t			_globalCIContextLock;
 			options:[NSDictionary dictionaryWithObjectsAndKeys:
 				(id)outputColorSpace, kCIContextOutputColorSpace,
 				(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
+#else
+		ciContext = [CIContext
+			contextWithEAGLContext:context
+			//options:nil];
+			options:[NSDictionary dictionaryWithObjectsAndKeys:
+				(id)outputColorSpace, kCIContextOutputColorSpace,
+				(id)workingColorSpace, kCIContextWorkingColorSpace,
+			//	/*(id)NUMINT(kCIFormatRGBAf), kCIContextWorkingFormat,*/
+				nil]	];
 #endif
 	}
 	if (ciContext != nil)

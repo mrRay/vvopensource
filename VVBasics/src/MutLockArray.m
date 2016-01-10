@@ -57,7 +57,11 @@
 - (id) init	{
 	return [self initWithCapacity:0];
 }
-
+- (id) copyWithZone:(NSZone *)z	{
+	MutLockArray	*returnMe = [[MutLockArray alloc] initWithCapacity:0];
+	[returnMe lockAddObjectsFromArray:self];
+	return returnMe;
+}
 - (void) dealloc	{
 	[self lockRemoveAllObjects];
 	pthread_rwlock_destroy(&arrayLock);

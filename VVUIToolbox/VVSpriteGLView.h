@@ -117,6 +117,7 @@ extern long			_spriteGLViewSysVers;
 @property (readonly) NSEvent *lastMouseEvent;
 @property (retain,readwrite) NSColor *clearColor;
 - (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
+- (void) getClearColors:(GLfloat *)n;
 @property (assign,readwrite) BOOL drawBorder;
 @property (retain,readwrite) NSColor *borderColor;
 @property (readonly) VVSpriteManager *spriteManager;

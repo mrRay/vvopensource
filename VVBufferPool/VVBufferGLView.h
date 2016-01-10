@@ -1,4 +1,4 @@
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <OpenGL/CGLMacro.h>
 #import "VVBuffer.h"
 #import <pthread.h>

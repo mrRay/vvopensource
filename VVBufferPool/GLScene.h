@@ -1,6 +1,13 @@
-#import <Cocoa/Cocoa.h>
+#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
+#if !TARGET_OS_IPHONE
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
+#else
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES3/glext.h>
+#import <GLKit/GLKit.h>
+#endif
 #import <VVBasics/VVBasics.h>
 #import "VVBuffer.h"
 
@@ -16,9 +23,11 @@ extern BOOL				_hasIntegratedAndDiscreteGPUsFlag;
 
 typedef NS_ENUM(NSInteger, VVGLFlushMode)	{
 	VVGLFlushModeGL = 0,	//	glFlush()
+#if !TARGET_OS_IPHONE
 	VVGLFlushModeCGL = 1,	//	CGLFlushDrawable()
 	VVGLFlushModeNS = 2,	//	[context flushBuffer]
 	VVGLFlushModeApple = 3,	//	glFlushRenderAPPLE()
+#endif
 	VVGLFlushModeFinish = 4	//	glFinish()
 };
 
@@ -40,9 +49,13 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	OSSpinLock				renderThreadLock;	//	used to serialize access to "renderThreadDeleteArray", making it thread-safe
 	MutLockArray			*renderThreadDeleteArray;	//	NOT RETAINED!  weak ref to an array you can add items to such that the items will be released on the thread that renders the scene.  useful if you need to ensure that rendering resources are released on the same thread that did the rendering.  only non-nil if this scene is being rendered on a thread created by a RenderThread class
 	
+#if !TARGET_OS_IPHONE
 	NSOpenGLContext			*sharedContext;	//	NOT retained! weak ref to the shared context, which is assumed to be retained elsewhere.
 	NSOpenGLContext			*context;	//	RETAINED- the context i render into!
 	NSOpenGLPixelFormat		*customPixelFormat;	//	the pixel format used by my context
+#else
+	EAGLContext				*context;	//	RETAINED- the context i render into!
+#endif
 	CGColorSpaceRef			colorSpace;
 	
 	id						renderTarget;	//	NOT RETAINED- the target of my render method
@@ -59,8 +72,14 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	GLuint					colorMSAA;	//	the color renderbuffer attached to the msaa fbo- only valid when the render method is called!
 	GLuint					depthMSAA;	//	the depth renderbuffer attached to the msaa fbo- only valid when the render method is called!
 	
-	NSSize					size;	//	the size of the this scene/the texture/framebuffer/viewport/etc
+	VVSIZE					size;	//	the size of the this scene/the texture/framebuffer/viewport/etc
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
+
+	OSSpinLock				projectionMatrixLock;	//	used to lock projectionMatrix-related vars
+	float					projectionMatrix[16];	//	if you're in "modern" GL, the modelview/projection matrices have to be expressed as a single matrix that gets passed to the vertx shader.  this is that matrix- it configures orthogonal projection.  stored here in column-major format.
+#if TARGET_OS_IPHONE
+	GLKBaseEffect			*projectionMatrixEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
+#endif
 	
 	BOOL					performClear;
 	GLfloat					clearColor[4];
@@ -69,6 +88,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	int						swapInterval;
 }
 
+#if !TARGET_OS_IPHONE
 ///	Returns an array of the GPUs currently accessible by the renderer accessible being used with this process
 + (NSMutableArray *) gpuVendorArray;
 ///	Returns a YES if you're using an integrated GPU
@@ -83,20 +103,28 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 + (NSOpenGLPixelFormat *) defaultQTPixelFormat;
 + (NSOpenGLPixelFormat *) fsaaPixelFormat;
 + (NSOpenGLPixelFormat *) doubleBufferFSAAPixelFormat;
+#endif
 
+#if !TARGET_OS_IPHONE
 ///	Init an instance of GLScene using the passed shared context.
 - (id) initWithSharedContext:(NSOpenGLContext *)c;
 ///	Init an instance of GLScene using the passed shared context.  The GLScene will automatically be configured to render at the passed size.
-- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(NSSize)s;
+- (id) initWithSharedContext:(NSOpenGLContext *)c sized:(VVSIZE)s;
 ///	Init an instance of GLScene using the passed shared context and pixel format
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p;
 ///	Init an instance of GLScene using the passed shared context and pixel format.  The GLScene will automatically be configured to render at the passed size.
-- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(NSSize)s;
+- (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s;
 
 - (id) initWithContext:(NSOpenGLContext *)c;
 - (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc;
-- (id) initWithContext:(NSOpenGLContext *)c sized:(NSSize)s;
-- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(NSSize)s;
+- (id) initWithContext:(NSOpenGLContext *)c sized:(VVSIZE)s;
+- (id) initWithContext:(NSOpenGLContext *)c sharedContext:(NSOpenGLContext *)sc sized:(VVSIZE)s;
+#else
+- (id) initWithSharegroup:(EAGLSharegroup *)g sized:(VVSIZE)s;
+- (id) initWithSharegroup:(EAGLSharegroup *)g;
+- (id) initWithContext:(EAGLContext *)c;
+- (id) initWithContext:(EAGLContext *)c sized:(VVSIZE)s;
+#endif
 
 - (void) generalInit;
 - (void) prepareToBeDeleted;
@@ -125,19 +153,26 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 - (void) _reshape;
 - (void) _renderCleanup;
 
+#if !TARGET_OS_IPHONE
 - (NSOpenGLContext *) sharedContext;
 - (NSOpenGLContext *) context;
 - (CGLContextObj) CGLContextObj;
 - (NSOpenGLPixelFormat *) customPixelFormat;
+# else
+- (EAGLSharegroup *) sharegroup;
+- (EAGLContext *) context;
+#endif
 - (CGColorSpaceRef) colorSpace;
 ///	Set the size at which this scene should render
-@property (assign,readwrite) NSSize size;
+@property (assign,readwrite) VVSIZE size;
 - (void) setFlipped:(BOOL)n;
 - (BOOL) flipped;
 
 - (void) setPerformClear:(BOOL)n;
+#if !TARGET_OS_IPHONE
 ///	Set the clear color from the passed NSColor
 - (void) setClearNSColor:(NSColor *)c;
+#endif
 ///	Set the clear color from the passed array of GLfloats
 - (void) setClearColor:(GLfloat *)c;
 ///	Set the clear color from the passed color values

@@ -2,7 +2,7 @@
 
 
 
-
+#if !TARGET_OS_IPHONE
 NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC)	{
 	NSInteger		returnMe;
 	NSAlert			*macroLocalAlert = [NSAlert alertWithError:[NSError
@@ -23,3 +23,5 @@ NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSStri
 	//NSLog(@"\t\treturning %ld",returnMe);
 	return returnMe;
 }
+#endif
+
