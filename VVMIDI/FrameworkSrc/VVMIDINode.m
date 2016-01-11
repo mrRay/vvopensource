@@ -89,6 +89,9 @@ double			_machTimeToNsFactor;
 		return nil;
 	}
 	
+	//	set the 'sender' flag
+	virtualSender = YES;
+	
 	//	load the properties for the endpoint
 	[self loadProperties];
 	
@@ -226,6 +229,11 @@ double			_machTimeToNsFactor;
 	if (name != nil)	{
 		[name release];
 		name = nil;
+	}
+	
+	if (virtualSender) {
+		MIDIEndpointDispose(endpointRef);
+		endpointRef = 0;
 	}
 	
 	if (sysexArray != nil)	{
