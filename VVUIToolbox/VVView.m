@@ -113,11 +113,12 @@
 	else if (_containerView != nil)
 		[_containerView removeVVSubview:self];
 	
+	deleted = YES;
+	
 	pthread_mutex_destroy(&spritesUpdateLock);
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
-	deleted = YES;
 }
 - (void) dealloc	{
 	if (!deleted)
@@ -137,6 +138,7 @@
 #else
 	VVRELEASE(trackingAreas);
 #endif
+	VVRELEASE(spriteManager);
 	[super dealloc];
 }
 
@@ -360,10 +362,16 @@
 	if ([e type] != NSScrollWheel)
 		NSLog(@"\t\terr: event wasn't of type NSScrollWheel in %s",__func__);
 	else	{
-		id		scrollView = [self enclosingScrollView];
-		if (_spriteGLViewSysVers >= 7)	{
-			if (scrollView != nil)
-				[scrollView scrollByAmount:VVMAKEPOINT([e scrollingDeltaX],[e scrollingDeltaY])];
+		if ([self isKindOfClass:[VVScrollView class]])
+			[(VVScrollView *)self scrollByAmount:VVMAKEPOINT([e scrollingDeltaX],[e scrollingDeltaY])];
+		else	{
+			if (_spriteGLViewSysVers >= 7)	{
+				id		scrollView = [self enclosingScrollView];
+				if (scrollView != nil)	{
+					[scrollView scrollByAmount:VVMAKEPOINT([e scrollingDeltaX],[e scrollingDeltaY])];
+					//[scrollView scrollWheel:e];
+				}
+			}
 		}
 	}
 }
@@ -1033,7 +1041,7 @@
 - (VVRECT) _visibleRect	{
 	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted || (_superview==nil && _containerView==nil))	{
-		NSLog(@"\t\terr: bailing, %s",__func__);
+		//NSLog(@"\t\terr: bailing, %s",__func__);
 		return VVZERORECT;
 	}
 	//	i need my superview's visible rect (in my superview's local coords)
@@ -1509,9 +1517,10 @@
 #endif
 	
 	pthread_mutex_lock(&spritesUpdateLock);
-	if (spritesNeedUpdate)
-		[self updateSprites];
+	BOOL		lSpritesNeedUpdate = spritesNeedUpdate;
 	pthread_mutex_unlock(&spritesUpdateLock);
+	if (lSpritesNeedUpdate)
+		[self updateSprites];
 	
 	//	configure glScissor so it's clipping to my visible rect (bail if i don't have a visible rect)
 	VVRECT			clipRect = [self visibleRect];
@@ -1738,9 +1747,10 @@
 - (void) finishedDrawing	{
 	
 }
-//	you MUST LOCK 'spritesUpdateLock' BEFORE CALLING THIS METHOD
 - (void) updateSprites	{
+	pthread_mutex_lock(&spritesUpdateLock);
 	spritesNeedUpdate = NO;
+	pthread_mutex_unlock(&spritesUpdateLock);
 }
 
 - (double) localToBackingBoundsMultiplier	{

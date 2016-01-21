@@ -26,6 +26,14 @@
 	//VVSprite		*vDownSprite;
 	VVSprite		*vScrollTrack;
 	VVSprite		*vScrollBar;
+	
+	int				vertsAroundEndCap;	//	the number of verts used to draw a single semicircle in the rounded ends of the scroll track/bar
+	int				scrollTrackVertCount;
+	int				scrollBarVertCount;
+	GLfloat			*hScrollTrackVerts;
+	GLfloat			*vScrollTrackVerts;
+	GLfloat			*hScrollBarVerts;
+	GLfloat			*vScrollBarVerts;
 }
 
 - (void) hSpriteAction:(VVSprite *)s;
@@ -45,3 +53,7 @@
 - (VVRECT) documentVisibleRect;
 
 @end
+
+
+
+

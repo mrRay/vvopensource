@@ -899,7 +899,7 @@ long			_spriteGLViewSysVers;
 	
 	//pthread_mutex_lock(&glLock);
 	if (pthread_mutex_trylock(&glLock) != 0)	{	//	returns 0 if successful- so if i can't get a gl lock, skip drawing!
-		NSLog(@"\t\terr: couldn't get GL lock, bailing %s",__func__);
+		//NSLog(@"\t\terr: couldn't get GL lock, bailing %s",__func__);
 		return;
 	}
 	
