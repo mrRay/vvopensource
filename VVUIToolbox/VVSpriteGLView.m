@@ -914,6 +914,13 @@ long			_spriteGLViewSysVers;
 	NSOpenGLContext		*context = [self openGLContext];
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 	
+	//	if my GL context doesn't have a view, bail- if you try to draw while this context doesn't have an attached framebuffer, gl will error and bad things can happen
+	if ([[self openGLContext] view] == nil)	{
+		initialized = NO;
+		pthread_mutex_unlock(&glLock);
+		return;
+	}
+	
 	//	lock around the fence, determine whether i should proceed with the render or not
 	OSSpinLockLock(&fenceLock);
 	BOOL		proceedWithRender = NO;
