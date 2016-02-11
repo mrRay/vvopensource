@@ -9,7 +9,7 @@
 #define PI (3.1415926535897932384626433832795)
 
 //	this function evaluates the x,y coords of points along the circumference of a circle.  starts evaluating at 'startAngleRadians', stops evaluation at 'endAngleRadians'.  'centerPoint' is the center of the circle, 'radius' defines its circumference, 'vertCount' is the number of vertices to evaluate.  the results are written into 'destBuffer' as a series of three GLfloat values per vertex.  returns a ptr to the memory in 'wPtr' after these additions.
-GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians, NSPoint centerPoint, double radius, int vertCount, GLfloat *destBuffer);
+GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians, VVPOINT centerPoint, double radius, int vertCount, GLfloat *destBuffer);
 
 
 
@@ -156,19 +156,19 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 		
 		//	populate the scroll track vertices- this is a "line loop", so we just run around the outside edge
 		{
-			NSRect		tmpRect = [hScrollTrack rect];
+			VVRECT		tmpRect = [hScrollTrack rect];
 			tmpRect = VVINSETRECT(tmpRect,1.*LTBBM,1.*LTBBM);
-			NSPoint		centerPoint;
+			VVPOINT		centerPoint;
 			GLfloat		*wPtr = hScrollTrackVerts;
 			double		r = tmpRect.size.height/2.;
 			//	run from -π/2 to π/2 to draw the right semicircle
-			centerPoint = NSMakePoint(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
+			centerPoint = VVMAKEPOINT(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
 			wPtr = VVEvaluateCircleVerts(PI/2., 3.*PI/2., centerPoint, r, vertsAroundEndCap, wPtr);
 			//	run from π/2 to (3π)/2 to draw the left semicircle
-			centerPoint = NSMakePoint(VVMINX(tmpRect)+(tmpRect.size.height/2.), VVMIDY(tmpRect));
+			centerPoint = VVMAKEPOINT(VVMINX(tmpRect)+(tmpRect.size.height/2.), VVMIDY(tmpRect));
 			wPtr = VVEvaluateCircleVerts(-1.*PI/2., PI/2., centerPoint, r, vertsAroundEndCap, wPtr);
 			//	...i need to "close the loop" with one more vertex!
-			centerPoint = NSMakePoint(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
+			centerPoint = VVMAKEPOINT(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
 			*(wPtr+0) = (r)*cos(PI/2.) + centerPoint.x;
 			*(wPtr+1) = (r)*sin(PI/2.) + centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -176,14 +176,14 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 		//	populate the scroll bar vertices- this is a "triangle fan" + "triangle fan" + "triangle strip"
 		{
 			
-			NSRect		tmpRect = [hScrollBar rect];
+			VVRECT		tmpRect = [hScrollBar rect];
 			//	inset the width of 'tmpRect' a bit- we want the polys we fill in to appear as if they were "just inside" the stroke around the track
 			tmpRect = VVINSETRECT(tmpRect,3.*LTBBM,3.*LTBBM);
-			NSPoint		centerPoint;
+			VVPOINT		centerPoint;
 			GLfloat		*wPtr = hScrollBarVerts;
 			double		r = tmpRect.size.height/2.;
 			//	first add centerpoint to fan
-			centerPoint = NSMakePoint(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
+			centerPoint = VVMAKEPOINT(VVMAXX(tmpRect)-(tmpRect.size.height/2.), VVMIDY(tmpRect));
 			*(wPtr+0) = centerPoint.x;
 			*(wPtr+1) = centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -192,7 +192,7 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 			wPtr = VVEvaluateCircleVerts(PI/2., 3.*PI/2., centerPoint, r, vertsAroundEndCap, wPtr);
 			
 			//	first add centerpoint to fan
-			centerPoint = NSMakePoint(VVMINX(tmpRect)+(tmpRect.size.height/2.), VVMIDY(tmpRect));
+			centerPoint = VVMAKEPOINT(VVMINX(tmpRect)+(tmpRect.size.height/2.), VVMIDY(tmpRect));
 			*(wPtr+0) = centerPoint.x;
 			*(wPtr+1) = centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -271,19 +271,19 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 		
 		//	populate the scroll track vertices- this is a "line loop", so we just run around the outside edge
 		{
-			NSRect		tmpRect = [vScrollTrack rect];
+			VVRECT		tmpRect = [vScrollTrack rect];
 			tmpRect = VVINSETRECT(tmpRect,1.*LTBBM,1.*LTBBM);
-			NSPoint		centerPoint;
+			VVPOINT		centerPoint;
 			GLfloat		*wPtr = vScrollTrackVerts;
 			double		r = tmpRect.size.width/2.;
 			//	run from 0 to π to drop the top semicircle
-			centerPoint = NSMakePoint(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
+			centerPoint = VVMAKEPOINT(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
 			wPtr = VVEvaluateCircleVerts(0., PI, centerPoint, r, vertsAroundEndCap, wPtr);
 			//	run from π to 2π to draw the bottom semicircle
-			centerPoint = NSMakePoint(VVMIDX(tmpRect), VVMAXY(tmpRect)-(tmpRect.size.width/2.));
+			centerPoint = VVMAKEPOINT(VVMIDX(tmpRect), VVMAXY(tmpRect)-(tmpRect.size.width/2.));
 			wPtr = VVEvaluateCircleVerts(PI, 2.*PI, centerPoint, r, vertsAroundEndCap, wPtr);
 			//	...i need to "close the loop" with one more vertex!
-			centerPoint = NSMakePoint(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
+			centerPoint = VVMAKEPOINT(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
 			*(wPtr+0) = (r)*cos(0.) + centerPoint.x;
 			*(wPtr+1) = (r)*sin(0.) + centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -291,14 +291,14 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 		//	populate the scroll bar vertices- this is a "triangle fan" + "triangle fan" + "triangle strip"
 		{
 			
-			NSRect		tmpRect = [vScrollBar rect];
+			VVRECT		tmpRect = [vScrollBar rect];
 			//	inset the width of 'tmpRect' a bit- we want the polys we fill in to appear as if they were "just inside" the stroke around the track
 			tmpRect = VVINSETRECT(tmpRect,3.*LTBBM,3.*LTBBM);
-			NSPoint		centerPoint;
+			VVPOINT		centerPoint;
 			GLfloat		*wPtr = vScrollBarVerts;
 			double		r = tmpRect.size.width/2.;
 			//	first add centerpoint to fan
-			centerPoint = NSMakePoint(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
+			centerPoint = VVMAKEPOINT(VVMIDX(tmpRect), VVMINY(tmpRect)+(tmpRect.size.width/2.));
 			*(wPtr+0) = centerPoint.x;
 			*(wPtr+1) = centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -307,7 +307,7 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 			wPtr = VVEvaluateCircleVerts(0., PI, centerPoint, r, vertsAroundEndCap, wPtr);
 			
 			//	first add centerpoint to fan
-			centerPoint = NSMakePoint(VVMIDX(tmpRect), VVMAXY(tmpRect)-(tmpRect.size.width/2.));
+			centerPoint = VVMAKEPOINT(VVMIDX(tmpRect), VVMAXY(tmpRect)-(tmpRect.size.width/2.));
 			*(wPtr+0) = centerPoint.x;
 			*(wPtr+1) = centerPoint.y;
 			*(wPtr+2) = 0.;
@@ -687,7 +687,7 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 
 
 
-GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians, NSPoint centerPoint, double radius, int vertCount, GLfloat *destBuffer)
+GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians, VVPOINT centerPoint, double radius, int vertCount, GLfloat *destBuffer)
 {
 	if (destBuffer == NULL)
 		return NULL;
