@@ -1,6 +1,7 @@
 /*{
 	"DESCRIPTION": "",
 	"CREDIT": "narf",
+	"ISFVSN": "2",
 	"CATEGORIES": [
 		"Test Effect"
 	],
@@ -19,5 +20,6 @@
 void main(void)
 {
 	//gl_FragColor = vec4(vv_FragNormCoord.x, vv_FragNormCoord.y, mod(TIME,5.0)/5.0, 1.0);
-	gl_FragColor = vec4(level, level, level, 1.0) * vec4(vv_FragNormCoord.x, vv_FragNormCoord.y, 0.0, 1.0);
+	//gl_FragColor = vec4(level, level, level, 1.0) * vec4(vv_FragNormCoord.x, vv_FragNormCoord.y, 0.0, 1.0);
+	gl_FragColor = vec4(level, level, level, 1.0) * vec4(isf_FragNormCoord.x, isf_FragNormCoord.y, 0.0, 1.0);
 }

@@ -33,6 +33,12 @@
 		case ISFAT_Cube:
 			typeString = @"Cube";
 			break;
+		case ISFAT_Audio:
+			typeString = @"Audio";
+			break;
+		case ISFAT_AudioFFT:
+			typeString = @"AudioFFT";
+			break;
 	}
 	return [NSString stringWithFormat:@"<ISFAttrib %@ named %@>",typeString,attribName];
 }
@@ -112,6 +118,12 @@
 				break;
 			case ISFAT_Cube:
 				currentVal.imageVal = def.imageVal;
+				break;
+			case ISFAT_Audio:
+				currentVal.audioVal = def.audioVal;
+				break;
+			case ISFAT_AudioFFT:
+				currentVal.audioVal = def.audioVal;
 				break;
 		}
 		isFilterInputImage = NO;
@@ -195,6 +207,12 @@
 			break;
 		case ISFAT_Cube:
 			currentVal.imageVal = n.imageVal;
+			break;
+		case ISFAT_Audio:
+			currentVal.audioVal = n.audioVal;
+			break;
+		case ISFAT_AudioFFT:
+			currentVal.audioVal = n.audioVal;
 			break;
 	}
 }

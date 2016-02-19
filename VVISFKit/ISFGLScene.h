@@ -46,6 +46,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	
 	MutLockArray		*inputs;	//	array of ISFAttrib instances for the various inputs
 	MutLockArray		*imageInputs;	//	array of ISFAttrib instances for the image inputs (the image inputs are stored in two arrays).
+	MutLockArray		*audioInputs;	//	array of ISFAttrib instances for the audio inputs
 	MutLockArray		*imageImports;	//	array of ISFAttrib instances that describe imported images. 'attribName' is the name of the sampler, 'attribDescription' is the path to the file.
 	
 	VVSIZE				renderSize;	//	the last size at which i was requested to render a buffer (used to produce vals from normalized point inputs that need a render size to be used)
@@ -84,8 +85,10 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 - (void) setBuffer:(VVBuffer *)b forInputImageKey:(NSString *)k;
 ///	convenience method- if the ISF file is an image filter (which has an explicitly-named image input), this applies the passed buffer to the filter input
 - (void) setFilterInputImageBuffer:(VVBuffer *)b;
+- (void) setBuffer:(VVBuffer *)b forInputAudioKey:(NSString *)k;
 ///	retrieves the current buffer being used at the passed key
 - (VVBuffer *) bufferForInputImageKey:(NSString *)k;
+- (VVBuffer *) bufferForInputAudioKey:(NSString *)k;
 - (void) purgeInputGLTextures;
 ///	applies the passed value to the input with the passed key
 /**
@@ -148,9 +151,11 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 @property (readonly) MutLockArray *inputs;
 ///	returns a MutLockArray (from VVBasics) of all the image-type (ISFAT_Image) ISFAttrib instances, one for each input in the currently loaded ISF file
 @property (readonly) MutLockArray *imageInputs;
+@property (readonly) MutLockArray *audioInputs;
 @property (readonly) VVSIZE renderSize;
 @property (readonly) int passCount;
 @property (readonly) int imageInputsCount;
+@property (readonly) int audioInputsCount;
 @property (readonly) NSString *jsonString;
 @property (readonly) NSString *vertShaderSource;
 @property (readonly) NSString *fragShaderSource;

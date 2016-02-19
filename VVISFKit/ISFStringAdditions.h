@@ -14,5 +14,7 @@
 - (NSRange) lexFunctionCallInRange:(NSRange)funcNameRange addVariablesToArray:(NSMutableArray *)varArray;
 - (NSUInteger) numberOfLines;
 - (id) objectFromJSONString;
+- (id) mutableObjectFromJSONString;
+- (NSNumber *) parseAsBoolean;
 
 @end

@@ -95,6 +95,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	categoryNames = [MUTARRAY retain];
 	inputs = [[MutLockArray alloc] init];
 	imageInputs = [[MutLockArray alloc] init];
+	audioInputs = [[MutLockArray alloc] init];
 	imageImports = [[MutLockArray alloc] init];
 	renderSize = VVMAKESIZE(1,1);
 	swatch = [[VVStopwatch alloc] init];
@@ -126,6 +127,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(categoryNames);
 	VVRELEASE(inputs);
 	VVRELEASE(imageInputs);
+	VVRELEASE(audioInputs);
 	[self _clearImageImports];
 	VVRELEASE(imageImports);
 	VVRELEASE(swatch);
@@ -167,6 +169,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	OSSpinLockUnlock(&propertyLock);
 	[inputs lockRemoveAllObjects];
 	[imageInputs lockRemoveAllObjects];
+	[audioInputs lockRemoveAllObjects];
 	[self _clearImageImports];
 	bufferRequiresEval = NO;
 	[persistentBufferArray lockRemoveAllObjects];
@@ -308,12 +311,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							[newBuffer setName:bufferName];
 							NSString				*tmpString = nil;
 							tmpString = [bufferDescription objectForKey:@"WIDTH"];
-							if (tmpString != nil)	{
+							if (tmpString != nil && [tmpString isKindOfClass:[NSString class]])	{
 								[newBuffer setTargetWidthString:tmpString];
 								bufferRequiresEval = YES;
 							}
 							tmpString = [bufferDescription objectForKey:@"HEIGHT"];
-							if (tmpString != nil)	{
+							if (tmpString != nil && [tmpString isKindOfClass:[NSString class]])	{
 								[newBuffer setTargetHeightString:tmpString];
 								bufferRequiresEval = YES;
 							}
@@ -582,11 +585,31 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							[newPass setTargetName:tmpBufferName];
 							//	find the target buffer for this pass- first check the persistent buffers
 							ISFTargetBuffer			*targetBuffer = [self findPersistentBufferNamed:tmpBufferName];
-							//	if i couldn't find a persistent buffer, create one, add it as a temp buffer
+							//	if i couldn't find a persistent buffer...
 							if (targetBuffer == nil)	{
+								//	create a buffer, set its name...
 								targetBuffer = [ISFTargetBuffer create];
 								[targetBuffer setName:tmpBufferName];
-								[tempBufferArray lockAddObject:targetBuffer];
+								//	check for a PERSISTENT flag as per the ISF 2.0 spec
+								id					persistentObj = [rawPassDict objectForKey:@"PERSISTENT"];
+								NSNumber			*persistentNum = nil;
+								if ([persistentObj isKindOfClass:[NSString class]])	{
+									persistentNum = [(NSString *)persistentObj parseAsBoolean];
+									if (persistentNum == nil)
+										persistentNum = [(NSString *)persistentObj numberByEvaluatingString];
+								}
+								else if ([persistentObj isKindOfClass:[NSNumber class]])
+									persistentNum = [[persistentObj retain] autorelease];
+								//	if there's a valid "PERSISTENT" flag in this pass dict and it's indicating a positive
+								if (persistentNum!=nil && [persistentNum intValue]>0)	{
+									//	add the target buffer as a persistent buffer
+									[persistentBufferArray lockAddObject:targetBuffer];
+								}
+								//	else there's no "PERSISTENT" flag in this pass dict or it's indicating a negative
+								else	{
+									//	add the target buffer as a temp buffer
+									[tempBufferArray lockAddObject:targetBuffer];
+								}
 							}
 							//	update the width/height stuff for the target buffer
 							NSString			*tmpString = nil;
@@ -630,6 +653,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				NSArray				*labelArray = nil;
 				NSArray				*valArray = nil;
 				BOOL				isImageInput = NO;
+				BOOL				isAudioInput = NO;
 				BOOL				isFilterImageInput = NO;
 				
 				for (NSDictionary *inputDict in inputsArray)	{
@@ -650,6 +674,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								labelString = nil;
 							//NSLog(@"\t\tattrib key is %@, typeString is %@",inputKey,typeString);
 							isImageInput = NO;
+							isAudioInput = NO;
 							isFilterImageInput = NO;
 							
 							//	if the typeString is nil (or was set to nil because it wasn't a string), the attrib simply shouldn't exist
@@ -667,6 +692,22 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									isFilterImageInput = YES;
 									fileFunctionality = ISFF_Filter;
 								}
+							}
+							else if ([typeString isEqualToString:@"audio"])	{
+								newAttribType = ISFAT_Audio;
+								minVal.audioVal = 0;
+								maxVal.audioVal = 0;
+								defVal.audioVal = 0;
+								idenVal.audioVal = 0;
+								isAudioInput = YES;
+							}
+							else if ([typeString isEqualToString:@"audioFFT"])	{
+								newAttribType = ISFAT_AudioFFT;
+								minVal.audioVal = 0;
+								maxVal.audioVal = 0;
+								defVal.audioVal = 0;
+								idenVal.audioVal = 0;
+								isAudioInput = YES;
 							}
 							else if ([typeString isEqualToString:@"cube"])	{
 								newAttribType = ISFAT_Cube;
@@ -848,6 +889,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									[inputs lockAddObject:newAttrib];
 									if (isImageInput)
 										[imageInputs lockAddObject:newAttrib];
+									if (isAudioInput)
+										[audioInputs lockAddObject:newAttrib];
 								}
 							//}
 							
@@ -1131,6 +1174,15 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				[d setObject:imgInputBuffer forKey:NUMINT(100+i)];
 		}
 		[imageInputs unlock];
+		//	add the buffers for the varoius audio inputs at keys going from 200-299
+		[audioInputs rdlock];
+		for (int i=0; i<[audioInputs count]; ++i)	{
+			ISFAttrib		*attrib = [audioInputs objectAtIndex:i];
+			VVBuffer		*audioInputBuffer = [attrib userInfo];
+			if (audioInputBuffer!=nil)
+				[d setObject:audioInputBuffer forKey:NUMINT(200+i)];
+		}
+		[audioInputs unlock];
 	}
 	
 	
@@ -1212,6 +1264,21 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		[modSrcString appendString:fragShaderSource];
 		OSSpinLockUnlock(&srcLock);
 		
+		
+		//	find-and-replace vv_FragNormCoord (v1 of the ISF spec) with isf_FragNormCoord (v2 of the ISF spec)
+		searchString = @"vv_FragNormCoord";
+		tmpRange = NSMakeRange(0,[modSrcString length]);
+		do	{
+			tmpRange = [modSrcString rangeOfString:searchString options:NSLiteralSearch range:tmpRange];
+			if (tmpRange.length!=0)	{
+				NSString		*newString = @"isf_FragNormCoord";
+				[modSrcString replaceCharactersInRange:tmpRange withString:newString];
+				tmpRange.location = tmpRange.location + [newString length];
+				tmpRange.length = [modSrcString length] - tmpRange.location;
+			}
+		} while (tmpRange.length!=0);
+		
+		
 		//	now find-and-replace IMGPIXEL
 		//NSLog(@"**************************************");
 		//NSLog(@"\t\tmodSrcString is %@",modSrcString);
@@ -1235,6 +1302,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
@@ -1287,6 +1356,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
@@ -1342,6 +1413,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						[imgThisPixelSamplerNames addObject:samplerName];
 					
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						newFuncString = VVFMTSTRING(@"texture2DRect(%@, _%@_texCoord)",samplerName,samplerName);
@@ -1387,6 +1460,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						[imgThisNormPixelSamplerNames addObject:samplerName];
 					
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						newFuncString = VVFMTSTRING(@"texture2DRect(%@, _%@_normTexCoord)",samplerName,samplerName);
@@ -1489,6 +1564,34 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		[modSrcString appendString:vertShaderSource];
 		OSSpinLockUnlock(&srcLock);
 		
+		
+		//	find-and-replace vv_FragNormCoord (v1 of the ISF spec) with isf_FragNormCoord (v2 of the ISF spec)
+		searchString = @"vv_FragNormCoord";
+		tmpRange = NSMakeRange(0,[modSrcString length]);
+		do	{
+			tmpRange = [modSrcString rangeOfString:searchString options:NSLiteralSearch range:tmpRange];
+			if (tmpRange.length!=0)	{
+				NSString		*newString = @"isf_FragNormCoord";
+				[modSrcString replaceCharactersInRange:tmpRange withString:newString];
+				tmpRange.location = tmpRange.location + [newString length];
+				tmpRange.length = [modSrcString length] - tmpRange.location;
+			}
+		} while (tmpRange.length!=0);
+		
+		//	find-and-replace vv_vertShaderInit (v1 of the ISF spec) with isf_vertShaderInit (v2 of the ISF spec)
+		searchString = @"vv_vertShaderInit";
+		tmpRange = NSMakeRange(0,[modSrcString length]);
+		do	{
+			tmpRange = [modSrcString rangeOfString:searchString options:NSLiteralSearch range:tmpRange];
+			if (tmpRange.length!=0)	{
+				NSString		*newString = @"isf_vertShaderInit";
+				[modSrcString replaceCharactersInRange:tmpRange withString:newString];
+				tmpRange.location = tmpRange.location + [newString length];
+				tmpRange.length = [modSrcString length] - tmpRange.location;
+			}
+		} while (tmpRange.length!=0);
+		
+		
 		//	now find-and-replace IMGPIXEL
 		//NSLog(@"**************************************");
 		//NSLog(@"\t\tmodSrcString is %@",modSrcString);
@@ -1512,6 +1615,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYPIXEL(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
@@ -1564,6 +1669,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
 					NSString		*samplerCoord = [varArray objectAtIndex:1];
 					imgBuffer = [self bufferForInputImageKey:samplerName];
+					if (imgBuffer == nil)
+						imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 					if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
 						//newFuncString = VVFMTSTRING(@"VVSAMPLER_2DRECTBYNORM(%@, _%@_imgRect, _%@_imgSize, _%@_flip, %@)",samplerName,samplerName,samplerName,samplerName,samplerCoord);
@@ -1597,6 +1704,31 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			}
 		} while (tmpRange.length!=0);
 		
+		searchString = @"IMG_SIZE";
+		imgBuffer = nil;
+		tmpRange = NSMakeRange(0,[modSrcString length]);
+		do	{
+			tmpRange = [modSrcString rangeOfString:searchString options:NSLiteralSearch range:tmpRange];
+			if (tmpRange.length!=0)	{
+				//requiresMacroFunctions = YES;
+				NSMutableArray		*varArray = MUTARRAY;
+				NSRange				fullFuncRangeToReplace = [(NSString *)modSrcString lexFunctionCallInRange:tmpRange addVariablesToArray:varArray];
+				NSUInteger			varArrayCount = [varArray count];
+				if (varArrayCount!=1)	{
+					NSLog(@"\t\tERR: variable count wrong searching for %@: %@",searchString,varArray);
+					break;
+				}
+				else	{
+					NSString		*newFuncString = nil;
+					NSString		*samplerName = [varArray objectAtIndex:0];
+					newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
+					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
+					tmpRange.length = [modSrcString length] - tmpRange.location;
+				}
+			}
+		} while (tmpRange.length!=0);
+		
 		//	if the frag shader requires macro functions, add them now that i'm done declaring the variables
 		if (requires2DMacro)
 			[newVertShaderSrc appendString:_ISFMacro2DString];
@@ -1610,32 +1742,34 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//	add the shader source that has been find-and-replaced
 		[newVertShaderSrc appendString:modSrcString];
 		
-		//	add the vv_vertShaderInit() method to the vertex shader
-		[newVertShaderSrc appendString:@"\nvoid vv_vertShaderInit(void)\t{"];
+		//	add the isf_vertShaderInit() method to the vertex shader
+		[newVertShaderSrc appendString:@"\nvoid isf_vertShaderInit(void)\t{"];
 		[newVertShaderSrc appendString:_ISFVertInitFunc];
 		//	run through the IMG_THIS_PIXEL sampler names, populating the varying vec2 variables i declared
 		if (imgThisPixelSamplerNames != nil)	{
 			for (NSString *samplerName in imgThisPixelSamplerNames)	{
-				[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_texCoord = (_%@_flip) ? vec2(((vv_fragCoord.x/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-(vv_fragCoord.y/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2(((vv_fragCoord.x/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (vv_fragCoord.y/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
+				[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_texCoord = (_%@_flip) ? vec2(((isf_fragCoord.x/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-(isf_fragCoord.y/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2(((isf_fragCoord.x/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (isf_fragCoord.y/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
 			}
 		}
 		//	run through the IMG_THIS_NORM_PIXEL sampler names, populating the varying vec2 variables i declared
 		if (imgThisNormPixelSamplerNames != nil)	{
 			for (NSString *samplerName in imgThisNormPixelSamplerNames)	{
 				imgBuffer = [self bufferForInputImageKey:samplerName];
+				if (imgBuffer == nil)
+					imgBuffer = [self bufferForInputAudioKey:samplerName];
 #if !TARGET_OS_IPHONE
 				if (imgBuffer==nil || [imgBuffer target]==GL_TEXTURE_RECTANGLE_EXT)	{
-					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((vv_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((vv_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((vv_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((vv_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
+					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((isf_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((isf_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((isf_FragNormCoord.x*_%@_imgRect.z)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((isf_FragNormCoord.y*_%@_imgRect.w)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
 				}
 				else	{
 #endif
-					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((vv_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((vv_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((vv_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((vv_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
+					[newVertShaderSrc appendString:VVFMTSTRING(@"\t_%@_normTexCoord = (_%@_flip) ? vec2((((isf_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), (_%@_imgRect.w-((isf_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y)) : vec2((((isf_FragNormCoord.x*_%@_imgSize.x)/_%@_imgSize.x*_%@_imgRect.z)+_%@_imgRect.x), ((isf_FragNormCoord.y*_%@_imgSize.y)/_%@_imgSize.y*_%@_imgRect.w)+_%@_imgRect.y);\n",samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName,samplerName)];
 #if !TARGET_OS_IPHONE
 				}
 #endif
 			}
 		}
-		//	...this finishes adding the vv_vertShaderInit() method!
+		//	...this finishes adding the isf_vertShaderInit() method!
 		[newVertShaderSrc appendString:@"}\n"];
 		
 		//	if there are any "#version" tags in the shaders, see that they are preserved and moved to the beginning!
@@ -1711,6 +1845,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			case ISFAT_Color:
 				[varDeclarations appendString:VVFMTSTRING(@"uniform vec4\t\t%@;\n",attribName)];
 				break;
+			case ISFAT_Audio:
+			case ISFAT_AudioFFT:
 			case ISFAT_Image:	//	most of the voodoo happens here
 				//	make a sampler of the appropriate type for this input
 				attribBuffer = [attrib userInfo];
@@ -1808,10 +1944,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[varDeclarations appendString:@"uniform vec2\t\tRENDERSIZE;\n"];
 
 	//	add the coord vars + time var
-	//[varDeclarations appendString:@"varying vec2\t\tvv_fragCoord;\n"];
-	[varDeclarations appendString:@"varying vec2\t\tvv_FragNormCoord;\n"];
-	[varDeclarations appendString:@"varying vec3\t\tvv_VertNorm;\n"];
-	[varDeclarations appendString:@"varying vec3\t\tvv_VertPos;\n"];
+	//[varDeclarations appendString:@"varying vec2\t\tisf_fragCoord;\n"];
+	[varDeclarations appendString:@"varying vec2\t\tisf_FragNormCoord;\n"];
+	[varDeclarations appendString:@"varying vec3\t\tisf_VertNorm;\n"];
+	[varDeclarations appendString:@"varying vec3\t\tisf_VertPos;\n"];
 	[varDeclarations appendString:@"uniform float\t\tTIME;\n"];
 	
 	return varDeclarations;
@@ -1845,6 +1981,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			case ISFAT_Image:
 				break;
 			case ISFAT_Cube:
+				break;
+			case ISFAT_Audio:
+				break;
+			case ISFAT_AudioFFT:
 				break;
 		}
 	}
@@ -1896,6 +2036,25 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		}
 	}
 	[imageInputs unlock];
+	
+	[audioInputs rdlock];
+	for (ISFAttrib *attrib in [audioInputs array])	{
+		ISFAttribValType		attribType = [attrib attribType];
+		if (attribType==ISFAT_Audio || attribType==ISFAT_AudioFFT)	{
+#if !TARGET_OS_IPHONE
+			VVBuffer		*tmpBuffer = [attrib userInfo];
+			//NSLog(@"\t\tattrib is %@, tmpBuffer is %@",attrib,tmpBuffer);
+			GLenum			tmpTarget = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
+			if (tmpTarget==GL_TEXTURE_RECTANGLE_EXT)
+				[tmpMutString appendString:@"R"];
+			else
+				[tmpMutString appendString:@"2"];
+#else
+			[tmpMutString appendString:@"2"];
+#endif
+		}
+	}
+	[audioInputs unlock];
 	
 	[imageImports rdlock];
 	for (ISFAttrib *attrib in [imageImports array])	{
@@ -2058,6 +2217,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					glUniform4f(samplerLoc, attribVal.colorVal[0], attribVal.colorVal[1], attribVal.colorVal[2], attribVal.colorVal[3]);
 				break;
 			case ISFAT_Image:
+			case ISFAT_Audio:
+			case ISFAT_AudioFFT:
 				if (findNewUniforms)	{
 					attribNameC = [[attrib attribName] UTF8String];
 					samplerLoc = (program<=0) ? -1 : glGetUniformLocation(program,attribNameC);
@@ -2448,6 +2609,19 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 	[imageInputs unlock];
 }
+- (void) setBuffer:(VVBuffer *)b forInputAudioKey:(NSString *)k	{
+	//NSLog(@"%s ... %@, %@",__func__,b,k);
+	if (deleted || b==nil || k==nil)
+		return;
+	[audioInputs rdlock];
+	for (ISFAttrib *attrib in [audioInputs array])	{
+		if ([[attrib attribName] isEqualToString:k])	{
+			[attrib setUserInfo:b];
+			break;
+		}
+	}
+	[audioInputs unlock];
+}
 - (VVBuffer *) bufferForInputImageKey:(NSString *)k	{
 	if (deleted || k==nil)
 		return nil;
@@ -2504,10 +2678,27 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 	return returnMe;
 }
+- (VVBuffer *) bufferForInputAudioKey:(NSString *)k	{
+	if (deleted || k==nil)
+		return nil;
+	VVBuffer		*returnMe = nil;
+	NSString		*attribName = nil;
+	//	try to find the buffer in the image inputs
+	[audioInputs rdlock];
+	for (ISFAttrib *attrib in [audioInputs array])	{
+		attribName = [attrib attribName];
+		if (attribName!=nil && [attribName isEqualToString:k])	{
+			returnMe = [attrib userInfo];
+			break;
+		}
+	}
+	[audioInputs unlock];
+	return returnMe;
+}
 - (void) purgeInputGLTextures	{
 	if (deleted)
 		return;
-	//	try to find the buffer in the image inputs
+	
 	[imageInputs rdlock];
 	for (ISFAttrib *attrib in [imageInputs array])	{
 		ISFAttribValType	type = [attrib attribType];
@@ -2515,6 +2706,14 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			[attrib setUserInfo:nil];
 	}
 	[imageInputs unlock];
+	
+	[audioInputs rdlock];
+	for (ISFAttrib *attrib in [audioInputs array])	{
+		ISFAttribValType	type = [attrib attribType];
+		if (type==ISFAT_Audio || type==ISFAT_AudioFFT)
+			[attrib setUserInfo:nil];
+	}
+	[audioInputs unlock];
 }
 - (void) setValue:(ISFAttribVal)n forInputKey:(NSString *)k	{
 	if (deleted || k==nil)
@@ -2581,6 +2780,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					[attrib setUserInfo:n];
 					break;
 				case ISFAT_Cube:
+					[attrib setUserInfo:n];
+					break;
+				case ISFAT_Audio:
+					[attrib setUserInfo:n];
+					break;
+				case ISFAT_AudioFFT:
 					[attrib setUserInfo:n];
 					break;
 			}
@@ -2693,6 +2898,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 @synthesize inputs;
 @synthesize imageInputs;
+@synthesize audioInputs;
 @synthesize renderSize;
 - (int) passCount	{
 	if (deleted || passes==nil)
@@ -2703,6 +2909,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (deleted || imageInputs==nil)
 		return 0;
 	return (int)[imageInputs lockCount];
+}
+- (int) audioInputsCount	{
+	if (deleted || audioInputs==nil)
+		return 0;
+	return (int)[audioInputs lockCount];
 }
 - (NSString *) jsonString	{
 	if (deleted)

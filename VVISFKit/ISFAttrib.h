@@ -23,7 +23,9 @@ typedef NS_ENUM(NSInteger, ISFAttribValType)	{
 	ISFAT_Point2D,	//!<	sends a 2 element vector
 	ISFAT_Color,	//!<	sends a 4 element vector representing an RGBA color
 	ISFAT_Image,	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
-	ISFAT_Cube 		//!<	a long- the texture number (like GL_TEXTURE0) of a cubemap texture to pass to the shader
+	ISFAT_Cube,		//!<	a long- the texture number (like GL_TEXTURE0) of a cubemap texture to pass to the shader
+	ISFAT_Audio,	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
+	ISFAT_AudioFFT	//!<	a long- the texture number (like GL_TEXTURE0) to pass to the shader
 };
 ///	union describing a value for one of the listed attribute types
 /**
@@ -37,6 +39,7 @@ typedef union ISFAttribVal	{
 	GLfloat			point2DVal[2];	//!<	array of two floats, used if this is a point2D attribute
 	GLfloat			colorVal[4];	//!<	array of four floats, used if this is a color attribute
 	long			imageVal;	//!<	not really used- you never pass images as values (images are passed as VVBuffers, as there are resources that need to be retained and can't be passed strictly "by value").  included for symmetry.
+	long			audioVal;	//!<	not really used- you never pass images as values (images are passed as VVBuffers, as there are resources that need to be retained and can't be passed strictly "by value").  included for symmetry.
 } ISFAttribVal;
 
 

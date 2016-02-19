@@ -83,6 +83,29 @@
 		NSLog(@"\t\terr: %s, %@. %@",__func__,nsErr,self);
 	return returnMe;
 }
+- (id) mutableObjectFromJSONString	{
+	//NSLog(@"%s",__func__);
+	NSData			*tmpData = [self dataUsingEncoding:NSUTF8StringEncoding];
+	NSError			*nsErr = nil;
+	id				returnMe = (tmpData==nil) ? nil : [NSJSONSerialization JSONObjectWithData:tmpData options:NSJSONReadingAllowFragments|NSJSONReadingMutableContainers error:&nsErr];
+	if (returnMe == nil)
+		NSLog(@"\t\terr: %s, %@. %@",__func__,nsErr,self);
+	return returnMe;
+}
+- (NSNumber *) parseAsBoolean	{
+	NSNumber		*returnMe = nil;
+	if (self!=nil && [self isKindOfClass:[NSString class]])	{
+		if ([self localizedCaseInsensitiveCompare:@"YES"]==NSOrderedSame	||
+		[self localizedCaseInsensitiveCompare:@"TRUE"]==NSOrderedSame)	{
+			returnMe = [NSNumber numberWithBool:YES];
+		}
+		else if ([self localizedCaseInsensitiveCompare:@"NO"]==NSOrderedSame	||
+		[self localizedCaseInsensitiveCompare:@"FALSE"]==NSOrderedSame)	{
+			returnMe = [NSNumber numberWithBool:NO];
+		}
+	}
+	return returnMe;
+}
 
 @end
 
