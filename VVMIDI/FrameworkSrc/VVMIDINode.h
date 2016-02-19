@@ -7,7 +7,7 @@
 
 
 
-extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, CCs 32-64 are the LSBs of 14-bit values (CCs 0-31 are the MSBs).  some controllers/apps don't support the spec properly, and expect these CCs to be 64 different (low-res) values.  set this BOOL to NO if you want this fmwk to treat CCs 0-64 as 7-bit vals, in violation of the spec!
+extern BOOL			_VVMIDIFourteenBitCCs;	//	NO by default. according to MIDI spec, CCs 32-63 are the LSBs of 14-bit values (CCs 0-31 are the MSBs).  some controllers/apps don't support the spec properly, and expect these CCs to be 64 different (low-res) values.  set this BOOL to NO if you want this fmwk to treat CCs 0-63 as 7-bit vals, in violation of the spec.  note that if this BOOL is YES, CCs 0-31 will be treated as 7-bit values until the corresponding value from CC32-63 is received, at which point it will automatically switch to 14-bit.
 extern double		_machTimeToNsFactor;
 
 
