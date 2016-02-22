@@ -210,7 +210,10 @@
 		*((long *)(b+writeOffset)) = 1;
 	}
 	else	{
+		//	the interval since ref date gives us the interval since 1/1/2001
 		NSTimeInterval		interval = [timeTag timeIntervalSinceReferenceDate];
+		//	...the "reference date" in OSC is 1/1/1900, so we have to add one century plus one year's worth of seconds to this...
+		interval += 3187296000.;
 		long		time_s = NSSwapHostLongToBig(floor(interval));
 		long		time_us = NSSwapHostLongToBig((long)(floor((double)1000000.0 * ((double)(interval - (double)time_s)))));
 		writeOffset = 8;
