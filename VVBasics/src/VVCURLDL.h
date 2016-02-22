@@ -64,6 +64,8 @@
 - (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b;
 - (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b;
 
+- (void) performOnQueue:(dispatch_queue_t)q block:(void (^)(VVCURLDL *completedDL))b;
+
 - (void) _execute;
 
 //- (struct curl_slist *) headerList;
@@ -71,6 +73,7 @@
 //- (struct curl_httppost *) lastFormPtr;
 - (void) appendDataToPOST:(NSData *)d;
 - (void) appendStringToPOST:(NSString *)s;
+@property (readonly) NSString *urlString;
 @property (assign,readwrite,setter=setDNSCacheTimeout:) long dnsCacheTimeout;
 @property (assign,readwrite) long connectTimeout;
 - (void) setLogin:(NSString *)user password:(NSString *)pass;

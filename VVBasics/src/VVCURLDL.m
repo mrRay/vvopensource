@@ -91,15 +91,27 @@
 	}
 	
 }
+- (void) performOnQueue:(dispatch_queue_t)q block:(void (^)(VVCURLDL *completedDL))b	{
+	if (q==NULL || b==NULL)	{
+		NSLog(@"\t\terr: can't continue, queue or block NULL, %s",__func__);
+		return;
+	}
+	dispatch_async(q, ^(void)	{
+		[self _performWithBlock:b];
+	});
+}
 
 
 - (void) performAsync:(BOOL)as withBlock:(void (^)(VVCURLDL *completedDL))b	{
+	void			(^tmpBlock)(VVCURLDL *completedDL) = (b==nil) ? nil : Block_copy(b);
+	
+	
 	//	if i'm performing asynchronously, spawn a thread (make an autorelease pool!) and go
 	if (as)
-		[NSThread detachNewThreadSelector:@selector(_performAsyncWithBlock:) toTarget:self withObject:b];
+		[NSThread detachNewThreadSelector:@selector(_performAsyncWithBlock:) toTarget:self withObject:tmpBlock];
 	//	else just go
 	else
-		[self _performWithBlock:b];
+		[self _performWithBlock:tmpBlock];
 }
 - (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b	{
 	//	make a pool
@@ -122,6 +134,8 @@
 		else	{
 			b(blockSafeSelf);
 		}
+		
+		Block_release(b);
 	}
 }
 
@@ -255,6 +269,7 @@
 		return;
 	[self appendDataToPOST:[s dataUsingEncoding:NSUTF8StringEncoding]];
 }
+@synthesize urlString;
 @synthesize dnsCacheTimeout;
 @synthesize connectTimeout;
 - (void) setLogin:(NSString *)u password:(NSString *)p	{
