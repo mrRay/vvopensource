@@ -104,6 +104,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	tempBufferArray = [[MutLockArray alloc] init];
 	passes = [[MutLockArray alloc] init];
 	passIndex = 1;
+	jsonSource = nil;
 	jsonString = nil;
 	vertShaderSource = nil;
 	fragShaderSource = nil;
@@ -135,6 +136,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(tempBufferArray);
 	VVRELEASE(passes);
 	OSSpinLockLock(&srcLock);
+	VVRELEASE(jsonSource);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
@@ -177,6 +179,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[passes lockRemoveAllObjects];
 	
 	OSSpinLockLock(&srcLock);
+	VVRELEASE(jsonSource);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
@@ -248,9 +251,21 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//	remove the JSON blob, save it as one string- save everything else as the raw shader source string
 		OSSpinLockLock(&srcLock);
 		VVRELEASE(fragShaderSource);
+		VVRELEASE(jsonSource);
 		VVRELEASE(jsonString);
-		fragShaderSource = [[rawFile substringWithRange:NSMakeRange(closeCommentRange.location+closeCommentRange.length, [rawFile length]-(closeCommentRange.location+closeCommentRange.length))] retain];
-		jsonString = [[rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))] retain];
+		NSRange			fragShaderSourceRange;
+		fragShaderSourceRange.location = closeCommentRange.location + closeCommentRange.length;
+		fragShaderSourceRange.length = [rawFile length] - fragShaderSourceRange.location;
+		NSRange			jsonStringRange;
+		jsonStringRange.location = openCommentRange.location + openCommentRange.length;
+		jsonStringRange.length = closeCommentRange.location - jsonStringRange.location;
+		NSRange			jsonSourceRange;
+		jsonSourceRange.location = 0;
+		jsonSourceRange.length = (closeCommentRange.location + closeCommentRange.length) - jsonSourceRange.location;
+		
+		fragShaderSource = [[rawFile substringWithRange:fragShaderSourceRange] retain];
+		jsonString = [[rawFile substringWithRange:jsonStringRange] retain];
+		jsonSource = [[rawFile substringWithRange:jsonSourceRange] retain];
 		//	parse the JSON dict, turning it into a dictionary and values
 		id				jsonObject = (jsonString==nil) ? nil : [jsonString objectFromJSONString];
 		if (jsonObject==nil)	{
@@ -758,9 +773,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									maxVal.longVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 10.0 : [tmpNum longValue];
 								}
 								tmpNum = [inputDict objectForKey:@"DEFAULT"];
-								defVal.longVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 5.0 : [tmpNum longValue];
+								defVal.longVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0.0 : [tmpNum longValue];
 								tmpNum = [inputDict objectForKey:@"IDENTITY"];
-								idenVal.longVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 5.0 : [tmpNum longValue];
+								idenVal.longVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0.0 : [tmpNum longValue];
 							}
 							else if ([typeString isEqualToString:@"event"])	{
 								//NSLog(@"********* ERR: %s",__func__);
@@ -839,36 +854,71 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									NSNumber		*tmpNum = [tmpArray objectAtIndex:0];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										defVal.point2DVal[0] = [tmpNum floatValue];
+									else
+										defVal.point2DVal[0] = 0.;
 									tmpNum = [tmpArray objectAtIndex:1];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										defVal.point2DVal[1] = [tmpNum floatValue];
+									else
+										defVal.point2DVal[1] = 0.;
 								}
+								else	{
+									defVal.point2DVal[0] = 0.;
+									defVal.point2DVal[1] = 0.;
+								}
+								
 								tmpArray = [inputDict objectForKey:@"IDENTITY"];
 								if (tmpArray!=nil && [tmpArray isKindOfClass:arrayClass])	{
 									NSNumber		*tmpNum = [tmpArray objectAtIndex:0];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
-										defVal.point2DVal[0] = [tmpNum floatValue];
+										idenVal.point2DVal[0] = [tmpNum floatValue];
+									else
+										idenVal.point2DVal[0] = 0.;
 									tmpNum = [tmpArray objectAtIndex:1];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
-										defVal.point2DVal[1] = [tmpNum floatValue];
+										idenVal.point2DVal[1] = [tmpNum floatValue];
+									else
+										idenVal.point2DVal[1] = 0.;
 								}
+								else	{
+									idenVal.point2DVal[0] = 0.;
+									idenVal.point2DVal[1] = 0.;
+								}
+								
 								tmpArray = [inputDict objectForKey:@"MIN"];
 								if (tmpArray!=nil && [tmpArray isKindOfClass:arrayClass] && [tmpArray count]==2)	{
 									NSNumber		*tmpNum = [tmpArray objectAtIndex:0];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										minVal.point2DVal[0] = [tmpNum floatValue];
+									else
+										minVal.point2DVal[0] = 0.;
 									tmpNum = [tmpArray objectAtIndex:1];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										minVal.point2DVal[1] = [tmpNum floatValue];
+									else
+										minVal.point2DVal[1] = 0.;
 								}
+								else	{
+									minVal.point2DVal[0] = 0.;
+									minVal.point2DVal[1] = 0.;
+								}
+								
 								tmpArray = [inputDict objectForKey:@"MAX"];
 								if (tmpArray!=nil && [tmpArray isKindOfClass:arrayClass] && [tmpArray count]==2)	{
 									NSNumber		*tmpNum = [tmpArray objectAtIndex:0];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										maxVal.point2DVal[0] = [tmpNum floatValue];
+									else
+										maxVal.point2DVal[0] = 0.;
 									tmpNum = [tmpArray objectAtIndex:1];
 									if (tmpNum!=nil && [tmpNum isKindOfClass:numClass])
 										maxVal.point2DVal[1] = [tmpNum floatValue];
+									else
+										maxVal.point2DVal[1] = 0.;
+								}
+								else	{
+									maxVal.point2DVal[0] = 0.;
+									maxVal.point2DVal[1] = 0.;
 								}
 							}
 							//	else the attribute type wasn't recognized- it simply shouldn't exist!
@@ -976,7 +1026,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	BOOL		bailBecauseLoading = (loadingInProgress==YES) ? YES : NO;
 	OSSpinLockUnlock(&propertyLock);
 	if (bailBecauseLoading)	{
-		NSLog(@"\t\terr: bailing, can't render beause loading, %s",__func__);
+		NSLog(@"\t\terr: bailing, can't render because loading, %s",__func__);
 		return nil;
 	}
 	
@@ -1229,7 +1279,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 
 //	this is called from within "_renderPrep"
 - (void) _assembleShaderSource	{
-	
+	if (fragShaderSource == nil)
+		return;
 	
 	/*	stores names of the images/buffers that are accessed via IMG_THIS_PIXEL (which is replaced 
 	in the frag shader, but the names are then needed to declare vars in the vert shader)		*/
@@ -2914,6 +2965,15 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (deleted || audioInputs==nil)
 		return 0;
 	return (int)[audioInputs lockCount];
+}
+- (NSString *) jsonSource	{
+	if (deleted)
+		return nil;
+	NSString		*returnMe = nil;
+	OSSpinLockLock(&srcLock);
+	returnMe = (jsonSource==nil) ? nil : [[jsonSource retain] autorelease];
+	OSSpinLockUnlock(&srcLock);
+	return returnMe;
 }
 - (NSString *) jsonString	{
 	if (deleted)

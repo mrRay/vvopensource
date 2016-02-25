@@ -60,7 +60,8 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	int					passIndex;	//	only has a valid value while rendering
 	
 	OSSpinLock			srcLock;
-	NSString			*jsonString;	//	the raw JSON string copied from the source
+	NSString			*jsonSource;	//	the JSON string from the source *including the comments and any linebreaks before/after it*
+	NSString			*jsonString;	//	the JSON string copied from the source- doesn't include any comments before/after it
 	NSString			*vertShaderSource;	//	the raw vert shader source before being find-and-replaced
 	NSString			*fragShaderSource;	//	the raw frag shader source before being find-and-replaced
 	NSString			*compiledInputTypeString;	//	a sequence of characters, either "2" or "R", one character for each input image. describes whether the shader was compiled to work with 2D textures or RECT textures.
@@ -156,6 +157,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 @property (readonly) int passCount;
 @property (readonly) int imageInputsCount;
 @property (readonly) int audioInputsCount;
+@property (readonly) NSString *jsonSource;
 @property (readonly) NSString *jsonString;
 @property (readonly) NSString *vertShaderSource;
 @property (readonly) NSString *fragShaderSource;
