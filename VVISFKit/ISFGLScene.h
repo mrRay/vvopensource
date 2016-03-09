@@ -51,7 +51,9 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	
 	VVSIZE				renderSize;	//	the last size at which i was requested to render a buffer (used to produce vals from normalized point inputs that need a render size to be used)
 	VVStopwatch			*swatch;	//	used to pass time to shaders
+	unsigned long		renderFrameIndex;	//	used to pass FRAMEINDEX to shaders
 	double				renderTime;
+	double				renderTimeDelta;
 	BOOL				bufferRequiresEval;	//	NO by default, set to YES during file open if any of the buffers require evaluation (faster than checking every single buffer every pass)
 	MutLockArray		*persistentBufferArray;	//	array of ISFTargetBuffer instances describing the various persistent buffers. these buffers are retained until a different file is loaded.
 	MutLockArray		*tempBufferArray;	//	array of ISFTargetBuffer instances- temp buffers are available while rendering, but are returned to the pool when rendering's complete
@@ -68,6 +70,9 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	long				renderSizeUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the render size
 	long				passIndexUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the pass index
 	long				timeUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the time in seconds
+	long				timeDeltaUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for time (in seconds) since the last frame was rendered
+	long				dateUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the date
+	long				renderFrameIndexUniformLoc;	//	-1, or the location of the uniform var in the compiled GL program for the render frame index
 	VVBuffer			*geoXYVBO;
 }
 

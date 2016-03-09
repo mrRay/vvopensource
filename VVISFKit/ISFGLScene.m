@@ -112,6 +112,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	renderSizeUniformLoc = -1;
 	passIndexUniformLoc = -1;
 	timeUniformLoc = -1;
+	timeDeltaUniformLoc = -1;
+	dateUniformLoc = -1;
+	renderFrameIndexUniformLoc = -1;
 	geoXYVBO = nil;
 	[self setRenderTarget:self];
 	[self setRenderSelector:@selector(renderCallback:)];
@@ -168,6 +171,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(fileCredits);
 	fileFunctionality = ISFF_Source;
 	VVRELEASE(categoryNames);
+	renderTime = 0.;
+	renderTimeDelta = 0.;
 	OSSpinLockUnlock(&propertyLock);
 	[inputs lockRemoveAllObjects];
 	[imageInputs lockRemoveAllObjects];
@@ -615,12 +620,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								}
 								else if ([persistentObj isKindOfClass:[NSNumber class]])
 									persistentNum = [[persistentObj retain] autorelease];
-								//	if there's a valid "PERSISTENT" flag in this pass dict and it's indicating a positive
+								//	if there's a valid "PERSISTENT" flag in this pass dict and it's indicating a positive...
 								if (persistentNum!=nil && [persistentNum intValue]>0)	{
 									//	add the target buffer as a persistent buffer
 									[persistentBufferArray lockAddObject:targetBuffer];
 								}
-								//	else there's no "PERSISTENT" flag in this pass dict or it's indicating a negative
+								//	else there's no "PERSISTENT" flag in this pass dict or it's indicating a negative...
 								else	{
 									//	add the target buffer as a temp buffer
 									[tempBufferArray lockAddObject:targetBuffer];
@@ -715,6 +720,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								defVal.audioVal = 0;
 								idenVal.audioVal = 0;
 								isAudioInput = YES;
+								NSNumber			*tmpNum = nil;
+								tmpNum = [inputDict objectForKey:@"MAX"];
+								maxVal.audioVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0 : [tmpNum intValue];
 							}
 							else if ([typeString isEqualToString:@"audioFFT"])	{
 								newAttribType = ISFAT_AudioFFT;
@@ -723,6 +731,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								defVal.audioVal = 0;
 								idenVal.audioVal = 0;
 								isAudioInput = YES;
+								NSNumber			*tmpNum = nil;
+								tmpNum = [inputDict objectForKey:@"MAX"];
+								maxVal.audioVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0 : [tmpNum intValue];
 							}
 							else if ([typeString isEqualToString:@"cube"])	{
 								newAttribType = ISFAT_Cube;
@@ -984,6 +995,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	OSSpinLockUnlock(&propertyLock);
 	
 	[swatch start];
+	renderFrameIndex = 0;
 }
 - (VVBuffer *) allocAndRenderABuffer	{
 #if !TARGET_OS_IPHONE
@@ -1078,6 +1090,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	pthread_mutex_lock(&renderLock);
 	renderSize = s;
+	renderTimeDelta = (t<=0.) ? 0. : fabs(t-renderTime);
 	renderTime = t;
 	
 	NSMutableDictionary		*subDict = (bufferRequiresEval) ? [self _assembleSubstitutionDict] : nil;
@@ -1208,6 +1221,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		VVRELEASE(targetDepth);
 	}
 	[passes unlock];
+	
+	//	don't forget to increment the render frame index!
+	++renderFrameIndex;
 	
 	
 	//	if there's a pass dict...
@@ -2000,6 +2016,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[varDeclarations appendString:@"varying vec3\t\tisf_VertNorm;\n"];
 	[varDeclarations appendString:@"varying vec3\t\tisf_VertPos;\n"];
 	[varDeclarations appendString:@"uniform float\t\tTIME;\n"];
+	[varDeclarations appendString:@"uniform float\t\tTIMEDELTA;\n"];
+	[varDeclarations appendString:@"uniform vec4\t\tDATE;\n"];
+	[varDeclarations appendString:@"uniform int\t\tFRAMEINDEX;\n"];
 	
 	return varDeclarations;
 }
@@ -2553,6 +2572,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		renderSizeUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "RENDERSIZE");
 		passIndexUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "PASSINDEX");
 		timeUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "TIME");
+		timeDeltaUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "TIMEDELTA");
+		dateUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "DATE");
+		renderFrameIndexUniformLoc = (program<=0) ? -1 : glGetUniformLocation(program, "FRAMEINDEX");
 	}
 	if (renderSizeUniformLoc >= 0)
 		glUniform2f((int)renderSizeUniformLoc, size.width, size.height);
@@ -2560,6 +2582,25 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		glUniform1i((int)passIndexUniformLoc, passIndex-1);
 	if (timeUniformLoc >= 0)
 		glUniform1f((int)timeUniformLoc, renderTime);
+	if (timeDeltaUniformLoc >= 0)
+		glUniform1f((int)timeDeltaUniformLoc, renderTimeDelta);
+	if (dateUniformLoc >= 0)	{
+		NSDate					*nowDate = [NSDate date];
+		NSDateComponents		*dateComps = [[NSCalendar currentCalendar]
+			components:NSCalendarUnitNanosecond|NSCalendarUnitSecond|NSCalendarUnitMinute|NSCalendarUnitHour|NSCalendarUnitDay|NSCalendarUnitMonth|NSCalendarUnitYear
+			fromDate:nowDate];
+		double					timeInSeconds = 0.;
+		timeInSeconds += (double)[dateComps nanosecond]*(0.000000001);
+		timeInSeconds += (double)[dateComps second];
+		timeInSeconds += (double)[dateComps minute]*60.;
+		timeInSeconds += (double)[dateComps hour]*60.*60.;
+		//NSLog(@"\t\tnano-sec-min is %ld-%ld-%ld",[dateComps nanosecond],[dateComps second],[dateComps minute]);
+		//NSLog(@"\t\tsending date vals %ld-%ld-%ld, %f",[dateComps year],[dateComps month],[dateComps day],timeInSeconds);
+		glUniform4f((int)dateUniformLoc, (GLfloat)[dateComps year], (GLfloat)[dateComps month], (GLfloat)[dateComps day], timeInSeconds);
+	}
+	if (renderFrameIndexUniformLoc >= 0)	{
+		glUniform1i((int)renderFrameIndexUniformLoc, renderFrameIndex);
+	}
 	OSSpinLockUnlock(&srcLock);
 }
 - (void) renderCallback:(GLScene *)s	{

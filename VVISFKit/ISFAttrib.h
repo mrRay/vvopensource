@@ -39,7 +39,7 @@ typedef union ISFAttribVal	{
 	GLfloat			point2DVal[2];	//!<	array of two floats, used if this is a point2D attribute
 	GLfloat			colorVal[4];	//!<	array of four floats, used if this is a color attribute
 	long			imageVal;	//!<	not really used- you never pass images as values (images are passed as VVBuffers, as there are resources that need to be retained and can't be passed strictly "by value").  included for symmetry.
-	long			audioVal;	//!<	not really used- you never pass images as values (images are passed as VVBuffers, as there are resources that need to be retained and can't be passed strictly "by value").  included for symmetry.
+	long			audioVal;	//!<	really only used because audio and audioFFT inputs can specify a "max" value
 } ISFAttribVal;
 
 

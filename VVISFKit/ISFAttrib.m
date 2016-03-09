@@ -120,10 +120,12 @@
 				currentVal.imageVal = def.imageVal;
 				break;
 			case ISFAT_Audio:
-				currentVal.audioVal = def.audioVal;
-				break;
 			case ISFAT_AudioFFT:
 				currentVal.audioVal = def.audioVal;
+				minVal.audioVal = min.audioVal;
+				maxVal.audioVal = max.audioVal;
+				defaultVal.audioVal = def.audioVal;
+				identityVal.audioVal = iden.audioVal;
 				break;
 		}
 		isFilterInputImage = NO;
