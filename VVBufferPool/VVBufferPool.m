@@ -262,11 +262,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	BOOL					compressedTex = NO;
 #if !TARGET_OS_IPHONE
 	switch (newBufferDesc.internalFormat)	{
-		case VVBufferIF_RGB_DXT1:	//	4 bits per pixel
-			compressedTex = YES;
-			break;
-		case VVBufferIF_RGBA_DXT5:	//	8 bits per pixel
-		//case VVBufferIF_YCoCg_DXT5:	//	8 bits per pixel
+		case VVBufferIF_RGB_DXT1:
+		case VVBufferIF_RGBA_DXT5:
+		case VVBufferIF_A_RGTC:
 			compressedTex = YES;
 			break;
 		default:
@@ -1201,7 +1199,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				break;
 			case VVBufferIF_RGB_DXT1:
 			case VVBufferIF_RGBA_DXT5:
-			//case VVBufferIF_YCoCg_DXT5:
+			//case VVBufferIF_YCoCg_DXT5:	//	(flagged as duplicate case if un-commented, because both RGBA_DXT5 and YCoCg_DXT5 evaluate to the same internal format)
+			case VVBufferIF_A_RGTC:
 				doCompressedUpload = YES;
 				bSize = [returnMe backingSize];
 				break;

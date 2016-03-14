@@ -59,7 +59,8 @@ typedef NS_ENUM(NSInteger, VVBufferIntFormat)	{
 #if !TARGET_OS_IPHONE
 	VVBufferIF_RGB_DXT1 = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,	//!<	Hap
 	VVBufferIF_RGBA_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!<	Hap Alpha
-	VVBufferIF_YCoCg_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!< HapQ. not a typo, same as RGBA_DXT5!
+	VVBufferIF_YCoCg_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,	//!< HapQ, and HapQ Alpha. not a typo, same as RGBA_DXT5!
+	VVBufferIF_A_RGTC = GL_COMPRESSED_RED_RGTC1	//!<	The "alpha" plane in HapQ Alpha
 #endif
 };
 
