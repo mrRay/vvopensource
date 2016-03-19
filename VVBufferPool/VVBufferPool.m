@@ -921,33 +921,13 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//NSLog(@"%s ... %d",__func__,prefer2D);
 	if (img==nil)
 		return nil;
-	VVSIZE					imageSize = [img size];
-	VVSIZE					bitmapSize;
-	/*
-	if (prefer2D)	{
-		int			tmpInt = 1;
-		while (tmpInt < imageSize.width)
-			tmpInt <<= 1;
-		bitmapSize.width = tmpInt;
-		tmpInt = 1;
-		while (tmpInt < imageSize.height)
-			tmpInt <<= 1;
-		bitmapSize.height = tmpInt;
-	}
-	else	{
-	*/
-		bitmapSize = imageSize;
-	/*
-	}
-	*/
-	NSArray			*reps = [img representations];
-	for (NSImageRep *rep in reps)	{
-		if ([rep isKindOfClass:[NSBitmapImageRep class]])	{
-			bitmapSize.width = fmax(bitmapSize.width, [rep pixelsWide]);
-			bitmapSize.height = fmax(bitmapSize.height, [rep pixelsHigh]);
-		}
-	}
-	VVRECT					bitmapRect = VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height);
+	
+	NSSize				origImageSize = [img size];
+	NSRect				origImageRect = NSMakeRect(0, 0, origImageSize.width, origImageSize.height);
+	NSImageRep			*bestRep = [img bestRepresentationForRect:origImageRect context:nil hints:nil];
+	VVSIZE				bitmapSize = NSMakeSize([bestRep pixelsWide], [bestRep pixelsHigh]);
+	VVRECT				bitmapRect = VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height);
+	
 	//	make a bitmap image rep
 	NSBitmapImageRep		*rep = [[NSBitmapImageRep alloc]
 		initWithBitmapDataPlanes:nil
@@ -976,8 +956,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		//[[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0] set];
 		//VVRECTFill(bitmapRect);
 		[img
-			drawAtPoint:VVMAKEPOINT(0,floor(bitmapSize.height-imageSize.height))
-			fromRect:bitmapRect
+			drawInRect:bitmapRect
+			fromRect:origImageRect
 			operation:NSCompositeCopy
 			fraction:1.0];
 		
@@ -991,7 +971,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	}
 	
 	VVBuffer		*returnMe = [self allocBufferForBitmapRep:rep prefer2DTexture:prefer2D];
-	[returnMe setSrcRect:VVMAKERECT(0,0,imageSize.width,imageSize.height)];
+	[returnMe setSrcRect:VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height)];
 	[returnMe setFlipped:YES];
 	[rep release];
 	/*	the static analyzer flags this as a leak, but it isn't.  the VVBuffer instance retains the NSBitmapRep underlying the GL texture, which is interpreted here as a leak.		*/
