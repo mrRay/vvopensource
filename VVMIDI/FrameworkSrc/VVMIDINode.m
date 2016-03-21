@@ -206,18 +206,16 @@ double			_machTimeToNsFactor;
 }
 
 - (void) dealloc	{
+	//	disable me, so my proc won't start executing again while the following is running
+	[self setEnabled:NO];
+	//	wait until my proc's done running (at which point it will be save to mess with the CoreMIDI stuff)
+	while ([self procRunning])	{
+		pthread_yield_np();
+	}
+	
 	if (properties != nil)	{
 		[properties release];
 		properties = nil;
-	}
-	
-	if (mtcClockRef != NULL)	{
-		CAClockDispose(mtcClockRef);
-		mtcClockRef = NULL;
-	}
-	if (bpmClockRef != NULL)	{
-		CAClockDispose(bpmClockRef);
-		bpmClockRef = NULL;
 	}
 	
 	if (portRef!=0)	{
@@ -226,14 +224,27 @@ double			_machTimeToNsFactor;
 		portRef = 0;
 	}
 	
-	if (name != nil)	{
-		[name release];
-		name = nil;
-	}
-	
 	if (virtualSender) {
 		MIDIEndpointDispose(endpointRef);
 		endpointRef = 0;
+	}
+	
+	if (mtcClockRef != NULL)	{
+		CAClockRemoveListener(mtcClockRef, clockListenerProc, self);
+		CAClockDisarm(mtcClockRef);
+		CAClockDispose(mtcClockRef);
+		mtcClockRef = NULL;
+	}
+	if (bpmClockRef != NULL)	{
+		CAClockRemoveListener(bpmClockRef, clockListenerProc, self);
+		CAClockDisarm(bpmClockRef);
+		CAClockDispose(bpmClockRef);
+		bpmClockRef = NULL;
+	}
+	
+	if (name != nil)	{
+		[name release];
+		name = nil;
 	}
 	
 	if (sysexArray != nil)	{
@@ -458,7 +469,7 @@ double			_machTimeToNsFactor;
 - (void) receivedMIDI:(NSArray *)a	{
 	//NSLog(@"VVMIDINode:processMIDIMessageArray: ... %@",name);
 	//NSLog(@"\t\t%@",a);
-	if ((enabled) && (delegate != nil))	{
+	if (([self enabled]) && (delegate != nil))	{
 		if ([delegate respondsToSelector:@selector(receivedMIDI:fromNode:)])
 			[delegate receivedMIDI:a fromNode:self];
 		else if ([delegate respondsToSelector:@selector(receivedMIDI:)])
@@ -469,7 +480,7 @@ double			_machTimeToNsFactor;
 	this method is called whenever the midi setup is changed
 */
 - (void) sendMsg:(VVMIDIMessage *)m	{
-	if ((enabled!=YES) || (sender!=YES) || (m==nil))
+	if (![self enabled] || !sender || m==nil)
 		return;
 	//NSLog(@"\t\tsending %@ to %@",m,name);
 	
@@ -582,7 +593,7 @@ double			_machTimeToNsFactor;
 }
 - (void) sendMsgs:(NSArray *)a	{
 	//NSLog(@"VVMIDINode:sendMsgs:");
-	if ((enabled!=YES) || (sender!=YES) || (a==nil) || ([a count]<1))
+	if (![self enabled] || !sender || a==nil || [a count]<1)
 		return;
 	//NSLog(@"\t\tsending to %@",name);
 	
@@ -648,6 +659,7 @@ double			_machTimeToNsFactor;
 - (CAClockRef) bpmClockRef	{
 	return bpmClockRef;
 }
+@synthesize procRunning;
 - (NSString *) name	{
 	return name;
 }
@@ -683,12 +695,7 @@ double			_machTimeToNsFactor;
 - (NSMutableArray *) sysexArray	{
 	return sysexArray;
 }
-- (BOOL) enabled	{
-	return enabled;
-}
-- (void) setEnabled:(BOOL)n	{
-	enabled = n;
-}
+@synthesize enabled;
 - (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb	{
 	*msb = twoPieceCCVals[c][cc];
 	*lsb = twoPieceCCVals[c][cc+32];
@@ -752,309 +759,317 @@ double			_machTimeToNsFactor;
 
 void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
 	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	MIDIPacket				*packet = nil;
-	int						i;
-	int						currByte;
-	int						j;
-	int						msgElementCount;
-	VVMIDIMessage			*newMsg = nil;
-	BOOL					processingSysex = [(VVMIDINode *)readProcRefCon processingSysex];
-	int						processingSysexIterationCount = [(VVMIDINode *)readProcRefCon processingSysexIterationCount];
-	NSMutableArray			*sysex = [(VVMIDINode *)readProcRefCon sysexArray];
-	NSMutableArray			*msgs = [NSMutableArray arrayWithCapacity:0];
-	BOOL					hadMTCMsg = NO;
-	BOOL					hadClockMsg = NO;
+	//	flag my proc as running- don't doing anything with the endpoint/port/clocks while the proc's running
+	[(VVMIDINode *)readProcRefCon setProcRunning:YES];
+	//	only proceed if we're enabled...
+	if ([(VVMIDINode *)readProcRefCon enabled])	{
+		MIDIPacket				*packet = nil;
+		int						i;
+		int						currByte;
+		int						j;
+		int						msgElementCount;
+		VVMIDIMessage			*newMsg = nil;
+		BOOL					processingSysex = [(VVMIDINode *)readProcRefCon processingSysex];
+		int						processingSysexIterationCount = [(VVMIDINode *)readProcRefCon processingSysexIterationCount];
+		NSMutableArray			*sysex = [(VVMIDINode *)readProcRefCon sysexArray];
+		NSMutableArray			*msgs = [NSMutableArray arrayWithCapacity:0];
+		BOOL					hadMTCMsg = NO;
+		BOOL					hadClockMsg = NO;
 	
-	//	first of all, if i'm processing sysex, bump the iteration count
-	if (processingSysex)
-		++processingSysexIterationCount;
-	//	if the sysex iteration count is > 128, turn sysex off automatically (make sure a dropped packet won't result in a non-responsive midi proc)
-	if (processingSysexIterationCount > 128)	{
-		processingSysexIterationCount = 0;
-		processingSysex = NO;
-	}
+		//	first of all, if i'm processing sysex, bump the iteration count
+		if (processingSysex)
+			++processingSysexIterationCount;
+		//	if the sysex iteration count is > 128, turn sysex off automatically (make sure a dropped packet won't result in a non-responsive midi proc)
+		if (processingSysexIterationCount > 128)	{
+			processingSysexIterationCount = 0;
+			processingSysex = NO;
+		}
 	
 	
-	//	run through all the packets in the passed list of packets
-	packet = (MIDIPacket *)&pktList->packet[0];
-	for (i=0; i<pktList->numPackets; ++i)	{
-		//	run through the packet...
-		for (j=0; j<packet->length; ++j)	{
-			currByte = packet->data[j];
-			//	check to see what kind of byte it is
-			//	if it's in the range 0x80 - 0xFF, it's a status byte- the first byte of a message
-			if ((currByte >= 0x80) && (currByte <= 0xFF))	{
+		//	run through all the packets in the passed list of packets
+		packet = (MIDIPacket *)&pktList->packet[0];
+		for (i=0; i<pktList->numPackets; ++i)	{
+			//	run through the packet...
+			for (j=0; j<packet->length; ++j)	{
+				currByte = packet->data[j];
+				//	check to see what kind of byte it is
+				//	if it's in the range 0x80 - 0xFF, it's a status byte- the first byte of a message
+				if ((currByte >= 0x80) && (currByte <= 0xFF))	{
 				
-				switch((currByte & 0xF0))	{
-					case VVMIDIControlChangeVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
-						if (newMsg == nil)	{
-							break;
-						}
-						/*		NOT A BUG: do NOT add the msg to the array now, the CC may be 14-bit (may require two messages to assemble a single value!
-						[msgs addObject:newMsg];
-						*/
-						msgElementCount = 0;
-						break;
-					case VVMIDINoteOffVal:
-					case VVMIDINoteOnVal:
-					case VVMIDIAfterTouchVal:
-					case VVMIDIProgramChangeVal:
-					case VVMIDIChannelPressureVal:
-					case VVMIDIPitchWheelVal:
-						newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
-						if (newMsg == nil)	{
-							break;
-						}
-						[msgs addObject:newMsg];
-						msgElementCount = 0;
-						break;
-					default:		//	the default means that i've run up against either a common or realtime message
-						switch (currByte)	{
-							//	common messages- insert leisurely
-							case VVMIDIMTCQuarterFrameVal:
-								hadMTCMsg = YES;
-							case VVMIDISongPosPointerVal:
-							case VVMIDISongSelectVal:
-							case VVMIDIUndefinedCommon1Val:
-							case VVMIDIUndefinedCommon2Val:
-							case VVMIDITuneRequestVal:
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
-								if (newMsg != nil)	{
-									[msgs addObject:newMsg];
-									msgElementCount = 0;
-								}
+					switch((currByte & 0xF0))	{
+						case VVMIDIControlChangeVal:
+							newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
+							if (newMsg == nil)	{
 								break;
-							case VVMIDIEndSysexDumpVal:
-								newMsg = [VVMIDIMessage createWithSysexArray:sysex timestamp:packet->timeStamp];
-								if (newMsg != nil)	{
-									if ([newMsg isFullFrameSMPTE])	{
-										long					err = noErr;
-										CAClockRef				tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
-										CAClockSMPTEFormat		clockSMPTEFormat = kSMPTETimeType30;
-										UInt32					tmpSize = sizeof(clockSMPTEFormat);
-										//	get the SMPTE format from the clock
-										err = CAClockGetProperty(tmpClock, kCAClockProperty_SMPTEFormat, &tmpSize, &clockSMPTEFormat);
-										if (err != noErr)
-											NSLog(@"\t\terr %ld getting SMPTE format in %s",err,__func__);
-										CAClockTime				tmpTime;
-										tmpTime.format = kCAClockTimeFormat_SMPTESeconds;
-										tmpTime.time.smpte.mSubframes = 0;	//	untested, not sure if correct
-										tmpTime.time.smpte.mSubframeDivisor = 80;	//	untested, not sure if correct
-										tmpTime.time.smpte.mCounter = 0;	//	untested, not sure if correct
-										tmpTime.time.smpte.mType = clockSMPTEFormat;	//	untested, not sure if correct
-										tmpTime.time.smpte.mFlags = 0;	//	untested, not sure if correct
-										tmpTime.time.smpte.mHours = [[sysex objectAtIndex:4] intValue];
-										tmpTime.time.smpte.mMinutes = [[sysex objectAtIndex:5] intValue];
-										tmpTime.time.smpte.mSeconds = [[sysex objectAtIndex:6] intValue];
-										tmpTime.time.smpte.mFrames = [[sysex objectAtIndex:7] intValue];
-										
-										err = CAClockStop(tmpClock);
-										if (err!=noErr)
-											NSLog(@"\t\terr %ld at CAClockStop() in %s",err,__func__);
-										else	{
-											err = CAClockSetCurrentTime(tmpClock, &tmpTime);
+							}
+							/*		NOT A BUG: do NOT add the msg to the array now, the CC may be 14-bit (may require two messages to assemble a single value!
+							[msgs addObject:newMsg];
+							*/
+							msgElementCount = 0;
+							break;
+						case VVMIDINoteOffVal:
+						case VVMIDINoteOnVal:
+						case VVMIDIAfterTouchVal:
+						case VVMIDIProgramChangeVal:
+						case VVMIDIChannelPressureVal:
+						case VVMIDIPitchWheelVal:
+							newMsg = [VVMIDIMessage createWithType:(currByte & 0xF0) channel:(currByte & 0x0F) timestamp:packet->timeStamp];
+							if (newMsg == nil)	{
+								break;
+							}
+							[msgs addObject:newMsg];
+							msgElementCount = 0;
+							break;
+						default:		//	the default means that i've run up against either a common or realtime message
+							switch (currByte)	{
+								//	common messages- insert leisurely
+								case VVMIDIMTCQuarterFrameVal:
+									hadMTCMsg = YES;
+								case VVMIDISongPosPointerVal:
+								case VVMIDISongSelectVal:
+								case VVMIDIUndefinedCommon1Val:
+								case VVMIDIUndefinedCommon2Val:
+								case VVMIDITuneRequestVal:
+									newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
+									if (newMsg != nil)	{
+										[msgs addObject:newMsg];
+										msgElementCount = 0;
+									}
+									break;
+								case VVMIDIEndSysexDumpVal:
+									newMsg = [VVMIDIMessage createWithSysexArray:sysex timestamp:packet->timeStamp];
+									if (newMsg != nil)	{
+										if ([newMsg isFullFrameSMPTE])	{
+											long					err = noErr;
+											CAClockRef				tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
+											CAClockSMPTEFormat		clockSMPTEFormat = kSMPTETimeType30;
+											UInt32					tmpSize = sizeof(clockSMPTEFormat);
+											//	get the SMPTE format from the clock
+											err = CAClockGetProperty(tmpClock, kCAClockProperty_SMPTEFormat, &tmpSize, &clockSMPTEFormat);
 											if (err != noErr)
-												NSLog(@"\t\terr %ld at CAClockSetCurrentTime() in %s",err,__func__);
+												NSLog(@"\t\terr %ld getting SMPTE format in %s",err,__func__);
+											CAClockTime				tmpTime;
+											tmpTime.format = kCAClockTimeFormat_SMPTESeconds;
+											tmpTime.time.smpte.mSubframes = 0;	//	untested, not sure if correct
+											tmpTime.time.smpte.mSubframeDivisor = 80;	//	untested, not sure if correct
+											tmpTime.time.smpte.mCounter = 0;	//	untested, not sure if correct
+											tmpTime.time.smpte.mType = clockSMPTEFormat;	//	untested, not sure if correct
+											tmpTime.time.smpte.mFlags = 0;	//	untested, not sure if correct
+											tmpTime.time.smpte.mHours = [[sysex objectAtIndex:4] intValue];
+											tmpTime.time.smpte.mMinutes = [[sysex objectAtIndex:5] intValue];
+											tmpTime.time.smpte.mSeconds = [[sysex objectAtIndex:6] intValue];
+											tmpTime.time.smpte.mFrames = [[sysex objectAtIndex:7] intValue];
+										
+											err = CAClockStop(tmpClock);
+											if (err!=noErr)
+												NSLog(@"\t\terr %ld at CAClockStop() in %s",err,__func__);
 											else	{
-												err = CAClockStart(tmpClock);
-												if (err!=noErr)
-													NSLog(@"\t\terr %ld at CAClockStart() in %s",err,__func__);
+												err = CAClockSetCurrentTime(tmpClock, &tmpTime);
+												if (err != noErr)
+													NSLog(@"\t\terr %ld at CAClockSetCurrentTime() in %s",err,__func__);
+												else	{
+													err = CAClockStart(tmpClock);
+													if (err!=noErr)
+														NSLog(@"\t\terr %ld at CAClockStart() in %s",err,__func__);
+												}
 											}
 										}
+										[msgs addObject:newMsg];
 									}
-									[msgs addObject:newMsg];
-								}
-								[sysex removeAllObjects];
-								//NSLog(@"\t\tVVMIDIEndSysexDumpVal - %X",currByte);
-								processingSysex = NO;
-								processingSysexIterationCount = 0;
-								break;
-							case VVMIDIBeginSysexDumpVal:
-								//NSLog(@"\t\tVVMIDIBeginSysexDumpVal - %X",currByte);
-								processingSysex = YES;
-								processingSysexIterationCount = 0;
-								[sysex removeAllObjects];
-								//[sysex addObject:[NSNumber numberWithInt:currByte]];
-								break;
-							//	realtime messages- insert these immediately
-							case VVMIDIClockVal:
-							case VVMIDITickVal:
-							case VVMIDIStartVal:
-							case VVMIDIContinueVal:
-							case VVMIDIStopVal:
-							case VVMIDIUndefinedRealtime1Val:
-							case VVMIDIActiveSenseVal:
-							case VVMIDIResetVal:
-								hadClockMsg = YES;
-								newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
-								if (newMsg != nil)	{
-									[msgs addObject:newMsg];
-								}
-								break;
-							default:	//	no idea what the default would be...
-								break;
-						}
-						break;
-				}
-			}
-			//	else if the byte's in the range 0x00 - 0x7F, it's not a status byte- instead, it's got some kind of data in it
-			else if ((currByte >= 0x00) && (currByte <= 0x7F))	{
-				//	i'm only going to process this data if i'm not in the midst of a sysex dump and i'm assembling a message
-				if (processingSysex)	{
-					//NSLog(@"\t\tsysex val - %X",currByte);
-					NSNumber		*tmpNum = [NSNumber numberWithInt:currByte];
-					if (tmpNum != nil)
-						[sysex addObject:tmpNum];
-				}
-				//	...else i'm not processing sysex data!
-				else	{
-					if (newMsg != nil)	{
-						switch(msgElementCount)	{
-							case 0:
-								[newMsg setData1:currByte];
-								++msgElementCount;
-								break;
-							case 1:
-								{
-									int			msgType = [newMsg type];
-									if ((msgType == VVMIDINoteOnVal) && (currByte == 0x00))	{
-										[newMsg setType:VVMIDINoteOffVal];
-										[newMsg setData2:currByte];
+									[sysex removeAllObjects];
+									//NSLog(@"\t\tVVMIDIEndSysexDumpVal - %X",currByte);
+									processingSysex = NO;
+									processingSysexIterationCount = 0;
+									break;
+								case VVMIDIBeginSysexDumpVal:
+									//NSLog(@"\t\tVVMIDIBeginSysexDumpVal - %X",currByte);
+									processingSysex = YES;
+									processingSysexIterationCount = 0;
+									[sysex removeAllObjects];
+									//[sysex addObject:[NSNumber numberWithInt:currByte]];
+									break;
+								//	realtime messages- insert these immediately
+								case VVMIDIClockVal:
+								case VVMIDITickVal:
+								case VVMIDIStartVal:
+								case VVMIDIContinueVal:
+								case VVMIDIStopVal:
+								case VVMIDIUndefinedRealtime1Val:
+								case VVMIDIActiveSenseVal:
+								case VVMIDIResetVal:
+									hadClockMsg = YES;
+									newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
+									if (newMsg != nil)	{
+										[msgs addObject:newMsg];
 									}
-									//	if it's a control change value, the message may only be the LSB of a CC value!
-									else if (msgType==VVMIDIControlChangeVal)	{
-										int			cc = [newMsg data1];
-										int			channel = [newMsg channel];
-										//	CCs 0-31 are the MSBs of CCs 0-31
-										if (_VVMIDIFourteenBitCCs && cc>=0 && cc<32)	{
-											//	get current MSB & LSB from node
-											int			msb;
-											int			lsb;
-											[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
-											msb = currByte;
-											//NSLog(@"\t\tMSB.  vals are now %d / %d",msb,lsb);
-											//	push updated MSB & LSB to node & newMsg
-											[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
-											[newMsg setData2:msb];
-											if (lsb>=0 && lsb<=127)
+									break;
+								default:	//	no idea what the default would be...
+									break;
+							}
+							break;
+					}
+				}
+				//	else if the byte's in the range 0x00 - 0x7F, it's not a status byte- instead, it's got some kind of data in it
+				else if ((currByte >= 0x00) && (currByte <= 0x7F))	{
+					//	i'm only going to process this data if i'm not in the midst of a sysex dump and i'm assembling a message
+					if (processingSysex)	{
+						//NSLog(@"\t\tsysex val - %X",currByte);
+						NSNumber		*tmpNum = [NSNumber numberWithInt:currByte];
+						if (tmpNum != nil)
+							[sysex addObject:tmpNum];
+					}
+					//	...else i'm not processing sysex data!
+					else	{
+						if (newMsg != nil)	{
+							switch(msgElementCount)	{
+								case 0:
+									[newMsg setData1:currByte];
+									++msgElementCount;
+									break;
+								case 1:
+									{
+										int			msgType = [newMsg type];
+										if ((msgType == VVMIDINoteOnVal) && (currByte == 0x00))	{
+											[newMsg setType:VVMIDINoteOffVal];
+											[newMsg setData2:currByte];
+										}
+										//	if it's a control change value, the message may only be the LSB of a CC value!
+										else if (msgType==VVMIDIControlChangeVal)	{
+											int			cc = [newMsg data1];
+											int			channel = [newMsg channel];
+											//	CCs 0-31 are the MSBs of CCs 0-31
+											if (_VVMIDIFourteenBitCCs && cc>=0 && cc<32)	{
+												//	get current MSB & LSB from node
+												int			msb;
+												int			lsb;
+												[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
+												msb = currByte;
+												//NSLog(@"\t\tMSB.  vals are now %d / %d",msb,lsb);
+												//	push updated MSB & LSB to node & newMsg
+												[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
+												[newMsg setData2:msb];
+												if (lsb>=0 && lsb<=127)
+													[newMsg setData3:lsb];
+												//	run through the local array- make sure there aren't any other messages from this channel + ctrl (remove them if there are)
+												int			tmpIndex = 0;
+												for (VVMIDIMessage *msgPtr in msgs)	{
+													if ([msgPtr data1]==cc && [msgPtr channel]==channel)	{
+														[msgs removeObjectAtIndex:tmpIndex];
+														break;
+													}
+													++tmpIndex;
+												}
+												//	...now that i know there aren't any other messages to this ctrl, add this new message to the array!
+												[msgs addObject:newMsg];
+											}
+											//	CCs 32-63 are the LSBs of CCs 0-31
+											else if (_VVMIDIFourteenBitCCs && cc>=32 && cc<64)	{
+												//	fix channel of newMsg
+												cc -= 32;
+												[newMsg setData1:cc];
+												//	get current MSB & LSB from node
+												int			msb;
+												int			lsb;
+												[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
+												lsb = currByte;
+												//NSLog(@"\t\tLSB.  vals are now %d / %d",msb,lsb);
+												//	push updated MSB & LSB to node & newMsg
+												[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
+												[newMsg setData2:msb];
 												[newMsg setData3:lsb];
-											//	run through the local array- make sure there aren't any other messages from this channel + ctrl (remove them if there are)
-											int			tmpIndex = 0;
-											for (VVMIDIMessage *msgPtr in msgs)	{
-												if ([msgPtr data1]==cc && [msgPtr channel]==channel)	{
-													[msgs removeObjectAtIndex:tmpIndex];
-													break;
+												//	run through the local array- make sure there aren't any other messages from this channel + ctrl (remove them if there are)
+												int			tmpIndex = 0;
+												for (VVMIDIMessage *msgPtr in msgs)	{
+													if ([msgPtr data1]==cc && [msgPtr channel]==channel)	{
+														[msgs removeObjectAtIndex:tmpIndex];
+														break;
+													}
+													++tmpIndex;
 												}
-												++tmpIndex;
+												//	...now that i know there aren't any other messages to this ctrl, add this new message to the array!
+												[msgs addObject:newMsg];
 											}
-											//	...now that i know there aren't any other messages to this ctrl, add this new message to the array!
-											[msgs addObject:newMsg];
-										}
-										//	CCs 32-63 are the LSBs of CCs 0-31
-										else if (_VVMIDIFourteenBitCCs && cc>=32 && cc<64)	{
-											//	fix channel of newMsg
-											cc -= 32;
-											[newMsg setData1:cc];
-											//	get current MSB & LSB from node
-											int			msb;
-											int			lsb;
-											[(VVMIDINode *)readProcRefCon _getValsForCC:cc channel:channel toMSB:&msb LSB:&lsb];
-											lsb = currByte;
-											//NSLog(@"\t\tLSB.  vals are now %d / %d",msb,lsb);
-											//	push updated MSB & LSB to node & newMsg
-											[(VVMIDINode *)readProcRefCon _setValsForCC:cc channel:channel fromMSB:msb LSB:lsb];
-											[newMsg setData2:msb];
-											[newMsg setData3:lsb];
-											//	run through the local array- make sure there aren't any other messages from this channel + ctrl (remove them if there are)
-											int			tmpIndex = 0;
-											for (VVMIDIMessage *msgPtr in msgs)	{
-												if ([msgPtr data1]==cc && [msgPtr channel]==channel)	{
-													[msgs removeObjectAtIndex:tmpIndex];
-													break;
-												}
-												++tmpIndex;
+											//	else it's a normal MIDI CC!
+											else	{
+												[newMsg setData2:currByte];
+												[msgs addObject:newMsg];
 											}
-											//	...now that i know there aren't any other messages to this ctrl, add this new message to the array!
-											[msgs addObject:newMsg];
 										}
-										//	else it's a normal MIDI CC!
 										else	{
 											[newMsg setData2:currByte];
-											[msgs addObject:newMsg];
+										}
+										++msgElementCount;
+									}
+									break;
+							}
+						
+							/*	if the last MIDI msg was a MTC quarter-frame message, it will be passed on to the CAClockRef.  however, 
+							if the CAClockRef's SMPTE mode doesn't match the SMPTE mode of the incoming message, it will be ignored.  this 
+							isn't desirable, so we pull the SMPTE mode out of the message and apply it to the clock anyway.		*/
+							if (hadMTCMsg)	{
+								Byte		mtcVal = [newMsg data1];
+								int			highNibble = ((mtcVal >> 4) & 0x0F);
+								//	the high nibble is a number describing which "piece"- piece 7 contains SMPTE format data (and hours, but we don't care about that here)
+								if (highNibble == 7)	{
+									int			lowNibble = (mtcVal & 0x0F);
+									long	err = noErr;
+									CAClockRef	tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
+									//UInt32		smpteType = ((lowNibble >> 1) & 0x03);	//	0-based, max val is 3. from 0, vals represent: 24fps, 25fps, 30-drop fps, 30fps.
+									UInt32		smpteType = 0;
+									UInt32		tmpSize = sizeof(UInt32);
+									err = CAClockGetProperty(tmpClock, kCAClockProperty_SMPTEFormat, &tmpSize, &smpteType);
+									if (err != noErr)
+										NSLog(@"\t\terr %ld querying clock's SMPTE format in %s",err,__func__);
+									else	{
+										//	if the clock's current SMPTE format doesn't match the SMPTE format described by the received MTC...
+										if (smpteType != ((lowNibble >> 1) & 0x03))	{
+											smpteType = ((lowNibble >> 1) & 0x03);
+											err = CAClockSetProperty(tmpClock, kCAClockProperty_SMPTEFormat, tmpSize, &smpteType);
+											if (err != noErr)
+												NSLog(@"\t\terr %ld correcting received SMPTE format in %s",err,__func__);
 										}
 									}
-									else	{
-										[newMsg setData2:currByte];
-									}
-									++msgElementCount;
 								}
-								break;
-						}
-						
-						/*	if the last MIDI msg was a MTC quarter-frame message, it will be passed on to the CAClockRef.  however, 
-						if the CAClockRef's SMPTE mode doesn't match the SMPTE mode of the incoming message, it will be ignored.  this 
-						isn't desirable, so we pull the SMPTE mode out of the message and apply it to the clock anyway.		*/
-						if (hadMTCMsg)	{
-							Byte		mtcVal = [newMsg data1];
-							int			highNibble = ((mtcVal >> 4) & 0x0F);
-							//	the high nibble is a number describing which "piece"- piece 7 contains SMPTE format data (and hours, but we don't care about that here)
-							if (highNibble == 7)	{
-								int			lowNibble = (mtcVal & 0x0F);
-								long	err = noErr;
-								CAClockRef	tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
-								//UInt32		smpteType = ((lowNibble >> 1) & 0x03);	//	0-based, max val is 3. from 0, vals represent: 24fps, 25fps, 30-drop fps, 30fps.
-								UInt32		smpteType = 0;
-								UInt32		tmpSize = sizeof(UInt32);
-								err = CAClockGetProperty(tmpClock, kCAClockProperty_SMPTEFormat, &tmpSize, &smpteType);
-								if (err != noErr)
-									NSLog(@"\t\terr %ld querying clock's SMPTE format in %s",err,__func__);
-								else	{
-									//	if the clock's current SMPTE format doesn't match the SMPTE format described by the received MTC...
-									if (smpteType != ((lowNibble >> 1) & 0x03))	{
-										smpteType = ((lowNibble >> 1) & 0x03);
-										err = CAClockSetProperty(tmpClock, kCAClockProperty_SMPTEFormat, tmpSize, &smpteType);
-										if (err != noErr)
-											NSLog(@"\t\terr %ld correcting received SMPTE format in %s",err,__func__);
-									}
-								}
+							
+							
+							
+							
+							
+							
 							}
-							
-							
-							
-							
-							
-							
 						}
 					}
 				}
 			}
-		}
 		
-		//	get the next packet
-		packet = MIDIPacketNext(packet);
+			//	get the next packet
+			packet = MIDIPacketNext(packet);
+		}
+	
+		if (hadMTCMsg)	{
+			CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
+			long			err = CAClockParseMIDI(tmpClock, pktList);
+			if (err != noErr)
+				NSLog(@"\t\terr %ld at CAClockParseMIDI() for MTC in %s",err,__func__);
+		}
+		if (hadClockMsg)	{
+			CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon bpmClockRef];
+			long			err = CAClockParseMIDI(tmpClock, pktList);
+			if (err != noErr)
+				NSLog(@"\t\terr %ld at CAClockParseMIDI() for BPM in %s",err,__func__);
+		}
+	
+		//	update the sysex-related flags in the actual VVMIDINode object
+		[(VVMIDINode *)readProcRefCon setProcessingSysex:processingSysex];
+		[(VVMIDINode *)readProcRefCon setProcessingSysexIterationCount:processingSysexIterationCount];
+	
+		//	hand the array of messages to the actual VVMIDINode object
+		if ((msgs != nil) && ([msgs count] > 0))
+			[(VVMIDINode *)readProcRefCon receivedMIDI:msgs];
 	}
 	
-	if (hadMTCMsg)	{
-		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon mtcClockRef];
-		long			err = CAClockParseMIDI(tmpClock, pktList);
-		if (err != noErr)
-			NSLog(@"\t\terr %ld at CAClockParseMIDI() for MTC in %s",err,__func__);
-	}
-	if (hadClockMsg)	{
-		CAClockRef		tmpClock = [(VVMIDINode *)readProcRefCon bpmClockRef];
-		long			err = CAClockParseMIDI(tmpClock, pktList);
-		if (err != noErr)
-			NSLog(@"\t\terr %ld at CAClockParseMIDI() for BPM in %s",err,__func__);
-	}
-	
-	//	update the sysex-related flags in the actual VVMIDINode object
-	[(VVMIDINode *)readProcRefCon setProcessingSysex:processingSysex];
-	[(VVMIDINode *)readProcRefCon setProcessingSysexIterationCount:processingSysexIterationCount];
-	
-	//	hand the array of messages to the actual VVMIDINode object
-	if ((msgs != nil) && ([msgs count] > 0))
-		[(VVMIDINode *)readProcRefCon receivedMIDI:msgs];
+	//	flag my proc as done running, so stuff that wants to access the CoreMIDI vars may do so
+	[(VVMIDINode *)readProcRefCon setProcRunning:NO];
 	
 	[pool release];
 	//NSLog(@"\t\tmyMIDIReadProc - FINISHED");

@@ -18,6 +18,7 @@ extern double		_machTimeToNsFactor;
 	MIDIPortRef				portRef;		//	the port is owned by the client, and connects it to the endpoint
 	CAClockRef				mtcClockRef;
 	CAClockRef				bpmClockRef;
+	BOOL					procRunning;	//	YES while MIDI callback is executing- limit access to CoreMIDI vars to times when this is NO.
 	
 	NSString				*name;
 	NSString				*deviceName;
@@ -61,6 +62,7 @@ extern double		_machTimeToNsFactor;
 - (MIDIEndpointRef) endpointRef;
 - (NSMutableDictionary *) properties;
 - (CAClockRef) mtcClockRef;
+@property (assign,readwrite) BOOL procRunning;
 - (NSString *) name;
 - (NSString *) deviceName;
 - (NSString *) fullName;
@@ -71,8 +73,7 @@ extern double		_machTimeToNsFactor;
 - (int) processingSysexIterationCount;
 - (void) setProcessingSysexIterationCount:(int)n;
 - (NSMutableArray *) sysexArray;
-- (BOOL) enabled;
-- (void) setEnabled:(BOOL)n;
+@property (assign,readwrite) BOOL enabled;
 - (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb;
 - (void) _setValsForCC:(int)cc channel:(int)c fromMSB:(int)msb LSB:(int)lsb;
 - (double) MTCQuarterFrameSMPTEAsDouble;
