@@ -938,13 +938,11 @@
 		return nil;
 	OSCMessage		*returnMe = nil;
 	
-		OSSpinLockLock(&lastReceivedMessageLock);
-			if (lastReceivedMessage != nil)	{
-				returnMe = [lastReceivedMessage copy];
-			}
-		OSSpinLockUnlock(&lastReceivedMessageLock);
-		if (returnMe != nil)
-			[returnMe autorelease];
+	OSSpinLockLock(&lastReceivedMessageLock);
+		if (lastReceivedMessage != nil)	{
+			returnMe = [[lastReceivedMessage copy] autorelease];
+		}
+	OSSpinLockUnlock(&lastReceivedMessageLock);
 	
 	return returnMe;
 }

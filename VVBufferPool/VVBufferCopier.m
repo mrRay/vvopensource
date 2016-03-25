@@ -518,12 +518,14 @@ id _globalVVBufferCopier = nil;
 			glEnable([a target]);
 			//GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],VVMAKERECT(0,0,aSize.width,aSize.height));
 			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			dstRect.origin = NSMakePoint(0,0);
 			GLDRAWTEXQUADMACRO([a name],[a target],[a flipped],[a glReadySrcRect],dstRect);
 			glDisable([a target]);
 #else
 			//VVRECT				bounds = VVMAKERECT(0,0,size.width,size.height);
 			VVRECT				glSrcRect = [a glReadySrcRect];
 			VVRECT				dstRect = [VVSizingTool rectThatFitsRect:[a srcRect] inRect:VVMAKERECT(0,0,bSize.width,bSize.height) sizingMode:VVSizingModeCopy];
+			dstRect.origin = VVMAKEPOINT(0,0);
 			//	populate my built-in projection effect with the texture data i want to draw
 			GLKEffectPropertyTexture	*effectTex = [projectionMatrixEffect texture2d0];
 			[effectTex setEnabled:YES];

@@ -431,6 +431,12 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	contentTimestamp.tv_sec = (*(n)).tv_sec;
 	contentTimestamp.tv_usec = (*(n)).tv_usec;
 }
+- (double) contentTimestampInSeconds	{
+	double		returnMe = 0.;
+	returnMe += (double)contentTimestamp.tv_sec;
+	returnMe += (((double)contentTimestamp.tv_usec) / 1000000.);
+	return returnMe;
+}
 - (void) setUserInfo:(id)n	{
 	VVRELEASE(userInfo);
 	userInfo = n;
