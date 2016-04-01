@@ -7,6 +7,9 @@
 #import <VVBasics/VVBasics.h>
 
 #import "VVBufferPoolStringAdditions.h"
+#if !TARGET_OS_IPHONE
+#import "VVBufferPoolNSBitmapImageRepAdditions.h"
+#endif
 #import "VVBuffer.h"
 #import "VVBufferAggregate.h"
 #if !TARGET_OS_IPHONE
@@ -238,6 +241,7 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 
 
 - (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n;
+- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n prefer2DTexture:(BOOL)prefer2D;
 
 
 
@@ -259,3 +263,4 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 
 unsigned long VVPackFourCC_fromChar(char *charPtr);
 void VVUnpackFourCC_toChar(unsigned long fourCC, char *destCharPtr);
+void CGBitmapContextUnpremultiply(CGContextRef ctx);

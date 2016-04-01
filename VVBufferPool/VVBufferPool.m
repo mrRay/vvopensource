@@ -316,12 +316,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			//	bind the renderbuffer, set it up
 			glBindRenderbuffer(newBufferDesc.target, newBufferDesc.name);
 			if (newBufferDesc.msAmount > 0)	{
-#if !TARGET_OS_IPHONE
 				glRenderbufferStorageMultisample(newBufferDesc.target,
-#else
-				//glRenderbufferStorageMultisampleAPPLE(newBufferDesc.target,
-				glRenderbufferStorageMultisample(newBufferDesc.target,
-#endif
 					newBufferDesc.msAmount,
 					newBufferDesc.pixelFormat,
 					s.width,
@@ -926,6 +921,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	NSRect				origImageRect = NSMakeRect(0, 0, origImageSize.width, origImageSize.height);
 	NSImageRep			*bestRep = [img bestRepresentationForRect:origImageRect context:nil hints:nil];
 	VVSIZE				bitmapSize = NSMakeSize([bestRep pixelsWide], [bestRep pixelsHigh]);
+	if (bitmapSize.width==0 || bitmapSize.height==0)
+		bitmapSize = [img size];
 	VVRECT				bitmapRect = VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height);
 	
 	//	make a bitmap image rep
@@ -969,6 +966,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		[origContext release];
 		origContext = nil;
 	}
+	
+	//	the bitmap rep we just drew into was premultiplied, and we have to fix that before uploading it
+	[rep unpremultiply];
 	
 	VVBuffer		*returnMe = [self allocBufferForBitmapRep:rep prefer2DTexture:prefer2D];
 	[returnMe setSrcRect:VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height)];
@@ -1812,6 +1812,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	return returnMe;
 }
 - (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n	{
+	return [self allocBufferForCGImageRef:n prefer2DTexture:NO];
+}
+- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n prefer2DTexture:(BOOL)prefer2D	{
 	if (n==nil)
 		return nil;
 	//	i have the image- i need to get some of its basic properties (pixel format, alpha, etc) to determine if i can just upload this data to a texture or if i have to convert (draw) it
@@ -1858,7 +1861,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			VVBufferDescriptor		desc;
 #if !TARGET_OS_IPHONE
 			desc.type = VVBufferType_Tex;
-			desc.target = GL_TEXTURE_RECTANGLE_EXT;
+			desc.target = (prefer2D) ? GL_TEXTURE_2D : GL_TEXTURE_RECTANGLE_EXT;
 			desc.internalFormat = VVBufferIF_RGBA8;
 			//desc.pixelFormat = VVBufferPF_RGBA;
 			desc.pixelFormat = VVBufferPF_RGBA;
@@ -1923,6 +1926,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		CGContextDrawImage(ctx, CGRectMake(0,0,imgSize.width,imgSize.height), n);
 		CGContextFlush(ctx);
 		CGContextRelease(ctx);
+		//	the bitmap context we just drew into has premultiplied alpha, so we need to un-premultiply before uploading it
+		CGBitmapContextUnpremultiply(ctx);
 		//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
 		VVBufferDescriptor		desc;
 		desc.type = VVBufferType_Tex;
@@ -2053,4 +2058,32 @@ void VVUnpackFourCC_toChar(unsigned long fourCC, char *destCharPtr)	{
 	destCharPtr[1] = (fourCC>>16) & 0xFF;
 	destCharPtr[2] = (fourCC>>8) & 0xFF;
 	destCharPtr[3] = (fourCC) & 0xFF;
+}
+void CGBitmapContextUnpremultiply(CGContextRef ctx)	{
+	NSSize				actualSize = NSMakeSize(CGBitmapContextGetWidth(ctx), CGBitmapContextGetHeight(ctx));
+	unsigned long		bytesPerRow = CGBitmapContextGetBytesPerRow(ctx);
+	unsigned char		*bitmapData = (unsigned char *)CGBitmapContextGetData(ctx);
+	unsigned char		*pixelPtr = nil;
+	double				colors[4];
+	if (bitmapData==nil || bytesPerRow<=0 || actualSize.width<1 || actualSize.height<1)
+		return;
+	for (int y=0; y<actualSize.height; ++y)	{
+		pixelPtr = bitmapData + (y * bytesPerRow);
+		for (int x=0; x<actualSize.width; ++x)	{
+			//	convert unsigned chars to normalized doubles
+			for (int i=0; i<4; ++i)
+				colors[i] = ((double)*(pixelPtr+i))/255.;
+			//	unpremultiply if there's an alpha and it won't cause a divide-by-zero
+			if (colors[3]>0. && colors[3]<1.)	{
+				for (int i=0; i<3; ++i)
+					colors[i] = colors[i] / colors[3];
+			}
+			//	convert the normalized components back into unsigned chars
+			for (int i=0; i<4; ++i)
+				*(pixelPtr+i) = (unsigned char)(colors[i]*255.);
+			
+			//	don't forget to increment the pixel ptr!
+			pixelPtr += 4;
+		}
+	}
 }
