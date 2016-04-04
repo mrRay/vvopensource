@@ -19,12 +19,12 @@
 	}
 	
 	if (sourceEnableStateDict != nil)
-		[sourceEnableStateDict retain];
+		sourceEnableStateDict = [sourceEnableStateDict mutableCopy];
 	else
 		sourceEnableStateDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
 	
 	if (destEnableStateDict != nil)
-		[destEnableStateDict retain];
+		destEnableStateDict = [destEnableStateDict mutableCopy];
 	else
 		destEnableStateDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
 	
@@ -90,8 +90,11 @@
 			for (NSString *midiString in it)
 				[tmpString appendString:[NSString stringWithFormat:@"%@\n",midiString]];
 		[receivedOSCStringArray unlock];
-		if ([receivedOSCPreviewToggle intValue] == NSOnState)
-			[receivedOSCField setStringValue:tmpString];
+		if ([receivedOSCPreviewToggle intValue] == NSOnState)	{
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[receivedOSCField setStringValue:tmpString];
+			});
+		}
 	}
 }
 

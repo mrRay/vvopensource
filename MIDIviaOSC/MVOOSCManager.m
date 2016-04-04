@@ -114,8 +114,11 @@
 						for (NSString *midiString in it)
 							[tmpString appendString:[NSString stringWithFormat:@"%@\n",midiString]];
 					[receivedMIDIStringArray unlock];
-					if ([receivedMIDIPreviewToggle intValue] == NSOnState)
-						[receivedMIDIField setStringValue:tmpString];
+					if ([receivedMIDIPreviewToggle intValue] == NSOnState)	{
+						dispatch_async(dispatch_get_main_queue(), ^{
+							[receivedMIDIField setStringValue:tmpString];
+						});
+					}
 				}
 			}
 		}

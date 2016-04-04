@@ -15,35 +15,45 @@
 	switch (type)	{
 		//	status byte
 		case VVMIDINoteOffVal:
-			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
+			//return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDINoteOnVal:
-			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
+			//return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIAfterTouchVal:
-			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
+			//return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIControlChangeVal:
-			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%llu",channel,data1,data2,timestamp];
+			//return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
+			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd",channel,data1,data2];
 			break;
 		case VVMIDIProgramChangeVal:
-			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%llu",channel,data1,timestamp];
+			//return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%qd",channel,data1,timestamp];
+			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd",channel,data1];
 			break;
 		case VVMIDIChannelPressureVal:
-			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%llu",channel,data1,timestamp];
+			//return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%qd",channel,data1,timestamp];
+			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd",channel,data1];
 			break;
 		case VVMIDIPitchWheelVal:
-			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%llu",channel,(data2<<7)|data1,timestamp];
+			//return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%qd",channel,(data2<<7)|data1,timestamp];
+			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d",channel,(data2<<7)|data1];
 			break;
 		//	common messages
 		case VVMIDIMTCQuarterFrameVal:
-			return [NSString stringWithFormat:@"Quarter-Frame: %hhd, time.%llu",data1,timestamp];
+			//return [NSString stringWithFormat:@"Quarter-Frame: %hhd, time.%qd",data1,timestamp];
+			return [NSString stringWithFormat:@"Quarter-Frame: %hhd",data1];
 			break;
 		case VVMIDISongPosPointerVal:
-			return [NSString stringWithFormat:@"Song Pos'n ptr: %d, time.%llu",(data2 << 7) | data1,timestamp];
+			//return [NSString stringWithFormat:@"Song Pos'n ptr: %d, time.%qd",(data2 << 7) | data1,timestamp];
+			return [NSString stringWithFormat:@"Song Pos'n ptr: %d",(data2 << 7) | data1];
 			break;
 		case VVMIDISongSelectVal:
-			return [NSString stringWithFormat:@"Song Select: %hhd, time.%llu",data1,timestamp];
+			//return [NSString stringWithFormat:@"Song Select: %hhd, time.%qd",data1,timestamp];
+			return [NSString stringWithFormat:@"Song Select: %hhd",data1];
 			break;
 		case VVMIDIUndefinedCommon1Val:
 			return @"Undefined common";
@@ -112,10 +122,10 @@
 	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:time] autorelease];
 }
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:0] autorelease];
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:(uint64_t)0] autorelease];
 }
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:0] autorelease];
+	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:(uint64_t)0] autorelease];
 }
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
 	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:time] autorelease];

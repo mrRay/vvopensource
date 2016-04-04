@@ -32,8 +32,6 @@ What does this project include/do/make?
   
   * DDMathParser is the [DDMathParser project by Dave DeLong](https://github.com/davedelong/DDMathParser) packaged up as a framework.  this is a slightly older version of DDMathParser (the last version capable of compiling 32-bit binaries capable of running on 10.6).  DDMathParser is used by VVISFKit to parse and evaluate mathematical expressions- it's a really neat project, you should check it out!
   
-  * JSONKit is the [JSONKit project by John Engelhart](https://github.com/johnezang/JSONKit) packaged up as a framework.  VVISFKit uses JSONKit to read JSON blobs (NSJSONSerialization wasn't available until 10.7 and everything in this project can compile and run in 10.6).
-  
   * VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://vidvox.net/rays_oddsnends/ISF.html).
   
   * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
@@ -59,13 +57,13 @@ I'm not a programmer, I just want to download a MIDI/OSC test application!
 --------------------------------------------------------------------------
 
 Here's an OSC test application:
-http://vidvox.com/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.4.zip
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.5.zip
 
 Here's an application that sends MIDI input on one computer to another computer over the network/internet using OSC:
-http://vidvox.com/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.3.zip
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.4.zip
 
 Here's an extremely crude MIDI test application ("MIDIMonitor" from snoize is much more comprehensive and fully-featured!):
-http://vidvox.com/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.5.zip
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.6.zip
 
 
 How to use these frameworks in your Mac application
@@ -126,4 +124,4 @@ Doxygen was used to generate documentation for most things in this project, whic
 Licensing
 ---------
 
-This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html.  Some classes in this project use code from other open-source projects- all third-party code and licensing information is located in the top-level "external" directory.  At present, the third-party code used includes MAZeroingWeakRef from Mike Ash, DDMathParser from Dave DeLong, and JSONKit by John Engelhart.
+This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html.  Some classes in this project use code from other open-source projects- all third-party code and licensing information is located in the top-level "external" directory.  At present, the third-party code used includes MAZeroingWeakRef from Mike Ash, and DDMathParser from Dave DeLong.
