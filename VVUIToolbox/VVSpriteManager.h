@@ -48,6 +48,8 @@ extern MutLockArray		*_spriteManagerArray;
 - (void) receivedOtherEvent:(VVSpriteEventType)e atPoint:(VVPOINT)p withModifierFlag:(long)m;
 - (BOOL) localMouseDown:(VVPOINT)p modifierFlag:(long)m;
 - (BOOL) localVisibleMouseDown:(VVPOINT)p modifierFlag:(long)m;
+- (BOOL) localMouseDoubleDown:(VVPOINT)p modifierFlag:(long)m;
+- (BOOL) localVisibleMouseDoubleDown:(VVPOINT)p modifierFlag:(long)m;
 - (BOOL) localRightMouseDown:(VVPOINT)p modifierFlag:(long)m;
 - (BOOL) localVisibleRightMouseDown:(VVPOINT)p modifierFlag:(long)m;
 - (void) localRightMouseUp:(VVPOINT)p;

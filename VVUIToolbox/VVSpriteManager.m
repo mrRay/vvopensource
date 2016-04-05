@@ -296,6 +296,12 @@ MutLockArray		*_spriteManagerArray;
 - (BOOL) localVisibleMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventDown atPoint:p withModifierFlag:m visibleOnly:YES];
 }
+- (BOOL) localMouseDoubleDown:(VVPOINT)p modifierFlag:(long)m	{
+	return [self receivedMouseDownEvent:VVSpriteEventDouble atPoint:p withModifierFlag:m visibleOnly:NO];
+}
+- (BOOL) localVisibleMouseDoubleDown:(VVPOINT)p modifierFlag:(long)m	{
+	return [self receivedMouseDownEvent:VVSpriteEventDouble atPoint:p withModifierFlag:m visibleOnly:YES];
+}
 - (BOOL) localRightMouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	return [self receivedMouseDownEvent:VVSpriteEventRightDown atPoint:p withModifierFlag:m visibleOnly:NO];
 }

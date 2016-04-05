@@ -236,8 +236,14 @@
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	}
 	else	{
-		mouseDownEventType = VVSpriteEventDown;
-		[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
+		if ([e clickCount]>=2)	{
+			mouseDownEventType = VVSpriteEventDouble;
+			[spriteManager localMouseDoubleDown:localPoint modifierFlag:mouseDownModifierFlags];
+		}
+		else	{
+			mouseDownEventType = VVSpriteEventDown;
+			[spriteManager localMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
+		}
 	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
