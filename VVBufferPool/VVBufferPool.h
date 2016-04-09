@@ -191,6 +191,8 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 */
 #ifndef __LP64__
 - (VVBuffer *) allocTexRangeForHapCVImageBuffer:(CVImageBufferRef)img;
+- (VVBuffer *) allocTexRangeForPlane:(int)pi ofHapCVImageBuffer:(CVImageBufferRef)img;
+- (NSArray *) createBuffersForHapCVImageBuffer:(CVImageBufferRef)img;
 #endif
 ///	Allocates and returns a VVBuffer instance backed by an IOSurfaceRef.  If you want to pass a texture to another process via an IOSurface, create one of these and then render to it.
 /**

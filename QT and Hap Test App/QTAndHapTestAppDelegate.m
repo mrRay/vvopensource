@@ -1,9 +1,9 @@
-#import "AppDelegate.h"
+#import "QTAndHapTestAppDelegate.h"
 
 
 
 
-@implementation AppDelegate
+@implementation QTAndHapTestAppDelegate
 
 
 - (id) init	{
@@ -64,7 +64,7 @@
 		[op setDirectoryURL:[NSURL fileURLWithPath:importDir]];
 	
 	[op
-		beginSheetModalForWindow:nil
+		beginSheetModalForWindow:window
 		completionHandler:^(NSInteger result)	{
 			if (result == NSFileHandlingPanelOKButton)	{
 				//	get the inspected object
@@ -108,7 +108,7 @@ CVReturn displayLinkCallback(CVDisplayLinkRef displayLink,
 {
 	//NSLog(@"%s",__func__);
 	NSAutoreleasePool		*pool =[[NSAutoreleasePool alloc] init];
-	[(AppDelegate *)displayLinkContext renderCallback];
+	[(QTAndHapTestAppDelegate *)displayLinkContext renderCallback];
 	[pool release];
 	return kCVReturnSuccess;
 }

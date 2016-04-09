@@ -61,6 +61,7 @@ done, free the VVBuffer instance- the underlying resources will be pooled or fre
 #ifndef __LP64__	//	FFGL is a 32-bit API/VVFFGL is a 32-bit-only framework
 - (VVBuffer *) allocBufferForFFGLImage:(FFGLImage *)i;
 #endif
-- (VVBuffer *) allocBufferForHapDecoderFrame:(HapDecoderFrame *)n;
+- (VVBuffer *) allocBufferForPlane:(int)pi inHapDecoderFrame:(HapDecoderFrame *)n;
+- (NSArray *) createBuffersForHapDecoderFrame:(HapDecoderFrame *)n;
 
 @end

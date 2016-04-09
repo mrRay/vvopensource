@@ -98,6 +98,8 @@ Boolean HapQTQuickTimeMovieHasHapTrackPlayable(Movie movie)
                     case kHapCodecSubType:
                     case kHapAlphaCodecSubType:
                     case kHapYCoCgCodecSubType:
+                    case kHapYCoCgACodecSubType:
+                    case kHapAOnlyCodecSubType:
                         return HapQTCodecIsAvailable(codecType);
                     default:
                         break;
@@ -106,6 +108,40 @@ Boolean HapQTQuickTimeMovieHasHapTrackPlayable(Movie movie)
         }
     }
     return false;
+}
+OSType HapCodecType(Movie movie)
+{
+	OSType		returnMe = 0;
+	 if (movie)
+    {
+        for (long i = 1; i<=GetMovieTrackCount(movie) && returnMe==0; i++) {
+            Track track = GetMovieIndTrack(movie, i);
+            Media media = GetTrackMedia(track);
+            OSType mediaType;
+            GetMediaHandlerDescription(media, &mediaType, NULL, NULL);
+            if (mediaType == VideoMediaType)
+            {
+                // Get the codec-type of this track
+                ImageDescriptionHandle imageDescription = (ImageDescriptionHandle)NewHandle(0); // GetMediaSampleDescription will resize it
+                GetMediaSampleDescription(media, 1, (SampleDescriptionHandle)imageDescription);
+                OSType codecType = (*imageDescription)->cType;
+                DisposeHandle((Handle)imageDescription);
+                
+                switch (codecType) {
+                    case kHapCodecSubType:
+                    case kHapAlphaCodecSubType:
+                    case kHapYCoCgCodecSubType:
+                    case kHapYCoCgACodecSubType:
+                    case kHapAOnlyCodecSubType:
+                        returnMe = codecType;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+	return returnMe;
 }
 #pragma GCC pop
 
@@ -173,6 +209,9 @@ static void HapQTRegisterPixelFormats(void)
         HapQTRegisterDXTPixelFormat(kHapPixelFormatTypeRGB_DXT1, 4, 0x83F0, false);
         HapQTRegisterDXTPixelFormat(kHapPixelFormatTypeRGBA_DXT5, 8, 0x83F3, true);
         HapQTRegisterDXTPixelFormat(kHapPixelFormatTypeYCoCg_DXT5, 8, 0x83F3, false);
+        //HapQTRegisterDXTPixelFormat(kHapPixelFormatType_CoCgXY, 8, 0x83F3, false);
+        //HapQTRegisterDXTPixelFormat(kHapPixelFormatType_YCoCg_DXT5_A_RGTC1, 8, 0x83F3, true);
+        HapQTRegisterDXTPixelFormat(kHapPixelFormatType_A_RGTC1, 8, 0x8DBB, false);
         registered = true;
     }
 }
@@ -187,18 +226,24 @@ CFDictionaryRef HapQTCreateCVPixelBufferOptionsDictionary()
     SInt32 rgb_dxt1 = kHapPixelFormatTypeRGB_DXT1;
     SInt32 rgba_dxt5 = kHapPixelFormatTypeRGBA_DXT5;
     SInt32 ycocg_dxt5 = kHapPixelFormatTypeYCoCg_DXT5;
+    //SInt32 cocgxy = kHapPixelFormatType_CoCgXY;
+    SInt32 cocgxy_a = kHapPixelFormatType_YCoCg_DXT5_A_RGTC1;
     
-    const void *formatNumbers[3] = {
+    const void *formatNumbers[4] = {
         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &rgb_dxt1),
         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &rgba_dxt5),
-        CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &ycocg_dxt5)
+        CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &ycocg_dxt5),
+        //CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &cocgxy),
+        CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &cocgxy_a)
     };
     
-    CFArrayRef formats = CFArrayCreate(kCFAllocatorDefault, formatNumbers, 3, &kCFTypeArrayCallBacks);
+    CFArrayRef formats = CFArrayCreate(kCFAllocatorDefault, formatNumbers, 4, &kCFTypeArrayCallBacks);
     
     CFRelease(formatNumbers[0]);
     CFRelease(formatNumbers[1]);
     CFRelease(formatNumbers[2]);
+    CFRelease(formatNumbers[3]);
+    //CFRelease(formatNumbers[4]);
     
     const void *keys[1] = { kCVPixelBufferPixelFormatTypeKey };
     const void *values[1] = { formats };

@@ -1036,9 +1036,13 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 }
 #ifndef __LP64__
 - (VVBuffer *) allocTexRangeForHapCVImageBuffer:(CVImageBufferRef)img	{
-	//NSLog(@"%s",__func__);
-	if (img == nil)
+	return [self allocTexRangeForPlane:0 ofHapCVImageBuffer:img];
+}
+- (VVBuffer *) allocTexRangeForPlane:(int)pi ofHapCVImageBuffer:(CVImageBufferRef)img	{
+	if (img == nil || (pi>0 && pi>=CVPixelBufferGetPlaneCount(img)))	{
+		NSLog(@"\t\terr: bailing, %s",__func__);
 		return nil;
+	}
 	VVBufferDescriptor		desc;
 	desc.type = VVBufferType_Tex;
 	desc.target = GL_TEXTURE_RECTANGLE_EXT;
@@ -1096,6 +1100,24 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			desc.pixelType = VVBufferPT_U_Int_8888_Rev;
 			desc.texClientStorageFlag = NO;
 			break;
+		case kHapPixelFormatType_YCoCg_DXT5_A_RGTC1:
+			if (pi == 0)	{
+				bitsPerPixel = 8;
+				desc.target = GL_TEXTURE_2D;
+				desc.internalFormat = VVBufferIF_YCoCg_DXT5;
+				desc.pixelFormat = VVBufferPF_BGRA;
+				desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+				desc.texClientStorageFlag = NO;
+			}
+			else	{
+				bitsPerPixel = 4;
+				desc.target = GL_TEXTURE_2D;
+				desc.internalFormat = VVBufferIF_A_RGTC;
+				desc.pixelFormat = VVBufferPF_BGRA;
+				desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+				desc.texClientStorageFlag = NO;
+			}
+			break;
 		default:
 			NSLog(@"\t\terr: img pixel format unrecognized, bailing! %s",__func__);
 			CVPixelBufferUnlockBaseAddress(img, kCVPixelBufferLock_ReadOnly);
@@ -1112,7 +1134,11 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	
 	//	lock the base address of the buffer- unlock it only when i free the buffer (or if something goes wrong and i have to bail)!
 	CVPixelBufferLockBaseAddress(img, kCVPixelBufferLock_ReadOnly);
-	void		*baseAddress = CVPixelBufferGetBaseAddress(img);
+	void		*baseAddress = nil;
+	if (CVPixelBufferIsPlanar(img))
+		baseAddress = CVPixelBufferGetBaseAddressOfPlane(img, pi);
+	else
+		baseAddress = CVPixelBufferGetBaseAddress(img);
 	
 	//	determine what the size of the texture should be
 	VVSIZE		gpuSize = roundedRect.size;
@@ -1232,6 +1258,21 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		[VVBufferPool timestampThisBuffer:returnMe];
 	}
 	pthread_mutex_unlock(&contextLock);
+	return returnMe;
+}
+- (NSArray *) createBuffersForHapCVImageBuffer:(CVImageBufferRef)img	{
+	//NSLog(@"%s",__func__);
+	if (img == NULL)
+		return nil;
+	NSMutableArray		*returnMe = MUTARRAY;
+	for (int i=0; i<CVPixelBufferGetPlaneCount(img); ++i)	{
+		VVBuffer		*tmpBuffer = [self allocTexRangeForPlane:i ofHapCVImageBuffer:img];
+		if (tmpBuffer != nil)	{
+			[returnMe addObject:tmpBuffer];
+			[tmpBuffer release];
+		}
+	}
+	//NSLog(@"\t\treturning %@",returnMe);
 	return returnMe;
 }
 #endif

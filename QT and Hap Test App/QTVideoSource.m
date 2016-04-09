@@ -39,7 +39,7 @@
 		glContext = [[NSOpenGLContext alloc] initWithFormat:pf shareContext:[[VVBufferPool globalVVBufferPool] sharedContext]];
 		//	make a new hapQ swizzler
 		hapQSwizzler = [[ISFGLScene alloc] initWithSharedContext:[[VVBufferPool globalVVBufferPool] sharedContext]];
-		[hapQSwizzler useFile:[[NSBundle mainBundle] pathForResource:@"ScaledCoCgYtoRGBA" ofType:@"fs"]];
+		//[hapQSwizzler useFile:[[NSBundle mainBundle] pathForResource:@"ScaledCoCgYtoRGBA" ofType:@"fs"]];
 		//	make a movie
 		OSStatus	err = noErr;
 		NSURL		*pathURL = [NSURL fileURLWithPath:p];
@@ -56,6 +56,20 @@
 			if (err != noErr)	{
 				NSLog(@"\t\terr %ld at A in %s",err,__func__);
 				return;
+			}
+			
+			//	get the hap codec type- if it's HapQ or HapQ alpha, we're going to need to load a shader to convert the image...
+			switch (HapCodecType([movie quickTimeMovie]))	{
+			case kHapCodecSubType:
+			case kHapAlphaCodecSubType:
+			case kHapAOnlyCodecSubType:
+				break;
+			case kHapYCoCgCodecSubType:
+				[hapQSwizzler useFile:[[NSBundle mainBundle] pathForResource:@"ScaledCoCgYtoRGBA" ofType:@"fs"]];
+				break;
+			case kHapYCoCgACodecSubType:
+				[hapQSwizzler useFile:[[NSBundle mainBundle] pathForResource:@"ScaledCoCgYplusAtoRGBA" ofType:@"fs"]];
+				break;
 			}
 		}
 		//	else this movie doesn't have a hap video track- we're going to use a standard visual context
@@ -95,6 +109,7 @@
 			//	if there's an image buffer
 			if (imgRef != NULL)	{
 				CFTypeID			imgRefType = CFGetTypeID(imgRef);
+				OSType		imgPixelFormat = CVPixelBufferGetPixelFormatType(imgRef);
 				//	if the image buffer is already a GL texture...
 				if (imgRefType == CVOpenGLTextureGetTypeID())	{
 					//	just wrap the CoreVideo GL texture with VVBuffer.  AVFoundation rendering is handled the same way- use apple APIs to get a CV GL texture, then create a VVBuffer from it.
@@ -102,16 +117,24 @@
 				}
 				//	else if the image buffer is a pixel buffer (hap)
 				else if (imgRefType == CVPixelBufferGetTypeID())	{
-					//	if this is hapQ, we have to convert the image from YCoCg to RGBA.  we do this with an ISF file, because that's really easy.
-					OSType		imgPixelFormat = CVPixelBufferGetPixelFormatType(imgRef);
 					if (imgPixelFormat == kHapPixelFormatTypeYCoCg_DXT5)	{
-						VVBuffer		*yCoCg = [[VVBufferPool globalVVBufferPool] allocTexRangeForHapCVImageBuffer:imgRef];
+						VVBuffer		*yCoCg = [[VVBufferPool globalVVBufferPool] allocTexRangeForPlane:0 ofHapCVImageBuffer:imgRef];
 						[hapQSwizzler setFilterInputImageBuffer:yCoCg];
 						returnMe = [hapQSwizzler allocAndRenderToBufferSized:[yCoCg srcRect].size];
 						VVRELEASE(yCoCg);
 					}
-					else
-						returnMe = [[VVBufferPool globalVVBufferPool] allocTexRangeForHapCVImageBuffer:imgRef];
+					else if (imgPixelFormat == kHapPixelFormatType_YCoCg_DXT5_A_RGTC1)	{
+						VVBuffer		*yCoCg = [[VVBufferPool globalVVBufferPool] allocTexRangeForPlane:0 ofHapCVImageBuffer:imgRef];
+						VVBuffer		*alpha = [[VVBufferPool globalVVBufferPool] allocTexRangeForPlane:1 ofHapCVImageBuffer:imgRef];
+						[hapQSwizzler setBuffer:alpha forInputImageKey:@"alphaImage"];
+						[hapQSwizzler setFilterInputImageBuffer:yCoCg];
+						returnMe = [hapQSwizzler allocAndRenderToBufferSized:[yCoCg srcRect].size];
+						VVRELEASE(alpha);
+						VVRELEASE(yCoCg);
+					}
+					else	{
+						returnMe = [[VVBufferPool globalVVBufferPool] allocTexRangeForPlane:0 ofHapCVImageBuffer:imgRef];
+					}
 				}
 				//	else- dunno
 				else	{

@@ -88,6 +88,7 @@
 		1A00B8D21C430B3600BC2BEB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A00B8D01C430B3600BC2BEB /* Main.storyboard */; };
 		1A00B8D41C430B3600BC2BEB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A00B8D31C430B3600BC2BEB /* Assets.xcassets */; };
 		1A00B8D71C430B3600BC2BEB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A00B8D51C430B3600BC2BEB /* LaunchScreen.storyboard */; };
+		1A066E3F1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */; };
 		1A09FBED1C42FB0B008736D6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBEE1C42FB0B008736D6 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBEF1C42FB0B008736D6 /* OSCStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D103100E8A6700C3944E /* OSCStringAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -366,7 +367,7 @@
 		96140110198AD46D00335292 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9614010E198AD46D00335292 /* InfoPlist.strings */; };
 		96140112198AD46D00335292 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 96140111198AD46D00335292 /* main.m */; };
 		96140116198AD46D00335292 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 96140114198AD46D00335292 /* Credits.rtf */; };
-		96140119198AD46D00335292 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96140118198AD46D00335292 /* AppDelegate.m */; };
+		96140119198AD46D00335292 /* QTAndHapTestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 96140118198AD46D00335292 /* QTAndHapTestAppDelegate.m */; };
 		9614011C198AD46D00335292 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9614011A198AD46D00335292 /* MainMenu.xib */; };
 		96140122198AD49F00335292 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
 		96140124198AD49F00335292 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
@@ -1378,6 +1379,7 @@
 		1A00B8D31C430B3600BC2BEB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A00B8D61C430B3600BC2BEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1A00B8D81C430B3600BC2BEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ScaledCoCgYplusAtoRGBA.fs; sourceTree = "<group>"; };
 		1A1A6C931C1382C200601E8C /* mblur.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = mblur.fs; sourceTree = "<group>"; };
 		1A1A6C941C1382C200601E8C /* passthru.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passthru.vs; sourceTree = "<group>"; };
 		1A254AF51904909E00526633 /* VVSpriteGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLKView.h; sourceTree = "<group>"; };
@@ -1498,8 +1500,8 @@
 		96140111198AD46D00335292 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		96140113198AD46D00335292 /* QT and Hap Test App-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QT and Hap Test App-Prefix.pch"; sourceTree = "<group>"; };
 		96140115198AD46D00335292 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		96140117198AD46D00335292 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		96140118198AD46D00335292 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		96140117198AD46D00335292 /* QTAndHapTestAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QTAndHapTestAppDelegate.h; sourceTree = "<group>"; };
+		96140118198AD46D00335292 /* QTAndHapTestAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QTAndHapTestAppDelegate.m; sourceTree = "<group>"; };
 		9614011B198AD46D00335292 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		961745F4100F86B400FB60E6 /* VVMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		961745F5100F86B400FB60E6 /* VVMIDI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "VVMIDI-Info.plist"; path = "VVMIDI/FrameworkSrc/VVMIDI-Info.plist"; sourceTree = "<group>"; };
@@ -2455,9 +2457,10 @@
 		9614010B198AD46D00335292 /* QT and Hap Test App */ = {
 			isa = PBXGroup;
 			children = (
-				96140117198AD46D00335292 /* AppDelegate.h */,
-				96140118198AD46D00335292 /* AppDelegate.m */,
+				96140117198AD46D00335292 /* QTAndHapTestAppDelegate.h */,
+				96140118198AD46D00335292 /* QTAndHapTestAppDelegate.m */,
 				964F447F198AD97D00EF1FAE /* ScaledCoCgYtoRGBA.fs */,
+				1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */,
 				9614011A198AD46D00335292 /* MainMenu.xib */,
 				9614010C198AD46D00335292 /* Supporting Files */,
 				962965AC198AD54A002A7718 /* QTVideoSource.h */,
@@ -4205,6 +4208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96140110198AD46D00335292 /* InfoPlist.strings in Resources */,
+				1A066E3F1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs in Resources */,
 				96140116198AD46D00335292 /* Credits.rtf in Resources */,
 				964F4480198AD97D00EF1FAE /* ScaledCoCgYtoRGBA.fs in Resources */,
 				9614011C198AD46D00335292 /* MainMenu.xib in Resources */,
@@ -4559,7 +4563,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96140112198AD46D00335292 /* main.m in Sources */,
-				96140119198AD46D00335292 /* AppDelegate.m in Sources */,
+				96140119198AD46D00335292 /* QTAndHapTestAppDelegate.m in Sources */,
 				962965AE198AD54A002A7718 /* QTVideoSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

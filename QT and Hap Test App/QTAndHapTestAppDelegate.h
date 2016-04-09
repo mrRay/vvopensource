@@ -6,7 +6,8 @@
 
 
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>	{
+@interface QTAndHapTestAppDelegate : NSObject <NSApplicationDelegate>	{
+	IBOutlet NSWindow			*window;
 	IBOutlet VVBufferGLView		*glView;
 	NSOpenGLContext				*sharedContext;
 	CVDisplayLinkRef			displayLink;

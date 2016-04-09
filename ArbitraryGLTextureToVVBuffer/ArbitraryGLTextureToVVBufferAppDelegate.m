@@ -70,7 +70,8 @@
 		hasAlpha:YES
 		isPlanar:NO
 		colorSpaceName:NSCalibratedRGBColorSpace
-		bitmapFormat:0
+		bitmapFormat:0	//	premultiplied, but alpha is last
+		//bitmapFormat:NSAlphaNonpremultipliedBitmapFormat	//	can't use this- graphics contexts cant use non-premultiplied bitmap reps as a backing
 		bytesPerRow:32 * (long)imgSize.width / 8
 		bitsPerPixel:32];
 	if (imgRep==nil)	{
@@ -94,6 +95,9 @@
 		[NSGraphicsContext setCurrentContext:origCtx];
 		uint8_t			*rdPtr = [imgRep bitmapData];
 		size_t			rdBytesPerRow = [imgRep bytesPerRow];
+		
+		//	the rep we just drew into was premultiplied, and we have to fix that before uploading it
+		[imgRep unpremultiply];
 	
 		//	upload the bytes on the bitmap to a GL texture
 		textureSize = imgSize;
