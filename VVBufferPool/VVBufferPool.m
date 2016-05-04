@@ -2,11 +2,13 @@
 #if !TARGET_OS_IPHONE
 #import <IOSurface/IOSurface.h>
 #import <OpenGL/CGLIOSurface.h>
+
 #ifdef __LP64__
-#else
+#else	//	NOT __LP64__
 #import "HapSupport.h"
-#endif
-#endif
+#endif	//	__LP64__
+
+#endif	//	!TARGET_OS_IPHONE
 
 
 
@@ -16,7 +18,7 @@
 id _globalVVBufferPool = nil;
 #if !TARGET_OS_IPHONE
 int				_msaaMaxSamples = 0;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 BOOL			_bufferPoolInitialized = NO;
 VVStopwatch		*_bufferTimestampMaker = nil;
 
@@ -30,7 +32,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//NSLog(@"%s",__func__);
 #if !TARGET_OS_IPHONE
 	_msaaMaxSamples = 0;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	_bufferPoolInitialized = NO;
 	_bufferTimestampMaker = nil;
 	
@@ -58,9 +60,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		_msaaMaxSamples = tmp;
 		[tmpContext release];
 	}
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	[VVBufferGLKView class];
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	
 	
 	_bufferTimestampMaker = [[VVStopwatch alloc] init];
@@ -71,7 +73,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 + (int) msaaMaxSamples	{
 	return _msaaMaxSamples;
 }
-#endif
+#endif	//	!TARGET_OS_IPHONE
 + (void) setGlobalVVBufferPool:(id)n	{
 	//NSLog(@"%s ... %p",__func__,n);
 	VVRELEASE(_globalVVBufferPool);
@@ -81,9 +83,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	if (_globalVVBufferCopier == nil)	{
 #if !TARGET_OS_IPHONE
 		[VVBufferCopier createGlobalVVBufferCopierWithSharedContext:[n sharedContext]];
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 		[VVBufferCopier createGlobalVVBufferCopierWithSharegroup:[n sharegroup]];
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	}
 }
 #if !TARGET_OS_IPHONE
@@ -95,7 +97,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	if (_globalVVBufferCopier == nil)
 		[VVBufferCopier createGlobalVVBufferCopierWithSharedContext:n];
 }
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferPoolWithSharegroup:(EAGLSharegroup *)n	{
 	VVRELEASE(_globalVVBufferPool);
 	if (n==nil)
@@ -113,7 +115,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	if (_globalVVBufferCopier == nil)
 		[VVBufferCopier createGlobalVVBufferCopierWithSharegroup:[c sharegroup]];
 }
-#endif
+#endif	//	!TARGET_OS_IPHONE
 + (id) globalVVBufferPool	{
 	return _globalVVBufferPool;
 }
@@ -123,6 +125,171 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	get the full (un-rounded) timestamp from the stopwatch, applying it directly to the passed buffer's struct
 	[_bufferTimestampMaker getFullTimeSinceStart:[n contentTimestampPtr]];
 }
+
+
+/*===================================================================================*/
+#pragma mark --------------------- push memory to VRAM (simple and DMA)
+/*------------------------------------*/
+
+
+#if !TARGET_OS_IPHONE
+#pragma GCC diagnostic ignored "-Wimplicit"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
++ (void) pushProperlySizedRAM:(void *)m toSimpleTextureBuffer:(VVBuffer *)b usingContext:(CGLContextObj)cgl_ctx	{
+	if (b==nil || cgl_ctx==NULL)
+		return;
+	VVBufferDescriptor		*desc = [b descriptorPtr];
+	if (desc==nil)
+		return;
+	if (desc->type!=VVBufferType_Tex)
+		return;
+	if (desc->gpuBackingType != VVBufferGPUBack_Internal)
+		return;
+	
+	NSSize			bSize;
+	
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(desc->target);
+	glBindTexture(desc->target, desc->name);
+	
+	if (desc->texClientStorageFlag)
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
+	
+	bSize = [b size];
+	
+	glTexSubImage2D(desc->target,
+		0,
+		0,
+		0,
+		bSize.width,
+		bSize.height,
+		desc->pixelFormat,
+		desc->pixelType,
+		m);
+	
+	if (desc->texClientStorageFlag)
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
+	
+	glBindTexture(desc->target, 0);
+	//glDisable(desc->target);
+	glFlush();
+	
+	//	timestamp the buffer, so we know a new frame has been pushed to it!
+	[VVBufferPool timestampThisBuffer:b];
+}
++ (void) pushTexRangeBufferRAMtoVRAM:(VVBuffer *)b usingContext:(CGLContextObj)cgl_ctx	{
+	//NSLog(@"%s",__func__);
+	if (b==nil || cgl_ctx==NULL)
+		return;
+	
+	//		DOES NOT USE THE LOCAL CONTEXT!  ONLY USES PASSED CONTEXT!
+	
+	VVBufferDescriptor		*desc = [b descriptorPtr];
+	if (desc==nil)
+		return;
+	if (desc->type!=VVBufferType_Tex)
+		return;
+	//if (desc->texRangeFlag != YES)
+	//	return;
+	if (desc->cpuBackingType == VVBufferCPUBack_None)
+		return;
+	if (desc->gpuBackingType != VVBufferGPUBack_Internal)
+		return;
+	if (!desc->texRangeFlag)
+		return;
+	
+	NSSize			bSize;
+	//NSSize			backingSize = [b backingSize];
+	void			*pixels = [b cpuBackingPtr];
+	BOOL			doCompressedUpload = NO;
+	
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(desc->target);
+	glBindTexture(desc->target, desc->name);
+	
+	
+	if (desc->texClientStorageFlag)
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
+	
+	switch (desc->internalFormat)	{
+		case VVBufferIF_None:
+		case VVBufferIF_Lum8:
+		case VVBufferIF_LumFloat:
+		case VVBufferIF_R:
+		case VVBufferIF_RGB:
+		case VVBufferIF_RGBA:
+		case VVBufferIF_RGBA8:
+		case VVBufferIF_Depth24:
+		case VVBufferIF_RGBA32F:
+			doCompressedUpload = NO;
+			bSize = [b size];
+			break;
+		case VVBufferIF_RGB_DXT1:
+		case VVBufferIF_RGBA_DXT5:
+		//case VVBufferIF_YCoCg_DXT5:	//	(flagged as duplicate case if un-commented, because both RGBA_DXT5 and YCoCg_DXT5 evaluate to the same internal format)
+		case VVBufferIF_A_RGTC:
+			doCompressedUpload = YES;
+			bSize = [b backingSize];
+			break;
+	}
+	
+	
+	if (!doCompressedUpload)	{
+		//NSLog(@"\t\tuncompressed upload");
+		glTexSubImage2D(desc->target,
+			0,
+			0,
+			0,
+			bSize.width,
+			bSize.height,
+			desc->pixelFormat,
+			desc->pixelType,
+			pixels);
+		//NSLog(@"\t\tfinished uncompressed upload");
+		//NSLog(@"\t\target is %ld, should be %ld",desc->target,GL_TEXTURE_RECTANGLE_EXT);
+		//NSLog(@"\t\twidth/height is %f x %f",bSize.width,bSize.height);
+		//NSLog(@"\t\tpixelFormat is %ld, should be %ld",desc->pixelFormat,GL_YCBCR_422_APPLE);
+		//NSLog(@"\t\tpixelType is %ld, should be %ld",desc->pixelType,GL_UNSIGNED_SHORT_8_8_APPLE);
+	}
+	else	{
+		//NSLog(@"\t\tcompressed upload! %s",__func__);
+		//int					rowBytes = (pmHandle==nil) ? 0 : ((*pmHandle)->rowBytes)&0x7FFF;
+		//int				rowBytes = VVBufferDescriptorCalculateCPUBackingForSize([b descriptorPtr], [b size]);
+		//int				rowBytes = VVBufferDescriptorCalculateCPUBackingForSize([b descriptorPtr], bSize);
+		unsigned long		cpuBufferLength = VVBufferDescriptorCalculateCPUBackingForSize([b descriptorPtr], bSize);
+		bSize = [b backingSize];
+		glCompressedTexSubImage2D(desc->target,
+			0,
+			0,
+			0,
+			bSize.width,
+			bSize.height,
+			desc->internalFormat,
+			//rowBytes * bSize.height,
+			cpuBufferLength,
+			pixels);
+		//NSLog(@"\t\tfinished compressed upload");
+	}
+	/*
+	if (desc->backingType == VVBufferBack_GWorld)	{
+		//if (pmHandle != nil)
+		//	UnlockPixels(pmHandle);
+	}
+	*/
+	if (desc->texClientStorageFlag)
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
+	
+	glBindTexture(desc->target, 0);
+	//glDisable(desc->target);
+	glFlush();
+	
+	//	timestamp the buffer, so we know a new frame has been pushed to it!
+	[VVBufferPool timestampThisBuffer:b];
+}
+#pragma GCC diagnostic warning "-Wimplicit"
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+#endif	//	!TARGET_OS_IPHONE
+
 
 /*===================================================================================*/
 #pragma mark --------------------- misc upkeep
@@ -219,15 +386,15 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 - (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs	{
 #if !TARGET_OS_IPHONE
 	return [self allocBufferForDescriptor:d sized:s backingPtr:b backingSize:bs inContext:[self CGLContextObj]];
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	return [self allocBufferForDescriptor:d sized:s backingPtr:b backingSize:bs inContext:[self context]];
-#endif
+#endif	//	!TARGET_OS_IPHONE
 }
 #if !TARGET_OS_IPHONE
 - (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs inContext:(CGLContextObj)c
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 - (VVBuffer *) allocBufferForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs inContext:(EAGLContext *)c
-#endif
+#endif	//	!TARGET_OS_IPHONE
 {
 	//NSLog(@"%s",__func__);
 	if (deleted || d==nil)
@@ -248,14 +415,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 #if !TARGET_OS_IPHONE
 	CGLError				err = kCGLNoError;
 	IOSurfaceRef			newSurfaceRef = nil;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	//	make a buffer descriptor, populate it from the one i was passed- this will describe the buffer i'm returning
 	VVBufferDescriptor		newBufferDesc;
 	VVBufferDescriptorCopy(d,&newBufferDesc);
 #if !TARGET_OS_IPHONE
 	unsigned long			cpuBackingSize = VVBufferDescriptorCalculateCPUBackingForSize(&newBufferDesc, bs);
 	unsigned long			bytesPerRow = cpuBackingSize / bs.height;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	
 	
 	OSType					pixelFormat = 0x00;
@@ -270,14 +437,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		default:
 			break;
 	}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	switch (newBufferDesc.pixelFormat)	{
 		case VVBufferPF_None:
 		case VVBufferPF_Depth:
 			break;
 #if !TARGET_OS_IPHONE
 		case VVBufferPF_R:
-#endif
+#endif	//	!TARGET_OS_IPHONE
 		case VVBufferPF_Lum:
 			pixelFormat = kCVPixelFormatType_OneComponent8;
 			break;
@@ -294,17 +461,17 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		case VVBufferPF_YCBCR_422:	//	'2vuy'
 			pixelFormat = kCVPixelFormatType_422YpCbCr8;
 			break;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	}
 	
 	
 	//	create the GL resources, populating the buffer descriptor where appropriate
 #if !TARGET_OS_IPHONE
 	CGLContextObj			cgl_ctx = c;
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	if (c != nil)
 		[EAGLContext setCurrentContext:c];
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	pthread_mutex_lock(&contextLock);
 	switch (newBufferDesc.type)	{
 		case VVBufferType_None:
@@ -352,11 +519,11 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					newBufferDesc.localSurfaceID = 0;
 				}
 			}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			//	enable the tex target, gen the texture, and bind it
 #if !TARGET_OS_IPHONE
 			glEnable(newBufferDesc.target);
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			glGenTextures(1,&newBufferDesc.name);
 			glBindTexture(newBufferDesc.target, newBufferDesc.name);
 			
@@ -374,14 +541,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				//copy IF THE TEXTURE WIDTH IS A MULTIPLE OF 32 BYTES!
 				glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
 			}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			
 #if !TARGET_OS_IPHONE
 			//	setup basic tex defaults
 			glPixelStorei(GL_UNPACK_SKIP_ROWS, GL_FALSE);
 			glPixelStorei(GL_UNPACK_SKIP_PIXELS, GL_FALSE);
 			glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			
 			glTexParameteri(newBufferDesc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(newBufferDesc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -398,7 +565,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				glTexParameteri(newBufferDesc.target, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
 			else
 				glTexParameteri(newBufferDesc.target, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_SHARED_APPLE);
-#endif
+#endif	//	!TARGET_OS_IPHONE
 
 			
 #if !TARGET_OS_IPHONE
@@ -425,14 +592,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 						b);
 				}
 			}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			
 			
 			
 			//	if there's no surface ref, or there is, but there was a problem associating it with the texture, set it up as a straight-up texture!
 #if !TARGET_OS_IPHONE
 			if (newSurfaceRef==nil || err!=kCGLNoError)	{
-#endif
+#endif	//	!TARGET_OS_IPHONE
 				if (compressedTex)	{
 					glTexImage2D(newBufferDesc.target,
 						0,
@@ -463,20 +630,20 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				}
 #if !TARGET_OS_IPHONE
 			}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	
 			
 #if !TARGET_OS_IPHONE
 			if (newBufferDesc.texClientStorageFlag)	{
 				glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
 			}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			
 			//	un-bind the tex and disable the target
 			glBindTexture(newBufferDesc.target, 0);
 #if !TARGET_OS_IPHONE
 			glDisable(newBufferDesc.target);
-#endif
+#endif	//	!TARGET_OS_IPHONE
 			
 			//	flush!
 			glFlush();
@@ -506,7 +673,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			//	flush!
 			glFlush();
 			break;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	}
 	pthread_mutex_unlock(&contextLock);
 	
@@ -524,14 +691,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		CFRelease(newSurfaceRef);
 		newSurfaceRef = nil;
 	}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	return returnMe;
 }
 #if TARGET_OS_IPHONE
 - (VVBuffer *) allocBufferInCurrentContextForDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s backingPtr:(void *)b backingSize:(VVSIZE)bs	{
 	return [self allocBufferForDescriptor:d sized:s backingPtr:b backingSize:bs inContext:NULL];
 }
-#endif
+#endif	//	!TARGET_OS_IPHONE
 - (VVBuffer *) copyFreeBufferMatchingDescriptor:(VVBufferDescriptor *)d sized:(VVSIZE)s	{
 	//NSLog(@"%s",__func__);
 	if (deleted || d==nil)
@@ -552,7 +719,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					case VVBufferType_FBO:
 #if !TARGET_OS_IPHONE
 					case VVBufferType_DispList:
-#endif
+#endif	//	!TARGET_OS_IPHONE
 						sizeIsOK = YES;
 						break;
 					case VVBufferType_None:	//	need to check size because RGB/RGBA CPU buffers use this type!
@@ -573,7 +740,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					IOSurfaceRef		srf = [bufferPtr localSurfaceRef];
 					//NSLog(@"\t\tsrf is %p, d->localSurfaceID is %lu",srf,d->localSurfaceID);
 					if ((d->localSurfaceID!=0 && srf!=nil) || (d->localSurfaceID==0 && srf==nil))	{
-#endif
+#endif	//	!TARGET_OS_IPHONE
 						//	retain the buffer (so it doesn't get freed)
 						returnMe = [bufferPtr retain];
 						//	remove the buffer from the array
@@ -584,7 +751,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 						break;
 #if !TARGET_OS_IPHONE
 					}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 				}
 			}
 			++tmpIndex;
@@ -620,7 +787,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 						sizeIsOK = YES;
 						backingSizeIsOK = YES;
 						break;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 					case VVBufferType_None:	//	need to check size because RGB/RGBA CPU buffers use this type!
 					case VVBufferType_RB:
 					case VVBufferType_Tex:
@@ -642,7 +809,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 					IOSurfaceRef		srf = [bufferPtr localSurfaceRef];
 					//NSLog(@"\t\tsrf is %p, d->localSurfaceID is %lu",srf,d->localSurfaceID);
 					if ((d->localSurfaceID!=0 && srf!=nil) || (d->localSurfaceID==0 && srf==nil))	{
-#endif
+#endif	//	!TARGET_OS_IPHONE
 						//	retain the buffer (so it doesn't get freed)
 						returnMe = [bufferPtr retain];
 						//	remove the buffer from the array
@@ -653,7 +820,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 						break;
 #if !TARGET_OS_IPHONE
 					}
-#endif
+#endif	//	!TARGET_OS_IPHONE
 				}
 			}
 			++tmpIndex;
@@ -668,7 +835,14 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 
 
 /*===================================================================================*/
-#pragma mark --------------------- the only methods you should call to create stuff
+#pragma mark --------------------- METHODS TO CREATE VVBUFFERS START HERE
+#pragma mark ------------------------------------------
+/*------------------------------------*/
+
+
+
+/*===================================================================================*/
+#pragma mark --------------------- basic/commonly-used creation methods
 /*------------------------------------*/
 
 
@@ -712,7 +886,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
-#endif
+#endif	//	!TARGET_OS_IPHONE
 - (VVBuffer *) allocBGR2DTexSized:(VVSIZE)s	{
 	VVBufferDescriptor		desc;
 	desc.type = VVBufferType_Tex;
@@ -721,11 +895,11 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.internalFormat = VVBufferIF_RGBA8;
 	desc.pixelFormat = VVBufferPF_BGRA;
 	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	desc.internalFormat = VVBufferIF_RGBA;
 	desc.pixelFormat = VVBufferPF_BGRA;
 	desc.pixelType = VVBufferPT_U_Byte;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	desc.cpuBackingType = VVBufferCPUBack_None;
 	desc.gpuBackingType = VVBufferGPUBack_Internal;
 	desc.name = 0;
@@ -799,7 +973,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
-#endif
+#endif	//	!TARGET_OS_IPHONE
 - (VVBuffer *) allocBGRFloat2DPOTTexSized:(VVSIZE)s	{
 	//	rounds up the size to the nearest POT
 	VVSIZE		texSize;
@@ -824,11 +998,11 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.internalFormat = VVBufferIF_RGBA32F;
 	desc.pixelFormat = VVBufferPF_BGRA;
 	desc.pixelType = VVBufferPT_Float;
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	desc.internalFormat = VVBufferIF_RGBA16F;
 	desc.pixelFormat = VVBufferPF_RGBA;
 	desc.pixelType = VVBufferPT_HalfFloat;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	desc.cpuBackingType = VVBufferCPUBack_None;
 	desc.gpuBackingType = VVBufferGPUBack_Internal;
 	desc.name = 0;
@@ -846,9 +1020,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.type = VVBufferType_Tex;
 #if !TARGET_OS_IPHONE
 	desc.target = GL_TEXTURE_RECTANGLE_EXT;
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	desc.target = GL_TEXTURE_2D;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	desc.internalFormat = VVBufferIF_Depth24;
 	desc.pixelFormat = VVBufferPF_Depth;
 	desc.pixelType = VVBufferPT_U_Byte;
@@ -872,9 +1046,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	desc.pixelFormat = VVBufferPF_RGBA;
 #if !TARGET_OS_IPHONE
 	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 	desc.pixelType = VVBufferPT_U_Byte;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	desc.cpuBackingType = VVBufferCPUBack_None;
 	desc.gpuBackingType = VVBufferGPUBack_Internal;
 	desc.name = 0;
@@ -906,6 +1080,124 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
 	return returnMe;
 }
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocYCbCrTexSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGB;
+	desc.pixelFormat = VVBufferPF_YCBCR_422;
+	desc.pixelType = VVBufferPT_U_Short_88;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	return returnMe;
+}
+#endif	//	!TARGET_OS_IPHONE
+- (VVBuffer *) allocRGBTexSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+#if TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_2D;
+	desc.internalFormat = VVBufferIF_RGBA;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Byte;
+#else	//	NOT TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+#endif
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	return returnMe;
+}
+- (VVBuffer *) allocRGB2DPOTTexSized:(VVSIZE)s	{
+	//	rounds up the size to the nearest POT
+	VVSIZE		texSize;
+	int			tmpInt = 1;
+	while (tmpInt < s.width)
+		tmpInt <<= 1;
+	texSize.width = tmpInt;
+	tmpInt = 1;
+	while (tmpInt < s.height)
+		tmpInt <<= 1;
+	texSize.height = tmpInt;
+	//	make the width & the height match
+	texSize.width = fmax(texSize.width,texSize.height);
+	texSize.height = texSize.width;
+	
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_2D;
+#if TARGET_OS_IPHONE
+	desc.internalFormat = VVBufferIF_RGBA;
+#else	//	NOT TARGET_OS_IPHONE
+	desc.internalFormat = VVBufferIF_RGBA8;
+#endif
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Byte;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:texSize];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:texSize backingPtr:nil backingSize:s];
+	[returnMe setSrcRect:VVMAKERECT(0,0,s.width,s.height)];
+	[returnMe setBackingSize:s];
+	return returnMe;
+}
+- (VVBuffer *) allocRGBFloatTexSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+#if TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_2D;
+#else	//	NOT TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+#endif	//	TARGET_OS_IPHONE
+	desc.internalFormat = VVBufferIF_RGBA32F;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe == nil)
+		returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	return returnMe;
+}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- creating VVBuffers from other kinds of images
+/*------------------------------------*/
 
 
 #if !TARGET_OS_IPHONE
@@ -917,10 +1209,10 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	if (img==nil)
 		return nil;
 	
-	NSSize				origImageSize = [img size];
+	VVSIZE				origImageSize = [img size];
 	NSRect				origImageRect = NSMakeRect(0, 0, origImageSize.width, origImageSize.height);
 	NSImageRep			*bestRep = [img bestRepresentationForRect:origImageRect context:nil hints:nil];
-	VVSIZE				bitmapSize = NSMakeSize([bestRep pixelsWide], [bestRep pixelsHigh]);
+	VVSIZE				bitmapSize = VVMAKESIZE([bestRep pixelsWide], [bestRep pixelsHigh]);
 	if (bitmapSize.width==0 || bitmapSize.height==0)
 		bitmapSize = [img size];
 	VVRECT				bitmapRect = VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height);
@@ -1034,7 +1326,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	[returnMe setBackingSize:repSize];
 	return returnMe;
 }
-#ifndef __LP64__
+#ifndef __LP64__	//	not a typo- these methods are only available in 32-bit
 - (VVBuffer *) allocTexRangeForHapCVImageBuffer:(CVImageBufferRef)img	{
 	return [self allocTexRangeForPlane:0 ofHapCVImageBuffer:img];
 }
@@ -1233,7 +1525,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			//NSLog(@"\t\tcompressed upload! %s",__func__);
 			#ifdef __LP64__
 			NSLog(@"\t\tERR: no 64-bit path for Hap/DXT-compressed textures %s",__func__);
-			#else
+			#else	//	NOT __LP64__
 			unsigned long		cpuBufferLength = VVBufferDescriptorCalculateCPUBackingForSize([returnMe descriptorPtr], bSize);
 			bSize = [returnMe backingSize];
 			glCompressedTexSubImage2D(desc->target,
@@ -1246,7 +1538,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				//rowBytes * bSize.height,
 				cpuBufferLength,
 				pixels);
-			#endif
+			#endif	//	__LP64__
 		}
 		if (desc->texClientStorageFlag)
 			glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
@@ -1275,17 +1567,666 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//NSLog(@"\t\treturning %@",returnMe);
 	return returnMe;
 }
+#endif	//	__LP64__
+#endif	//	!TARGET_OS_IPHONE
+
+
+#if TARGET_OS_IPHONE
+- (VVBuffer *) allocBufferForImageNamed:(NSString *)n	{
+	if (n==nil)
+		return nil;
+	UIImage			*uiImage = [UIImage imageNamed:n];
+	if (uiImage == nil)	{
+		NSLog(@"\t\terr: image nil, %s",__func__);
+		return nil;
+	}
+	return [self allocBufferForUIImage:uiImage];
+}
+- (VVBuffer *) allocBufferForUIImage:(UIImage *)n	{
+	CGImageRef		cgImgRef = [n CGImage];
+	if (cgImgRef == NULL)	{
+		NSLog(@"\t\terr: cgImage nil, %s",__func__);
+		return nil;
+	}
+	return [self allocBufferForCGImageRef:cgImgRef];
+}
+#endif //	TARGET_OS_IPHONE
+
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n	{
+#if !TARGET_OS_IPHONE
+	return [self allocCubeMapTextureForImages:n inContext:[self CGLContextObj]];
+#else	//	NOT !TARGET_OS_IPHONE
+	return [self allocCubeMapTextureForImages:n inContext:[self context]];
+#endif	//	!TARGET_OS_IPHONE
+}
+
+#if TARGET_OS_IPHONE
+- (VVBuffer *) allocCubeMapTextureInCurrentContextForImages:(NSArray *)n	{
+	return [self allocCubeMapTextureForImages:n inContext:NULL];
+}
+#endif	//	TARGET_OS_IPHONE
+
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(CGLContextObj)c
+#else	//	NOT !TARGET_OS_IPHONE
+- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(EAGLContext *)c
+#endif	//	!TARGET_OS_IPHONE
+{
+	//	make sure that i was passed six images, and that all six images are the same size
+	if (n==nil || [n count]!=6)	{
+		NSLog(@"\t\terr: bailing, not passed 6 images, %s",__func__);
+		return nil;
+	}
+	VVSIZE			imageSize = [[n objectAtIndex:0] size];
+#if !TARGET_OS_IPHONE
+	for (NSImage *imagePtr in n)	{
+		BOOL			hasBitmapRep = NO;
+		for (NSImageRep *imageRep in [imagePtr representations])	{
+			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
+				hasBitmapRep = YES;
+				break;
+			}
+		}
+		if (!hasBitmapRep)	{
+			NSLog(@"\t\terr: image doesn't have a bitmap rep, bailing, %s",__func__);
+			return nil;
+		}
+		if (!NSEqualSizes([imagePtr size], imageSize))	{
+			NSLog(@"\t\terr: image sizes are not uniform, bailing, %s",__func__);
+			return nil;
+		}
+	}
+#else	//	NOT !TARGET_OS_IPHONE
+	for (UIImage *imagePtr in n)	{
+		BOOL			directUploadOK = YES;
+		CGImageRef		cgImg = [imagePtr CGImage];
+		if (cgImg != NULL)	{
+			VVSIZE			tmpImgSize = VVMAKESIZE(CGImageGetWidth(cgImg), CGImageGetHeight(cgImg));
+			if (!VVEQUALSIZES(imageSize,tmpImgSize))
+				directUploadOK = NO;
+			
+			CGBitmapInfo		newImgInfo = CGImageGetBitmapInfo(cgImg);
+			CGImageAlphaInfo	calculatedAlphaInfo = newImgInfo & kCGBitmapAlphaInfoMask;
+			
+			if (VVBITMASKCHECK(newImgInfo, kCGBitmapFloatComponents)	||
+			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Little)	||
+			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Big)	||
+			//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Little)	||
+			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Big))	{
+				directUploadOK = NO;
+			}
+			
+			switch (calculatedAlphaInfo)	{
+			case kCGImageAlphaPremultipliedLast:
+			case kCGImageAlphaPremultipliedFirst:
+			case kCGImageAlphaOnly:
+			case kCGImageAlphaNone:
+				directUploadOK = NO;
+				break;
+			case kCGImageAlphaLast:
+			case kCGImageAlphaFirst:
+			case kCGImageAlphaNoneSkipLast:
+			case kCGImageAlphaNoneSkipFirst:
+				break;
+			}
+		}
+		else
+			directUploadOK = NO;
+		
+		if (!directUploadOK)	{
+			NSLog(@"\t\terr: bailing, problem with array of cube images, %s",__func__);
+			return nil;
+		}
+	}
+#endif	//	!TARGET_OS_IPHONE
+	
+	VVBuffer		*returnMe = nil;
+	
+	//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+#if !TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_CUBE_MAP;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+#else	//	NOT !TARGET_OS_IPHONE
+	desc.target = GL_TEXTURE_CUBE_MAP;
+	desc.internalFormat = VVBufferIF_RGBA;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Byte;
+#endif	//	!TARGET_OS_IPHONE
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	
+	//	actually upload the bitmap data to the texture
+	pthread_mutex_lock(&contextLock);
+#if !TARGET_OS_IPHONE
+	CGLContextObj		cgl_ctx = c;
+	glEnable(desc.target);
+#else	//	NOT !TARGET_OS_IPHONE
+	if (c != nil)
+		[EAGLContext setCurrentContext:c];
+#endif	//	!TARGET_OS_IPHONE
+	glGenTextures(1,&desc.name);
+	glBindTexture(desc.target, desc.name);
+#if !TARGET_OS_IPHONE
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, GL_FALSE);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, GL_FALSE);
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+#endif	//	!TARGET_OS_IPHONE
+	glTexParameteri(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFlush();
+	
+	int				faceCount=0;
+	unsigned long	bytesPerRow = 32 * imageSize.width / 8;
+	void			*clipboardData = malloc(bytesPerRow * imageSize.height);
+	//	run through all the images
+#if !TARGET_OS_IPHONE
+	for (NSImage *imagePtr in n)	{
+		//	for each image, run through the bitmap reps until i find a bitmap image rep
+		for (NSImageRep *imageRep in [imagePtr representations])	{
+			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
+				//	the bitmap data in the image rep is padded and shit, copy it to a buffer and then upload the buffer
+				void			*repBufferData = [(NSBitmapImageRep *)imageRep bitmapData];
+				NSInteger		repBytesPerRow = [(NSBitmapImageRep *)imageRep bytesPerRow];
+				for (int i=0; i<imageSize.height; ++i)	{
+					memcpy(clipboardData+(bytesPerRow*i), repBufferData+(repBytesPerRow*i), bytesPerRow);
+				}
+				//	upload the bitmap image rep's data to the texture
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceCount,
+					0,
+					desc.internalFormat,
+					imageSize.width,
+					imageSize.height,
+					0,
+					desc.pixelFormat,
+					desc.pixelType,
+					clipboardData);
+				break;
+			}
+		}
+		
+		glFlush();
+		
+		++faceCount;
+	}
+#else	//	NOT !TARGET_OS_IPHONE
+	for (UIImage *imagePtr in n)	{
+		//	for each image, get the CGImage and copy the data from its data provider
+		CGImageRef		cgImgRef = [imagePtr CGImage];
+		if (cgImgRef != NULL)	{
+			NSData			*frameData = (NSData *)CGDataProviderCopyData(CGImageGetDataProvider(cgImgRef));
+			if (frameData != nil)	{
+				VVSIZE			tmpImgSize = VVMAKESIZE(CGImageGetWidth(cgImgRef), CGImageGetHeight(cgImgRef));
+				void			*repBufferData = (void *)[frameData bytes];
+				NSInteger		repBytesPerRow = CGImageGetBytesPerRow(cgImgRef);
+				for (int i=0; i<tmpImgSize.height; ++i)	{
+					memcpy(clipboardData+(repBytesPerRow*i), repBufferData+(repBytesPerRow*i), bytesPerRow);
+				}
+				//	upload the bitmap image rep's data to the texture
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceCount,
+					0,
+					desc.internalFormat,
+					imageSize.width,
+					imageSize.height,
+					0,
+					desc.pixelFormat,
+					desc.pixelType,
+					clipboardData);
+				
+				[frameData release];
+				frameData = nil;
+			}
+		}
+		
+		glFlush();
+		
+		++faceCount;
+	}
+#endif	//	!TARGET_OS_IPHONE
+	free(clipboardData);
+	
+	glBindTexture(desc.target, 0);
+#if !TARGET_OS_IPHONE
+	glDisable(desc.target);
+#endif	//	!TARGET_OS_IPHONE
+	
+	pthread_mutex_unlock(&contextLock);
+	
+	//	finish creating the VVBuffer instance from stuff
+	returnMe = [[VVBuffer alloc] initWithPool:self];
+	[returnMe setDescriptorFromPtr:&desc];
+	[returnMe setSize:imageSize];
+	[returnMe setSrcRect:VVMAKERECT(0,0,imageSize.width,imageSize.height)];
+	[returnMe setBackingSize:imageSize];
+	[returnMe setPreferDeletion:YES];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	
+	return returnMe;
+}
+
+
+
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLTextureRef)cvt
+#else	//	NOT !TARGET_OS_IPHONE
+- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLESTextureRef)cvt
+#endif	//	!TARGET_OS_IPHONE
+{
+	//NSLog(@"%s ... %@",__func__,cvt);
+	if (deleted)
+		return nil;
+	if (cvt == nil)	{
+		NSLog(@"\t\terr: passed nil tex %s",__func__);
+		return nil;
+	}
+#if !TARGET_OS_IPHONE
+	GLuint			texName = CVOpenGLTextureGetName(cvt);
+#else	//	NOT !TARGET_OS_IPHONE
+	GLuint			texName = CVOpenGLESTextureGetName(cvt);
+#endif	//	!TARGET_OS_IPHONE
+	if (texName <= 0)	{
+		NSLog(@"\t\terr: passed invalid tex num %s",__func__);
+		return nil;
+	}
+#if !TARGET_OS_IPHONE
+	if (CFGetTypeID(cvt) != CVOpenGLTextureGetTypeID())
+#else	//	NOT !TARGET_OS_IPHONE
+	if (CFGetTypeID(cvt) != CVOpenGLESTextureGetTypeID())
+#endif	//	!TARGET_OS_IPHONE
+	{
+		NSLog(@"\t\terr: CFTypeID of passed tex doesn't match expected %s",__func__);
+		return nil;
+	}
+	
+	VVBuffer			*returnMe = [[VVBuffer alloc] initWithPool:self];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	VVBufferDescriptor	*desc = [returnMe descriptorPtr];
+	if (desc == nil)	{
+		VVRELEASE(returnMe);
+		return nil;
+	}
+	desc->type = VVBufferType_Tex;
+#if !TARGET_OS_IPHONE
+	desc->target = CVOpenGLTextureGetTarget(cvt);
+	desc->internalFormat = VVBufferIF_RGBA8;
+	desc->pixelFormat = VVBufferPF_BGRA;
+	desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+#else	//	NOT !TARGET_OS_IPHONE
+	desc->target = CVOpenGLESTextureGetTarget(cvt);
+	desc->internalFormat = VVBufferIF_RGBA;
+	desc->pixelFormat = VVBufferPF_BGRA;
+	desc->pixelType = VVBufferPT_U_Byte;
+#endif	//	!TARGET_OS_IPHONE
+	desc->cpuBackingType = VVBufferCPUBack_None;
+	desc->gpuBackingType = VVBufferGPUBack_External;
+	desc->name = texName;
+	desc->texRangeFlag = NO;
+	desc->texClientStorageFlag = NO;
+	desc->msAmount = 0;
+	desc->localSurfaceID = 0;
+	
+	//CGSize				texSize = CVImageBufferGetDisplaySize(cvt);
+	CGSize				texSize = CVImageBufferGetEncodedSize(cvt);
+	//VVSIZE					texSize = VVMAKESIZE(CVPixelBufferGetWidth(cvt), CVPixelBufferGetHeight(cvt));
+	//VVSIZE					texSize = VVMAKESIZE(1920,1080);
+	//CGRect				cleanRect = CVImageBufferGetCleanRect(cvt);
+	//NSSizeLog(@"\t\ttexSize is",texSize);
+	//NSRectLog(@"\t\tcleanRect is",cleanRect);
+	[returnMe setPreferDeletion:YES];
+	[returnMe setSize:VVMAKESIZE(texSize.width,texSize.height)];
+	[returnMe setSrcRect:VVMAKERECT(0,0,texSize.width,texSize.height)];
+#if !TARGET_OS_IPHONE
+	[returnMe setFlipped:CVOpenGLTextureIsFlipped(cvt)];
+#else	//	NOT !TARGET_OS_IPHONE
+	[returnMe setFlipped:CVOpenGLESTextureIsFlipped(cvt)];
+#endif	//	!TARGET_OS_IPHONE
+	[returnMe setBackingSize:[returnMe size]];
+	
+	[returnMe setBackingID:VVBufferBackID_CVTex];
+#if !TARGET_OS_IPHONE
+	CVOpenGLTextureRetain(cvt);
+#else	//	NOT !TARGET_OS_IPHONE
+	//CVOpenGLESTextureRetain(cvt);
+	CVBufferRetain(cvt);
+#endif	//	!TARGET_OS_IPHONE
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseCVGLT];
+	[returnMe setBackingReleaseCallbackContext:cvt];
+	return returnMe;
+}
+- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n	{
+	return [self allocBufferForCGImageRef:n prefer2DTexture:NO];
+}
+- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n prefer2DTexture:(BOOL)prefer2D	{
+	if (n==nil)
+		return nil;
+	//	i have the image- i need to get some of its basic properties (pixel format, alpha, etc) to determine if i can just upload this data to a texture or if i have to convert (draw) it
+	BOOL				directUploadOK = YES;
+	
+	CGBitmapInfo		newImgInfo = CGImageGetBitmapInfo(n);
+	CGImageAlphaInfo	calculatedAlphaInfo = newImgInfo & kCGBitmapAlphaInfoMask;
+	
+	
+	
+	//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrderDefault)
+	if (VVBITMASKCHECK(newImgInfo, kCGBitmapFloatComponents)	||
+	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Little)	||
+	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Big)	||
+	//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Little)	||
+	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Big))	{
+		directUploadOK = NO;
+	}
+	
+	
+	
+	switch (calculatedAlphaInfo)	{
+	case kCGImageAlphaPremultipliedLast:
+	case kCGImageAlphaPremultipliedFirst:
+	case kCGImageAlphaOnly:
+	case kCGImageAlphaNone:
+		directUploadOK = NO;
+		break;
+	case kCGImageAlphaLast:
+	case kCGImageAlphaFirst:
+	case kCGImageAlphaNoneSkipLast:
+	case kCGImageAlphaNoneSkipFirst:
+		break;
+	}
+	
+	VVBuffer			*returnMe = nil;
+	
+	//	if i can upload the pixel data from the CGImageRef directly to a texture...
+	if (directUploadOK)	{
+		//	this just copies the data right out of the image provider, let's give it a shot...
+		VVSIZE		imgSize = VVMAKESIZE(CGImageGetWidth(n), CGImageGetHeight(n));
+		NSData		*frameData = (NSData *)CGDataProviderCopyData(CGImageGetDataProvider(n));
+		if (frameData!=nil)	{
+			VVBufferDescriptor		desc;
+#if !TARGET_OS_IPHONE
+			desc.type = VVBufferType_Tex;
+			desc.target = (prefer2D) ? GL_TEXTURE_2D : GL_TEXTURE_RECTANGLE_EXT;
+			desc.internalFormat = VVBufferIF_RGBA8;
+			//desc.pixelFormat = VVBufferPF_RGBA;
+			desc.pixelFormat = VVBufferPF_RGBA;
+			desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+			desc.cpuBackingType = VVBufferCPUBack_External;
+			desc.gpuBackingType = VVBufferGPUBack_Internal;
+			desc.name = 0;
+			desc.texRangeFlag = YES;
+			desc.texClientStorageFlag = YES;
+			desc.msAmount = 0;
+			desc.localSurfaceID = 0;
+#else	//	NOT !TARGET_OS_IPHONE
+			desc.type = VVBufferType_Tex;
+			desc.target = GL_TEXTURE_2D;
+			desc.internalFormat = VVBufferIF_RGBA;
+			//desc.pixelFormat = VVBufferPF_RGBA;
+			desc.pixelFormat = VVBufferPF_RGBA;
+			desc.pixelType = VVBufferPT_U_Byte;
+			desc.cpuBackingType = VVBufferCPUBack_External;
+			desc.gpuBackingType = VVBufferGPUBack_Internal;
+			desc.name = 0;
+			desc.texRangeFlag = NO;
+			desc.texClientStorageFlag = NO;
+			desc.msAmount = 0;
+			desc.localSurfaceID = 0;
+#endif	//	!TARGET_OS_IPHONE
+			returnMe = [_globalVVBufferPool
+				allocBufferForDescriptor:&desc
+				sized:imgSize
+				backingPtr:(void *)[frameData bytes]
+				backingSize:imgSize];
+			[returnMe setBackingID:VVBufferBackID_External];
+			[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
+			[returnMe setBackingReleaseCallbackContext:frameData];
+			[frameData retain];
+			[returnMe setPreferDeletion:YES];
+			[returnMe setFlipped:YES];
+			
+			
+			[frameData release];
+			frameData = nil;
+		}
+	}
+	//	else the direct upload isn't okay...
+	else	{
+		//	alloc some memory, make a CGBitmapContext that uses the memory to store pixel data
+		VVSIZE			imgSize = VVMAKESIZE(CGImageGetWidth(n), CGImageGetHeight(n));
+		GLubyte			*imgData = calloc((long)imgSize.width * (long)imgSize.height, sizeof(GLubyte)*4);
+		CGContextRef	ctx = CGBitmapContextCreate(imgData,
+			(long)imgSize.width,
+			(long)imgSize.height,
+			8,
+			((long)(imgSize.width))*4,
+			colorSpace,
+			kCGImageAlphaPremultipliedLast);
+		if (ctx == NULL)	{
+			NSLog(@"\t\tERR: ctx null in %s",__func__);
+			free(imgData);
+			return nil;
+		}
+		//	draw the image in the bitmap context, flush it
+		CGContextDrawImage(ctx, CGRectMake(0,0,imgSize.width,imgSize.height), n);
+		CGContextFlush(ctx);
+		CGContextRelease(ctx);
+		//	the bitmap context we just drew into has premultiplied alpha, so we need to un-premultiply before uploading it
+		CGBitmapContextUnpremultiply(ctx);
+		//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
+		VVBufferDescriptor		desc;
+		desc.type = VVBufferType_Tex;
+		desc.target = GL_TEXTURE_2D;
+		desc.internalFormat = VVBufferIF_RGBA;
+		desc.pixelFormat = VVBufferPF_RGBA;
+		desc.pixelType = VVBufferPT_U_Byte;
+		desc.cpuBackingType = VVBufferCPUBack_External;
+		desc.gpuBackingType = VVBufferGPUBack_Internal;
+		desc.name = 0;
+		desc.texRangeFlag = NO;
+		desc.texClientStorageFlag = YES;
+		desc.msAmount = 0;
+		desc.localSurfaceID = 0;
+		//	alloc the buffer, populate its basic variables
+		returnMe = [self allocBufferForDescriptor:&desc sized:imgSize backingPtr:imgData backingSize:imgSize];
+		[returnMe setSrcRect:VVMAKERECT(0,0,imgSize.width,imgSize.height)];
+		[returnMe setBackingID:VVBufferBackID_Pixels];
+		[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];
+		[returnMe setBackingReleaseCallbackContext:imgData];
+		[returnMe setFlipped:YES];
+	}
+	return returnMe;
+}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- creating VBO VVBuffers
+/*------------------------------------*/
+
+
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u	{
+	VVBuffer		*returnMe = nil;
+#if !TARGET_OS_IPHONE
+	returnMe = [self allocVBOWithBytes:b byteSize:s usage:u inContext:[context CGLContextObj]];
+#else	//	NOT !TARGET_OS_IPHONE
+	returnMe = [self allocVBOWithBytes:b byteSize:s usage:u inContext:context];
+#endif	//	!TARGET_OS_IPHONE
+	return returnMe;
+}
+#if !TARGET_OS_IPHONE
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(CGLContextObj)cgl_ctx
+#else	//	NOT !TARGET_OS_IPHONE
+- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(EAGLContext *)ctx
+#endif	//	!TARGET_OS_IPHONE
+{
+	if (deleted || (s==0) || context==NULL)
+		return nil;
+	VVBuffer		*returnMe = nil;
+	
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_VBO;
+	desc.target = 0;
+	desc.internalFormat = VVBufferIF_None;
+	desc.pixelFormat = VVBufferPF_None;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	
+	pthread_mutex_lock(&contextLock);
+#if !TARGET_OS_IPHONE
+	//CGLContextObj		cgl_ctx = [context CGLContextObj];
+#else	//	NOT !TARGET_OS_IPHONE
+	[EAGLContext setCurrentContext:context];
+#endif	//	!TARGET_OS_IPHONE
+	glGenBuffers(1, &(desc.name));
+	glBindBuffer(GL_ARRAY_BUFFER, desc.name);
+	glBufferData(GL_ARRAY_BUFFER, s, b, u);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glFlush();
+	
+	pthread_mutex_unlock(&contextLock);
+	
+	returnMe = [[VVBuffer alloc] initWithPool:self];
+	[returnMe setDescriptorFromPtr:&desc];
+	[returnMe setSize:VVMAKESIZE(0,0)];
+	[returnMe setSrcRect:VVZERORECT];
+	[returnMe setBackingID:VVBufferBackID_None];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	[returnMe setPreferDeletion:YES];
+	
+	return returnMe;
+}
+#if TARGET_OS_IPHONE
+- (VVBuffer *) allocVBOInCurrentContextWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u	{
+	if (deleted || (s==0) || context==NULL)
+		return nil;
+	VVBuffer		*returnMe = nil;
+	
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_VBO;
+	desc.target = 0;
+	desc.internalFormat = VVBufferIF_None;
+	desc.pixelFormat = VVBufferPF_None;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	
+//	pthread_mutex_lock(&contextLock);
+//#if !TARGET_OS_IPHONE
+//	CGLContextObj		cgl_ctx = [context CGLContextObj];
+//#else
+//	[EAGLContext setCurrentContext:context];
+//#endif
+	glGenBuffers(1, &(desc.name));
+	glBindBuffer(GL_ARRAY_BUFFER, desc.name);
+	glBufferData(GL_ARRAY_BUFFER, s, b, u);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//	glFlush();
+	
+//	pthread_mutex_unlock(&contextLock);
+	
+	returnMe = [[VVBuffer alloc] initWithPool:self];
+	[returnMe setDescriptorFromPtr:&desc];
+	[returnMe setSize:VVMAKESIZE(0,0)];
+	[returnMe setSrcRect:VVZERORECT];
+	[returnMe setBackingID:VVBufferBackID_None];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	[returnMe setPreferDeletion:YES];
+	
+	return returnMe;
+}
+#endif	//	TARGET_OS_IPHONE
+
+
+/*===================================================================================*/
+#pragma mark --------------------- CPU-based VVBuffers: no GL textures, no PBOs, just RAM.
+/*------------------------------------*/
+
+
+- (VVBuffer *) allocRGBACPUBufferSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_None;
+	desc.target = 0;
+#if !TARGET_OS_IPHONE
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+#else
+	desc.internalFormat = VVBufferIF_RGBA;
+	desc.pixelType = VVBufferPT_U_Byte;
 #endif
+	desc.pixelFormat = VVBufferPF_RGBA;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_None;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocRGBAFloatCPUBufferSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_None;
+	desc.target = 0;
+	desc.internalFormat = VVBufferIF_RGBA32F;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_None;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
 
 
+/*===================================================================================*/
+#pragma mark --------------------- creating VVBuffers with or from IOSurfaces
+/*------------------------------------*/
 
 
-
-
-
-
-
-
+#if !TARGET_OS_IPHONE
 - (VVBuffer *) allocBufferForTexBackedIOSurfaceSized:(VVSIZE)s	{
 	VVBufferDescriptor		desc;
 	desc.type = VVBufferType_Tex;
@@ -1311,7 +2252,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	look up the surface for the ID i was passed, bail if i can't
 	IOSurfaceRef		newSurface = IOSurfaceLookup(n);
 	if (newSurface == nil)	{
-		NSLog(@"\t\terr: bailing, couldn't look up IOSurface by ID %d",n);
+		//NSLog(@"\t\terr: bailing, couldn't look up IOSurface by ID %d",n);
 		return nil;
 	}
 	//	figure out how big the IOSurface is and what its pixel format is
@@ -1417,582 +2358,544 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	[returnMe setFlipped:newFlipped];
 	return returnMe;
 }
-#else	//	TARGET_OS_IPHONE
-- (VVBuffer *) allocBufferForImageNamed:(NSString *)n	{
-	if (n==nil)
-		return nil;
-	UIImage			*uiImage = [UIImage imageNamed:n];
-	if (uiImage == nil)	{
-		NSLog(@"\t\terr: image nil, %s",__func__);
-		return nil;
-	}
-	return [self allocBufferForUIImage:uiImage];
-}
-- (VVBuffer *) allocBufferForUIImage:(UIImage *)n	{
-	CGImageRef		cgImgRef = [n CGImage];
-	if (cgImgRef == NULL)	{
-		NSLog(@"\t\terr: cgImage nil, %s",__func__);
-		return nil;
-	}
-	return [self allocBufferForCGImageRef:cgImgRef];
-}
-#endif	//	TARGET_OS_IPHONE
 
-- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n	{
-#if !TARGET_OS_IPHONE
-	return [self allocCubeMapTextureForImages:n inContext:[self CGLContextObj]];
-#else
-	return [self allocCubeMapTextureForImages:n inContext:[self context]];
-#endif
-}
 
-#if TARGET_OS_IPHONE
-- (VVBuffer *) allocCubeMapTextureInCurrentContextForImages:(NSArray *)n	{
-	return [self allocCubeMapTextureForImages:n inContext:NULL];
-}
-#endif
 
-#if !TARGET_OS_IPHONE
-- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(CGLContextObj)c
-#else
-- (VVBuffer *) allocCubeMapTextureForImages:(NSArray *)n inContext:(EAGLContext *)c
-#endif
-{
-	//	make sure that i was passed six images, and that all six images are the same size
-	if (n==nil || [n count]!=6)	{
-		NSLog(@"\t\terr: bailing, not passed 6 images, %s",__func__);
-		return nil;
-	}
-	VVSIZE			imageSize = [[n objectAtIndex:0] size];
-#if !TARGET_OS_IPHONE
-	for (NSImage *imagePtr in n)	{
-		BOOL			hasBitmapRep = NO;
-		for (NSImageRep *imageRep in [imagePtr representations])	{
-			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
-				hasBitmapRep = YES;
-				break;
-			}
-		}
-		if (!hasBitmapRep)	{
-			NSLog(@"\t\terr: image doesn't have a bitmap rep, bailing, %s",__func__);
-			return nil;
-		}
-		if (!NSEqualSizes([imagePtr size], imageSize))	{
-			NSLog(@"\t\terr: image sizes are not uniform, bailing, %s",__func__);
-			return nil;
-		}
-	}
-#else
-	for (UIImage *imagePtr in n)	{
-		BOOL			directUploadOK = YES;
-		CGImageRef		cgImg = [imagePtr CGImage];
-		if (cgImg != NULL)	{
-			VVSIZE			tmpImgSize = VVMAKESIZE(CGImageGetWidth(cgImg), CGImageGetHeight(cgImg));
-			if (!VVEQUALSIZES(imageSize,tmpImgSize))
-				directUploadOK = NO;
-			
-			CGBitmapInfo		newImgInfo = CGImageGetBitmapInfo(cgImg);
-			CGImageAlphaInfo	calculatedAlphaInfo = newImgInfo & kCGBitmapAlphaInfoMask;
-			
-			if (VVBITMASKCHECK(newImgInfo, kCGBitmapFloatComponents)	||
-			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Little)	||
-			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Big)	||
-			//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Little)	||
-			VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Big))	{
-				directUploadOK = NO;
-			}
-			
-			switch (calculatedAlphaInfo)	{
-			case kCGImageAlphaPremultipliedLast:
-			case kCGImageAlphaPremultipliedFirst:
-			case kCGImageAlphaOnly:
-			case kCGImageAlphaNone:
-				directUploadOK = NO;
-				break;
-			case kCGImageAlphaLast:
-			case kCGImageAlphaFirst:
-			case kCGImageAlphaNoneSkipLast:
-			case kCGImageAlphaNoneSkipFirst:
-				break;
-			}
-		}
-		else
-			directUploadOK = NO;
-		
-		if (!directUploadOK)	{
-			NSLog(@"\t\terr: bailing, problem with array of cube images, %s",__func__);
-			return nil;
-		}
-	}
-#endif
-	
-	VVBuffer		*returnMe = nil;
-	
-	//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
+/*===================================================================================*/
+#pragma mark --------------------- texture ranges- DMA GL textures
+/*------------------------------------*/
+
+
+- (VVBuffer *) allocRedByteCPUBackedTexRangeSized:(VVSIZE)s	{
 	VVBufferDescriptor		desc;
 	desc.type = VVBufferType_Tex;
-#if !TARGET_OS_IPHONE
-	desc.target = GL_TEXTURE_CUBE_MAP;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_R;
+	desc.pixelFormat = VVBufferPF_R;
+	desc.pixelType = VVBufferPT_U_Byte;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocRedFloatCPUBackedTexRangeSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_R;
+	desc.pixelFormat = VVBufferPF_R;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocLum8CPUBackedTexRangeSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_Lum8;
+	desc.pixelFormat = VVBufferPF_Lum;
+	desc.pixelType = VVBufferPT_U_Byte;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocRGBACPUBackedTexRangeSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
 	desc.internalFormat = VVBufferIF_RGBA8;
 	desc.pixelFormat = VVBufferPF_RGBA;
 	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
-#else
-	desc.target = GL_TEXTURE_CUBE_MAP;
-	desc.internalFormat = VVBufferIF_RGBA;
-	desc.pixelFormat = VVBufferPF_RGBA;
-	desc.pixelType = VVBufferPT_U_Byte;
-#endif
-	desc.cpuBackingType = VVBufferCPUBack_None;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
 	desc.gpuBackingType = VVBufferGPUBack_Internal;
 	desc.name = 0;
-	desc.texRangeFlag = NO;
-	desc.texClientStorageFlag = NO;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
 	desc.msAmount = 0;
 	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
 	
-	//	actually upload the bitmap data to the texture
-	pthread_mutex_lock(&contextLock);
-#if !TARGET_OS_IPHONE
-	CGLContextObj		cgl_ctx = c;
-	glEnable(desc.target);
-#else
-	if (c != nil)
-		[EAGLContext setCurrentContext:c];
-#endif
-	glGenTextures(1,&desc.name);
-	glBindTexture(desc.target, desc.name);
-#if !TARGET_OS_IPHONE
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, GL_FALSE);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, GL_FALSE);
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
-#endif
-	glTexParameteri(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFlush();
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocBGRACPUBackedTexRangeSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_BGRA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
 	
-	int				faceCount=0;
-	unsigned long	bytesPerRow = 32 * imageSize.width / 8;
-	void			*clipboardData = malloc(bytesPerRow * imageSize.height);
-	//	run through all the images
-#if !TARGET_OS_IPHONE
-	for (NSImage *imagePtr in n)	{
-		//	for each image, run through the bitmap reps until i find a bitmap image rep
-		for (NSImageRep *imageRep in [imagePtr representations])	{
-			if ([imageRep isKindOfClass:[NSBitmapImageRep class]])	{
-				//	the bitmap data in the image rep is padded and shit, copy it to a buffer and then upload the buffer
-				void			*repBufferData = [(NSBitmapImageRep *)imageRep bitmapData];
-				NSInteger		repBytesPerRow = [(NSBitmapImageRep *)imageRep bytesPerRow];
-				for (int i=0; i<imageSize.height; ++i)	{
-					memcpy(clipboardData+(bytesPerRow*i), repBufferData+(repBytesPerRow*i), bytesPerRow);
-				}
-				//	upload the bitmap image rep's data to the texture
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceCount,
-					0,
-					desc.internalFormat,
-					imageSize.width,
-					imageSize.height,
-					0,
-					desc.pixelFormat,
-					desc.pixelType,
-					clipboardData);
-				break;
-			}
-		}
-		
-		glFlush();
-		
-		++faceCount;
-	}
-#else
-	for (UIImage *imagePtr in n)	{
-		//	for each image, get the CGImage and copy the data from its data provider
-		CGImageRef		cgImgRef = [imagePtr CGImage];
-		if (cgImgRef != NULL)	{
-			NSData			*frameData = (NSData *)CGDataProviderCopyData(CGImageGetDataProvider(cgImgRef));
-			if (frameData != nil)	{
-				VVSIZE			tmpImgSize = VVMAKESIZE(CGImageGetWidth(cgImgRef), CGImageGetHeight(cgImgRef));
-				void			*repBufferData = (void *)[frameData bytes];
-				NSInteger		repBytesPerRow = CGImageGetBytesPerRow(cgImgRef);
-				for (int i=0; i<tmpImgSize.height; ++i)	{
-					memcpy(clipboardData+(repBytesPerRow*i), repBufferData+(repBytesPerRow*i), bytesPerRow);
-				}
-				//	upload the bitmap image rep's data to the texture
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceCount,
-					0,
-					desc.internalFormat,
-					imageSize.width,
-					imageSize.height,
-					0,
-					desc.pixelFormat,
-					desc.pixelType,
-					clipboardData);
-				
-				[frameData release];
-				frameData = nil;
-			}
-		}
-		
-		glFlush();
-		
-		++faceCount;
-	}
-#endif
-	free(clipboardData);
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
+- (VVBuffer *) allocBGRAFloatCPUBackedTexRangeSized:(VVSIZE)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA32F;
+	desc.pixelFormat = VVBufferPF_BGRA;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
 	
-	glBindTexture(desc.target, 0);
-#if !TARGET_OS_IPHONE
-	glDisable(desc.target);
-#endif
-	
-	pthread_mutex_unlock(&contextLock);
-	
-	//	finish creating the VVBuffer instance from stuff
-	returnMe = [[VVBuffer alloc] initWithPool:self];
-	[returnMe setDescriptorFromPtr:&desc];
-	[returnMe setSize:imageSize];
-	[returnMe setSrcRect:VVMAKERECT(0,0,imageSize.width,imageSize.height)];
-	[returnMe setBackingSize:imageSize];
-	[returnMe setPreferDeletion:YES];
-	[VVBufferPool timestampThisBuffer:returnMe];
-	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
 	return returnMe;
 }
 
-- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u	{
-	VVBuffer		*returnMe = nil;
-#if !TARGET_OS_IPHONE
-	returnMe = [self allocVBOWithBytes:b byteSize:s usage:u inContext:[context CGLContextObj]];
-#else
-	returnMe = [self allocVBOWithBytes:b byteSize:s usage:u inContext:context];
-#endif
-	return returnMe;
-}
-#if !TARGET_OS_IPHONE
-- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(CGLContextObj)cgl_ctx
-#else
-- (VVBuffer *) allocVBOWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u inContext:(EAGLContext *)ctx
-#endif
-{
-	if (deleted || (s==0) || context==NULL)
-		return nil;
-	VVBuffer		*returnMe = nil;
-	
-	VVBufferDescriptor		desc;
-	desc.type = VVBufferType_VBO;
-	desc.target = 0;
-	desc.internalFormat = VVBufferIF_None;
-	desc.pixelFormat = VVBufferPF_None;
-	desc.pixelType = VVBufferPT_Float;
-	//desc.backingType = VVBufferBack_None;
-	desc.cpuBackingType = VVBufferCPUBack_None;
-	desc.gpuBackingType = VVBufferGPUBack_Internal;
-	desc.name = 0;
-	desc.texRangeFlag = NO;
-	desc.texClientStorageFlag = NO;
-	desc.msAmount = 0;
-	desc.localSurfaceID = 0;
-	
-	pthread_mutex_lock(&contextLock);
-#if !TARGET_OS_IPHONE
-	//CGLContextObj		cgl_ctx = [context CGLContextObj];
-#else
-	[EAGLContext setCurrentContext:context];
-#endif
-	glGenBuffers(1, &(desc.name));
-	glBindBuffer(GL_ARRAY_BUFFER, desc.name);
-	glBufferData(GL_ARRAY_BUFFER, s, b, u);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glFlush();
-	
-	pthread_mutex_unlock(&contextLock);
-	
-	returnMe = [[VVBuffer alloc] initWithPool:self];
-	[returnMe setDescriptorFromPtr:&desc];
-	[returnMe setSize:VVMAKESIZE(0,0)];
-	[returnMe setSrcRect:VVZERORECT];
-	[returnMe setBackingID:VVBufferBackID_None];
-	[VVBufferPool timestampThisBuffer:returnMe];
-	[returnMe setPreferDeletion:YES];
-	
-	return returnMe;
-}
-#if TARGET_OS_IPHONE
-- (VVBuffer *) allocVBOInCurrentContextWithBytes:(void *)b byteSize:(long)s usage:(GLenum)u	{
-	if (deleted || (s==0) || context==NULL)
-		return nil;
-	VVBuffer		*returnMe = nil;
-	
-	VVBufferDescriptor		desc;
-	desc.type = VVBufferType_VBO;
-	desc.target = 0;
-	desc.internalFormat = VVBufferIF_None;
-	desc.pixelFormat = VVBufferPF_None;
-	desc.pixelType = VVBufferPT_Float;
-	//desc.backingType = VVBufferBack_None;
-	desc.cpuBackingType = VVBufferCPUBack_None;
-	desc.gpuBackingType = VVBufferGPUBack_Internal;
-	desc.name = 0;
-	desc.texRangeFlag = NO;
-	desc.texClientStorageFlag = NO;
-	desc.msAmount = 0;
-	desc.localSurfaceID = 0;
-	
-//	pthread_mutex_lock(&contextLock);
-//#if !TARGET_OS_IPHONE
-//	CGLContextObj		cgl_ctx = [context CGLContextObj];
-//#else
-//	[EAGLContext setCurrentContext:context];
-//#endif
-	glGenBuffers(1, &(desc.name));
-	glBindBuffer(GL_ARRAY_BUFFER, desc.name);
-	glBufferData(GL_ARRAY_BUFFER, s, b, u);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//	glFlush();
-	
-//	pthread_mutex_unlock(&contextLock);
-	
-	returnMe = [[VVBuffer alloc] initWithPool:self];
-	[returnMe setDescriptorFromPtr:&desc];
-	[returnMe setSize:VVMAKESIZE(0,0)];
-	[returnMe setSrcRect:VVZERORECT];
-	[returnMe setBackingID:VVBufferBackID_None];
-	[VVBufferPool timestampThisBuffer:returnMe];
-	[returnMe setPreferDeletion:YES];
-	
-	return returnMe;
-}
-#endif
 
-#if !TARGET_OS_IPHONE
-- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLTextureRef)cvt
-#else
-- (VVBuffer *) allocBufferForCVGLTex:(CVOpenGLESTextureRef)cvt
-#endif
-{
-	//NSLog(@"%s ... %@",__func__,cvt);
-	if (deleted)
+/*===================================================================================*/
+#pragma mark --------------------- texture ranges from other kinds of images
+/*------------------------------------*/
+
+
+- (VVBuffer *) allocTexRangeForCMSampleBuffer:(CMSampleBufferRef)n	{
+	//NSLog(@"%s",__func__);
+	if (n == NULL)
 		return nil;
-	if (cvt == nil)	{
-		NSLog(@"\t\terr: passed nil tex %s",__func__);
-		return nil;
-	}
-#if !TARGET_OS_IPHONE
-	GLuint			texName = CVOpenGLTextureGetName(cvt);
-#else
-	GLuint			texName = CVOpenGLESTextureGetName(cvt);
-#endif
-	if (texName <= 0)	{
-		NSLog(@"\t\terr: passed invalid tex num %s",__func__);
+	
+	CMFormatDescriptionRef	cmDesc = CMSampleBufferGetFormatDescription(n);
+	if (cmDesc == NULL)	{
+		NSLog(@"\t\terr: bailing, desc NULL, %s",__func__);
+		if (!CMSampleBufferIsValid(n))
+			NSLog(@"\t\terr: as a note, the sample buffer wasn't valid in %s",__func__);
 		return nil;
 	}
-#if !TARGET_OS_IPHONE
-	if (CFGetTypeID(cvt) != CVOpenGLTextureGetTypeID())
-#else
-	if (CFGetTypeID(cvt) != CVOpenGLESTextureGetTypeID())
-#endif
-	{
-		NSLog(@"\t\terr: CFTypeID of passed tex doesn't match expected %s",__func__);
-		return nil;
+	//	get the CVImage
+	CVImageBufferRef		cvImg = CMSampleBufferGetImageBuffer(n);	//	don't need to free this
+	VVBuffer				*returnMe = nil;
+	if (cvImg!=NULL && (CFGetTypeID(cvImg) == CVPixelBufferGetTypeID()))	{
+		//	make the actual buffer i'll be returning
+		returnMe = [self allocBufferForCVPixelBuffer:cvImg texRange:YES ioSurface:NO];
+		//	get the CMSampleBuffer timing info, apply it to the buffer
+		CMTime				bufferTime = CMSampleBufferGetPresentationTimeStamp(n);
+		double				timeInSec = (!CMTIME_IS_VALID(bufferTime)) ? 0. : CMTimeGetSeconds(bufferTime);
+		struct timeval		tmpTimestamp;
+		tmpTimestamp.tv_sec = (long)floor(timeInSec);
+		tmpTimestamp.tv_usec = (__int32_t)((1000000.*timeInSec) - (1000000.*(double)tmpTimestamp.tv_sec));
+		[returnMe setContentTimestampFromPtr:&tmpTimestamp];
 	}
-	
-	VVBuffer			*returnMe = [[VVBuffer alloc] initWithPool:self];
-	[VVBufferPool timestampThisBuffer:returnMe];
-	VVBufferDescriptor	*desc = [returnMe descriptorPtr];
-	if (desc == nil)	{
-		VVRELEASE(returnMe);
-		return nil;
-	}
-	desc->type = VVBufferType_Tex;
-#if !TARGET_OS_IPHONE
-	desc->target = CVOpenGLTextureGetTarget(cvt);
-	desc->internalFormat = VVBufferIF_RGBA8;
-	desc->pixelFormat = VVBufferPF_BGRA;
-	desc->pixelType = VVBufferPT_U_Int_8888_Rev;
-#else
-	desc->target = CVOpenGLESTextureGetTarget(cvt);
-	desc->internalFormat = VVBufferIF_RGBA;
-	desc->pixelFormat = VVBufferPF_BGRA;
-	desc->pixelType = VVBufferPT_U_Byte;
-#endif
-	desc->cpuBackingType = VVBufferCPUBack_None;
-	desc->gpuBackingType = VVBufferGPUBack_External;
-	desc->name = texName;
-	desc->texRangeFlag = NO;
-	desc->texClientStorageFlag = NO;
-	desc->msAmount = 0;
-	desc->localSurfaceID = 0;
-	
-	//CGSize				texSize = CVImageBufferGetDisplaySize(cvt);
-	CGSize				texSize = CVImageBufferGetEncodedSize(cvt);
-	//VVSIZE					texSize = VVMAKESIZE(CVPixelBufferGetWidth(cvt), CVPixelBufferGetHeight(cvt));
-	//VVSIZE					texSize = VVMAKESIZE(1920,1080);
-	//CGRect				cleanRect = CVImageBufferGetCleanRect(cvt);
-	//NSSizeLog(@"\t\ttexSize is",texSize);
-	//NSRectLog(@"\t\tcleanRect is",cleanRect);
-	[returnMe setPreferDeletion:YES];
-	[returnMe setSize:VVMAKESIZE(texSize.width,texSize.height)];
-	[returnMe setSrcRect:VVMAKERECT(0,0,texSize.width,texSize.height)];
-#if !TARGET_OS_IPHONE
-	[returnMe setFlipped:CVOpenGLTextureIsFlipped(cvt)];
-#else
-	[returnMe setFlipped:CVOpenGLESTextureIsFlipped(cvt)];
-#endif
-	[returnMe setBackingSize:[returnMe size]];
-	
-	[returnMe setBackingID:VVBufferBackID_CVTex];
-#if !TARGET_OS_IPHONE
-	CVOpenGLTextureRetain(cvt);
-#else
-	//CVOpenGLESTextureRetain(cvt);
-	CVBufferRetain(cvt);
-#endif
-	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseCVGLT];
-	[returnMe setBackingReleaseCallbackContext:cvt];
-	return returnMe;
-}
-- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n	{
-	return [self allocBufferForCGImageRef:n prefer2DTexture:NO];
-}
-- (VVBuffer *) allocBufferForCGImageRef:(CGImageRef)n prefer2DTexture:(BOOL)prefer2D	{
-	if (n==nil)
-		return nil;
-	//	i have the image- i need to get some of its basic properties (pixel format, alpha, etc) to determine if i can just upload this data to a texture or if i have to convert (draw) it
-	BOOL				directUploadOK = YES;
-	
-	CGBitmapInfo		newImgInfo = CGImageGetBitmapInfo(n);
-	CGImageAlphaInfo	calculatedAlphaInfo = newImgInfo & kCGBitmapAlphaInfoMask;
-	
-	
-	
-	//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrderDefault)
-	if (VVBITMASKCHECK(newImgInfo, kCGBitmapFloatComponents)	||
-	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Little)	||
-	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder16Big)	||
-	//VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Little)	||
-	VVBITMASKCHECK(newImgInfo, kCGBitmapByteOrder32Big))	{
-		directUploadOK = NO;
-	}
-	
-	
-	
-	switch (calculatedAlphaInfo)	{
-	case kCGImageAlphaPremultipliedLast:
-	case kCGImageAlphaPremultipliedFirst:
-	case kCGImageAlphaOnly:
-	case kCGImageAlphaNone:
-		directUploadOK = NO;
-		break;
-	case kCGImageAlphaLast:
-	case kCGImageAlphaFirst:
-	case kCGImageAlphaNoneSkipLast:
-	case kCGImageAlphaNoneSkipFirst:
-		break;
-	}
-	
-	VVBuffer			*returnMe = nil;
-	
-	//	if i can upload the pixel data from the CGImageRef directly to a texture...
-	if (directUploadOK)	{
-		//	this just copies the data right out of the image provider, let's give it a shot...
-		VVSIZE		imgSize = VVMAKESIZE(CGImageGetWidth(n), CGImageGetHeight(n));
-		NSData		*frameData = (NSData *)CGDataProviderCopyData(CGImageGetDataProvider(n));
-		if (frameData!=nil)	{
-			VVBufferDescriptor		desc;
-#if !TARGET_OS_IPHONE
-			desc.type = VVBufferType_Tex;
-			desc.target = (prefer2D) ? GL_TEXTURE_2D : GL_TEXTURE_RECTANGLE_EXT;
-			desc.internalFormat = VVBufferIF_RGBA8;
-			//desc.pixelFormat = VVBufferPF_RGBA;
-			desc.pixelFormat = VVBufferPF_RGBA;
-			desc.pixelType = VVBufferPT_U_Int_8888_Rev;
-			desc.cpuBackingType = VVBufferCPUBack_External;
-			desc.gpuBackingType = VVBufferGPUBack_Internal;
-			desc.name = 0;
-			desc.texRangeFlag = YES;
-			desc.texClientStorageFlag = YES;
-			desc.msAmount = 0;
-			desc.localSurfaceID = 0;
-#else
-			desc.type = VVBufferType_Tex;
-			desc.target = GL_TEXTURE_2D;
-			desc.internalFormat = VVBufferIF_RGBA;
-			//desc.pixelFormat = VVBufferPF_RGBA;
-			desc.pixelFormat = VVBufferPF_RGBA;
-			desc.pixelType = VVBufferPT_U_Byte;
-			desc.cpuBackingType = VVBufferCPUBack_External;
-			desc.gpuBackingType = VVBufferGPUBack_Internal;
-			desc.name = 0;
-			desc.texRangeFlag = NO;
-			desc.texClientStorageFlag = NO;
-			desc.msAmount = 0;
-			desc.localSurfaceID = 0;
-#endif
-			returnMe = [_globalVVBufferPool
-				allocBufferForDescriptor:&desc
-				sized:imgSize
-				backingPtr:(void *)[frameData bytes]
-				backingSize:imgSize];
-			[returnMe setBackingID:VVBufferBackID_External];
-			[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
-			[returnMe setBackingReleaseCallbackContext:frameData];
-			[frameData retain];
-			[returnMe setPreferDeletion:YES];
-			[returnMe setFlipped:YES];
-			
-			
-			[frameData release];
-			frameData = nil;
-		}
-	}
-	//	else the direct upload isn't okay...
 	else	{
-		//	alloc some memory, make a CGBitmapContext that uses the memory to store pixel data
-		VVSIZE			imgSize = VVMAKESIZE(CGImageGetWidth(n), CGImageGetHeight(n));
-		GLubyte			*imgData = calloc((long)imgSize.width * (long)imgSize.height, sizeof(GLubyte)*4);
-		CGContextRef	ctx = CGBitmapContextCreate(imgData,
-			(long)imgSize.width,
-			(long)imgSize.height,
-			8,
-			((long)(imgSize.width))*4,
-			colorSpace,
-			kCGImageAlphaPremultipliedLast);
-		if (ctx == NULL)	{
-			NSLog(@"\t\tERR: ctx null in %s",__func__);
-			free(imgData);
-			return nil;
-		}
-		//	draw the image in the bitmap context, flush it
-		CGContextDrawImage(ctx, CGRectMake(0,0,imgSize.width,imgSize.height), n);
-		CGContextFlush(ctx);
-		CGContextRelease(ctx);
-		//	the bitmap context we just drew into has premultiplied alpha, so we need to un-premultiply before uploading it
-		CGBitmapContextUnpremultiply(ctx);
-		//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
-		VVBufferDescriptor		desc;
-		desc.type = VVBufferType_Tex;
-		desc.target = GL_TEXTURE_2D;
-		desc.internalFormat = VVBufferIF_RGBA;
-		desc.pixelFormat = VVBufferPF_RGBA;
-		desc.pixelType = VVBufferPT_U_Byte;
-		desc.cpuBackingType = VVBufferCPUBack_External;
-		desc.gpuBackingType = VVBufferGPUBack_Internal;
-		desc.name = 0;
-		desc.texRangeFlag = NO;
-		desc.texClientStorageFlag = YES;
-		desc.msAmount = 0;
-		desc.localSurfaceID = 0;
-		//	alloc the buffer, populate its basic variables
-		returnMe = [self allocBufferForDescriptor:&desc sized:imgSize backingPtr:imgData backingSize:imgSize];
-		[returnMe setSrcRect:VVMAKERECT(0,0,imgSize.width,imgSize.height)];
-		[returnMe setBackingID:VVBufferBackID_Pixels];
-		[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];
-		[returnMe setBackingReleaseCallbackContext:imgData];
-		[returnMe setFlipped:YES];
+		if (cvImg == NULL)
+			NSLog(@"\t\terr: img null in %s",__func__);
+		else
+			NSLog(@"\t\terr: img not of expected type (%ld) in %s",CFGetTypeID(cvImg),__func__);
 	}
 	return returnMe;
 }
+- (VVBuffer *) allocBufferForCVPixelBuffer:(CVPixelBufferRef)cvpb texRange:(BOOL)tr ioSurface:(BOOL)io	{
+	//NSLog(@"%s",__func__);
+	//	start setting up a buffer descriptor for the buffer i'm going to create
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_BGRA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	//desc.backingType = VVBufferBack_CVPixBuf;
+	desc.cpuBackingType = VVBufferCPUBack_External;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = tr;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = (io) ? 1 : 0;
+	
+	//	get some basic properties of the CVPixelBufferRef
+	unsigned long	cvpb_bytesPerRow = CVPixelBufferGetBytesPerRow(cvpb);
+	int				bitsPerPixel = 32;
+	OSType			pixelFormat = CVPixelBufferGetPixelFormatType(cvpb);
+	
+	//FourCCLog(@"\t\tpixel format is",pixelFormat);
+	switch (pixelFormat)	{
+		//case FOURCC_PACK('B','G','R','A'):
+		case 'BGRA':
+			//NSLog(@"\t\tBGRA");
+			bitsPerPixel = 32;
+			break;
+		//case FOURCC_PACK('2','v','u','y'):
+		case '2vuy':
+			//NSLog(@"\t\t2vuy");
+			bitsPerPixel = 16;
+			desc.internalFormat = VVBufferIF_RGB;
+			desc.pixelFormat = VVBufferPF_YCBCR_422;
+			desc.pixelType = VVBufferPT_U_Short_88;
+			break;
+		//case FOURCC_PACK('D','X','t','1'):
+		case 'DXt1':
+			break;
+		//case FOURCC_PACK('D','X','T','5'):
+		case 'DXT5':
+			break;
+		//case FOURCC_PACK('D','Y','t','5'):
+		case 'DYt5':
+			break;
+		default:
+			{
+				char			charPtr[5];
+				charPtr[4] = 0;
+				VVUnpackFourCC_toChar(pixelFormat,charPtr);
+				NSLog(@"\t\terr: unrecognized pixel format: %s, in %s",charPtr,__func__);
+				return nil;
+			}
+			break;
+	}
+	
+	//NSRect			cvpb_srcRect = NSMakeRect(0,0,CVPixelBufferGetWidth(cvpb),CVPixelBufferGetHeight(cvpb));
+	CGRect			cvpb_srcRect = CVImageBufferGetCleanRect(cvpb);
+	VVSIZE			cvpb_backingSize = VVMAKESIZE(cvpb_bytesPerRow/(bitsPerPixel/8), CVPixelBufferGetDataSize(cvpb)/cvpb_bytesPerRow);
+	//NSLog(@"\t\ttotal size is %ld",CVPixelBufferGetDataSize(cvpb));
+	//NSLog(@"\t\tbytesPerRow is %ld",cvpb_bytesPerRow);
+	//NSSizeLog(@"\t\tbackingSize is",cvpb_backingSize);
+	//NSRectLog(@"\t\tsrcRect is",cvpb_srcRect);
+	
+	CVPixelBufferLockBaseAddress(cvpb, kCVPixelBufferLock_ReadOnly);
+	void			*cvpb_baseAddr = CVPixelBufferGetBaseAddress(cvpb);
+	VVBuffer		*returnMe = [self
+		allocBufferForDescriptor:&desc
+		sized:cvpb_backingSize
+		backingPtr:cvpb_baseAddr
+		backingSize:cvpb_backingSize];
+	//CVPixelBufferUnlockBaseAddress(cvpb, 0);
+	CVPixelBufferRetain(cvpb);	//	the CVPixelBuffer is retained by the VVBuffer for the backing release callback context, here's where the retain count is incremented
+	[returnMe setBackingID:VVBufferBackID_CVPixBuf];
+	//[returnMe setCpuBackingPtr:cvpb_baseAddr];
+	[returnMe setBackingReleaseCallbackContext:cvpb];
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseCVPixBuf];
+	[returnMe setPreferDeletion:YES];
+	[returnMe setSrcRect:CGMAKENSRECT(cvpb_srcRect)];
+	[returnMe setFlipped:(CVImageBufferIsFlipped(cvpb)) ? YES : NO];
+	return returnMe;
+}
+//	returns a RETAINED (MUST BE RELEASED BY CALLER!) VVBuffer with a texture backed by a (retained) NSBitmapImageRep!
+- (VVBuffer *) allocTexRangeForNSBitmapRep:(NSBitmapImageRep *)rep	{
+	return [self allocTexRangeForNSBitmapRep:rep prefer2DTexture:NO];
+}
+- (VVBuffer *) allocTexRangeForNSBitmapRep:(NSBitmapImageRep *)rep prefer2DTexture:(BOOL)prefer2D	{
+	//NSLog(@"%s",__func__);
+	if (rep==nil || deleted)
+		return nil;
+	void					*pixelData = (void *)[rep bitmapData];
+	if (pixelData == nil)
+		return nil;
+	VVSIZE					repSize = [rep size];
+	VVSIZE					gpuSize;
+	if (prefer2D)	{
+		int						tmpInt;
+		tmpInt = 1;
+		while (tmpInt < repSize.width)
+			tmpInt <<= 1;
+		gpuSize.width = tmpInt;
+		tmpInt = 1;
+		while (tmpInt < repSize.height)
+			tmpInt <<= 1;
+		gpuSize.height = tmpInt;
+	}
+	else
+		gpuSize = repSize;
+	
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_External;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	
+	VVBuffer			*returnMe = [self allocBufferForDescriptor:&desc sized:gpuSize backingPtr:pixelData backingSize:repSize];
+	[returnMe setSrcRect:NSMakeRect(0,0,repSize.width,repSize.height)];
+	//	the backing release callback should release a bitmap rep- set it, and the context (which is the rep)
+	[returnMe setBackingID:VVBufferBackID_NSBitImgRep];
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
+	[returnMe setBackingReleaseCallbackContext:rep];
+	//	don't forget to retain the rep (the buffer retains it, we increment the retain count here)
+	[rep retain];
+	[returnMe setFlipped:YES];
+	[returnMe setBackingSize:repSize];
+	return returnMe;
+}
+
+
+/*===================================================================================*/
+#pragma mark --------------------- making PBO-based VVBuffers
+/*------------------------------------*/
+
+
+- (VVBuffer *) allocRGBAPBOForTarget:(GLenum)t usage:(GLenum)u sized:(VVSIZE)s data:(const GLvoid *)d	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_PBO;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	if (returnMe == nil)
+		return nil;
+	
+	int						bytesPerElement = 4;
+	switch (desc.pixelType)	{
+		case VVBufferPT_None:
+			break;
+		case VVBufferPT_Float:
+			bytesPerElement = 16;
+			break;
+		case VVBufferPT_U_Byte:
+			bytesPerElement = 1;
+			break;
+		case VVBufferPT_U_Int_8888_Rev:
+			bytesPerElement = 4;
+			break;
+		case VVBufferPT_U_Short_88:
+			bytesPerElement = 2;
+			break;
+	}
+	
+	pthread_mutex_lock(&contextLock);
+	CGLContextObj			cgl_ctx = [context CGLContextObj];
+	glBindBufferARB(t, [returnMe name]);
+	glBufferDataARB(t, s.width * s.height * bytesPerElement, d, u);
+	glBindBufferARB(t, 0);
+	pthread_mutex_unlock(&contextLock);
+	
+	return returnMe;
+}
+- (VVBuffer *) allocRGBAFloatPBOForTarget:(GLenum)t usage:(GLenum)u sized:(VVSIZE)s data:(const GLvoid *)d	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_PBO;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA32F;
+	desc.pixelFormat = VVBufferPF_RGBA;
+	desc.pixelType = VVBufferPT_Float;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	if (returnMe == nil)
+		return nil;
+	
+	
+	int						bytesPerElement = 4;
+	switch (desc.pixelType)	{
+		case VVBufferPT_None:
+			break;
+		case VVBufferPT_Float:
+			bytesPerElement = 16;
+			break;
+		case VVBufferPT_U_Byte:
+			bytesPerElement = 1;
+			break;
+		case VVBufferPT_U_Int_8888_Rev:
+			bytesPerElement = 4;
+			break;
+		case VVBufferPT_U_Short_88:
+			bytesPerElement = 2;
+			break;
+	}
+	
+	pthread_mutex_lock(&contextLock);
+	CGLContextObj			cgl_ctx = [context CGLContextObj];
+	glBindBufferARB(t, [returnMe name]);
+	glBufferDataARB(t, s.width * s.height * bytesPerElement, d, u);
+	glBindBufferARB(t, 0);
+	pthread_mutex_unlock(&contextLock);
+	
+	return returnMe;
+}
+- (VVBuffer *) allocYCbCrPBOForTarget:(GLenum)t usage:(GLenum)u sized:(VVSIZE)s data:(const GLvoid *)d	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_PBO;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_YCBCR_422;
+	desc.pixelType = VVBufferPT_U_Short_88;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	if (returnMe == nil)
+		return nil;
+	
+	
+	int						bytesPerElement = 4;
+	switch (desc.pixelType)	{
+		case VVBufferPT_None:
+			break;
+		case VVBufferPT_Float:
+			bytesPerElement = 16;
+			break;
+		case VVBufferPT_U_Byte:
+			bytesPerElement = 1;
+			break;
+		case VVBufferPT_U_Int_8888_Rev:
+			bytesPerElement = 4;
+			break;
+		case VVBufferPT_U_Short_88:
+			bytesPerElement = 2;
+			break;
+	}
+	
+	pthread_mutex_lock(&contextLock);
+	CGLContextObj			cgl_ctx = [context CGLContextObj];
+	glBindBufferARB(t, [returnMe name]);
+	glBufferDataARB(t, s.width * s.height * bytesPerElement, d, u);
+	glBindBufferARB(t, 0);
+	pthread_mutex_unlock(&contextLock);
+	
+	return returnMe;
+}
+- (VVBuffer *) allocBGRAPBOForTarget:(GLenum)t usage:(GLenum)u sized:(VVSIZE)s data:(const GLvoid *)d	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_PBO;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGBA8;
+	desc.pixelFormat = VVBufferPF_BGRA;
+	desc.pixelType = VVBufferPT_U_Int_8888_Rev;
+	//desc.backingType = VVBufferBack_None;
+	desc.cpuBackingType = VVBufferCPUBack_None;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = NO;
+	desc.texClientStorageFlag = NO;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [_globalVVBufferPool allocBufferForDescriptor:&desc sized:s backingPtr:nil backingSize:s];
+	if (returnMe == nil)
+		return nil;
+	
+	
+	int						bytesPerElement = 4;
+	switch (desc.pixelType)	{
+		case VVBufferPT_None:
+			break;
+		case VVBufferPT_Float:
+			bytesPerElement = 16;
+			break;
+		case VVBufferPT_U_Byte:
+			bytesPerElement = 1;
+			break;
+		case VVBufferPT_U_Int_8888_Rev:
+			bytesPerElement = 4;
+			break;
+		case VVBufferPT_U_Short_88:
+			bytesPerElement = 2;
+			break;
+	}
+	
+	pthread_mutex_lock(&contextLock);
+	CGLContextObj			cgl_ctx = [context CGLContextObj];
+	glBindBufferARB(t, [returnMe name]);
+	glBufferDataARB(t, s.width * s.height * bytesPerElement, d, u);
+	glBindBufferARB(t, 0);
+	pthread_mutex_unlock(&contextLock);
+	
+	return returnMe;
+}
+#endif	//	!TARGET_OS_IPHONE
 
 
 /*===================================================================================*/
@@ -2027,7 +2930,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	don't bother setting the cvImgRef, cvTexRef, ffglImage, syphonImage, or externalBacking- buffers with those are never returned to the pool
 	[newBuffer setLocalSurfaceRef:[b localSurfaceRef]];
 	//	don't bother setting the remote surface- buffers with remote surfaces are never returned to the pool
-#endif
+#endif	//	!TARGET_OS_IPHONE
 	
 	[freeBuffers lockAddObject:newBuffer];
 	//NSLog(@"\t\treplacement buffer is %@",newBuffer);
@@ -2047,9 +2950,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	pthread_mutex_lock(&contextLock);
 #if !TARGET_OS_IPHONE
 		CGLContextObj		cgl_ctx = [context CGLContextObj];
-#else
+#else	//	NOT !TARGET_OS_IPHONE
 		[EAGLContext setCurrentContext:context];
-#endif
+#endif	//	!TARGET_OS_IPHONE
 		switch (desc->type)	{
 			case VVBufferType_None:
 			case VVBufferType_RB:
@@ -2071,7 +2974,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 			case VVBufferType_DispList:
 				glDeleteLists(desc->name,1);
 				break;
-#endif
+#endif	//	!TARGET_OS_IPHONE
 		}
 		glFlush();
 	pthread_mutex_unlock(&contextLock);
@@ -2101,7 +3004,7 @@ void VVUnpackFourCC_toChar(unsigned long fourCC, char *destCharPtr)	{
 	destCharPtr[3] = (fourCC) & 0xFF;
 }
 void CGBitmapContextUnpremultiply(CGContextRef ctx)	{
-	NSSize				actualSize = NSMakeSize(CGBitmapContextGetWidth(ctx), CGBitmapContextGetHeight(ctx));
+	VVSIZE				actualSize = VVMAKESIZE(CGBitmapContextGetWidth(ctx), CGBitmapContextGetHeight(ctx));
 	unsigned long		bytesPerRow = CGBitmapContextGetBytesPerRow(ctx);
 	unsigned char		*bitmapData = (unsigned char *)CGBitmapContextGetData(ctx);
 	unsigned char		*pixelPtr = nil;

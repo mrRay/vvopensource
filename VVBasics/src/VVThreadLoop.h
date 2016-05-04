@@ -48,6 +48,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 - (void) start;
 - (void) threadCallback;
 - (void) threadProc;
+- (void) timerCallback:(NSTimer *)n;
 ///	Pauses/resumes execution.  The thread will still be running at the configured interval- that's what differentiates pause/resume from start/stop- but the target/selector won't be getting called.
 - (void) pause;
 - (void) resume;

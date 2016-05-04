@@ -58,6 +58,10 @@
 				1A9ECF691C0FD05600CCEB70 /* PBXTargetDependency */,
 				1A9ECF671C0FD05300CCEB70 /* PBXTargetDependency */,
 				1A1A6C981C1389EB00601E8C /* PBXTargetDependency */,
+				1AE1A7FE1CDA6856005F924D /* PBXTargetDependency */,
+				1AE1A8001CDA6858005F924D /* PBXTargetDependency */,
+				1AE1A8021CDA685B005F924D /* PBXTargetDependency */,
+				1AE1A8041CDA685E005F924D /* PBXTargetDependency */,
 			);
 			name = "Build Mac Fmwks & Apps";
 			productName = Untitled;
@@ -150,7 +154,6 @@
 		1A09FC311C42FBC6008736D6 /* CIGLScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 9684E88D198345D500524F3C /* CIGLScene.m */; };
 		1A09FC321C42FBC6008736D6 /* VVBufferCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C24B041981A7F500C53395 /* VVBufferCopier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FC331C42FBC6008736D6 /* VVBufferCopier.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C24B051981A7F600C53395 /* VVBufferCopier.m */; };
-		1A09FC351C42FBC6008736D6 /* HapSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 964F4486198ADA7400EF1FAE /* HapSupport.m */; };
 		1A09FC361C42FBD6008736D6 /* DDMathParser-License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9628FFB819817E6400FB6C56 /* DDMathParser-License.txt */; };
 		1A09FC371C42FBD6008736D6 /* _DDFunctionContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C8074919817CB400FA7825 /* _DDFunctionContainer.h */; };
 		1A09FC381C42FBD6008736D6 /* _DDFunctionContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C8074A19817CB500FA7825 /* _DDFunctionContainer.m */; };
@@ -229,6 +232,20 @@
 		1A09FC8D1C4301A3008736D6 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EAD1C42F44300B4291E /* VVBufferPool.framework */; };
 		1A1A6C951C1382C200601E8C /* mblur.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A6C931C1382C200601E8C /* mblur.fs */; };
 		1A1A6C961C1382C200601E8C /* passthru.vs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A6C941C1382C200601E8C /* passthru.vs */; };
+		1A2DFB6A1CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB691CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m */; };
+		1A2DFB6D1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB6C1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.m */; };
+		1A2DFB711CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB6F1CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.m */; };
+		1A2DFB721CDA6AA10073424C /* IMG_0885.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 1A2DFB701CDA6AA10073424C /* IMG_0885.JPG */; };
+		1A2DFB761CDA6AB40073424C /* Checkerboard.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A2DFB731CDA6AB40073424C /* Checkerboard.fs */; };
+		1A2DFB771CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB751CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m */; };
+		1A2DFB781CDA6B2B0073424C /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
+		1A2DFB791CDA6B2C0073424C /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
+		1A2DFB7A1CDA6B8F0073424C /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A2DFB7B1CDA6B970073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A2DFB7C1CDA6BBE0073424C /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A2DFB7D1CDA6BBE0073424C /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1A2DFB7E1CDA6BC90073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A2DFB7F1CDA6BC90073424C /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */ = {isa = PBXBuildFile; fileRef = 96671EF61986D1CA0016365C /* SampleImg.png */; };
 		1A33E1601BED434100E82A6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
 		1A33E1611BED434800E82A6F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
@@ -255,6 +272,7 @@
 		1A486F071C42F50300B4291E /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
 		1A486F081C42F50300B4291E /* MAZeroingWeakRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 96AC1809185A41A500917830 /* MAZeroingWeakRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A486F091C42F50300B4291E /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC180A185A41A500917830 /* MAZeroingWeakRef.m */; };
+		1A64E4B11CD96BD000DC3310 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */; };
 		1A6E9AB21B610ECE00F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB31B610ED300F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB51B610EE600F8C8A6 /* MultiClassXPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -330,7 +348,45 @@
 		1AC5E45B1C431AA00068087D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A854FD91C1A601400540729 /* GLKit.framework */; };
 		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
+		1AE1A7B41CDA6803005F924D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B31CDA6803005F924D /* main.m */; };
+		1AE1A7B61CDA6803005F924D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B51CDA6803005F924D /* Assets.xcassets */; };
+		1AE1A7B91CDA6803005F924D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B71CDA6803005F924D /* MainMenu.xib */; };
+		1AE1A7C91CDA6812005F924D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1A7C81CDA6812005F924D /* main.m */; };
+		1AE1A7CB1CDA6812005F924D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7CA1CDA6812005F924D /* Assets.xcassets */; };
+		1AE1A7CE1CDA6812005F924D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7CC1CDA6812005F924D /* MainMenu.xib */; };
+		1AE1A7DE1CDA6824005F924D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1A7DD1CDA6824005F924D /* main.m */; };
+		1AE1A7E01CDA6824005F924D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7DF1CDA6824005F924D /* Assets.xcassets */; };
+		1AE1A7E31CDA6824005F924D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7E11CDA6824005F924D /* MainMenu.xib */; };
+		1AE1A7F31CDA682C005F924D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1A7F21CDA682C005F924D /* main.m */; };
+		1AE1A7F51CDA682C005F924D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7F41CDA682C005F924D /* Assets.xcassets */; };
+		1AE1A7F81CDA682C005F924D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7F61CDA682C005F924D /* MainMenu.xib */; };
+		1AE1A80D1CDA6891005F924D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1AE1A80E1CDA6891005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1AE1A80F1CDA6899005F924D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1AE1A8101CDA6899005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1AE1A8111CDA68A3005F924D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1AE1A8121CDA68A3005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1AE1A8131CDA68AC005F924D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1AE1A8141CDA68AC005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1AE1A8191CDA68FA005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81A1CDA68FA005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81B1CDA6909005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81C1CDA6909005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81D1CDA6914005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81E1CDA6914005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A81F1CDA691F005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A8201CDA691F005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE3C7FD1B3B858000D37189 /* IOKit.framework */; };
+		1AE80BFA1CDA582B001D4FC4 /* PBOCPUGLStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BAF1CDA57FA001D4FC4 /* PBOCPUGLStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE80BFB1CDA582B001D4FC4 /* PBOGLCPUStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BB11CDA57FA001D4FC4 /* PBOGLCPUStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE80BFC1CDA582B001D4FC4 /* StreamProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BB31CDA57FA001D4FC4 /* StreamProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE80BFE1CDA582B001D4FC4 /* TexRangeCPUGLStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BC41CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE80BFF1CDA582B001D4FC4 /* TexRangeGLCPUStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BC61CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE80C0D1CDA5B09001D4FC4 /* PBOCPUGLStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE80BB01CDA57FA001D4FC4 /* PBOCPUGLStreamer.m */; };
+		1AE80C0E1CDA5B09001D4FC4 /* PBOGLCPUStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE80BB21CDA57FA001D4FC4 /* PBOGLCPUStreamer.m */; };
+		1AE80C0F1CDA5B09001D4FC4 /* StreamProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE80BB41CDA57FA001D4FC4 /* StreamProcessor.m */; };
+		1AE80C101CDA5B09001D4FC4 /* TexRangeCPUGLStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE80BC51CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.m */; };
+		1AE80C111CDA5B09001D4FC4 /* TexRangeGLCPUStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE80BC71CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.m */; };
 		1AE8C5F61AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
 		1AE8C5F71AF1AC16006C5018 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F51AF1AC16006C5018 /* QTKit.framework */; };
 		1AE8C5F91AF1AC29006C5018 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE8C5F81AF1AC29006C5018 /* QuickTime.framework */; };
@@ -858,6 +914,62 @@
 			remoteGlobalIDString = 968A7EEB185BA3100075DEB1;
 			remoteInfo = "Build iOS frameworks";
 		};
+		1AE1A7FD1CDA6856005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AE1A7AC1CDA6803005F924D;
+			remoteInfo = "PBOGLtoCPUtoGL Test App";
+		};
+		1AE1A7FF1CDA6858005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AE1A7C11CDA6812005F924D;
+			remoteInfo = "TexRangeGLtoCPU Test App";
+		};
+		1AE1A8011CDA685B005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AE1A7D61CDA6824005F924D;
+			remoteInfo = GPUUploadBenchmark;
+		};
+		1AE1A8031CDA685E005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AE1A7EB1CDA682C005F924D;
+			remoteInfo = GPUDownloadBenchmark;
+		};
+		1AE1A8051CDA686C005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9658764818CE5C2D003126BC;
+			remoteInfo = "Build Mac Frameworks";
+		};
+		1AE1A8071CDA6870005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9658764818CE5C2D003126BC;
+			remoteInfo = "Build Mac Frameworks";
+		};
+		1AE1A8091CDA6874005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9658764818CE5C2D003126BC;
+			remoteInfo = "Build Mac Frameworks";
+		};
+		1AE1A80B1CDA6879005F924D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9658764818CE5C2D003126BC;
+			remoteInfo = "Build Mac Frameworks";
+		};
 		1AEE1ED21C1368F4005259C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1228,6 +1340,57 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AE1A8151CDA68C8005F924D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AE1A8191CDA68FA005F924D /* VVBasics.framework in Embed Frameworks */,
+				1AE1A81A1CDA68FA005F924D /* VVBufferPool.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A8161CDA68D4005F924D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AE1A81B1CDA6909005F924D /* VVBasics.framework in Embed Frameworks */,
+				1AE1A81C1CDA6909005F924D /* VVBufferPool.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A8171CDA68DC005F924D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A2DFB7B1CDA6B970073424C /* DDMathParser.framework in Embed Frameworks */,
+				1AE1A81D1CDA6914005F924D /* VVBasics.framework in Embed Frameworks */,
+				1AE1A81E1CDA6914005F924D /* VVBufferPool.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A8181CDA68E4005F924D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A2DFB7E1CDA6BC90073424C /* DDMathParser.framework in Embed Frameworks */,
+				1A2DFB7F1CDA6BC90073424C /* VVISFKit.framework in Embed Frameworks */,
+				1AE1A81F1CDA691F005F924D /* VVBasics.framework in Embed Frameworks */,
+				1AE1A8201CDA691F005F924D /* VVBufferPool.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AEE1ED61C136905005259C0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1384,6 +1547,16 @@
 		1A1A6C941C1382C200601E8C /* passthru.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passthru.vs; sourceTree = "<group>"; };
 		1A254AF51904909E00526633 /* VVSpriteGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLKView.h; sourceTree = "<group>"; };
 		1A254AF61904909E00526633 /* VVSpriteGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVSpriteGLKView.m; sourceTree = "<group>"; };
+		1A2DFB681CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBOGLtoCPUtoGLAppDelegate.h; sourceTree = "<group>"; };
+		1A2DFB691CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBOGLtoCPUtoGLAppDelegate.m; sourceTree = "<group>"; };
+		1A2DFB6B1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexRangeGLtoCPUtoGLAppDelegate.h; sourceTree = "<group>"; };
+		1A2DFB6C1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TexRangeGLtoCPUtoGLAppDelegate.m; sourceTree = "<group>"; };
+		1A2DFB6E1CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUUploadBenchmarkAppDelegate.h; sourceTree = "<group>"; };
+		1A2DFB6F1CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUUploadBenchmarkAppDelegate.m; sourceTree = "<group>"; };
+		1A2DFB701CDA6AA10073424C /* IMG_0885.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_0885.JPG; sourceTree = "<group>"; };
+		1A2DFB731CDA6AB40073424C /* Checkerboard.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Checkerboard.fs; sourceTree = "<group>"; };
+		1A2DFB741CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUDownloadBenchmarkAppDelegate.h; sourceTree = "<group>"; };
+		1A2DFB751CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUDownloadBenchmarkAppDelegate.m; sourceTree = "<group>"; };
 		1A33E1621BED443100E82A6F /* Bad TV.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "Bad TV.fs"; sourceTree = "<group>"; };
 		1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "CMYK Halftone-Lookaround.fs"; sourceTree = "<group>"; };
 		1A486EA01C42F43000B4291E /* VVBasics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVBasics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1404,6 +1577,7 @@
 		1A486EE11C42F47100B4291E /* VVOSC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVOSC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A486EE31C42F47100B4291E /* VVOSC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVOSC.h; sourceTree = "<group>"; };
 		1A486EE51C42F47100B4291E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		1A7128AF1B61065000528CDB /* MultiClassXPC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MultiClassXPC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A7128B21B61065000528CDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A7128B31B61065000528CDB /* MultiClassXPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiClassXPC.h; sourceTree = "<group>"; };
@@ -1472,7 +1646,37 @@
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
 		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
 		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
+		1AE1A7AD1CDA6803005F924D /* PBOGLtoCPUtoGL Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PBOGLtoCPUtoGL Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AE1A7B31CDA6803005F924D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1AE1A7B51CDA6803005F924D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AE1A7B81CDA6803005F924D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1AE1A7BA1CDA6803005F924D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AE1A7C21CDA6812005F924D /* TexRangeGLtoCPU Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TexRangeGLtoCPU Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AE1A7C81CDA6812005F924D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1AE1A7CA1CDA6812005F924D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AE1A7CD1CDA6812005F924D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1AE1A7CF1CDA6812005F924D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AE1A7D71CDA6824005F924D /* GPUUploadBenchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPUUploadBenchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AE1A7DD1CDA6824005F924D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1AE1A7DF1CDA6824005F924D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AE1A7E21CDA6824005F924D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1AE1A7E41CDA6824005F924D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AE1A7EC1CDA682C005F924D /* GPUDownloadBenchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPUDownloadBenchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AE1A7F21CDA682C005F924D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1AE1A7F41CDA682C005F924D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AE1A7F71CDA682C005F924D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1AE1A7F91CDA682C005F924D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AE3C7FD1B3B858000D37189 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		1AE80BAF1CDA57FA001D4FC4 /* PBOCPUGLStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBOCPUGLStreamer.h; sourceTree = "<group>"; };
+		1AE80BB01CDA57FA001D4FC4 /* PBOCPUGLStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBOCPUGLStreamer.m; sourceTree = "<group>"; };
+		1AE80BB11CDA57FA001D4FC4 /* PBOGLCPUStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBOGLCPUStreamer.h; sourceTree = "<group>"; };
+		1AE80BB21CDA57FA001D4FC4 /* PBOGLCPUStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBOGLCPUStreamer.m; sourceTree = "<group>"; };
+		1AE80BB31CDA57FA001D4FC4 /* StreamProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamProcessor.h; sourceTree = "<group>"; };
+		1AE80BB41CDA57FA001D4FC4 /* StreamProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamProcessor.m; sourceTree = "<group>"; };
+		1AE80BC41CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexRangeCPUGLStreamer.h; sourceTree = "<group>"; };
+		1AE80BC51CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TexRangeCPUGLStreamer.m; sourceTree = "<group>"; };
+		1AE80BC61CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexRangeGLCPUStreamer.h; sourceTree = "<group>"; };
+		1AE80BC71CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TexRangeGLCPUStreamer.m; sourceTree = "<group>"; };
 		1AE8C5F51AF1AC16006C5018 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = ../../../../System/Library/Frameworks/QTKit.framework; sourceTree = "<group>"; };
 		1AE8C5F81AF1AC29006C5018 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = ../../../../System/Library/Frameworks/QuickTime.framework; sourceTree = "<group>"; };
 		1AE8C5FC1AF1AC4D006C5018 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = ../../../../System/Library/Frameworks/IOSurface.framework; sourceTree = "<group>"; };
@@ -1922,6 +2126,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AE1A7AA1CDA6803005F924D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A80D1CDA6891005F924D /* VVBasics.framework in Frameworks */,
+				1AE1A80E1CDA6891005F924D /* VVBufferPool.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7BF1CDA6812005F924D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A80F1CDA6899005F924D /* VVBasics.framework in Frameworks */,
+				1AE1A8101CDA6899005F924D /* VVBufferPool.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7D41CDA6824005F924D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB7A1CDA6B8F0073424C /* DDMathParser.framework in Frameworks */,
+				1AE1A8111CDA68A3005F924D /* VVBasics.framework in Frameworks */,
+				1AE1A8121CDA68A3005F924D /* VVBufferPool.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7E91CDA682C005F924D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB7C1CDA6BBE0073424C /* DDMathParser.framework in Frameworks */,
+				1A2DFB7D1CDA6BBE0073424C /* VVISFKit.framework in Frameworks */,
+				1AE1A8131CDA68AC005F924D /* VVBasics.framework in Frameworks */,
+				1AE1A8141CDA68AC005F924D /* VVBufferPool.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AEE1EBE1C136883005259C0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2122,6 +2365,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A64E4B11CD96BD000DC3310 /* CoreMedia.framework in Frameworks */,
 				1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */,
 				9684E8AF198348A000524F3C /* Quartz.framework in Frameworks */,
 				1AE8C6091AF1AD55006C5018 /* OpenGL.framework in Frameworks */,
@@ -2171,6 +2415,10 @@
 				1A486ED41C42F46700B4291E /* VVUIToolbox.framework */,
 				1A486EE11C42F47100B4291E /* VVOSC.framework */,
 				1A00B8C51C430B3600BC2BEB /* ISFonIOSTest.app */,
+				1AE1A7AD1CDA6803005F924D /* PBOGLtoCPUtoGL Test App.app */,
+				1AE1A7C21CDA6812005F924D /* TexRangeGLtoCPU Test App.app */,
+				1AE1A7D71CDA6824005F924D /* GPUUploadBenchmark.app */,
+				1AE1A7EC1CDA682C005F924D /* GPUDownloadBenchmark.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2225,6 +2473,23 @@
 				1A486EE21C42F47100B4291E /* VVOSC-iOS */,
 			);
 			name = "iOS Frameworks";
+			sourceTree = "<group>";
+		};
+		1A3513C81CDA6421003C241B /* texture upload & download */ = {
+			isa = PBXGroup;
+			children = (
+				1AE80BAF1CDA57FA001D4FC4 /* PBOCPUGLStreamer.h */,
+				1AE80BB01CDA57FA001D4FC4 /* PBOCPUGLStreamer.m */,
+				1AE80BB11CDA57FA001D4FC4 /* PBOGLCPUStreamer.h */,
+				1AE80BB21CDA57FA001D4FC4 /* PBOGLCPUStreamer.m */,
+				1AE80BB31CDA57FA001D4FC4 /* StreamProcessor.h */,
+				1AE80BB41CDA57FA001D4FC4 /* StreamProcessor.m */,
+				1AE80BC41CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.h */,
+				1AE80BC51CDA57FA001D4FC4 /* TexRangeCPUGLStreamer.m */,
+				1AE80BC61CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.h */,
+				1AE80BC71CDA57FA001D4FC4 /* TexRangeGLCPUStreamer.m */,
+			);
+			name = "texture upload & download";
 			sourceTree = "<group>";
 		};
 		1A486EA11C42F43000B4291E /* VVBasics-iOS */ = {
@@ -2418,6 +2683,92 @@
 			isa = PBXGroup;
 			children = (
 				1A7AB8E21BED17A200B2B129 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AE1A7AE1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */ = {
+			isa = PBXGroup;
+			children = (
+				1A2DFB681CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.h */,
+				1A2DFB691CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m */,
+				1AE1A7B51CDA6803005F924D /* Assets.xcassets */,
+				1AE1A7B71CDA6803005F924D /* MainMenu.xib */,
+				1AE1A7BA1CDA6803005F924D /* Info.plist */,
+				1AE1A7B21CDA6803005F924D /* Supporting Files */,
+			);
+			path = "PBOGLtoCPUtoGL Test App";
+			sourceTree = "<group>";
+		};
+		1AE1A7B21CDA6803005F924D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AE1A7B31CDA6803005F924D /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AE1A7C31CDA6812005F924D /* TexRangeGLtoCPU Test App */ = {
+			isa = PBXGroup;
+			children = (
+				1A2DFB6B1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.h */,
+				1A2DFB6C1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.m */,
+				1AE1A7CA1CDA6812005F924D /* Assets.xcassets */,
+				1AE1A7CC1CDA6812005F924D /* MainMenu.xib */,
+				1AE1A7CF1CDA6812005F924D /* Info.plist */,
+				1AE1A7C71CDA6812005F924D /* Supporting Files */,
+			);
+			path = "TexRangeGLtoCPU Test App";
+			sourceTree = "<group>";
+		};
+		1AE1A7C71CDA6812005F924D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AE1A7C81CDA6812005F924D /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AE1A7D81CDA6824005F924D /* GPUUploadBenchmark */ = {
+			isa = PBXGroup;
+			children = (
+				1A2DFB6E1CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.h */,
+				1A2DFB6F1CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.m */,
+				1A2DFB701CDA6AA10073424C /* IMG_0885.JPG */,
+				1AE1A7DF1CDA6824005F924D /* Assets.xcassets */,
+				1AE1A7E11CDA6824005F924D /* MainMenu.xib */,
+				1AE1A7E41CDA6824005F924D /* Info.plist */,
+				1AE1A7DC1CDA6824005F924D /* Supporting Files */,
+			);
+			path = GPUUploadBenchmark;
+			sourceTree = "<group>";
+		};
+		1AE1A7DC1CDA6824005F924D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AE1A7DD1CDA6824005F924D /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AE1A7ED1CDA682C005F924D /* GPUDownloadBenchmark */ = {
+			isa = PBXGroup;
+			children = (
+				1A2DFB731CDA6AB40073424C /* Checkerboard.fs */,
+				1A2DFB741CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.h */,
+				1A2DFB751CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m */,
+				1AE1A7F41CDA682C005F924D /* Assets.xcassets */,
+				1AE1A7F61CDA682C005F924D /* MainMenu.xib */,
+				1AE1A7F91CDA682C005F924D /* Info.plist */,
+				1AE1A7F11CDA682C005F924D /* Supporting Files */,
+			);
+			path = GPUDownloadBenchmark;
+			sourceTree = "<group>";
+		};
+		1AE1A7F11CDA682C005F924D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AE1A7F21CDA682C005F924D /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2775,6 +3126,10 @@
 				1A7AB8DD1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */,
 				1AEE1EC21C136883005259C0 /* GLShaderSceneTestApp */,
 				1A00B8C61C430B3600BC2BEB /* ISFonIOSTest */,
+				1AE1A7AE1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */,
+				1AE1A7C31CDA6812005F924D /* TexRangeGLtoCPU Test App */,
+				1AE1A7D81CDA6824005F924D /* GPUUploadBenchmark */,
+				1AE1A7ED1CDA682C005F924D /* GPUDownloadBenchmark */,
 			);
 			name = Applications;
 			sourceTree = "<group>";
@@ -2846,6 +3201,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */,
 				1A854FDF1C1A603300540729 /* Foundation.framework */,
 				1A854FDC1C1A601F00540729 /* CoreImage.framework */,
 				1A854FD91C1A601400540729 /* GLKit.framework */,
@@ -3024,6 +3380,7 @@
 				96C24B051981A7F600C53395 /* VVBufferCopier.m */,
 				964F4485198ADA7400EF1FAE /* HapSupport.h */,
 				964F4486198ADA7400EF1FAE /* HapSupport.m */,
+				1A3513C81CDA6421003C241B /* texture upload & download */,
 				9628FF9B19817DFC00FB6C56 /* VVBufferPool-Prefix.pch */,
 				96C8073D19817C1600FA7825 /* Supporting Files */,
 				96BD8CB81987148000555A7E /* SampleVVBufferPoolAdditions.h */,
@@ -3376,6 +3733,11 @@
 				96BD8CBF1987CEBA00555A7E /* SampleVVBufferPoolAdditions.m in Headers */,
 				1AEC34821CADD67D0060FCBF /* VVBufferPoolNSBitmapImageRepAdditions.h in Headers */,
 				964F4487198ADA7400EF1FAE /* HapSupport.h in Headers */,
+				1AE80BFA1CDA582B001D4FC4 /* PBOCPUGLStreamer.h in Headers */,
+				1AE80BFB1CDA582B001D4FC4 /* PBOGLCPUStreamer.h in Headers */,
+				1AE80BFC1CDA582B001D4FC4 /* StreamProcessor.h in Headers */,
+				1AE80BFE1CDA582B001D4FC4 /* TexRangeCPUGLStreamer.h in Headers */,
+				1AE80BFF1CDA582B001D4FC4 /* TexRangeGLCPUStreamer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3606,6 +3968,82 @@
 			name = ArbitraryGLTextureToVVBuffer;
 			productName = ArbitraryGLTextureToVVBuffer;
 			productReference = 1A7AB8DC1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1AE1A7AC1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AE1A7BB1CDA6803005F924D /* Build configuration list for PBXNativeTarget "PBOGLtoCPUtoGL Test App" */;
+			buildPhases = (
+				1AE1A7A91CDA6803005F924D /* Sources */,
+				1AE1A7AA1CDA6803005F924D /* Frameworks */,
+				1AE1A7AB1CDA6803005F924D /* Resources */,
+				1AE1A8151CDA68C8005F924D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AE1A8061CDA686C005F924D /* PBXTargetDependency */,
+			);
+			name = "PBOGLtoCPUtoGL Test App";
+			productName = "PBOGLtoCPUtoGL Test App";
+			productReference = 1AE1A7AD1CDA6803005F924D /* PBOGLtoCPUtoGL Test App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1AE1A7C11CDA6812005F924D /* TexRangeGLtoCPU Test App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AE1A7D01CDA6812005F924D /* Build configuration list for PBXNativeTarget "TexRangeGLtoCPU Test App" */;
+			buildPhases = (
+				1AE1A7BE1CDA6812005F924D /* Sources */,
+				1AE1A7BF1CDA6812005F924D /* Frameworks */,
+				1AE1A7C01CDA6812005F924D /* Resources */,
+				1AE1A8161CDA68D4005F924D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AE1A8081CDA6870005F924D /* PBXTargetDependency */,
+			);
+			name = "TexRangeGLtoCPU Test App";
+			productName = "TexRangeGLtoCPU Test App";
+			productReference = 1AE1A7C21CDA6812005F924D /* TexRangeGLtoCPU Test App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1AE1A7D61CDA6824005F924D /* GPUUploadBenchmark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AE1A7E51CDA6824005F924D /* Build configuration list for PBXNativeTarget "GPUUploadBenchmark" */;
+			buildPhases = (
+				1AE1A7D31CDA6824005F924D /* Sources */,
+				1AE1A7D41CDA6824005F924D /* Frameworks */,
+				1AE1A7D51CDA6824005F924D /* Resources */,
+				1AE1A8171CDA68DC005F924D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AE1A80A1CDA6874005F924D /* PBXTargetDependency */,
+			);
+			name = GPUUploadBenchmark;
+			productName = GPUUploadBenchmark;
+			productReference = 1AE1A7D71CDA6824005F924D /* GPUUploadBenchmark.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1AE1A7EB1CDA682C005F924D /* GPUDownloadBenchmark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AE1A7FA1CDA682C005F924D /* Build configuration list for PBXNativeTarget "GPUDownloadBenchmark" */;
+			buildPhases = (
+				1AE1A7E81CDA682C005F924D /* Sources */,
+				1AE1A7E91CDA682C005F924D /* Frameworks */,
+				1AE1A7EA1CDA682C005F924D /* Resources */,
+				1AE1A8181CDA68E4005F924D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AE1A80C1CDA6879005F924D /* PBXTargetDependency */,
+			);
+			name = GPUDownloadBenchmark;
+			productName = GPUDownloadBenchmark;
+			productReference = 1AE1A7EC1CDA682C005F924D /* GPUDownloadBenchmark.app */;
 			productType = "com.apple.product-type.application";
 		};
 		1AEE1EC01C136883005259C0 /* GLShaderSceneTestApp */ = {
@@ -4023,6 +4461,18 @@
 					1A7AB8DB1BED17A200B2B129 = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					1AE1A7AC1CDA6803005F924D = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					1AE1A7C11CDA6812005F924D = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					1AE1A7D61CDA6824005F924D = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					1AE1A7EB1CDA682C005F924D = {
+						CreatedOnToolsVersion = 7.2;
+					};
 					1AEE1EC01C136883005259C0 = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -4078,6 +4528,10 @@
 				1A7AB8C61BED159000B2B129 /* SyphonToAndFromVVBuffer */,
 				1A7AB8DB1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */,
 				1AEE1EC01C136883005259C0 /* GLShaderSceneTestApp */,
+				1AE1A7AC1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */,
+				1AE1A7C11CDA6812005F924D /* TexRangeGLtoCPU Test App */,
+				1AE1A7D61CDA6824005F924D /* GPUUploadBenchmark */,
+				1AE1A7EB1CDA682C005F924D /* GPUDownloadBenchmark */,
 				1A00B8DC1C430B4800BC2BEB /* Build iOS Fmwks & Apps */,
 				1A00B8C41C430B3600BC2BEB /* ISFonIOSTest */,
 			);
@@ -4189,6 +4643,46 @@
 				1A7AB8E81BED17A200B2B129 /* MainMenu.xib in Resources */,
 				1A33E1651BED443100E82A6F /* CMYK Halftone-Lookaround.fs in Resources */,
 				1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7AB1CDA6803005F924D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A7B61CDA6803005F924D /* Assets.xcassets in Resources */,
+				1A2DFB781CDA6B2B0073424C /* Blue.qtz in Resources */,
+				1AE1A7B91CDA6803005F924D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7C01CDA6812005F924D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A7CB1CDA6812005F924D /* Assets.xcassets in Resources */,
+				1A2DFB791CDA6B2C0073424C /* Blue.qtz in Resources */,
+				1AE1A7CE1CDA6812005F924D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7D51CDA6824005F924D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB721CDA6AA10073424C /* IMG_0885.JPG in Resources */,
+				1AE1A7E01CDA6824005F924D /* Assets.xcassets in Resources */,
+				1AE1A7E31CDA6824005F924D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7EA1CDA682C005F924D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB761CDA6AB40073424C /* Checkerboard.fs in Resources */,
+				1AE1A7F51CDA682C005F924D /* Assets.xcassets in Resources */,
+				1AE1A7F81CDA682C005F924D /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4412,7 +4906,6 @@
 				1A09FC211C42FBC6008736D6 /* VVBufferPool.m in Sources */,
 				1A09FC251C42FBC6008736D6 /* VVBuffer.m in Sources */,
 				1A09FC271C42FBC6008736D6 /* VVBufferAggregate.m in Sources */,
-				1A09FC351C42FBC6008736D6 /* HapSupport.m in Sources */,
 				1A09FC2D1C42FBC6008736D6 /* GLScene.m in Sources */,
 				1A09FC2B1C42FBC6008736D6 /* VVSizingTool.m in Sources */,
 				1A09FC311C42FBC6008736D6 /* CIGLScene.m in Sources */,
@@ -4546,6 +5039,42 @@
 			files = (
 				1A7AB8E31BED17A200B2B129 /* main.m in Sources */,
 				1A7AB8E01BED17A200B2B129 /* ArbitraryGLTextureToVVBufferAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7A91CDA6803005F924D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A7B41CDA6803005F924D /* main.m in Sources */,
+				1A2DFB6A1CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7BE1CDA6812005F924D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB6D1CDA6A8B0073424C /* TexRangeGLtoCPUtoGLAppDelegate.m in Sources */,
+				1AE1A7C91CDA6812005F924D /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7D31CDA6824005F924D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2DFB711CDA6AA10073424C /* GPUUploadBenchmarkAppDelegate.m in Sources */,
+				1AE1A7DE1CDA6824005F924D /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1A7E81CDA682C005F924D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1A7F31CDA682C005F924D /* main.m in Sources */,
+				1A2DFB771CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4788,11 +5317,16 @@
 				9628FFB319817DFC00FB6C56 /* VVBufferPoolStringAdditions.m in Sources */,
 				9628FFB519817DFC00FB6C56 /* VVSizingTool.m in Sources */,
 				9628FFE31981840000FB6C56 /* GLShaderScene.m in Sources */,
-				96C24B071981A7F600C53395 /* VVBufferCopier.m in Sources */,
 				9684E893198345D500524F3C /* CIGLScene.m in Sources */,
 				9684E897198345D500524F3C /* VVQCComposition.m in Sources */,
 				9684E895198345D500524F3C /* QCGLScene.m in Sources */,
 				964F4488198ADA7400EF1FAE /* HapSupport.m in Sources */,
+				1AE80C0F1CDA5B09001D4FC4 /* StreamProcessor.m in Sources */,
+				1AE80C0D1CDA5B09001D4FC4 /* PBOCPUGLStreamer.m in Sources */,
+				1AE80C0E1CDA5B09001D4FC4 /* PBOGLCPUStreamer.m in Sources */,
+				1AE80C101CDA5B09001D4FC4 /* TexRangeCPUGLStreamer.m in Sources */,
+				1AE80C111CDA5B09001D4FC4 /* TexRangeGLCPUStreamer.m in Sources */,
+				96C24B071981A7F600C53395 /* VVBufferCopier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4918,6 +5452,46 @@
 			isa = PBXTargetDependency;
 			target = 968A7EEB185BA3100075DEB1 /* Build iOS frameworks */;
 			targetProxy = 1AC5E4501C4315C60068087D /* PBXContainerItemProxy */;
+		};
+		1AE1A7FE1CDA6856005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AE1A7AC1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */;
+			targetProxy = 1AE1A7FD1CDA6856005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A8001CDA6858005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AE1A7C11CDA6812005F924D /* TexRangeGLtoCPU Test App */;
+			targetProxy = 1AE1A7FF1CDA6858005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A8021CDA685B005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AE1A7D61CDA6824005F924D /* GPUUploadBenchmark */;
+			targetProxy = 1AE1A8011CDA685B005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A8041CDA685E005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AE1A7EB1CDA682C005F924D /* GPUDownloadBenchmark */;
+			targetProxy = 1AE1A8031CDA685E005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A8061CDA686C005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
+			targetProxy = 1AE1A8051CDA686C005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A8081CDA6870005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
+			targetProxy = 1AE1A8071CDA6870005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A80A1CDA6874005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
+			targetProxy = 1AE1A8091CDA6874005F924D /* PBXContainerItemProxy */;
+		};
+		1AE1A80C1CDA6879005F924D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
+			targetProxy = 1AE1A80B1CDA6879005F924D /* PBXContainerItemProxy */;
 		};
 		1AEE1ED31C1368F4005259C0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5168,6 +5742,38 @@
 			isa = PBXVariantGroup;
 			children = (
 				1A7AB8E71BED17A200B2B129 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1AE1A7B71CDA6803005F924D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE1A7B81CDA6803005F924D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1AE1A7CC1CDA6812005F924D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE1A7CD1CDA6812005F924D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1AE1A7E11CDA6824005F924D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE1A7E21CDA6824005F924D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1AE1A7F61CDA682C005F924D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE1A7F71CDA682C005F924D /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -6501,6 +7107,330 @@
 			};
 			name = Release;
 		};
+		1AE1A7BC1CDA6803005F924D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "PBOGLtoCPUtoGL Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.PBOGLtoCPUtoGL-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1AE1A7BD1CDA6803005F924D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "PBOGLtoCPUtoGL Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.PBOGLtoCPUtoGL-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1AE1A7D11CDA6812005F924D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "TexRangeGLtoCPU Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.TexRangeGLtoCPU-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1AE1A7D21CDA6812005F924D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "TexRangeGLtoCPU Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.TexRangeGLtoCPU-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1AE1A7E61CDA6824005F924D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = GPUUploadBenchmark/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUUploadBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1AE1A7E71CDA6824005F924D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = GPUUploadBenchmark/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUUploadBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1AE1A7FB1CDA682C005F924D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = GPUDownloadBenchmark/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUDownloadBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1AE1A7FC1CDA682C005F924D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = GPUDownloadBenchmark/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUDownloadBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		1AEE1ECF1C136883005259C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7821,6 +8751,42 @@
 			buildConfigurations = (
 				1A7AB8EB1BED17A200B2B129 /* Debug */,
 				1A7AB8EC1BED17A200B2B129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AE1A7BB1CDA6803005F924D /* Build configuration list for PBXNativeTarget "PBOGLtoCPUtoGL Test App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE1A7BC1CDA6803005F924D /* Debug */,
+				1AE1A7BD1CDA6803005F924D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AE1A7D01CDA6812005F924D /* Build configuration list for PBXNativeTarget "TexRangeGLtoCPU Test App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE1A7D11CDA6812005F924D /* Debug */,
+				1AE1A7D21CDA6812005F924D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AE1A7E51CDA6824005F924D /* Build configuration list for PBXNativeTarget "GPUUploadBenchmark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE1A7E61CDA6824005F924D /* Debug */,
+				1AE1A7E71CDA6824005F924D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AE1A7FA1CDA682C005F924D /* Build configuration list for PBXNativeTarget "GPUDownloadBenchmark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE1A7FB1CDA682C005F924D /* Debug */,
+				1AE1A7FC1CDA682C005F924D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
