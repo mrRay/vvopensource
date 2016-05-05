@@ -18,6 +18,18 @@
 			name = "Build iOS Fmwks & Apps";
 			productName = "Build iOS Fmwks & Apps";
 		};
+		1A8840BC1CDBE37600F9FF25 /* QuickLook plugins */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1A8840BF1CDBE37600F9FF25 /* Build configuration list for PBXAggregateTarget "QuickLook plugins" */;
+			buildPhases = (
+			);
+			dependencies = (
+				1A1A020B1CDBFE5100E49E5A /* PBXTargetDependency */,
+				1A8840C11CDBE38700F9FF25 /* PBXTargetDependency */,
+			);
+			name = "QuickLook plugins";
+			productName = "QuickLook plugins";
+		};
 		9658764818CE5C2D003126BC /* Build Mac Frameworks */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 9658764B18CE5C2D003126BC /* Build configuration list for PBXAggregateTarget "Build Mac Frameworks" */;
@@ -230,6 +242,18 @@
 		1A09FC8B1C4301A3008736D6 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; };
 		1A09FC8C1C4301A3008736D6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EA01C42F43000B4291E /* VVBasics.framework */; };
 		1A09FC8D1C4301A3008736D6 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EAD1C42F44300B4291E /* VVBufferPool.framework */; };
+		1A1A01DC1CDBF85D00E49E5A /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A1A01DD1CDBF85D00E49E5A /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1A1A01DE1CDBF86500E49E5A /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A1A01DF1CDBF86500E49E5A /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A1A01E31CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */; };
+		1A1A01EC1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A01EB1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m */; };
+		1A1A01EE1CDBFE3D00E49E5A /* GeneratePreviewForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A01ED1CDBFE3D00E49E5A /* GeneratePreviewForURL.m */; };
+		1A1A01F01CDBFE3D00E49E5A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A01EF1CDBFE3D00E49E5A /* main.c */; };
+		1A1A01FD1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A01FC1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.m */; };
+		1A1A02001CDBFE4900E49E5A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A01FF1CDBFE4900E49E5A /* main.m */; };
+		1A1A02021CDBFE4900E49E5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A02011CDBFE4900E49E5A /* Assets.xcassets */; };
+		1A1A02051CDBFE4900E49E5A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A02031CDBFE4900E49E5A /* MainMenu.xib */; };
 		1A1A6C951C1382C200601E8C /* mblur.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A6C931C1382C200601E8C /* mblur.fs */; };
 		1A1A6C961C1382C200601E8C /* passthru.vs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A6C941C1382C200601E8C /* passthru.vs */; };
 		1A2DFB6A1CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB691CDA6A7C0073424C /* PBOGLtoCPUtoGLAppDelegate.m */; };
@@ -246,6 +270,12 @@
 		1A2DFB7D1CDA6BBE0073424C /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
 		1A2DFB7E1CDA6BC90073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1A2DFB7F1CDA6BC90073424C /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A2E34111CDBE17100EFF2A8 /* ColorBars.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E340C1CDBE17100EFF2A8 /* ColorBars.png */; };
+		1A2E34121CDBE17100EFF2A8 /* QCQL_Renderer.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E340D1CDBE17100EFF2A8 /* QCQL_Renderer.entitlements */; };
+		1A2E34131CDBE17100EFF2A8 /* QCQLRendererAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E34101CDBE17100EFF2A8 /* QCQLRendererAgent.m */; };
+		1A2E34151CDBE18200EFF2A8 /* QCQL.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E34141CDBE18200EFF2A8 /* QCQL.entitlements */; };
+		1A2E341B1CDBE30200EFF2A8 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1A2E341C1CDBE30200EFF2A8 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */ = {isa = PBXBuildFile; fileRef = 96671EF61986D1CA0016365C /* SampleImg.png */; };
 		1A33E1601BED434100E82A6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
 		1A33E1611BED434800E82A6F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
@@ -272,7 +302,16 @@
 		1A486F071C42F50300B4291E /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
 		1A486F081C42F50300B4291E /* MAZeroingWeakRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 96AC1809185A41A500917830 /* MAZeroingWeakRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A486F091C42F50300B4291E /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC180A185A41A500917830 /* MAZeroingWeakRef.m */; };
+		1A5E3B291CDBE32E00F3EDF7 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A5E3B2A1CDBE32E00F3EDF7 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A64E4B11CD96BD000DC3310 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */; };
+		1A68C23E1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C23D1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m */; };
+		1A68C2401CDBDD46001FF7D6 /* GeneratePreviewForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C23F1CDBDD46001FF7D6 /* GeneratePreviewForURL.m */; };
+		1A68C2421CDBDD46001FF7D6 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C2411CDBDD46001FF7D6 /* main.c */; };
+		1A68C24F1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C24E1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.m */; };
+		1A68C2521CDBDD55001FF7D6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C2511CDBDD55001FF7D6 /* main.m */; };
+		1A68C2541CDBDD55001FF7D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A68C2531CDBDD55001FF7D6 /* Assets.xcassets */; };
+		1A68C2571CDBDD55001FF7D6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A68C2551CDBDD55001FF7D6 /* MainMenu.xib */; };
 		1A6E9AB21B610ECE00F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB31B610ED300F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB51B610EE600F8C8A6 /* MultiClassXPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -337,6 +376,20 @@
 		1A8A19971C15E09F0096BCB8 /* ISF_ES_Compatibility.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A19961C15E09F0096BCB8 /* ISF_ES_Compatibility.txt */; };
 		1A9BF64D1C430F2A009544C1 /* blueelectricspiral.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A9BF64C1C430F2A009544C1 /* blueelectricspiral.fs */; };
 		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
+		1ABD308B1CDBFFBC0008AD36 /* ISFQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABD30891CDBFFBC0008AD36 /* ISFQLRendererRemote.h */; };
+		1ABD308C1CDBFFBC0008AD36 /* ISFQLRendererRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ABD308A1CDBFFBC0008AD36 /* ISFQLRendererRemote.m */; };
+		1ABD308E1CDBFFC50008AD36 /* ISFQL.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1ABD308D1CDBFFC50008AD36 /* ISFQL.entitlements */; };
+		1ABD30901CDBFFD50008AD36 /* ISFQL_Renderer.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1ABD308F1CDBFFD50008AD36 /* ISFQL_Renderer.entitlements */; };
+		1ABD30921CDBFFE00008AD36 /* ColorBars.png in Resources */ = {isa = PBXBuildFile; fileRef = 1ABD30911CDBFFE00008AD36 /* ColorBars.png */; };
+		1ABD30961CDBFFEF0008AD36 /* ISFQLRendererAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ABD30951CDBFFEF0008AD36 /* ISFQLRendererAgent.m */; };
+		1ABD309B1CDC014D0008AD36 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1ABD309C1CDC014D0008AD36 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1ABD309D1CDC014D0008AD36 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1ABD309E1CDC014D0008AD36 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1ABD30A01CDC01690008AD36 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1ABD30A11CDC01690008AD36 /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1ABD30A21CDC01690008AD36 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1ABD30A31CDC01690008AD36 /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5E4521C4315D20068087D /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; };
 		1AC5E4531C4315D20068087D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EA01C42F43000B4291E /* VVBasics.framework */; };
 		1AC5E4541C4315D20068087D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EAD1C42F44300B4291E /* VVBufferPool.framework */; };
@@ -348,6 +401,8 @@
 		1AC5E45B1C431AA00068087D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A854FD91C1A601400540729 /* GLKit.framework */; };
 		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
+		1AE102A91CDBDF8B0034EA89 /* QCQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */; };
+		1AE102AA1CDBDF8B0034EA89 /* QCQLRendererRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE102A81CDBDF8B0034EA89 /* QCQLRendererRemote.m */; };
 		1AE1A7B41CDA6803005F924D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B31CDA6803005F924D /* main.m */; };
 		1AE1A7B61CDA6803005F924D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B51CDA6803005F924D /* Assets.xcassets */; };
 		1AE1A7B91CDA6803005F924D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AE1A7B71CDA6803005F924D /* MainMenu.xib */; };
@@ -795,12 +850,40 @@
 			remoteGlobalIDString = 1A486EB91C42F45200B4291E;
 			remoteInfo = "DDMathParser-iOS";
 		};
+		1A1A01E01CDBF8C100E49E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 964FF27C1981B5AF00CCC808;
+			remoteInfo = "VVISFKit-mac";
+		};
+		1A1A020A1CDBFE5100E49E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A1A01E81CDBFE3D00E49E5A;
+			remoteInfo = ISFQL;
+		};
 		1A1A6C971C1389EB00601E8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1AEE1EC01C136883005259C0;
 			remoteInfo = GLShaderSceneTestApp;
+		};
+		1A2E34161CDBE1B800EFF2A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A68C24A1CDBDD54001FF7D6;
+			remoteInfo = QCQL_Renderer;
+		};
+		1A2E34191CDBE2F800EFF2A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96C8073919817C1600FA7825;
+			remoteInfo = "VVBufferPool-mac";
 		};
 		1A6116211C430264000DC53E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -893,6 +976,13 @@
 			remoteGlobalIDString = 1A7128F71B610B6F00528CDB;
 			remoteInfo = MultiClassXPCTestService;
 		};
+		1A8840C01CDBE38700F9FF25 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A68C23A1CDBDD46001FF7D6;
+			remoteInfo = QCQL;
+		};
 		1A9ECF661C0FD05300CCEB70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -906,6 +996,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A7AB8DB1BED17A200B2B129;
 			remoteInfo = ArbitraryGLTextureToVVBuffer;
+		};
+		1ABD30971CDC013A0008AD36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96C8073919817C1600FA7825;
+			remoteInfo = "VVBufferPool-mac";
+		};
+		1ABD30991CDC013E0008AD36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 964FF27C1981B5AF00CCC808;
+			remoteInfo = "VVISFKit-mac";
+		};
+		1ABD30A41CDC01980008AD36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A1A01F81CDBFE4900E49E5A;
+			remoteInfo = ISFQL_Renderer;
 		};
 		1AC5E4501C4315C60068087D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1267,6 +1378,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1A2E341D1CDBE30700EFF2A8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A1A01DE1CDBF86500E49E5A /* DDMathParser.framework in Embed Frameworks */,
+				1A1A01DF1CDBF86500E49E5A /* VVISFKit.framework in Embed Frameworks */,
+				1A5E3B291CDBE32E00F3EDF7 /* VVBasics.framework in Embed Frameworks */,
+				1A5E3B2A1CDBE32E00F3EDF7 /* VVBufferPool.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A6E9AB41B610ED700F8C8A6 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1325,6 +1450,20 @@
 				1A86C92C1B6111A100506AD4 /* MultiClassXPCTestService.xpc in Embed XPC Service */,
 			);
 			name = "Embed XPC Service";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1ABD309F1CDC01540008AD36 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1ABD30A01CDC01690008AD36 /* VVBasics.framework in Embed Frameworks */,
+				1ABD30A11CDC01690008AD36 /* DDMathParser.framework in Embed Frameworks */,
+				1ABD30A21CDC01690008AD36 /* VVBufferPool.framework in Embed Frameworks */,
+				1ABD30A31CDC01690008AD36 /* VVISFKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1AC5E4561C4315D60068087D /* CopyFiles */ = {
@@ -1543,6 +1682,19 @@
 		1A00B8D61C430B3600BC2BEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1A00B8D81C430B3600BC2BEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ScaledCoCgYplusAtoRGBA.fs; sourceTree = "<group>"; };
+		1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-RGBAtoBGRA.fs"; sourceTree = "<group>"; };
+		1A1A01E91CDBFE3D00E49E5A /* ISFQL.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ISFQL.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A1A01EB1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenerateThumbnailForURL.m; sourceTree = "<group>"; };
+		1A1A01ED1CDBFE3D00E49E5A /* GeneratePreviewForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GeneratePreviewForURL.m; sourceTree = "<group>"; };
+		1A1A01EF1CDBFE3D00E49E5A /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		1A1A01F11CDBFE3D00E49E5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A1A01F91CDBFE4900E49E5A /* com.vidvox.ISFQL-Renderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "com.vidvox.ISFQL-Renderer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A1A01FB1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISFQL_RendererAppDelegate.h; sourceTree = "<group>"; };
+		1A1A01FC1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISFQL_RendererAppDelegate.m; sourceTree = "<group>"; };
+		1A1A01FF1CDBFE4900E49E5A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A1A02011CDBFE4900E49E5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A1A02041CDBFE4900E49E5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A1A02061CDBFE4900E49E5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A1A6C931C1382C200601E8C /* mblur.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = mblur.fs; sourceTree = "<group>"; };
 		1A1A6C941C1382C200601E8C /* passthru.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = passthru.vs; sourceTree = "<group>"; };
 		1A254AF51904909E00526633 /* VVSpriteGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVSpriteGLKView.h; sourceTree = "<group>"; };
@@ -1557,6 +1709,12 @@
 		1A2DFB731CDA6AB40073424C /* Checkerboard.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Checkerboard.fs; sourceTree = "<group>"; };
 		1A2DFB741CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUDownloadBenchmarkAppDelegate.h; sourceTree = "<group>"; };
 		1A2DFB751CDA6AB40073424C /* GPUDownloadBenchmarkAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUDownloadBenchmarkAppDelegate.m; sourceTree = "<group>"; };
+		1A2E340C1CDBE17100EFF2A8 /* ColorBars.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ColorBars.png; sourceTree = "<group>"; };
+		1A2E340D1CDBE17100EFF2A8 /* QCQL_Renderer.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = QCQL_Renderer.entitlements; sourceTree = "<group>"; };
+		1A2E340E1CDBE17100EFF2A8 /* QCQL_RendererProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQL_RendererProtocols.h; sourceTree = "<group>"; };
+		1A2E340F1CDBE17100EFF2A8 /* QCQLRendererAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQLRendererAgent.h; sourceTree = "<group>"; };
+		1A2E34101CDBE17100EFF2A8 /* QCQLRendererAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QCQLRendererAgent.m; sourceTree = "<group>"; };
+		1A2E34141CDBE18200EFF2A8 /* QCQL.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = QCQL.entitlements; sourceTree = "<group>"; };
 		1A33E1621BED443100E82A6F /* Bad TV.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "Bad TV.fs"; sourceTree = "<group>"; };
 		1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "CMYK Halftone-Lookaround.fs"; sourceTree = "<group>"; };
 		1A486EA01C42F43000B4291E /* VVBasics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVBasics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1578,6 +1736,18 @@
 		1A486EE31C42F47100B4291E /* VVOSC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVOSC.h; sourceTree = "<group>"; };
 		1A486EE51C42F47100B4291E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		1A68C23B1CDBDD46001FF7D6 /* QCQL.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QCQL.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A68C23D1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenerateThumbnailForURL.m; sourceTree = "<group>"; };
+		1A68C23F1CDBDD46001FF7D6 /* GeneratePreviewForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GeneratePreviewForURL.m; sourceTree = "<group>"; };
+		1A68C2411CDBDD46001FF7D6 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		1A68C2431CDBDD46001FF7D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A68C24B1CDBDD54001FF7D6 /* com.vidvox.QCQL-Renderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "com.vidvox.QCQL-Renderer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A68C24D1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCQL_RendererAppDelegate.h; sourceTree = "<group>"; };
+		1A68C24E1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCQL_RendererAppDelegate.m; sourceTree = "<group>"; };
+		1A68C2511CDBDD55001FF7D6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A68C2531CDBDD55001FF7D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A68C2561CDBDD55001FF7D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A68C2581CDBDD55001FF7D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A7128AF1B61065000528CDB /* MultiClassXPC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MultiClassXPC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A7128B21B61065000528CDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A7128B31B61065000528CDB /* MultiClassXPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiClassXPC.h; sourceTree = "<group>"; };
@@ -1644,8 +1814,18 @@
 		1A9ECF611C0F9BF800CCEB70 /* VVBufferGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferGLKView.h; sourceTree = "<group>"; };
 		1A9ECF621C0F9BF800CCEB70 /* VVBufferGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferGLKView.m; sourceTree = "<group>"; };
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
+		1ABD30891CDBFFBC0008AD36 /* ISFQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQLRendererRemote.h; sourceTree = "<group>"; };
+		1ABD308A1CDBFFBC0008AD36 /* ISFQLRendererRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFQLRendererRemote.m; sourceTree = "<group>"; };
+		1ABD308D1CDBFFC50008AD36 /* ISFQL.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ISFQL.entitlements; sourceTree = "<group>"; };
+		1ABD308F1CDBFFD50008AD36 /* ISFQL_Renderer.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ISFQL_Renderer.entitlements; sourceTree = "<group>"; };
+		1ABD30911CDBFFE00008AD36 /* ColorBars.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ColorBars.png; sourceTree = "<group>"; };
+		1ABD30931CDBFFEF0008AD36 /* ISFQL_RendererProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQL_RendererProtocols.h; sourceTree = "<group>"; };
+		1ABD30941CDBFFEF0008AD36 /* ISFQLRendererAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQLRendererAgent.h; sourceTree = "<group>"; };
+		1ABD30951CDBFFEF0008AD36 /* ISFQLRendererAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFQLRendererAgent.m; sourceTree = "<group>"; };
 		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
 		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
+		1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQLRendererRemote.h; sourceTree = "<group>"; };
+		1AE102A81CDBDF8B0034EA89 /* QCQLRendererRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QCQLRendererRemote.m; sourceTree = "<group>"; };
 		1AE1A7AD1CDA6803005F924D /* PBOGLtoCPUtoGL Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PBOGLtoCPUtoGL Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AE1A7B31CDA6803005F924D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1AE1A7B51CDA6803005F924D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -2027,6 +2207,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A1A01E51CDBFE3D00E49E5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A1A01F61CDBFE4900E49E5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ABD309B1CDC014D0008AD36 /* DDMathParser.framework in Frameworks */,
+				1ABD309C1CDC014D0008AD36 /* VVBasics.framework in Frameworks */,
+				1ABD309D1CDC014D0008AD36 /* VVBufferPool.framework in Frameworks */,
+				1ABD309E1CDC014D0008AD36 /* VVISFKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A486E9C1C42F43000B4291E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2072,6 +2270,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A09FC7D1C42FC49008736D6 /* VVBasics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2371CDBDD46001FF7D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2481CDBDD54001FF7D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A1A01DC1CDBF85D00E49E5A /* DDMathParser.framework in Frameworks */,
+				1A1A01DD1CDBF85D00E49E5A /* VVISFKit.framework in Frameworks */,
+				1A2E341B1CDBE30200EFF2A8 /* VVBasics.framework in Frameworks */,
+				1A2E341C1CDBE30200EFF2A8 /* VVBufferPool.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2419,6 +2635,10 @@
 				1AE1A7C21CDA6812005F924D /* TexRangeGLtoCPU Test App.app */,
 				1AE1A7D71CDA6824005F924D /* GPUUploadBenchmark.app */,
 				1AE1A7EC1CDA682C005F924D /* GPUDownloadBenchmark.app */,
+				1A68C23B1CDBDD46001FF7D6 /* QCQL.qlgenerator */,
+				1A68C24B1CDBDD54001FF7D6 /* com.vidvox.QCQL-Renderer.app */,
+				1A1A01E91CDBFE3D00E49E5A /* ISFQL.qlgenerator */,
+				1A1A01F91CDBFE4900E49E5A /* com.vidvox.ISFQL-Renderer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2429,6 +2649,7 @@
 				966D3E9718634FF000A7BE9E /* Mac Frameworks */,
 				1A0566DA1C43084F00A0C6D9 /* iOS Frameworks */,
 				966D3E9618634FE900A7BE9E /* Applications */,
+				1AD1AA771CDBEC70002ABBE9 /* QuickLook plugins */,
 				96C00547185A445B00C33FE2 /* EXTERNAL CODE */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				96ACD7221706416300138AE6 /* Frameworks */,
@@ -2473,6 +2694,46 @@
 				1A486EE21C42F47100B4291E /* VVOSC-iOS */,
 			);
 			name = "iOS Frameworks";
+			sourceTree = "<group>";
+		};
+		1A1A01EA1CDBFE3D00E49E5A /* ISFQL */ = {
+			isa = PBXGroup;
+			children = (
+				1A1A01EB1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m */,
+				1A1A01ED1CDBFE3D00E49E5A /* GeneratePreviewForURL.m */,
+				1ABD30891CDBFFBC0008AD36 /* ISFQLRendererRemote.h */,
+				1ABD308A1CDBFFBC0008AD36 /* ISFQLRendererRemote.m */,
+				1ABD308D1CDBFFC50008AD36 /* ISFQL.entitlements */,
+				1A1A01EF1CDBFE3D00E49E5A /* main.c */,
+				1A1A01F11CDBFE3D00E49E5A /* Info.plist */,
+			);
+			path = ISFQL;
+			sourceTree = "<group>";
+		};
+		1A1A01FA1CDBFE4900E49E5A /* ISFQL_Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				1A1A01FB1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.h */,
+				1A1A01FC1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.m */,
+				1ABD30931CDBFFEF0008AD36 /* ISFQL_RendererProtocols.h */,
+				1ABD30941CDBFFEF0008AD36 /* ISFQLRendererAgent.h */,
+				1ABD30951CDBFFEF0008AD36 /* ISFQLRendererAgent.m */,
+				1ABD30911CDBFFE00008AD36 /* ColorBars.png */,
+				1ABD308F1CDBFFD50008AD36 /* ISFQL_Renderer.entitlements */,
+				1A1A02011CDBFE4900E49E5A /* Assets.xcassets */,
+				1A1A02031CDBFE4900E49E5A /* MainMenu.xib */,
+				1A1A02061CDBFE4900E49E5A /* Info.plist */,
+				1A1A01FE1CDBFE4900E49E5A /* Supporting Files */,
+			);
+			path = ISFQL_Renderer;
+			sourceTree = "<group>";
+		};
+		1A1A01FE1CDBFE4900E49E5A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A1A01FF1CDBFE4900E49E5A /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		1A3513C81CDA6421003C241B /* texture upload & download */ = {
@@ -2550,6 +2811,47 @@
 			);
 			name = "VVOSC-iOS";
 			path = VVOSC;
+			sourceTree = "<group>";
+		};
+		1A68C23C1CDBDD46001FF7D6 /* QCQL */ = {
+			isa = PBXGroup;
+			children = (
+				1A68C23D1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m */,
+				1A68C23F1CDBDD46001FF7D6 /* GeneratePreviewForURL.m */,
+				1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */,
+				1AE102A81CDBDF8B0034EA89 /* QCQLRendererRemote.m */,
+				1A2E34141CDBE18200EFF2A8 /* QCQL.entitlements */,
+				1A68C2411CDBDD46001FF7D6 /* main.c */,
+				1A68C2431CDBDD46001FF7D6 /* Info.plist */,
+			);
+			path = QCQL;
+			sourceTree = "<group>";
+		};
+		1A68C24C1CDBDD54001FF7D6 /* QCQL_Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				1A68C24D1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.h */,
+				1A68C24E1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.m */,
+				1A2E340E1CDBE17100EFF2A8 /* QCQL_RendererProtocols.h */,
+				1A2E340F1CDBE17100EFF2A8 /* QCQLRendererAgent.h */,
+				1A2E34101CDBE17100EFF2A8 /* QCQLRendererAgent.m */,
+				1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */,
+				1A2E340C1CDBE17100EFF2A8 /* ColorBars.png */,
+				1A2E340D1CDBE17100EFF2A8 /* QCQL_Renderer.entitlements */,
+				1A68C2531CDBDD55001FF7D6 /* Assets.xcassets */,
+				1A68C2551CDBDD55001FF7D6 /* MainMenu.xib */,
+				1A68C2581CDBDD55001FF7D6 /* Info.plist */,
+				1A68C2501CDBDD55001FF7D6 /* Supporting Files */,
+			);
+			path = QCQL_Renderer;
+			sourceTree = "<group>";
+		};
+		1A68C2501CDBDD55001FF7D6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A68C2511CDBDD55001FF7D6 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		1A7128B01B61065000528CDB /* MultiClassXPC framework */ = {
@@ -2685,6 +2987,17 @@
 				1A7AB8E21BED17A200B2B129 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AD1AA771CDBEC70002ABBE9 /* QuickLook plugins */ = {
+			isa = PBXGroup;
+			children = (
+				1A68C23C1CDBDD46001FF7D6 /* QCQL */,
+				1A68C24C1CDBDD54001FF7D6 /* QCQL_Renderer */,
+				1A1A01EA1CDBFE3D00E49E5A /* ISFQL */,
+				1A1A01FA1CDBFE4900E49E5A /* ISFQL_Renderer */,
+			);
+			name = "QuickLook plugins";
 			sourceTree = "<group>";
 		};
 		1AE1A7AE1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */ = {
@@ -3458,6 +3771,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		1A1A01E61CDBFE3D00E49E5A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ABD308B1CDBFFBC0008AD36 /* ISFQLRendererRemote.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A486E9D1C42F43000B4291E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3572,6 +3893,14 @@
 				1A09FC071C42FB0B008736D6 /* OSCZeroConfDomain.h in Headers */,
 				1A09FBFB1C42FB0B008736D6 /* OSCManager.h in Headers */,
 				1A09FBEF1C42FB0B008736D6 /* OSCStringAdditions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2381CDBDD46001FF7D6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE102A91CDBDF8B0034EA89 /* QCQLRendererRemote.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3763,6 +4092,48 @@
 			productReference = 1A00B8C51C430B3600BC2BEB /* ISFonIOSTest.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1A1A01E81CDBFE3D00E49E5A /* ISFQL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A1A01F21CDBFE3D00E49E5A /* Build configuration list for PBXNativeTarget "ISFQL" */;
+			buildPhases = (
+				1ABD30A81CDC04F80008AD36 /* Clear Build Folder */,
+				1A1A01E41CDBFE3D00E49E5A /* Sources */,
+				1A1A01E51CDBFE3D00E49E5A /* Frameworks */,
+				1A1A01E61CDBFE3D00E49E5A /* Headers */,
+				1A1A01E71CDBFE3D00E49E5A /* Resources */,
+				1ABD30A61CDC01A80008AD36 /* Assemble Installer or Load Agent */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1ABD30A51CDC01980008AD36 /* PBXTargetDependency */,
+			);
+			name = ISFQL;
+			productName = ISFQL;
+			productReference = 1A1A01E91CDBFE3D00E49E5A /* ISFQL.qlgenerator */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1A1A01F81CDBFE4900E49E5A /* ISFQL_Renderer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A1A02071CDBFE4900E49E5A /* Build configuration list for PBXNativeTarget "ISFQL_Renderer" */;
+			buildPhases = (
+				1ABD30AA1CDC05A10008AD36 /* Clear Build Folder */,
+				1A1A01F51CDBFE4900E49E5A /* Sources */,
+				1A1A01F61CDBFE4900E49E5A /* Frameworks */,
+				1A1A01F71CDBFE4900E49E5A /* Resources */,
+				1ABD309F1CDC01540008AD36 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1ABD309A1CDC013E0008AD36 /* PBXTargetDependency */,
+				1ABD30981CDC013A0008AD36 /* PBXTargetDependency */,
+			);
+			name = ISFQL_Renderer;
+			productName = ISFQL_Renderer;
+			productReference = 1A1A01F91CDBFE4900E49E5A /* com.vidvox.ISFQL-Renderer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		1A486E9F1C42F43000B4291E /* VVBasics-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A486EA51C42F43000B4291E /* Build configuration list for PBXNativeTarget "VVBasics-iOS" */;
@@ -3876,6 +4247,48 @@
 			productName = VVOSC;
 			productReference = 1A486EE11C42F47100B4291E /* VVOSC.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		1A68C23A1CDBDD46001FF7D6 /* QCQL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A68C2461CDBDD46001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL" */;
+			buildPhases = (
+				1ABD30A71CDC049D0008AD36 /* Clear Build Folder */,
+				1A68C2361CDBDD46001FF7D6 /* Sources */,
+				1A68C2371CDBDD46001FF7D6 /* Frameworks */,
+				1A68C2381CDBDD46001FF7D6 /* Headers */,
+				1A68C2391CDBDD46001FF7D6 /* Resources */,
+				1AEB7BAB1CDBE81200603B9D /* Assemble Installer or Load Agent */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A2E34171CDBE1B800EFF2A8 /* PBXTargetDependency */,
+			);
+			name = QCQL;
+			productName = QCQL;
+			productReference = 1A68C23B1CDBDD46001FF7D6 /* QCQL.qlgenerator */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1A68C24A1CDBDD54001FF7D6 /* QCQL_Renderer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A68C2591CDBDD55001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL_Renderer" */;
+			buildPhases = (
+				1ABD30A91CDC05890008AD36 /* Clear Build Folder */,
+				1A68C2471CDBDD54001FF7D6 /* Sources */,
+				1A68C2481CDBDD54001FF7D6 /* Frameworks */,
+				1A68C2491CDBDD54001FF7D6 /* Resources */,
+				1A2E341D1CDBE30700EFF2A8 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A1A01E11CDBF8C100E49E5A /* PBXTargetDependency */,
+				1A2E341A1CDBE2F800EFF2A8 /* PBXTargetDependency */,
+			);
+			name = QCQL_Renderer;
+			productName = QCQL_Renderer;
+			productReference = 1A68C24B1CDBDD54001FF7D6 /* com.vidvox.QCQL-Renderer.app */;
+			productType = "com.apple.product-type.application";
 		};
 		1A7128AE1B61065000528CDB /* MultiClassXPC */ = {
 			isa = PBXNativeTarget;
@@ -4428,6 +4841,12 @@
 					1A00B8DC1C430B4800BC2BEB = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					1A1A01E81CDBFE3D00E49E5A = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					1A1A01F81CDBFE4900E49E5A = {
+						CreatedOnToolsVersion = 7.2;
+					};
 					1A486E9F1C42F43000B4291E = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -4446,6 +4865,17 @@
 					1A486EE01C42F47100B4291E = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					1A68C23A1CDBDD46001FF7D6 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					1A68C24A1CDBDD54001FF7D6 = {
+						CreatedOnToolsVersion = 7.2;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.Mac = {
+								enabled = 1;
+							};
+						};
+					};
 					1A7128AE1B61065000528CDB = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -4460,6 +4890,9 @@
 					};
 					1A7AB8DB1BED17A200B2B129 = {
 						CreatedOnToolsVersion = 7.1;
+					};
+					1A8840BC1CDBE37600F9FF25 = {
+						CreatedOnToolsVersion = 7.2;
 					};
 					1AE1A7AC1CDA6803005F924D = {
 						CreatedOnToolsVersion = 7.2;
@@ -4534,6 +4967,11 @@
 				1AE1A7EB1CDA682C005F924D /* GPUDownloadBenchmark */,
 				1A00B8DC1C430B4800BC2BEB /* Build iOS Fmwks & Apps */,
 				1A00B8C41C430B3600BC2BEB /* ISFonIOSTest */,
+				1A8840BC1CDBE37600F9FF25 /* QuickLook plugins */,
+				1A68C23A1CDBDD46001FF7D6 /* QCQL */,
+				1A68C24A1CDBDD54001FF7D6 /* QCQL_Renderer */,
+				1A1A01E81CDBFE3D00E49E5A /* ISFQL */,
+				1A1A01F81CDBFE4900E49E5A /* ISFQL_Renderer */,
 			);
 		};
 /* End PBXProject section */
@@ -4547,6 +4985,25 @@
 				1A00B8D41C430B3600BC2BEB /* Assets.xcassets in Resources */,
 				1A9BF64D1C430F2A009544C1 /* blueelectricspiral.fs in Resources */,
 				1A00B8D21C430B3600BC2BEB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A1A01E71CDBFE3D00E49E5A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ABD308E1CDBFFC50008AD36 /* ISFQL.entitlements in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A1A01F71CDBFE4900E49E5A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ABD30901CDBFFD50008AD36 /* ISFQL_Renderer.entitlements in Resources */,
+				1A1A02021CDBFE4900E49E5A /* Assets.xcassets in Resources */,
+				1A1A02051CDBFE4900E49E5A /* MainMenu.xib in Resources */,
+				1ABD30921CDBFFE00008AD36 /* ColorBars.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4598,6 +5055,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2391CDBDD46001FF7D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2E34151CDBE18200EFF2A8 /* QCQL.entitlements in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2491CDBDD54001FF7D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A68C2541CDBDD55001FF7D6 /* Assets.xcassets in Resources */,
+				1A2E34111CDBE17100EFF2A8 /* ColorBars.png in Resources */,
+				1A1A01E31CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs in Resources */,
+				1A68C2571CDBDD55001FF7D6 /* MainMenu.xib in Resources */,
+				1A2E34121CDBE17100EFF2A8 /* QCQL_Renderer.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4869,6 +5346,93 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1ABD30A61CDC01A80008AD36 /* Assemble Installer or Load Agent */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Assemble Installer or Load Agent";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\n\n# if we're in release mode, build and sign a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- assembling a pkg\"\n    cp -r \"$PROJECT_DIR/ISFQL_Renderer/com.vidvox.ISFQL-Renderer_RELEASE.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    #pkgbuild --identifier \"com.vidvox.ISFQL-Renderer\" --scripts \"$SCRIPTS\" --root \"$DSTROOT\" \"$DSTROOT/ISF QuickLook Plugin_unsigned.pkg\"\n    pkgbuild --identifier \"com.vidvox.ISFQL-Renderer\" --info \"$PROJECT_DIR/ISFQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../ISF QuickLook Plugin.pkg\"\n# else we're not in release mode- unregister the launch agent at all possible addresses, then try to enable the one we just built and installed\nelse\n    echo \"debug mode build- installing the compiled products in the user directory\"\n    # copy the plist to the LaunchAgents folder- the plugin and actual launch agent app were installed during build\n    cp -r \"$PROJECT_DIR/ISFQL_Renderer/com.vidvox.ISFQL-Renderer_DEBUG.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    # unload any global launch agent that may exist\n    TMPFILE=\"/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    #if [ ! -f $TMPFILE ]\n    #then\n        launchctl unload $TMPFILE\n    #fi\n    # unload any local launch agent, load the one we just installed\n    TMPFILE=\"$HOME/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    if [ -f $TMPFILE ]\n    then\n        launchctl unload $TMPFILE\n        launchctl load $TMPFILE\n    fi\nfi\n\n";
+		};
+		1ABD30A71CDC049D0008AD36 /* Clear Build Folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Clear Build Folder";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/QuickLook\" ]\n    then\n        rm -R \"$DSTROOT/Library/QuickLook\"\n    fi\nfi";
+		};
+		1ABD30A81CDC04F80008AD36 /* Clear Build Folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Clear Build Folder";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/QuickLook\" ]\n    then\n        rm -R \"$DSTROOT/Library/QuickLook\"\n    fi\nfi";
+		};
+		1ABD30A91CDC05890008AD36 /* Clear Build Folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Clear Build Folder";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/LaunchAgents\" ]\n    then\n        rm -R \"$DSTROOT/Library/LaunchAgents\"\n    fi\nfi";
+		};
+		1ABD30AA1CDC05A10008AD36 /* Clear Build Folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Clear Build Folder";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/LaunchAgents\" ]\n    then\n        rm -R \"$DSTROOT/Library/LaunchAgents\"\n    fi\nfi";
+		};
+		1AEB7BAB1CDBE81200603B9D /* Assemble Installer or Load Agent */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Assemble Installer or Load Agent";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\n\n# if we're in release mode, build and sign a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- assembling a pkg\"\n    cp -r \"$PROJECT_DIR/QCQL_Renderer/com.vidvox.QCQL-Renderer_RELEASE.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    #pkgbuild --identifier \"com.vidvox.QCQL-Renderer\" --scripts \"$SCRIPTS\" --root \"$DSTROOT\" \"$DSTROOT/QC QuickLook Plugin_unsigned.pkg\"\n    pkgbuild --identifier \"com.vidvox.QCQL-Renderer\" --info \"$PROJECT_DIR/QCQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../QC QuickLook Plugin.pkg\"\n# else we're not in release mode- unregister the launch agent at all possible addresses, then try to enable the one we just built and installed\nelse\n    echo \"debug mode build- installing the compiled products in the user directory\"\n    # copy the plist to the LaunchAgents folder- the plugin and actual launch agent app were installed during build\n    cp -r \"$PROJECT_DIR/QCQL_Renderer/com.vidvox.QCQL-Renderer_DEBUG.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    # unload any global launch agent that may exist\n    TMPFILE=\"/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    #if [ ! -f $TMPFILE ]\n    #then\n        launchctl unload $TMPFILE\n    #fi\n    # unload any local launch agent, load the one we just installed\n    TMPFILE=\"$HOME/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    if [ -f $TMPFILE ]\n    then\n        launchctl unload $TMPFILE\n        launchctl load $TMPFILE\n    fi\nfi\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1A00B8C11C430B3600BC2BEB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -4877,6 +5441,27 @@
 				1A00B8CF1C430B3600BC2BEB /* ViewController.m in Sources */,
 				1A00B8CC1C430B3600BC2BEB /* ISFonIOSTestAppDelegate.m in Sources */,
 				1A00B8C91C430B3600BC2BEB /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A1A01E41CDBFE3D00E49E5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A1A01EC1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m in Sources */,
+				1A1A01EE1CDBFE3D00E49E5A /* GeneratePreviewForURL.m in Sources */,
+				1ABD308C1CDBFFBC0008AD36 /* ISFQLRendererRemote.m in Sources */,
+				1A1A01F01CDBFE3D00E49E5A /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A1A01F51CDBFE4900E49E5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ABD30961CDBFFEF0008AD36 /* ISFQLRendererAgent.m in Sources */,
+				1A1A02001CDBFE4900E49E5A /* main.m in Sources */,
+				1A1A01FD1CDBFE4900E49E5A /* ISFQL_RendererAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4986,6 +5571,27 @@
 				1A09FC081C42FB0B008736D6 /* OSCZeroConfDomain.m in Sources */,
 				1A09FC041C42FB0B008736D6 /* OSCAddressSpace.m in Sources */,
 				1A09FBFE1C42FB0B008736D6 /* OSCInPort.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2361CDBDD46001FF7D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A68C23E1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m in Sources */,
+				1A68C2401CDBDD46001FF7D6 /* GeneratePreviewForURL.m in Sources */,
+				1A68C2421CDBDD46001FF7D6 /* main.c in Sources */,
+				1AE102AA1CDBDF8B0034EA89 /* QCQLRendererRemote.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A68C2471CDBDD54001FF7D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2E34131CDBE17100EFF2A8 /* QCQLRendererAgent.m in Sources */,
+				1A68C2521CDBDD55001FF7D6 /* main.m in Sources */,
+				1A68C24F1CDBDD55001FF7D6 /* QCQL_RendererAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5368,10 +5974,30 @@
 			target = 1A486EB91C42F45200B4291E /* DDMathParser-iOS */;
 			targetProxy = 1A09FC891C430198008736D6 /* PBXContainerItemProxy */;
 		};
+		1A1A01E11CDBF8C100E49E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 964FF27C1981B5AF00CCC808 /* VVISFKit-mac */;
+			targetProxy = 1A1A01E01CDBF8C100E49E5A /* PBXContainerItemProxy */;
+		};
+		1A1A020B1CDBFE5100E49E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A1A01E81CDBFE3D00E49E5A /* ISFQL */;
+			targetProxy = 1A1A020A1CDBFE5100E49E5A /* PBXContainerItemProxy */;
+		};
 		1A1A6C981C1389EB00601E8C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1AEE1EC01C136883005259C0 /* GLShaderSceneTestApp */;
 			targetProxy = 1A1A6C971C1389EB00601E8C /* PBXContainerItemProxy */;
+		};
+		1A2E34171CDBE1B800EFF2A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A68C24A1CDBDD54001FF7D6 /* QCQL_Renderer */;
+			targetProxy = 1A2E34161CDBE1B800EFF2A8 /* PBXContainerItemProxy */;
+		};
+		1A2E341A1CDBE2F800EFF2A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96C8073919817C1600FA7825 /* VVBufferPool-mac */;
+			targetProxy = 1A2E34191CDBE2F800EFF2A8 /* PBXContainerItemProxy */;
 		};
 		1A6116221C430264000DC53E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5438,6 +6064,11 @@
 			target = 1A7128F71B610B6F00528CDB /* MultiClassXPCTestService */;
 			targetProxy = 1A7129021B610B7000528CDB /* PBXContainerItemProxy */;
 		};
+		1A8840C11CDBE38700F9FF25 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A68C23A1CDBDD46001FF7D6 /* QCQL */;
+			targetProxy = 1A8840C01CDBE38700F9FF25 /* PBXContainerItemProxy */;
+		};
 		1A9ECF671C0FD05300CCEB70 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1A7AB8C61BED159000B2B129 /* SyphonToAndFromVVBuffer */;
@@ -5447,6 +6078,21 @@
 			isa = PBXTargetDependency;
 			target = 1A7AB8DB1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer */;
 			targetProxy = 1A9ECF681C0FD05600CCEB70 /* PBXContainerItemProxy */;
+		};
+		1ABD30981CDC013A0008AD36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96C8073919817C1600FA7825 /* VVBufferPool-mac */;
+			targetProxy = 1ABD30971CDC013A0008AD36 /* PBXContainerItemProxy */;
+		};
+		1ABD309A1CDC013E0008AD36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 964FF27C1981B5AF00CCC808 /* VVISFKit-mac */;
+			targetProxy = 1ABD30991CDC013E0008AD36 /* PBXContainerItemProxy */;
+		};
+		1ABD30A51CDC01980008AD36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A1A01F81CDBFE4900E49E5A /* ISFQL_Renderer */;
+			targetProxy = 1ABD30A41CDC01980008AD36 /* PBXContainerItemProxy */;
 		};
 		1AC5E4511C4315C60068087D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5720,6 +6366,22 @@
 				1A00B8D61C430B3600BC2BEB /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		1A1A02031CDBFE4900E49E5A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A1A02041CDBFE4900E49E5A /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1A68C2551CDBDD55001FF7D6 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A68C2561CDBDD55001FF7D6 /* Base */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		1A7128DF1B610B4700528CDB /* MainMenu.xib */ = {
@@ -6064,6 +6726,188 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1A1A01F31CDBFE3D00E49E5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ISFQL/ISFQL.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DSTROOT = "~";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ISFQL/Info.plist;
+				INSTALL_PATH = /Library/QuickLook;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.ISFQL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = qlgenerator;
+			};
+			name = Debug;
+		};
+		1A1A01F41CDBFE3D00E49E5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ISFQL/ISFQL.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ISFQL/Info.plist;
+				INSTALL_PATH = /Library/QuickLook;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.ISFQL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = qlgenerator;
+			};
+			name = Release;
+		};
+		1A1A02081CDBFE4900E49E5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ISFQL_Renderer/ISFQL_Renderer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DSTROOT = "~";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ISFQL_Renderer/Info.plist;
+				INSTALL_PATH = /Library/LaunchAgents;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISFQL-Renderer";
+				PRODUCT_NAME = "com.vidvox.ISFQL-Renderer";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		1A1A02091CDBFE4900E49E5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = ISFQL_Renderer/ISFQL_Renderer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = ISFQL_Renderer/Info.plist;
+				INSTALL_PATH = /Library/LaunchAgents;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISFQL-Renderer";
+				PRODUCT_NAME = "com.vidvox.ISFQL-Renderer";
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
@@ -6703,6 +7547,186 @@
 			};
 			name = Release;
 		};
+		1A68C2441CDBDD46001FF7D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = QCQL/QCQL.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DSTROOT = "~";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = QCQL/Info.plist;
+				INSTALL_PATH = /Library/QuickLook;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.QCQL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = qlgenerator;
+			};
+			name = Debug;
+		};
+		1A68C2451CDBDD46001FF7D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = QCQL/QCQL.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = QCQL/Info.plist;
+				INSTALL_PATH = /Library/QuickLook;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.QCQL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = qlgenerator;
+			};
+			name = Release;
+		};
+		1A68C25A1CDBDD55001FF7D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = QCQL_Renderer/QCQL_Renderer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DSTROOT = "~";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = QCQL_Renderer/Info.plist;
+				INSTALL_PATH = /Library/LaunchAgents;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.QCQL-Renderer";
+				PRODUCT_NAME = "com.vidvox.QCQL-Renderer";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		1A68C25B1CDBDD55001FF7D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = QCQL_Renderer/QCQL_Renderer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = QCQL_Renderer/Info.plist;
+				INSTALL_PATH = /Library/LaunchAgents;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.QCQL-Renderer";
+				PRODUCT_NAME = "com.vidvox.QCQL-Renderer";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
 		1A7128C81B61065100528CDB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7103,6 +8127,20 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ArbitraryGLTextureToVVBuffer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1A8840BD1CDBE37600F9FF25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1A8840BE1CDBE37600F9FF25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -8656,6 +9694,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		1A1A01F21CDBFE3D00E49E5A /* Build configuration list for PBXNativeTarget "ISFQL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A1A01F31CDBFE3D00E49E5A /* Debug */,
+				1A1A01F41CDBFE3D00E49E5A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A1A02071CDBFE4900E49E5A /* Build configuration list for PBXNativeTarget "ISFQL_Renderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A1A02081CDBFE4900E49E5A /* Debug */,
+				1A1A02091CDBFE4900E49E5A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1A486EA51C42F43000B4291E /* Build configuration list for PBXNativeTarget "VVBasics-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8710,6 +9766,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		1A68C2461CDBDD46001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A68C2441CDBDD46001FF7D6 /* Debug */,
+				1A68C2451CDBDD46001FF7D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A68C2591CDBDD55001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL_Renderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A68C25A1CDBDD55001FF7D6 /* Debug */,
+				1A68C25B1CDBDD55001FF7D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1A7128CC1B61065100528CDB /* Build configuration list for PBXNativeTarget "MultiClassXPC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8751,6 +9825,15 @@
 			buildConfigurations = (
 				1A7AB8EB1BED17A200B2B129 /* Debug */,
 				1A7AB8EC1BED17A200B2B129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A8840BF1CDBE37600F9FF25 /* Build configuration list for PBXAggregateTarget "QuickLook plugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A8840BD1CDBE37600F9FF25 /* Debug */,
+				1A8840BE1CDBE37600F9FF25 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
