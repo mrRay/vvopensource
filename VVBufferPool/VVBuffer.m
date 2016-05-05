@@ -619,6 +619,9 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 - (void) setBackingReleaseCallbackContext:(void *)n	{
 	backingReleaseCallbackContext = n;
 }
+- (void) setBackingReleaseCallbackContextObject:(id)n	{
+	backingReleaseCallbackContext = (n==nil) ? nil : [n retain];
+}
 - (void *) backingReleaseCallbackContext	{
 	return backingReleaseCallbackContext;
 }

@@ -49,14 +49,14 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 		NSLog(@"\t\terr: passed nil img %s",__func__);
 		return nil;
 	}
-	//	get a new image from the client
-	SyphonImage			*newImage = nil;
+	//	probably not necessary, but ensures that nothing else uses the GL context while we are- unlock as soon as we're done working with the context
 	pthread_mutex_lock(&contextLock);
-	newImage = [c newFrameImageForContext:[context CGLContextObj]];
+	//	get a new image from the client!
+	SyphonImage			*newImage = [c newFrameImageForContext:[context CGLContextObj]];
 	pthread_mutex_unlock(&contextLock);
 	
-	NSRect				tmpRect = NSMakeRect(0,0,0,0);
-	tmpRect.size = [newImage textureSize];
+	NSRect				newSrcRect = NSMakeRect(0,0,0,0);
+	newSrcRect.size = [newImage textureSize];
 	
 	/*		make and configure the buffer i'll be returning.  syphon actually created the GL texture, 
 	so instead of asking the VVBufferPool framework to allocate a texture, we're just going to 
@@ -80,18 +80,18 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 	desc->localSurfaceID = 0;							//	only used when working with associating textures with IOSurfaces- set to 0.
 	
 	[returnMe setPreferDeletion:YES];	//	we want to make sure that this buffer isn't pooled (the VVBuffer is just a wrapper around a syphon-created and syphon-controlled GL resource- it doesn't belong in this buffer pool)
-	[returnMe setSize:tmpRect.size];	//	set the buffer's size.  the "size" is the size of the GL resource, and is always in pixels.
-	[returnMe setSrcRect:tmpRect];		//	set the buffer's "srcRect".  the "srcRect" is the area of the GL resource that is used to describe the image this VVBuffer represents.  the units are always in pixels (even if the buffer is a GL_TEXTURE_2D, and its tex coords are normalized).  this is used to describe images that don't occupy the full region of a texture, and do zero-cost cropping.  the srcRect is respected by everything in this framework.
-	[returnMe setBackingSize:tmpRect.size];	//	the backing size is the size (in pixels) of whatever's backing the GL resource.  there's no CPU backing in this case- just set it to be the same as the buffer's "size".
+	[returnMe setSize:[newImage textureSize]];	//	set the buffer's size.  the "size" is the size of the GL resource, and is always in pixels.
+	[returnMe setSrcRect:newSrcRect];		//	set the buffer's "srcRect".  the "srcRect" is the area of the GL resource that is used to describe the image this VVBuffer represents.  the units are always in pixels (even if the buffer is a GL_TEXTURE_2D, and its tex coords are normalized).  this is used to describe images that don't occupy the full region of a texture, and do zero-cost cropping.  the srcRect is respected by everything in this framework.
+	[returnMe setBackingSize:[newImage textureSize]];	//	the backing size is the size (in pixels) of whatever's backing the GL resource.  there's no CPU backing in this case- just set it to be the same as the buffer's "size".
 	[returnMe setBackingID:VVBufferBackID_Syphon];	//	set the backing ID to indicate that this buffer was created by wrapping a syphon image.
 	
-	//	make sure the buffer i'm returning retains the image from the client, then release it!
+	//	set up the buffer i'm returning to use this callback when it's released- we'll free the SyphonImage in this callback
 	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseSyphonImage];
-	[returnMe setBackingReleaseCallbackContext:newImage];
+	//	make sure the buffer i'm returning retains the image from the client!
+	[returnMe setBackingReleaseCallbackContextObject:newImage];
 	
-	//	do NOT release newImage- 'returnMe' will free it in its backing release callback when the buffer is finally dealloc'ed
-	//VVRELEASE(newImage);
-	
+	//	the 'newImage' we got from the syphon client was retained, so release it
+	[newImage release];
 	return returnMe;
 }
 #ifndef __LP64__
@@ -166,8 +166,7 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 		[returnMe setBackingID:VVBufferBackID_VVFFGL];
 	}
 	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseFFGLImage];	//	this is the function that will be called when the VVBuffer is deallocated, and it's safe to release the underlying FFGLImage resource.  this function frees the FFGLImage resource.
-	[returnMe setBackingReleaseCallbackContext:i];	//	set the callback context to the FFGLImage i was passed.  the "release callback context" is the ptr passed to the "release callback" when the VVBuffer is freed.
-	[i retain];	//	retain the passed FFGLImage resource here.  the FFGLImage is retained by the VVBuffer created from it as the callback context- we want the FFGLImage to persist as long as this VVBuffer, so one has to retain the other.
+	[returnMe setBackingReleaseCallbackContextObject:i];	//	set the callback context to the FFGLImage i was passed.  the "release callback context" is the ptr passed to the "release callback" when the VVBuffer is freed.
 	
 	return returnMe;
 }

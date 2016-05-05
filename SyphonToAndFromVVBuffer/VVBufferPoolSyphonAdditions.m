@@ -51,12 +51,10 @@
 	//	set up the buffer i'm returning to use this callback when it's released- we'll free the SyphonImage in this callback
 	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseSyphonImage];
 	//	make sure the buffer i'm returning retains the image from the client!
-	[returnMe setBackingReleaseCallbackContext:newImage];
-	[newImage retain];
+	[returnMe setBackingReleaseCallbackContextObject:newImage];
 	
-	//	the 'newImage' we got from the syphon client was retained, so release it (yes, i know this cancels out the 'retain' above it, i'm trying to be explicit)
+	//	the 'newImage' we got from the syphon client was retained, so release it
 	[newImage release];
-	
 	return returnMe;
 }
 @end

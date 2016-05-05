@@ -1,9 +1,9 @@
 #import <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
-#else
+#else	//	NOT TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
-#endif
+#endif	//	TARGET_OS_IPHONE
 #include <sys/time.h>
 #import <unistd.h>
 #include <libkern/OSAtomic.h>

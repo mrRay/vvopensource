@@ -209,7 +209,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	if (context == nil)
 		return;
 #if !TARGET_OS_IPHONE
-	CGLContextObj		cgl_ctx = [context CGLContextObj];
+	//CGLContextObj		cgl_ctx = [context CGLContextObj];
 	/*
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);

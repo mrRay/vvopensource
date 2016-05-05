@@ -315,6 +315,11 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 @param n An arbitrary pointer to a resource that is assumed to be required by this VVBuffer.  VVBuffer doesn't explicitly retain anything passed to this method (because it's unknown if it will even be a void* or an id)- you are responsible for ensuring that whatever you pass here is retained, and freed later in the backingReleaseCallback.
 */
 - (void) setBackingReleaseCallbackContext:(void *)n;
+///	Similar to 'setBackingReleaseCallback:', but it expects to be passed a subclass of NSObject, which it retains
+/**
+@param n An NSObject instance of a resource that is assumed to be required by this VVBuffer.  It is expected that this variable will be released (via the backingReleaseCallback) when the VVBuffer is destroyed.
+*/
+- (void) setBackingReleaseCallbackContextObject:(id)n;
 - (void *) backingReleaseCallbackContext;
 #if !TARGET_OS_IPHONE
 ///	If the receiver is a GL texture backed by an IOSurfaceRef, this returns the IOSurfaceRef.  If you want to send a texture to another process, you want to call -[VVBufferPool allocBufferForTexBackedIOSurfaceSized:], render into the returned buffer, and then call "localSurfaceRef" to retrieve the IOSurface to be sent to another process.

@@ -1320,9 +1320,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	the backing release callback should release a bitmap rep- set it, and the context (which is the rep)
 	[returnMe setBackingID:VVBufferBackID_NSBitImgRep];
 	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
-	[returnMe setBackingReleaseCallbackContext:rep];
-	//	don't forget to retain the rep (the buffer retains it, we increment the retain count here)
-	[rep retain];
+	[returnMe setBackingReleaseCallbackContextObject:rep];
 	[returnMe setBackingSize:repSize];
 	return returnMe;
 }
@@ -1987,8 +1985,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 				backingSize:imgSize];
 			[returnMe setBackingID:VVBufferBackID_External];
 			[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
-			[returnMe setBackingReleaseCallbackContext:frameData];
-			[frameData retain];
+			[returnMe setBackingReleaseCallbackContextObject:frameData];
 			[returnMe setPreferDeletion:YES];
 			[returnMe setFlipped:YES];
 			
@@ -2017,9 +2014,9 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		//	draw the image in the bitmap context, flush it
 		CGContextDrawImage(ctx, CGRectMake(0,0,imgSize.width,imgSize.height), n);
 		CGContextFlush(ctx);
-		CGContextRelease(ctx);
 		//	the bitmap context we just drew into has premultiplied alpha, so we need to un-premultiply before uploading it
 		CGBitmapContextUnpremultiply(ctx);
+		CGContextRelease(ctx);
 		//	set up the buffer descriptor that i'll be using to describe the texture i'm about to create
 		VVBufferDescriptor		desc;
 		desc.type = VVBufferType_Tex;
@@ -2694,9 +2691,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 	//	the backing release callback should release a bitmap rep- set it, and the context (which is the rep)
 	[returnMe setBackingID:VVBufferBackID_NSBitImgRep];
 	[returnMe setBackingReleaseCallback:VVBuffer_ReleaseBitmapRep];
-	[returnMe setBackingReleaseCallbackContext:rep];
-	//	don't forget to retain the rep (the buffer retains it, we increment the retain count here)
-	[rep retain];
+	[returnMe setBackingReleaseCallbackContextObject:rep];
 	[returnMe setFlipped:YES];
 	[returnMe setBackingSize:repSize];
 	return returnMe;
