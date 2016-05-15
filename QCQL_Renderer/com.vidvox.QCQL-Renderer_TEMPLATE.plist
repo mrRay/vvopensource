@@ -8,7 +8,7 @@
 	<string>Aqua</string>
 	<key>ProgramArguments</key>
 	<array>
-	  <string>/Library/LaunchAgents/com.vidvox.QCQL-Renderer.app/Contents/MacOS/com.vidvox.QCQL-Renderer</string>
+	  <string>path to the compiled binary goes here</string>
 	</array>
 	<key>KeepAlive</key>
 	<false/>

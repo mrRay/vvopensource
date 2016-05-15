@@ -4096,7 +4096,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A1A01F21CDBFE3D00E49E5A /* Build configuration list for PBXNativeTarget "ISFQL" */;
 			buildPhases = (
-				1ABD30A81CDC04F80008AD36 /* Clear Build Folder */,
 				1A1A01E41CDBFE3D00E49E5A /* Sources */,
 				1A1A01E51CDBFE3D00E49E5A /* Frameworks */,
 				1A1A01E61CDBFE3D00E49E5A /* Headers */,
@@ -4117,7 +4116,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A1A02071CDBFE4900E49E5A /* Build configuration list for PBXNativeTarget "ISFQL_Renderer" */;
 			buildPhases = (
-				1ABD30AA1CDC05A10008AD36 /* Clear Build Folder */,
 				1A1A01F51CDBFE4900E49E5A /* Sources */,
 				1A1A01F61CDBFE4900E49E5A /* Frameworks */,
 				1A1A01F71CDBFE4900E49E5A /* Resources */,
@@ -4252,7 +4250,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A68C2461CDBDD46001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL" */;
 			buildPhases = (
-				1ABD30A71CDC049D0008AD36 /* Clear Build Folder */,
 				1A68C2361CDBDD46001FF7D6 /* Sources */,
 				1A68C2371CDBDD46001FF7D6 /* Frameworks */,
 				1A68C2381CDBDD46001FF7D6 /* Headers */,
@@ -4273,7 +4270,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A68C2591CDBDD55001FF7D6 /* Build configuration list for PBXNativeTarget "QCQL_Renderer" */;
 			buildPhases = (
-				1ABD30A91CDC05890008AD36 /* Clear Build Folder */,
 				1A68C2471CDBDD54001FF7D6 /* Sources */,
 				1A68C2481CDBDD54001FF7D6 /* Frameworks */,
 				1A68C2491CDBDD54001FF7D6 /* Resources */,
@@ -5359,63 +5355,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\n\n# if we're in release mode, build and sign a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- assembling a pkg\"\n    cp -r \"$PROJECT_DIR/ISFQL_Renderer/com.vidvox.ISFQL-Renderer_RELEASE.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    #pkgbuild --identifier \"com.vidvox.ISFQL-Renderer\" --scripts \"$SCRIPTS\" --root \"$DSTROOT\" \"$DSTROOT/ISF QuickLook Plugin_unsigned.pkg\"\n    pkgbuild --identifier \"com.vidvox.ISFQL-Renderer\" --info \"$PROJECT_DIR/ISFQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../ISF QuickLook Plugin.pkg\"\n# else we're not in release mode- unregister the launch agent at all possible addresses, then try to enable the one we just built and installed\nelse\n    echo \"debug mode build- installing the compiled products in the user directory\"\n    # copy the plist to the LaunchAgents folder- the plugin and actual launch agent app were installed during build\n    cp -r \"$PROJECT_DIR/ISFQL_Renderer/com.vidvox.ISFQL-Renderer_DEBUG.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    # unload any global launch agent that may exist\n    TMPFILE=\"/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    #if [ ! -f $TMPFILE ]\n    #then\n        launchctl unload $TMPFILE\n    #fi\n    # unload any local launch agent, load the one we just installed\n    TMPFILE=\"$HOME/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    if [ -f $TMPFILE ]\n    then\n        launchctl unload $TMPFILE\n        launchctl load $TMPFILE\n    fi\nfi\n\n";
-		};
-		1ABD30A71CDC049D0008AD36 /* Clear Build Folder */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Clear Build Folder";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/QuickLook\" ]\n    then\n        rm -R \"$DSTROOT/Library/QuickLook\"\n    fi\nfi";
-		};
-		1ABD30A81CDC04F80008AD36 /* Clear Build Folder */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Clear Build Folder";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/QuickLook\" ]\n    then\n        rm -R \"$DSTROOT/Library/QuickLook\"\n    fi\nfi";
-		};
-		1ABD30A91CDC05890008AD36 /* Clear Build Folder */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Clear Build Folder";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/LaunchAgents\" ]\n    then\n        rm -R \"$DSTROOT/Library/LaunchAgents\"\n    fi\nfi";
-		};
-		1ABD30AA1CDC05A10008AD36 /* Clear Build Folder */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Clear Build Folder";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# if we're in release mode, clear the build folder (other QuickLook targets in this plugin may have put stuff in it that we don't want in the installer)\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    if [ ! -f \"$DSTROOT/Library/LaunchAgents\" ]\n    then\n        rm -R \"$DSTROOT/Library/LaunchAgents\"\n    fi\nfi";
+			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\nplistbuddy=/usr/libexec/PlistBuddy\ntemplateplist=\"$PROJECT_DIR/ISFQL_Renderer/com.vidvox.ISFQL-Renderer_TEMPLATE.plist\"\ntargetfile=\"$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\necho \"templateplist is $templateplist\"\necho \"targetfile is $targetfile\"\n\n\n\n# copy the template plist to the LaunchAgents folder- the plugin and launch agent app were installed during their respective build processes\nif [ -f $targetfile ]\nthen\n    echo \"removing existing plist...\"\n    rm \"$targetfile\"\nfi\necho \"copying template plist...\"\ncp -r \"$templateplist\" \"$targetfile\"\n# now use plistbuddy to edit the file- we need to write the INSTALLED PATH of the launch agent to the plist\necho \"customizing plist...\"\n$plistbuddy -c \"delete :ProgramArguments\" $targetfile\n$plistbuddy -c \"add :ProgramArguments array\" $targetfile\n\n\n\n\n# if we're in release mode, finish the plist and then make a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- building files then assembling a pkg\"\n    \n    # if we're in release mode then we need to write an absolute path to targetfile\n    $plistbuddy -c \"add :ProgramArguments: string '/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.app/Contents/MacOS/com.vidvox.ISFQL-Renderer'\" $targetfile\n    \n    # make the plist\n    pkgbuild --identifier \"com.vidvox.ISFQL-Renderer\" --info \"$PROJECT_DIR/ISFQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../ISF QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../ISF QuickLook Plugin.pkg\"\n# else we're not in release mode- finish the plist, then reload the launch agent\nelse\n    echo \"debug mode build- installing the compiled products in the user library...\"\n    \n    # if we're in debug mode then right now targetfile is a plist in ~/Library/LaunchAgents, and we have to write the full path of the compiled launch agent to it\n    $plistbuddy -c \"add :ProgramArguments: string '$DSTROOT/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.app/Contents/MacOS/com.vidvox.ISFQL-Renderer'\" $targetfile\n    \n    # if there's a global launch agent, try unloading it\n    globalLaunchAgentPlist=\"/Library/LaunchAgents/com.vidvox.ISFQL-Renderer.plist\"\n    if [ -f $globalLaunchAgentPlist ]\n    then\n        echo \"found a global launch agent, unloading it...\"\n        launchctl unload $globalLaunchAgentPlist\n    fi\n    \n    # if there's a local launch agent, reload it\n    if [ -f $targetfile ]\n    then\n        echo \"unloading any old launch agents...\"\n        launchctl unload $targetfile\n        echo \"loading the new launch agent...\"\n        launchctl load $targetfile\n    fi\n    \nfi\n\n";
 		};
 		1AEB7BAB1CDBE81200603B9D /* Assemble Installer or Load Agent */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5429,7 +5369,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\n\n# if we're in release mode, build and sign a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- assembling a pkg\"\n    cp -r \"$PROJECT_DIR/QCQL_Renderer/com.vidvox.QCQL-Renderer_RELEASE.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    #pkgbuild --identifier \"com.vidvox.QCQL-Renderer\" --scripts \"$SCRIPTS\" --root \"$DSTROOT\" \"$DSTROOT/QC QuickLook Plugin_unsigned.pkg\"\n    pkgbuild --identifier \"com.vidvox.QCQL-Renderer\" --info \"$PROJECT_DIR/QCQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../QC QuickLook Plugin.pkg\"\n# else we're not in release mode- unregister the launch agent at all possible addresses, then try to enable the one we just built and installed\nelse\n    echo \"debug mode build- installing the compiled products in the user directory\"\n    # copy the plist to the LaunchAgents folder- the plugin and actual launch agent app were installed during build\n    cp -r \"$PROJECT_DIR/QCQL_Renderer/com.vidvox.QCQL-Renderer_DEBUG.plist\" \"$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    # unload any global launch agent that may exist\n    TMPFILE=\"/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    #if [ ! -f $TMPFILE ]\n    #then\n        launchctl unload $TMPFILE\n    #fi\n    # unload any local launch agent, load the one we just installed\n    TMPFILE=\"$HOME/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    echo \"TMPFILE is $TMPFILE\"\n    if [ -f $TMPFILE ]\n    then\n        launchctl unload $TMPFILE\n        launchctl load $TMPFILE\n    fi\nfi\n\n";
+			shellScript = "#echo \"DSTROOT is $DSTROOT\"\n\nplistbuddy=/usr/libexec/PlistBuddy\ntemplateplist=\"$PROJECT_DIR/QCQL_Renderer/com.vidvox.QCQL-Renderer_TEMPLATE.plist\"\ntargetfile=\"$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\necho \"templateplist is $templateplist\"\necho \"targetfile is $targetfile\"\n\n\n\n# copy the template plist to the LaunchAgents folder- the plugin and launch agent app were installed during their respective build processes\nif [ -f $targetfile ]\nthen\n    echo \"removing existing plist...\"\n    rm \"$targetfile\"\nfi\necho \"copying template plist...\"\ncp -r \"$templateplist\" \"$targetfile\"\n# now use plistbuddy to edit the file- we need to write the INSTALLED PATH of the launch agent to the plist\necho \"customizing plist...\"\n$plistbuddy -c \"delete :ProgramArguments\" $targetfile\n$plistbuddy -c \"add :ProgramArguments array\" $targetfile\n\n\n\n\n# if we're in release mode, finish the plist and then make a pkg\nif [ \"$CONFIGURATION\" = \"Release\" ]\nthen\n    echo \"release mode build- building files then assembling a pkg\"\n    \n    # if we're in release mode then we need to write an absolute path to targetfile\n    $plistbuddy -c \"add :ProgramArguments: string '/Library/LaunchAgents/com.vidvox.QCQL-Renderer.app/Contents/MacOS/com.vidvox.QCQL-Renderer'\" $targetfile\n    \n    # make the plist\n    pkgbuild --identifier \"com.vidvox.QCQL-Renderer\" --info \"$PROJECT_DIR/QCQL/PackageInfo\" --root \"$DSTROOT\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\"\n    productsign --sign \"Developer ID Installer: Vidvox, LLC\" \"$DSTROOT/../QC QuickLook Plugin_unsigned.pkg\" \"$DSTROOT/../QC QuickLook Plugin.pkg\"\n# else we're not in release mode- finish the plist, then reload the launch agent\nelse\n    echo \"debug mode build- installing the compiled products in the user library...\"\n    \n    # if we're in debug mode then right now targetfile is a plist in ~/Library/LaunchAgents, and we have to write the full path of the compiled launch agent to it\n    $plistbuddy -c \"add :ProgramArguments: string '$DSTROOT/Library/LaunchAgents/com.vidvox.QCQL-Renderer.app/Contents/MacOS/com.vidvox.QCQL-Renderer'\" $targetfile\n    \n    # if there's a global launch agent, try unloading it\n    globalLaunchAgentPlist=\"/Library/LaunchAgents/com.vidvox.QCQL-Renderer.plist\"\n    if [ -f $globalLaunchAgentPlist ]\n    then\n        echo \"found a global launch agent, unloading it...\"\n        launchctl unload $globalLaunchAgentPlist\n    fi\n    \n    # if there's a local launch agent, reload it\n    if [ -f $targetfile ]\n    then\n        echo \"unloading any old launch agents...\"\n        launchctl unload $targetfile\n        echo \"loading the new launch agent...\"\n        launchctl load $targetfile\n    fi\n    \nfi\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -6768,7 +6708,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = ISFQL/Info.plist;
 				INSTALL_PATH = /Library/QuickLook;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.ISFQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6799,7 +6739,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp_ISFQL";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -6811,7 +6751,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = ISFQL/Info.plist;
 				INSTALL_PATH = /Library/QuickLook;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.ISFQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6860,7 +6800,7 @@
 				INFOPLIST_FILE = ISFQL_Renderer/Info.plist;
 				INSTALL_PATH = /Library/LaunchAgents;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISFQL-Renderer";
 				PRODUCT_NAME = "com.vidvox.ISFQL-Renderer";
@@ -6890,7 +6830,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp_ISFQL";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -6903,7 +6843,7 @@
 				INFOPLIST_FILE = ISFQL_Renderer/Info.plist;
 				INSTALL_PATH = /Library/LaunchAgents;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISFQL-Renderer";
 				PRODUCT_NAME = "com.vidvox.ISFQL-Renderer";
@@ -7586,6 +7526,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = QCQL/Info.plist;
 				INSTALL_PATH = /Library/QuickLook;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.QCQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7616,7 +7557,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp_QCQL";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -7628,6 +7569,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = QCQL/Info.plist;
 				INSTALL_PATH = /Library/QuickLook;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.QCQL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7706,7 +7648,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DSTROOT = "$(PROJECT_DIR)/build/tmp";
+				DSTROOT = "$(PROJECT_DIR)/build/tmp_QCQL";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -8565,6 +8507,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -8586,6 +8529,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				SDKROOT = macosx;
 			};
 			name = Release;
