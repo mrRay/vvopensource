@@ -247,6 +247,7 @@
 				}
 			}
 			
+			int					loopCount = 0;
 			//	if the socket is one of the file descriptors, i need to get data from it
 			while (FD_ISSET(sock, &readFileDescriptor))	{
 				//NSLog(@"\t\twhile/packet ping");
@@ -282,9 +283,28 @@
 				}
 				
 				readyFileCount = select(sock+1, &readFileDescriptor, (fd_set *)NULL, (fd_set *)NULL, &timeout);
+				
+				//	every 100 parsed packets, dispatch them- this ensures that we don't get stuck in this loop if we're receiving packets very quickly
+				++loopCount;
+				if (loopCount > 100)	{
+					OSSpinLockUnlock(&socketLock);					
+					//	if there's stuff in the scratch dict, i have to pass the info on to my delegate
+					if ([scratchArray count] > 0)	{
+						NSArray				*tmpArray = nil;
+				
+						OSSpinLockLock(&scratchLock);
+							tmpArray = [NSArray arrayWithArray:scratchArray];
+							[scratchArray removeAllObjects];
+						OSSpinLockUnlock(&scratchLock);
+				
+						[self handleScratchArray:tmpArray];
+					}
+					OSSpinLockLock(&socketLock);
+					loopCount = 0;
+				}
 			}
 			OSSpinLockUnlock(&socketLock);
-			//	if there's stuff in the scratch dict, i have to pass the info on to my delegate
+			//	if there's stuff in the scratch array, i have to pass the info on to my delegate
 			if ([scratchArray count] > 0)	{
 				NSArray				*tmpArray = nil;
 				

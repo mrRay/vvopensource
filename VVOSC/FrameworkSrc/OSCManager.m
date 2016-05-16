@@ -607,12 +607,12 @@
 	if (p == nil)
 		return;
 	//BOOL				postNotification = NO;
-	NSUInteger			origCount;
+	//NSUInteger			origCount;
 	//NSLog(@"\t\tfiring about-to-change notification");
 	[[NSNotificationCenter defaultCenter] postNotificationName:OSCOutPortsAboutToChangeNotification object:self];
 	
 	[outPortArray wrlock];
-		origCount = [outPortArray count];
+		//origCount = [outPortArray count];
 		[outPortArray removeObject:p];
 		//if (origCount != [outPortArray count])
 		//	postNotification = YES;
