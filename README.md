@@ -6,7 +6,7 @@ vvopensource
 Introduction
 ------------
 
-I write software for a living at [Vidvox](www.vidvox.net).  The more I write, the more I find myself using a couple basic classes, or putting together frameworks so I can re-use code.  This project is an ever-growing collection of simple frameworks which I can link against to reuse code I already wrote and make my life easier; hopefully, it makes your life a bit easier too.
+I write software for a living at [Vidvox](http://www.vidvox.net).  The more I write, the more I find myself using a couple basic classes, or putting together frameworks so I can re-use code.  This project is an ever-growing collection of simple frameworks which I can link against to reuse code I already wrote and make my life easier; hopefully, it makes your life a bit easier too.
 
 All of these frameworks are contained in a single XCode project- as I write more frameworks, I link against code in other frameworks, so collecting everything together in a single project ensures that you can get everything necessary to compile all of these frameworks in one go- there are no external dependencies.  All of the code is always being worked on, and you should never assume that anything is "finished"- I would recommend updating the trunk whenever you get a chance.  Get in touch with me if you bump into an unfinished method or other oddity/problem- the code posted here is used in any number of other applications, and I'm always willing to fix or work on it.
 
@@ -17,53 +17,41 @@ How to get help
 Please open an "issue".  If i'm really busy (a frequent occurrence) it may take a while for me to get back to you- sorry in advance!  Documentation is generated with 'Doxygen', and can be found here: [http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html](http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html)
 
 
-What does this project include/do/make?
----------------------------------------
-
-  * VVBasics is an Objective-C framework with a number of common classes which I find to be generally useful; other frameworks and applications in this project link against VVBasics.
-
-  * VVOSC is an Objective-C framework for quickly and easily working with OSC data.  Capable of doing everything necessary to send and receive OSC data.  There are also targets for compiling, assembling, and installing an SDK which allows you to link against and use VVOSC on iPhones.
-
-  * VVMIDI is an Objective-C framework for quickly and easily working with MIDI data.
-
-  * VVUIToolbox is an objective-c framework that I use extensively to ease the process of creating UI items.  It contains a number of objects that standardize the act of creating, drawing, and interacting with sprites that work transparently with both NS and GL views.
-  
-  * VVBufferPool is an objective-c framework for creating and managing GL-backed resources.  This framework is used as the basis for the rendering engines I build for various proejcts, and is focused on the general goal of simplifying the task of "rendering to a texture" in an extensible manner to better work with a variety of APIs and formats.
-  
-  * DDMathParser is the [DDMathParser project by Dave DeLong](https://github.com/davedelong/DDMathParser) packaged up as a framework.  this is a slightly older version of DDMathParser (the last version capable of compiling 32-bit binaries capable of running on 10.6).  DDMathParser is used by VVISFKit to parse and evaluate mathematical expressions- it's a really neat project, you should check it out!
-  
-  * VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://vidvox.net/rays_oddsnends/ISF.html).
-  
-  * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
-  
-  * MIDITestApp is a Cocoa application (created using VVMIDI) used to demonstrate the sending and receiving of MIDI data.
-  
-  * MIDIviaOSC is a Cocoa application (created using VVMIDI and VVOSC) that lets you send MIDI data to another computer on the internet via OSC
-
-  * the CrashReporterTestApp is a Cocoa application (created using VVBasics) which demonstrates the use of the VVCrashReporter class and can also be used to test your server-side implementation
-  
-  * GLScene Test App demonstrates how to do use the VVBufferPool framework to easily render-to-texture with a VVBuffer using generic GL drawing commands, as well as how to create a VVBuffer/GL texture from an image file.
-  
-  * QCGLScene Test App demonstrates how to use VVBufferPool to render QC compositions to GL textures, as well as how to do MSAA rendering for smoother output images under some circumstances
-  
-  * CIGLScene Test App demonstrates how to use VVBufferPool to convert CIImages to GL textures- this makes it very, very easy to work with CIFilters and GL textures.
-  
-  * ISFGLScene Test App demonstrates how to use VVBufferPool and VVISFKit to open, interact with, and render ISF files to GL textures
-  
-  * QT and Hap Test App demonstrates how to use VVBufferPool to render QuickTime movies to GL textures.  Also shows how to use VVBufferPool to decode Hap video frames.
-
-
 I'm not a programmer, I just want to download a MIDI/OSC test application!
 --------------------------------------------------------------------------
 
 Here's an OSC test application:
-http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.5.zip
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.7.zip
 
 Here's an application that sends MIDI input on one computer to another computer over the network/internet using OSC:
-http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.4.zip
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.5.zip
 
 Here's an extremely crude MIDI test application ("MIDIMonitor" from snoize is much more comprehensive and fully-featured!):
 http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.6.zip
+
+
+What does this project include/do/make?
+---------------------------------------
+
+  - Frameworks
+  	* VVBasics is an Objective-C framework with a number of common classes which I find to be generally useful; other frameworks and applications in this project link against VVBasics.
+	* VVOSC is an Objective-C framework for quickly and easily working with OSC data.  Capable of doing everything necessary to send and receive OSC data.  There are also targets for compiling, assembling, and installing an SDK which allows you to link against and use VVOSC on iPhones.
+	* VVMIDI is an Objective-C framework for quickly and easily working with MIDI data.
+	* VVUIToolbox is an objective-c framework that I use extensively to ease the process of creating UI items.  It contains a number of objects that standardize the act of creating, drawing, and interacting with sprites that work transparently with both NS and GL views.
+	* VVBufferPool is an objective-c framework for creating and managing GL-backed resources.  This framework is used as the basis for the rendering engines I build for various proejcts, and is focused on the general goal of simplifying the task of "rendering to a texture" in an extensible manner to better work with a variety of APIs and formats.
+	* VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://vidvox.net/rays_oddsnends/ISF.html).
+	* MultiClassXPC is an objective-c framework that simplifies the process of quickly setting upa number of different classes to work in an XPC service.
+  - Potentially useful apps
+    * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
+    * MIDITestApp is a Cocoa application (created using VVMIDI) used to demonstrate the sending and receiving of MIDI data.
+    * MIDIviaOSC is a Cocoa application (created using VVMIDI and VVOSC) that lets you send MIDI data to another computer on the internet via OSC
+    * QCQL and ISFQL are QuickLook plugins that render thumbnails for, respectively, Quartz Composer and ISF content.
+    * ISF Editor is a browser and editor for ISF files- it's packed with enough features that listing them here would be very awkward.
+  - Test/example apps- the majority of the apps here are test apps or example apps demonstrating how to use many of the classes and frameworks in this repository.  Examples include rendering GL contexts to textures, rendering Quartz Composer and CoreImage content to textures, rendering ISF files as generative sources and fx, working with textures from Syphon, working with QuickTime and the Hap video codec, accelerated GL texture download and upload, etc.
+  - External code (stuff other people wrote hosted here to avoid dependency/submodule issues)
+    * DDMathParser is the [DDMathParser project by Dave DeLong](https://github.com/davedelong/DDMathParser) packaged up as a framework.  this is an older version of DDMathParser (the last version capable of compiling 32-bit binaries that can run on 10.6).  DDMathParser is used by VVISFKit to parse and evaluate mathematical expressions- it's a really great project, you should check it out!
+    * Fragaria is a Cocoa-based text view that supports code-completion and customizable syntax highlighting- the compiled framework is included in this repos, the source can be found [here](https://github.com/mugginsoft/Fragaria).  This is used by the ISF editor.
+    * [Syphon](https://syphon.v002.info/) is a widely-supported open source framework that facilitates inter-application sharing of GL textures in realtime.  A compiled version of Syphon.framework is included here for a couple test apps and the ISF Editor- source can be found [here](https://github.com/Syphon/syphon-framework).
 
 
 How to use these frameworks in your Mac application
