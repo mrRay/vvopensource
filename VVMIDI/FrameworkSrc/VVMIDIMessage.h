@@ -20,6 +20,8 @@
 + (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
 + (id) createWithSysexArray:(NSMutableArray *)s;
 + (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
++ (id) createWithSysexData:(NSData *)d;
++ (id) createWithSysexData:(NSData *)d timestamp:(uint64_t)time;
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
@@ -28,6 +30,8 @@
 - (id) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
 - (id) initWithSysexArray:(NSMutableArray *)s;
 - (id) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
+- (id) initWithSysexData:(NSData *)d;
+- (id) initWithSysexData:(NSData *)d timestamp:(uint64_t)time;
 - (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
 - (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
 - (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
@@ -46,6 +50,7 @@
 - (void) setData3:(Byte)newData;
 - (Byte) data3;
 - (NSMutableArray *) sysexArray;
+- (NSData *) sysexData;
 - (void) setTimestamp:(uint64_t)newTimestamp;
 - (uint64_t) timestamp;
 - (double) doubleValue;

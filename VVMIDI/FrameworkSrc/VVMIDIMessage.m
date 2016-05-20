@@ -66,7 +66,7 @@
 			break;
 		//	sysex!
 		case VVMIDIBeginSysexDumpVal:
-			return [NSString stringWithFormat:@"Sysex: %@, time.%lli",sysexArray,timestamp];
+			return [NSString stringWithFormat:@"Sysex: %@, time.%lli",[self sysexData],timestamp];
 			break;
 		//	realtime messages- insert these immediately
 		case VVMIDIClockVal:
@@ -121,6 +121,12 @@
 + (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;	{
 	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:time] autorelease];
 }
++ (id) createWithSysexData:(NSData *)d	{
+	return [[[VVMIDIMessage alloc] initWithSysexData:d timestamp:0] autorelease];
+}
++ (id) createWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
+	return [[[VVMIDIMessage alloc] initWithSysexData:d timestamp:time] autorelease];
+}
 + (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
 	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:(uint64_t)0] autorelease];
 }
@@ -160,6 +166,42 @@
 		data3 = -1;
 		sysexArray = [s mutableCopy];
 		timestamp = time;
+		return self;
+	}
+	BAIL:
+	NSLog(@"\t\terr: %s - BAIL",__func__);
+	[self release];
+	return nil;
+}
+- (id) initWithSysexData:(NSData *)d	{
+	return [self initWithSysexData:d timestamp:0];
+}
+- (id) initWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
+	if (d==nil || [d length]<1)
+		goto BAIL;
+	
+	self = [super init];
+	if (self != nil)	{
+		type = VVMIDIBeginSysexDumpVal;
+		channel = -1;
+		data1 = -1;
+		data2 = -1;
+		data3 = -1;
+		sysexArray = [[NSMutableArray arrayWithCapacity:0] retain];
+		timestamp = time;
+		
+		uint8_t			*rPtr = (uint8_t *)[d bytes];
+		for (int i=0; i<[d length]; ++i)	{
+			//	if any of the vals in the passed sysex blob are improperly sized, release & return nil
+			if (*rPtr > 0x7F)	{
+				NSLog(@"\t\terr: bailing, val in sysex data (%X) was > 0x7F",*rPtr);
+				goto BAIL;
+			}
+			NSNumber		*tmpNum = [NSNumber numberWithInteger:*rPtr];
+			if (tmpNum != nil)
+				[sysexArray addObject:tmpNum];
+			++rPtr;
+		}
 		return self;
 	}
 	BAIL:
@@ -243,6 +285,17 @@
 }
 - (NSMutableArray *) sysexArray	{
 	return sysexArray;
+}
+- (NSMutableData *) sysexData	{
+	size_t			dataSize = (sysexArray==nil) ? 0 : [sysexArray count];
+	NSMutableData	*returnMe = (dataSize==0) ? nil : [[NSMutableData alloc] initWithLength:dataSize];
+	uint8_t			*wPtr = (uint8_t *)[returnMe mutableBytes];
+	for (int i=0; i<dataSize; ++i)	{
+		NSNumber		*tmpNum = [sysexArray objectAtIndex:i];
+		*wPtr = (tmpNum==nil) ? 0 : [tmpNum intValue];
+		++wPtr;
+	}
+	return (returnMe==nil) ? nil : [returnMe autorelease];
 }
 - (void) setTimestamp:(uint64_t)newTimestamp {
 	timestamp = newTimestamp;
