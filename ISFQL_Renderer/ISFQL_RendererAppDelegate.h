@@ -9,11 +9,13 @@
 #import <Cocoa/Cocoa.h>
 #import "ISFQLRendererAgent.h"
 #import <VVBufferPool/VVBufferPool.h>
+#import <VVISFKit/VVISFKit.h>
 
 
 
 
 extern VVBuffer		*_globalColorBars;
+extern ISFGLScene	*_swizzleScene;
 
 
 

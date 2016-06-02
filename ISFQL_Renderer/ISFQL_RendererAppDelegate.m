@@ -6,6 +6,7 @@
 
 
 VVBuffer		*_globalColorBars = nil;
+ISFGLScene		*_swizzleScene = nil;
 
 
 #define LOCK OSSpinLockLock
@@ -35,6 +36,11 @@ VVBuffer		*_globalColorBars = nil;
 		_globalColorBars = [_globalVVBufferPool allocBufferForNSImage:bars];
 		[bars release];
 		bars = nil;
+		
+		//	load the swizzle scene
+		_swizzleScene = [[ISFGLScene alloc] initWithSharedContext:sharedContext pixelFormat:pf sized:NSMakeSize(800,600)];
+		NSString		*swizzleSrc = [[NSBundle mainBundle] pathForResource:@"SwizzleISF-RGBAtoBGRA" ofType:@"fs"];
+		[_swizzleScene useFile:swizzleSrc];
 		
 		//	spawn a thread- the listener will run on this thread
 		[NSThread detachNewThreadSelector:@selector(threadLaunch:) toTarget:self withObject:nil];

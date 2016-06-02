@@ -162,6 +162,7 @@
 	ISFGLScene				*scene = [[ISFGLScene alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] pixelFormat:[GLScene defaultPixelFormat] sized:renderSize];
 	//NSLog(@"\t\tscene is %@",scene);
 	VVBuffer				*renderBuffer = [_globalVVBufferPool allocBGRTexSized:renderSize];
+	VVBuffer				*swizzleBuffer = nil;
 	BOOL					problemRendering = NO;
 	
 	[scene setThrowExceptions:YES];
@@ -173,14 +174,22 @@
 		}
 		
 		[scene renderToBuffer:renderBuffer sized:renderSize];
+		
+		//	it's not really flipped, but CGImage stuff wants a flipped buffer...
+		[renderBuffer setFlipped:YES];
+		
+		//	swizzle the colors!
+		[_swizzleScene setSize:[renderBuffer srcRect].size];
+		[_swizzleScene setFilterInputImageBuffer:renderBuffer];
+		swizzleBuffer = [_swizzleScene allocAndRenderABuffer];
 	}
 	@catch (NSException *err)	{
 		problemRendering = YES;
 	}
 	
 	
-	[renderBuffer setFlipped:YES];	//	it's not really flipped, but CGImage stuff wants a flipped buffer...
-	//NSLog(@"\t\trenderBuffer is %@",renderBuffer);
+	
+	//NSLog(@"\t\tswizzleBuffer is %@",swizzleBuffer);
 	
 	
 	
@@ -196,7 +205,7 @@
 	//	else rendering happened without issue- download the image we rendered, then pass it back to the ROP
 	else	{
 		TexRangeGLCPUStreamer	*streamer = [[TexRangeGLCPUStreamer alloc] init];
-		[streamer setNextTexBufferForStream:renderBuffer];
+		[streamer setNextTexBufferForStream:swizzleBuffer];
 		VVBuffer				*cpuBuffer = nil;
 		while (cpuBuffer == nil)	{
 			cpuBuffer = [streamer copyAndGetCPUBackedBufferForStream];
@@ -224,6 +233,7 @@
 		VVRELEASE(streamer);
 	}
 	
+	VVRELEASE(swizzleBuffer);
 	VVRELEASE(renderBuffer);
 	VVRELEASE(scene);
 	

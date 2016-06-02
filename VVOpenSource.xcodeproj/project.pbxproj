@@ -74,6 +74,7 @@
 				1AE1A8001CDA6858005F924D /* PBXTargetDependency */,
 				1AE1A8021CDA685B005F924D /* PBXTargetDependency */,
 				1AE1A8041CDA685E005F924D /* PBXTargetDependency */,
+				1AC5A4DE1CEE4146004DF358 /* PBXTargetDependency */,
 			);
 			name = "Build Mac Fmwks & Apps";
 			productName = Untitled;
@@ -281,6 +282,7 @@
 		1A33E1611BED434800E82A6F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		1A33E1641BED443100E82A6F /* Bad TV.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A33E1621BED443100E82A6F /* Bad TV.fs */; };
 		1A33E1651BED443100E82A6F /* CMYK Halftone-Lookaround.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A33E1631BED443100E82A6F /* CMYK Halftone-Lookaround.fs */; };
+		1A3ECD6B1CF8AD27008460E8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9684E8AC1983488F00524F3C /* QuartzCore.framework */; };
 		1A486EA31C42F43000B4291E /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A486EA21C42F43000B4291E /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A486EF61C42F50300B4291E /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A486EF71C42F50300B4291E /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
@@ -304,6 +306,7 @@
 		1A486F091C42F50300B4291E /* MAZeroingWeakRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC180A185A41A500917830 /* MAZeroingWeakRef.m */; };
 		1A5E3B291CDBE32E00F3EDF7 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A5E3B2A1CDBE32E00F3EDF7 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A6377ED1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6377EC1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m */; };
 		1A64E4B11CD96BD000DC3310 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */; };
 		1A68C23E1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C23D1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m */; };
 		1A68C2401CDBDD46001FF7D6 /* GeneratePreviewForURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C23F1CDBDD46001FF7D6 /* GeneratePreviewForURL.m */; };
@@ -390,6 +393,15 @@
 		1ABD30A11CDC01690008AD36 /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1ABD30A21CDC01690008AD36 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1ABD30A31CDC01690008AD36 /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AC5A4D01CEE4138004DF358 /* MTCSenderAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC5A4CF1CEE4138004DF358 /* MTCSenderAppDelegate.m */; };
+		1AC5A4D31CEE4138004DF358 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC5A4D21CEE4138004DF358 /* main.m */; };
+		1AC5A4D51CEE4138004DF358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AC5A4D41CEE4138004DF358 /* Assets.xcassets */; };
+		1AC5A4D81CEE4138004DF358 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AC5A4D61CEE4138004DF358 /* MainMenu.xib */; };
+		1AC5A4DF1CEE4174004DF358 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1AC5A4E01CEE4174004DF358 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
+		1AC5A4E61CEE4188004DF358 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AC5A4E71CEE4188004DF358 /* VVMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AC5A4EA1CEE851B004DF358 /* MTCMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */; };
 		1AC5E4521C4315D20068087D /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; };
 		1AC5E4531C4315D20068087D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EA01C42F43000B4291E /* VVBasics.framework */; };
 		1AC5E4541C4315D20068087D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EAD1C42F44300B4291E /* VVBufferPool.framework */; };
@@ -399,6 +411,7 @@
 		1AC5E4591C4315E20068087D /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5E45A1C4315E20068087D /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A486EC71C42F45B00B4291E /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5E45B1C431AA00068087D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A854FD91C1A601400540729 /* GLKit.framework */; };
+		1AD65DBE1D00B80E004427DC /* SwizzleISF-RGBAtoBGRA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */; };
 		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
 		1AE102A91CDBDF8B0034EA89 /* QCQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */; };
@@ -465,7 +478,6 @@
 		1AEE1ED81C136914005259C0 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1AEE1EDB1C136C68005259C0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
 		1AEE1EDC1C136C6C005259C0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
-		1AEE1EDD1C136C73005259C0 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AEE1ED91C136C33005259C0 /* CoreImage.framework */; };
 		1AF93E851C10ABBB00BA0537 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
@@ -1018,6 +1030,27 @@
 			remoteGlobalIDString = 1A1A01F81CDBFE4900E49E5A;
 			remoteInfo = ISFQL_Renderer;
 		};
+		1AC5A4DD1CEE4146004DF358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AC5A4CB1CEE4138004DF358;
+			remoteInfo = MTCSender;
+		};
+		1AC5A4E11CEE4179004DF358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
+			remoteInfo = "VVBasics-mac";
+		};
+		1AC5A4E31CEE4179004DF358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961745F3100F86B400FB60E6;
+			remoteInfo = VVMIDI;
+		};
 		1AC5E4501C4315C60068087D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1466,6 +1499,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AC5A4E51CEE417B004DF358 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AC5A4E61CEE4188004DF358 /* VVBasics.framework in Embed Frameworks */,
+				1AC5A4E71CEE4188004DF358 /* VVMIDI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AC5E4561C4315D60068087D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1735,6 +1780,8 @@
 		1A486EE11C42F47100B4291E /* VVOSC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVOSC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A486EE31C42F47100B4291E /* VVOSC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VVOSC.h; sourceTree = "<group>"; };
 		1A486EE51C42F47100B4291E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A6377EB1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditionsSMPTE.h; sourceTree = "<group>"; };
+		1A6377EC1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditionsSMPTE.m; sourceTree = "<group>"; };
 		1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		1A68C23B1CDBDD46001FF7D6 /* QCQL.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QCQL.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A68C23D1CDBDD46001FF7D6 /* GenerateThumbnailForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenerateThumbnailForURL.m; sourceTree = "<group>"; };
@@ -1807,7 +1854,6 @@
 		1A854FD51C1A600000540729 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		1A854FD71C1A600C00540729 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		1A854FD91C1A601400540729 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
-		1A854FDC1C1A601F00540729 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
 		1A854FDF1C1A603300540729 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		1A8A19961C15E09F0096BCB8 /* ISF_ES_Compatibility.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ISF_ES_Compatibility.txt; sourceTree = "<group>"; };
 		1A9BF64C1C430F2A009544C1 /* blueelectricspiral.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blueelectricspiral.fs; sourceTree = "<group>"; };
@@ -1822,6 +1868,15 @@
 		1ABD30931CDBFFEF0008AD36 /* ISFQL_RendererProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQL_RendererProtocols.h; sourceTree = "<group>"; };
 		1ABD30941CDBFFEF0008AD36 /* ISFQLRendererAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQLRendererAgent.h; sourceTree = "<group>"; };
 		1ABD30951CDBFFEF0008AD36 /* ISFQLRendererAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFQLRendererAgent.m; sourceTree = "<group>"; };
+		1AC5A4CC1CEE4138004DF358 /* MTCSender.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTCSender.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AC5A4CE1CEE4138004DF358 /* MTCSenderAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTCSenderAppDelegate.h; sourceTree = "<group>"; };
+		1AC5A4CF1CEE4138004DF358 /* MTCSenderAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTCSenderAppDelegate.m; sourceTree = "<group>"; };
+		1AC5A4D21CEE4138004DF358 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1AC5A4D41CEE4138004DF358 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AC5A4D71CEE4138004DF358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1AC5A4D91CEE4138004DF358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AC5A4E81CEE851B004DF358 /* MTCMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTCMIDIManager.h; sourceTree = "<group>"; };
+		1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTCMIDIManager.m; sourceTree = "<group>"; };
 		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
 		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
 		1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQLRendererRemote.h; sourceTree = "<group>"; };
@@ -1870,7 +1925,6 @@
 		1AEE1EC91C136883005259C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1AEE1ECC1C136883005259C0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1AEE1ECE1C136883005259C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1AEE1ED91C136C33005259C0 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
 		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
 		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
@@ -2342,6 +2396,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AC5A4C91CEE4138004DF358 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AC5A4DF1CEE4174004DF358 /* VVBasics.framework in Frameworks */,
+				1AC5A4E01CEE4174004DF358 /* VVMIDI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AE1A7AA1CDA6803005F924D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2385,7 +2448,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AEE1EDD1C136C73005259C0 /* CoreImage.framework in Frameworks */,
+				1A3ECD6B1CF8AD27008460E8 /* QuartzCore.framework in Frameworks */,
 				1AEE1EDC1C136C6C005259C0 /* AppKit.framework in Frameworks */,
 				1AEE1EDB1C136C68005259C0 /* CoreVideo.framework in Frameworks */,
 				1AEE1ED41C136902005259C0 /* VVBasics.framework in Frameworks */,
@@ -2639,6 +2702,7 @@
 				1A68C24B1CDBDD54001FF7D6 /* com.vidvox.QCQL-Renderer.app */,
 				1A1A01E91CDBFE3D00E49E5A /* ISFQL.qlgenerator */,
 				1A1A01F91CDBFE4900E49E5A /* com.vidvox.ISFQL-Renderer.app */,
+				1AC5A4CC1CEE4138004DF358 /* MTCSender.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2653,6 +2717,7 @@
 				96C00547185A445B00C33FE2 /* EXTERNAL CODE */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				96ACD7221706416300138AE6 /* Frameworks */,
+				1A6533491CEB7DB40003C9D1 /* Embedded Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
@@ -2813,6 +2878,15 @@
 			path = VVOSC;
 			sourceTree = "<group>";
 		};
+		1A6533491CEB7DB40003C9D1 /* Embedded Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A7AB8FF1BED279300B2B129 /* Syphon.framework */,
+			);
+			name = "Embedded Frameworks";
+			path = SyphonToAndFromVVBuffer;
+			sourceTree = "<group>";
+		};
 		1A68C23C1CDBDD46001FF7D6 /* QCQL */ = {
 			isa = PBXGroup;
 			children = (
@@ -2949,7 +3023,6 @@
 				1A7AB9051BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m */,
 				1A7AB9061BED2AA800B2B129 /* VVBufferSyphonAdditions.h */,
 				1A7AB9071BED2AA800B2B129 /* VVBufferSyphonAdditions.m */,
-				1A7AB8FF1BED279300B2B129 /* Syphon.framework */,
 				1A7AB8CF1BED159100B2B129 /* Assets.xcassets */,
 				1A7AB8D11BED159100B2B129 /* MainMenu.xib */,
 				1A7AB8D41BED159100B2B129 /* Info.plist */,
@@ -2985,6 +3058,31 @@
 			isa = PBXGroup;
 			children = (
 				1A7AB8E21BED17A200B2B129 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AC5A4CD1CEE4138004DF358 /* MTCSender */ = {
+			isa = PBXGroup;
+			children = (
+				1AC5A4CE1CEE4138004DF358 /* MTCSenderAppDelegate.h */,
+				1AC5A4CF1CEE4138004DF358 /* MTCSenderAppDelegate.m */,
+				1AC5A4D41CEE4138004DF358 /* Assets.xcassets */,
+				1AC5A4D61CEE4138004DF358 /* MainMenu.xib */,
+				1AC5A4D91CEE4138004DF358 /* Info.plist */,
+				1AC5A4D11CEE4138004DF358 /* Supporting Files */,
+				1AC5A4E81CEE851B004DF358 /* MTCMIDIManager.h */,
+				1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */,
+				1A6377EB1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.h */,
+				1A6377EC1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m */,
+			);
+			path = MTCSender;
+			sourceTree = "<group>";
+		};
+		1AC5A4D11CEE4138004DF358 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AC5A4D21CEE4138004DF358 /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -3443,6 +3541,7 @@
 				1AE1A7C31CDA6812005F924D /* TexRangeGLtoCPU Test App */,
 				1AE1A7D81CDA6824005F924D /* GPUUploadBenchmark */,
 				1AE1A7ED1CDA682C005F924D /* GPUDownloadBenchmark */,
+				1AC5A4CD1CEE4138004DF358 /* MTCSender */,
 			);
 			name = Applications;
 			sourceTree = "<group>";
@@ -3516,12 +3615,10 @@
 			children = (
 				1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */,
 				1A854FDF1C1A603300540729 /* Foundation.framework */,
-				1A854FDC1C1A601F00540729 /* CoreImage.framework */,
 				1A854FD91C1A601400540729 /* GLKit.framework */,
 				1A854FD71C1A600C00540729 /* CoreVideo.framework */,
 				1A854FD51C1A600000540729 /* OpenGLES.framework */,
 				1A854FD31C1A5FFA00540729 /* UIKit.framework */,
-				1AEE1ED91C136C33005259C0 /* CoreImage.framework */,
 				1A7AB90C1BED311A00B2B129 /* AppKit.framework */,
 				1A7AB90A1BED311200B2B129 /* CoreVideo.framework */,
 				1AE3C7FD1B3B858000D37189 /* IOKit.framework */,
@@ -4379,6 +4476,26 @@
 			productReference = 1A7AB8DC1BED17A200B2B129 /* ArbitraryGLTextureToVVBuffer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1AC5A4CB1CEE4138004DF358 /* MTCSender */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AC5A4DA1CEE4138004DF358 /* Build configuration list for PBXNativeTarget "MTCSender" */;
+			buildPhases = (
+				1AC5A4C81CEE4138004DF358 /* Sources */,
+				1AC5A4C91CEE4138004DF358 /* Frameworks */,
+				1AC5A4CA1CEE4138004DF358 /* Resources */,
+				1AC5A4E51CEE417B004DF358 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AC5A4E21CEE4179004DF358 /* PBXTargetDependency */,
+				1AC5A4E41CEE4179004DF358 /* PBXTargetDependency */,
+			);
+			name = MTCSender;
+			productName = MTCSender;
+			productReference = 1AC5A4CC1CEE4138004DF358 /* MTCSender.app */;
+			productType = "com.apple.product-type.application";
+		};
 		1AE1A7AC1CDA6803005F924D /* PBOGLtoCPUtoGL Test App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AE1A7BB1CDA6803005F924D /* Build configuration list for PBXNativeTarget "PBOGLtoCPUtoGL Test App" */;
@@ -4890,6 +5007,9 @@
 					1A8840BC1CDBE37600F9FF25 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					1AC5A4CB1CEE4138004DF358 = {
+						CreatedOnToolsVersion = 7.2;
+					};
 					1AE1A7AC1CDA6803005F924D = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -4933,13 +5053,6 @@
 				961745F3100F86B400FB60E6 /* VVMIDI */,
 				9628D0C4100E89F700C3944E /* VVOSC-mac */,
 				1A7128AE1B61065000528CDB /* MultiClassXPC */,
-				968A7EEB185BA3100075DEB1 /* Build iOS frameworks */,
-				1A486E9F1C42F43000B4291E /* VVBasics-iOS */,
-				1A486EAC1C42F44300B4291E /* VVBufferPool-iOS */,
-				1A486EB91C42F45200B4291E /* DDMathParser-iOS */,
-				1A486EC61C42F45B00B4291E /* VVISFKit-iOS */,
-				1A486ED31C42F46700B4291E /* VVUIToolbox-iOS */,
-				1A486EE01C42F47100B4291E /* VVOSC-iOS */,
 				96677EDD100F7CF300163134 /* Build Mac Fmwks & Apps */,
 				968FAA85108B6141000E470D /* CrashReporterTestApp */,
 				9656D8FF100F89BA0064EEA6 /* MIDITestApp */,
@@ -4961,6 +5074,14 @@
 				1AE1A7C11CDA6812005F924D /* TexRangeGLtoCPU Test App */,
 				1AE1A7D61CDA6824005F924D /* GPUUploadBenchmark */,
 				1AE1A7EB1CDA682C005F924D /* GPUDownloadBenchmark */,
+				1AC5A4CB1CEE4138004DF358 /* MTCSender */,
+				968A7EEB185BA3100075DEB1 /* Build iOS frameworks */,
+				1A486E9F1C42F43000B4291E /* VVBasics-iOS */,
+				1A486EAC1C42F44300B4291E /* VVBufferPool-iOS */,
+				1A486EB91C42F45200B4291E /* DDMathParser-iOS */,
+				1A486EC61C42F45B00B4291E /* VVISFKit-iOS */,
+				1A486ED31C42F46700B4291E /* VVUIToolbox-iOS */,
+				1A486EE01C42F47100B4291E /* VVOSC-iOS */,
 				1A00B8DC1C430B4800BC2BEB /* Build iOS Fmwks & Apps */,
 				1A00B8C41C430B3600BC2BEB /* ISFonIOSTest */,
 				1A8840BC1CDBE37600F9FF25 /* QuickLook plugins */,
@@ -4997,6 +5118,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ABD30901CDBFFD50008AD36 /* ISFQL_Renderer.entitlements in Resources */,
+				1AD65DBE1D00B80E004427DC /* SwizzleISF-RGBAtoBGRA.fs in Resources */,
 				1A1A02021CDBFE4900E49E5A /* Assets.xcassets in Resources */,
 				1A1A02051CDBFE4900E49E5A /* MainMenu.xib in Resources */,
 				1ABD30921CDBFFE00008AD36 /* ColorBars.png in Resources */,
@@ -5116,6 +5238,15 @@
 				1A7AB8E81BED17A200B2B129 /* MainMenu.xib in Resources */,
 				1A33E1651BED443100E82A6F /* CMYK Halftone-Lookaround.fs in Resources */,
 				1A33E15F1BED3A5E00E82A6F /* SampleImg.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AC5A4CA1CEE4138004DF358 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AC5A4D51CEE4138004DF358 /* Assets.xcassets in Resources */,
+				1AC5A4D81CEE4138004DF358 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5588,6 +5719,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AC5A4C81CEE4138004DF358 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AC5A4EA1CEE851B004DF358 /* MTCMIDIManager.m in Sources */,
+				1AC5A4D31CEE4138004DF358 /* main.m in Sources */,
+				1AC5A4D01CEE4138004DF358 /* MTCSenderAppDelegate.m in Sources */,
+				1A6377ED1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AE1A7A91CDA6803005F924D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6034,6 +6176,21 @@
 			target = 1A1A01F81CDBFE4900E49E5A /* ISFQL_Renderer */;
 			targetProxy = 1ABD30A41CDC01980008AD36 /* PBXContainerItemProxy */;
 		};
+		1AC5A4DE1CEE4146004DF358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AC5A4CB1CEE4138004DF358 /* MTCSender */;
+			targetProxy = 1AC5A4DD1CEE4146004DF358 /* PBXContainerItemProxy */;
+		};
+		1AC5A4E21CEE4179004DF358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics-mac */;
+			targetProxy = 1AC5A4E11CEE4179004DF358 /* PBXContainerItemProxy */;
+		};
+		1AC5A4E41CEE4179004DF358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961745F3100F86B400FB60E6 /* VVMIDI */;
+			targetProxy = 1AC5A4E31CEE4179004DF358 /* PBXContainerItemProxy */;
+		};
 		1AC5E4511C4315C60068087D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 968A7EEB185BA3100075DEB1 /* Build iOS frameworks */;
@@ -6344,6 +6501,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				1A7AB8E71BED17A200B2B129 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1AC5A4D61CEE4138004DF358 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AC5A4D71CEE4138004DF358 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -7954,7 +8119,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = SyphonToAndFromVVBuffer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SyphonToAndFromVVBuffer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7992,7 +8156,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = SyphonToAndFromVVBuffer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SyphonToAndFromVVBuffer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8032,7 +8195,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = ArbitraryGLTextureToVVBuffer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ArbitraryGLTextureToVVBuffer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8066,7 +8228,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = ArbitraryGLTextureToVVBuffer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ArbitraryGLTextureToVVBuffer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8084,6 +8245,89 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1AC5A4DB1CEE4138004DF358 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = MTCSender/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.MTCSender;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1AC5A4DC1CEE4138004DF358 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = MTCSender/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.MTCSender;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -8123,7 +8367,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "PBOGLtoCPUtoGL Test App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.PBOGLtoCPUtoGL-Test-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8161,7 +8404,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "PBOGLtoCPUtoGL Test App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.PBOGLtoCPUtoGL-Test-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8204,7 +8446,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "TexRangeGLtoCPU Test App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.TexRangeGLtoCPU-Test-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8242,7 +8483,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "TexRangeGLtoCPU Test App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.TexRangeGLtoCPU-Test-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8285,7 +8525,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GPUUploadBenchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUUploadBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8323,7 +8562,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GPUUploadBenchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUUploadBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8366,7 +8604,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GPUDownloadBenchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUDownloadBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8404,7 +8641,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GPUDownloadBenchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GPUDownloadBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8446,7 +8682,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GLShaderSceneTestApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GLShaderSceneTestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8483,7 +8718,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = GLShaderSceneTestApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.GLShaderSceneTestApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8509,7 +8743,7 @@
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Debug;
 		};
@@ -8530,7 +8764,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Release;
 		};
@@ -9778,6 +10012,15 @@
 			buildConfigurations = (
 				1A8840BD1CDBE37600F9FF25 /* Debug */,
 				1A8840BE1CDBE37600F9FF25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AC5A4DA1CEE4138004DF358 /* Build configuration list for PBXNativeTarget "MTCSender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AC5A4DB1CEE4138004DF358 /* Debug */,
+				1AC5A4DC1CEE4138004DF358 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
