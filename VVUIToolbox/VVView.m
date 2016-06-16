@@ -660,7 +660,7 @@
 - (NSMutableArray *) _locationTransformsToContainerView	{
 	//NSLog(@"%s ... %@",__func__,self);
 	VVView				*viewPtr = self;
-	VVView				*theSuperview = [viewPtr superview];
+	VVView				*theSuperview = nil;
 	VVRECT				viewFrame;
 	VVViewBoundsOrientation		viewBO;
 	VVPOINT						viewOrigin;
@@ -799,8 +799,18 @@
 #endif
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 - (void) _setFrame:(VVRECT)n	{
@@ -823,8 +833,18 @@
 #endif
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 - (void) _setFrameSize:(VVSIZE)proposedSize	{
@@ -897,8 +917,18 @@
 #endif
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 - (void) _setFrameOrigin:(VVPOINT)n	{
@@ -936,8 +966,18 @@
 #endif
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 - (VVPOINT) boundsOrigin	{
@@ -955,8 +995,18 @@
 #endif
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 
@@ -1281,8 +1331,18 @@
 		[subviews insertObject:n atIndex:0];
 		[n _setSuperview:self];
 		[n setContainerView:_containerView];
-		if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+		if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:YES];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 	[subviews unlock];
 	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
@@ -1297,8 +1357,18 @@
 	[subviews lockRemoveIdenticalPtr:n];
 	[n _setSuperview:nil];
 	[n setContainerView:nil];
-	if (_containerView != nil)
-		[_containerView setNeedsDisplay:YES];
+	if (_containerView != nil)	{
+		__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+		void		(^tmpBlock)(void) = ^(void)	{
+			id			localContainerView = [_containerViewHolder object];
+			if (localContainerView != nil)	{
+				[localContainerView setNeedsDisplay:YES];
+			}
+			[_containerViewHolder release];
+			_containerViewHolder = nil;
+		};
+		APPKIT_TMPBLOCK_MAINTHREAD
+	}
 	
 	//	if the subview i'm removing has any drag types, tell the container view to reconcile its drag types
 	NSMutableArray		*tmpArray = MUTARRAY;
@@ -1612,10 +1682,18 @@
 	}
 #else
 	if (isOpaque)	{
+		glDisableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], 1.0);
 		GLDRAWRECT(VVMAKERECT(0,0,localBounds.size.width, localBounds.size.height));
 	}
 	else if (clearColor[3]!=0.0)	{
+		glDisableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
 		glColor4f(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 		GLDRAWRECT(VVMAKERECT(0,0,localBounds.size.width, localBounds.size.height));
 	}
@@ -1801,9 +1879,19 @@
 	needsDisplay = n;
 	if (needsDisplay)	{
 		if (_superview != nil)
-			[_superview setNeedsDisplay:YES];
-		else if (_containerView != nil)
-			[_containerView setNeedsDisplay:YES];
+			[_superview setNeedsDisplay:n];
+		else if (_containerView != nil)	{
+			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			void		(^tmpBlock)(void) = ^(void)	{
+				id			localContainerView = [_containerViewHolder object];
+				if (localContainerView != nil)	{
+					[localContainerView setNeedsDisplay:n];
+				}
+				[_containerViewHolder release];
+				_containerViewHolder = nil;
+			};
+			APPKIT_TMPBLOCK_MAINTHREAD
+		}
 	}
 }
 - (BOOL) needsDisplay	{

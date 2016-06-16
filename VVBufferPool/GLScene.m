@@ -373,7 +373,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 - (id) initWithSharedContext:(NSOpenGLContext *)c pixelFormat:(NSOpenGLPixelFormat *)p sized:(VVSIZE)s	{
 	if ((c==nil)||(p==nil)||(s.width<1)||(s.height<1))	{
 		NSLog(@"\t\terr: %s - BAIL, %@",__func__,self);
-		NSLog(@"\t\terr: %@",c);
+		NSLog(@"\t\terr: %@, %@",c,p);
 		NSLog(@"\t\terr: %f x %f",s.width,s.height);
 		[self release];
 		return nil;
