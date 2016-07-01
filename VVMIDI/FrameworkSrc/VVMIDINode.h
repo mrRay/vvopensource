@@ -77,6 +77,7 @@ extern double		_machTimeToNsFactor;
 - (void) _getValsForCC:(int)cc channel:(int)c toMSB:(int *)msb LSB:(int *)lsb;
 - (void) _setValsForCC:(int)cc channel:(int)c fromMSB:(int)msb LSB:(int)lsb;
 - (double) MTCQuarterFrameSMPTEAsDouble;
+- (double) MTCFPS;
 - (double) midiClockBeats;
 - (double) midiClockBPM;
 

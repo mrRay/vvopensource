@@ -718,6 +718,36 @@ double			_machTimeToNsFactor;
 	double		returnMe = (double)tmpClockTime;
 	return returnMe;
 }
+- (double) MTCFPS	{
+	if (mtcClockRef == NULL)
+		return 30.;
+	double			returnMe = 30.;
+	OSStatus		err = noErr;
+	UInt32			smpteType = 0;
+	UInt32			tmpSize = sizeof(UInt32);
+	err = CAClockGetProperty(mtcClockRef, kCAClockProperty_SMPTEFormat, &tmpSize, &smpteType);
+	if (err != noErr)
+		NSLog(@"\t\terr %ld querying clock's SMPTE format in %s",(long)err,__func__);
+	else	{
+		//	if the clock's current SMPTE format doesn't match the SMPTE format described by the received MTC...
+		switch (smpteType)	{
+		case kSMPTETimeType24:
+			returnMe = 24.;
+			break;
+		case kSMPTETimeType25:
+			returnMe = 25.;
+			break;
+		case kSMPTETimeType30Drop:
+		case kSMPTETimeType30:
+		case kSMPTETimeType2997:
+		case kSMPTETimeType2997Drop:
+			returnMe = 30.;
+			break;
+		}
+		
+	}
+	return returnMe;
+}
 - (double) midiClockBeats	{
 	if (bpmClockRef==NULL)
 		return (double)0.0;
