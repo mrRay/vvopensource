@@ -56,7 +56,16 @@
 #define QTMultiGPUTextureIssue_HapSupport_h
 
 #import <CoreFoundation/CoreFoundation.h>
+
+
+
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
 #import <QuickTime/QuickTime.h>
+#endif	//	#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+
+
+
 
 /**
  The four-character-codes used to describe the pixel-formats of DXT frames emitted by the Hap QuickTime codec.
@@ -77,6 +86,14 @@
 #define kHapYCoCgACodecSubType 'HapM'
 #define kHapAOnlyCodecSubType 'HapA'
 
+
+
+
+
+
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+
 /**
  Returns true if any track of movie is a Hap track and the codec is installed to handle it, otherwise false.
  */
@@ -89,6 +106,9 @@ OSType HapCodecType(Movie movie);
  */
 #define HapQTMovieHasHapTrackPlayable(m) ((BOOL)HapQTQuickTimeMovieHasHapTrackPlayable([(m) quickTimeMovie]))
 #endif
+
+#endif	//	__MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+
 
 /**
  Returns a dictionary suitable to pass with the kQTVisualContextPixelBufferAttributesKey in an options dictionary when

@@ -7,6 +7,7 @@
 //
 
 #import "ISFAVFAudioSource.h"
+#import <AppKit/AppKit.h>
 
 @implementation ISFAVFAudioSource
 

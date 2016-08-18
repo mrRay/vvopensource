@@ -65,7 +65,6 @@
 				96EE5D6B198412BD00231124 /* PBXTargetDependency */,
 				96EE5D6D198412BD00231124 /* PBXTargetDependency */,
 				96EE5D6F198412BD00231124 /* PBXTargetDependency */,
-				9614012E198AD4D700335292 /* PBXTargetDependency */,
 				1A6E9AAB1B610EAE00F8C8A6 /* PBXTargetDependency */,
 				1A9ECF691C0FD05600CCEB70 /* PBXTargetDependency */,
 				1A9ECF671C0FD05300CCEB70 /* PBXTargetDependency */,
@@ -466,6 +465,7 @@
 		1A7129251B610E2A00528CDB /* ServiceDelegateB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7129241B610E2A00528CDB /* ServiceDelegateB.m */; };
 		1A7129281B610E3A00528CDB /* ClassAMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7129271B610E3A00528CDB /* ClassAMCXLocal.m */; };
 		1A71292B1B610E4600528CDB /* ClassBMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A71292A1B610E4600528CDB /* ClassBMCXLocal.m */; };
+		1A7629A11D65EE1A001CACEA /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		1A7AB8CB1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */; };
 		1A7AB8CE1BED159100B2B129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CD1BED159100B2B129 /* main.m */; };
 		1A7AB8D01BED159100B2B129 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CF1BED159100B2B129 /* Assets.xcassets */; };
@@ -1310,13 +1310,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 9658764818CE5C2D003126BC;
 			remoteInfo = "Build Mac Frameworks";
-		};
-		9614012D198AD4D700335292 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 96140108198AD46D00335292;
-			remoteInfo = "QT and Hap Test App";
 		};
 		96174622100F886F00FB60E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2845,6 +2838,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A7629A11D65EE1A001CACEA /* AppKit.framework in Frameworks */,
 				1A39E6321D65B6F40065F271 /* VVUIToolbox.framework in Frameworks */,
 				1AFE77461D65B01D003D8E7C /* OpenGL.framework in Frameworks */,
 				1A39E5AB1D65B4410065F271 /* MGSFragaria.framework in Frameworks */,
@@ -7132,11 +7126,6 @@
 			target = 9658764818CE5C2D003126BC /* Build Mac Frameworks */;
 			targetProxy = 96140120198AD47600335292 /* PBXContainerItemProxy */;
 		};
-		9614012E198AD4D700335292 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 96140108198AD46D00335292 /* QT and Hap Test App */;
-			targetProxy = 9614012D198AD4D700335292 /* PBXContainerItemProxy */;
-		};
 		96174623100F886F00FB60E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics-mac */;
@@ -8866,7 +8855,6 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -8904,7 +8892,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -8945,7 +8932,6 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -8983,7 +8969,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -9194,7 +9179,6 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.MTCSender;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -9233,7 +9217,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.vidvox.MTCSender;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -9681,7 +9664,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISF-Editor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -9704,7 +9686,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9732,7 +9713,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.ISF-Editor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -9755,7 +9735,7 @@
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -9776,7 +9756,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -9811,7 +9791,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.11;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -9842,7 +9822,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.11;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -10072,7 +10052,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVISFKit;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10108,7 +10087,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVISFKit;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10640,7 +10618,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10664,7 +10641,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10753,7 +10729,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = DDMathParser;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10790,7 +10765,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = DDMathParser;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10836,7 +10810,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVBufferPool;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -10879,7 +10852,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVBufferPool;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

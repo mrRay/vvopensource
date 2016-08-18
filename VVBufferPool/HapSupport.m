@@ -46,10 +46,10 @@
 
 
 #import "HapSupport.h"
+
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
 #import <QuickTime/QuickTime.h>
-
-
-
 
 /*
  Searches the list of installed codecs for a given codec
@@ -145,6 +145,12 @@ OSType HapCodecType(Movie movie)
 }
 #pragma GCC pop
 
+
+#endif	//	#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+
+
+
+
 /*
  Utility function, does what it says...
  */
@@ -166,21 +172,23 @@ static void HapQTRegisterDXTPixelFormat(OSType fmt, short bits_per_pixel, SInt32
      * See http://developer.apple.com/legacy/mac/library/#qa/qa1401/_index.html
      */
     
-    ICMPixelFormatInfo pixelInfo;
     
-    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                            0,
-                                                            &kCFTypeDictionaryKeyCallBacks,
-                                                            &kCFTypeDictionaryValueCallBacks);
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+    ICMPixelFormatInfo pixelInfo;
     bzero(&pixelInfo, sizeof(pixelInfo));
     pixelInfo.size  = sizeof(ICMPixelFormatInfo);
     pixelInfo.formatFlags = (has_alpha ? kICMPixelFormatHasAlphaChannel : 0);
     pixelInfo.bitsPerPixel[0] = bits_per_pixel;
     pixelInfo.cmpCount = 4;
     pixelInfo.cmpSize = bits_per_pixel / 4;
-    
     // Ignore any errors here as this could be a duplicate registration
     ICMSetPixelFormatInfo(fmt, &pixelInfo);
+#endif	//	#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 101199
+	    
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault,
+                                                            0,
+                                                            &kCFTypeDictionaryKeyCallBacks,
+                                                            &kCFTypeDictionaryValueCallBacks);
     
     HapQTAddNumberToDictionary(dict, kCVPixelFormatConstant, fmt);
     
