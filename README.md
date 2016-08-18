@@ -17,8 +17,11 @@ How to get help
 Please open an "issue".  If i'm really busy (a frequent occurrence) it may take a while for me to get back to you- sorry in advance!  Documentation is generated with 'Doxygen', and can be found here: [http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html](http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html)
 
 
-I'm not a programmer, I just want to download a MIDI/OSC test application!
+I'm not a programmer, I just want to download a MIDI/OSC/ISF test application!
 --------------------------------------------------------------------------
+
+Here's the ISF Editor:
+http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/ISF_Editor_2.8.zip
 
 Here's an OSC test application:
 http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.7.zip
@@ -39,13 +42,14 @@ What does this project include/do/make?
 	* VVMIDI is an Objective-C framework for quickly and easily working with MIDI data.
 	* VVUIToolbox is an objective-c framework that I use extensively to ease the process of creating UI items.  It contains a number of objects that standardize the act of creating, drawing, and interacting with sprites that work transparently with both NS and GL views.
 	* VVBufferPool is an objective-c framework for creating and managing GL-backed resources.  This framework is used as the basis for the rendering engines I build for various proejcts, and is focused on the general goal of simplifying the task of "rendering to a texture" in an extensible manner to better work with a variety of APIs and formats.
-	* VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://vidvox.net/rays_oddsnends/ISF.html).
+	* VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://www.vidvox.net/rays_oddsnends/ISF.html).
 	* MultiClassXPC is an objective-c framework that simplifies the process of quickly setting upa number of different classes to work in an XPC service.
   - Potentially useful apps
     * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
     * MIDITestApp is a Cocoa application (created using VVMIDI) used to demonstrate the sending and receiving of MIDI data.
     * MIDIviaOSC is a Cocoa application (created using VVMIDI and VVOSC) that lets you send MIDI data to another computer on the internet via OSC
     * QCQL and ISFQL are QuickLook plugins that render thumbnails for, respectively, Quartz Composer and ISF content.
+    * MTCSender is a simple Cocoa app that sends MTC data to a given MIDI destination on the same machine.
     * ISF Editor is a browser and editor for ISF files- it's packed with enough features that listing them here would be very awkward.
   - Test/example apps- the majority of the apps here are test apps or example apps demonstrating how to use many of the classes and frameworks in this repository.  Examples include rendering GL contexts to textures, rendering Quartz Composer and CoreImage content to textures, rendering ISF files as generative sources and fx, working with textures from Syphon, working with QuickTime and the Hap video codec, accelerated GL texture download and upload, etc.
   - External code (stuff other people wrote hosted here to avoid dependency/submodule issues)
@@ -76,21 +80,6 @@ If you're writing a plugin, you need to weak-link against these frameworks.  If 
 
   1.  Follow the steps listed above for using these frameworks in a Mac application- you're going to be embedding a copy of these frameworks in your plugin just as you would for a mac app.
   2.  Double-click your plugin/target in the left-hand list of your project window (or select it and get its info).  Click on the "Build" tab, locate the "Other Linker Flags" setting, and add the following flags: "-weak_framework VVBasics", "-weak_framework VVOSC", "-weak_framework VVMIDI".
-
-
-How to use VVOSC in your iPhone application
--------------------------------------------
-
-In addition to frameworks for development of mac apps, this project can produce static libraries for use with iOS app creation.  Here's how to use the static libs in your project:
-  1.  In XCode, close the VVOpenSource project (if it is open), and then open your project.
-  2.  In the Finder, drag "VVOpenSource.xcodeproj" into your project's workspace
-  3.  Switch back to XCode, and locate the "Build Phases" settings for your project's target.
-  4.  Add a target dependency for "Build iOS static libs (VVOpenSource)".
-  5.  Add "libVVBasics.a" and "libVVOSC.a" to the "Link Binary with Libraries" section.
-  6.  In XCode, switch to the "Build Settings" for your application, and under the "Other Linker Flags" setting add the flag "-ObjC".
-  7.  That's it- you're done now.  You can import/include objects from the VVOSC framework in your source code as you normally would (#import \<VVOSC/VVOSC.h\>).
-
-Here's a quick video demonstrating the above steps:[http://vidvox.net/rays_oddsnends/addingVVOSC.mov].
 
 
 Using VVBasics/VVOSC/etc. in closed-source iOS applications
