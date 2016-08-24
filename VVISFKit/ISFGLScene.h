@@ -160,6 +160,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 @property (readonly) MutLockArray *audioInputs;
 @property (readonly) VVSIZE renderSize;
 @property (readonly) int passCount;
+@property (readonly) NSArray *passTargetNames;
 @property (readonly) int imageInputsCount;
 @property (readonly) int audioInputsCount;
 @property (readonly) NSString *jsonSource;

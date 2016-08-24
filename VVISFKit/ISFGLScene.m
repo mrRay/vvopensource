@@ -2997,6 +2997,21 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		return 0;
 	return (int)[passes count];
 }
+- (NSArray *) passTargetNames	{
+	if (deleted || passes==nil)
+		return nil;
+	
+	NSMutableArray		*returnMe = MUTARRAY;
+	[passes rdlock];
+	for (ISFRenderPass *pass in [passes array])	{
+		NSString		*passName = [pass targetName];
+		if (passName!=nil)
+			[returnMe addObject:passName];
+	}
+	[passes unlock];
+	
+	return returnMe;
+}
 - (int) imageInputsCount	{
 	if (deleted || imageInputs==nil)
 		return 0;

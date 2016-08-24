@@ -269,10 +269,17 @@
 		//	add a separator
 		[theMenu addItem:[NSMenuItem separatorItem]];
 		//	add menu items for the passes
+		NSArray			*passTargetNames = [[isfController scene] passTargetNames];
+		if (passTargetNames!=nil && [passTargetNames count]!=maxPassCount)
+			passTargetNames = nil;
 		for (int i=0; i<maxPassCount; ++i)	{
+			NSString		*tmpName = (passTargetNames!=nil)
+				? [NSString stringWithFormat:@"%d: %@",i,[passTargetNames objectAtIndex:i]]
+				: [NSString stringWithFormat:@"PASSINDEX %d",i];
 			tmpItem = [[NSMenuItem alloc]
 				//initWithTitle:[NSString stringWithFormat:@"Pass %d",i+1]
-				initWithTitle:[NSString stringWithFormat:@"PASSINDEX %d",i]
+				//initWithTitle:[NSString stringWithFormat:@"PASSINDEX %d",i]
+				initWithTitle:tmpName
 				action:nil
 				keyEquivalent:@""];
 			[tmpItem setRepresentedObject:NUMINT(i)];
