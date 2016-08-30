@@ -4,6 +4,10 @@
 
 #if !TARGET_OS_IPHONE
 NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC)	{
+	return VVRunAlertPanelSuppressString(title, msg, btnA, btnB, btnC, nil);
+}
+
+NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC, NSString *suppressString)	{
 	NSInteger		returnMe;
 	NSAlert			*macroLocalAlert = [NSAlert alertWithError:[NSError
 		errorWithDomain:@""
@@ -19,6 +23,19 @@ NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSStri
 		[macroLocalAlert addButtonWithTitle:btnB];
 	if (btnC!=nil && [btnC length]>0)
 		[macroLocalAlert addButtonWithTitle:btnC];
+	
+	if (suppressString!=nil && [suppressString length]>0)	{
+		[macroLocalAlert setShowsSuppressionButton:YES];
+		NSButton		*tmpButton = [macroLocalAlert suppressionButton];
+		if (tmpButton != nil)	{
+			[tmpButton setTitle:suppressString];
+			[tmpButton setIntValue:NSOffState];
+		}
+	}
+	else	{
+		[macroLocalAlert setShowsSuppressionButton:NO];
+	}
+	
 	returnMe = [macroLocalAlert runModal];
 	//NSLog(@"\t\treturning %ld",returnMe);
 	return returnMe;
