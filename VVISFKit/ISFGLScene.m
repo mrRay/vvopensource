@@ -329,16 +329,28 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						if (bufferDescription!=nil && [bufferDescription isKindOfClass:dictClass])	{
 							ISFTargetBuffer		*newBuffer = [ISFTargetBuffer create];
 							[newBuffer setName:bufferName];
-							NSString				*tmpString = nil;
-							tmpString = [bufferDescription objectForKey:@"WIDTH"];
-							if (tmpString != nil && [tmpString isKindOfClass:[NSString class]])	{
-								[newBuffer setTargetWidthString:tmpString];
-								bufferRequiresEval = YES;
+							id					tmpObj = nil;
+							tmpObj = [bufferDescription objectForKey:@"WIDTH"];
+							if (tmpObj != nil)	{
+								if ([tmpObj isKindOfClass:[NSString class]])	{
+									[newBuffer setTargetWidthString:tmpObj];
+									bufferRequiresEval = YES;
+								}
+								else if ([tmpObj isKindOfClass:[NSNumber class]])	{
+									[newBuffer setTargetWidthString:VVFMTSTRING(@"%d",[tmpObj intValue])];
+									bufferRequiresEval = YES;
+								}
 							}
-							tmpString = [bufferDescription objectForKey:@"HEIGHT"];
-							if (tmpString != nil && [tmpString isKindOfClass:[NSString class]])	{
-								[newBuffer setTargetHeightString:tmpString];
-								bufferRequiresEval = YES;
+							tmpObj = [bufferDescription objectForKey:@"HEIGHT"];
+							if (tmpObj != nil)	{
+								if ([tmpObj isKindOfClass:[NSString class]])	{
+									[newBuffer setTargetHeightString:tmpObj];
+									bufferRequiresEval = YES;
+								}
+								else if ([tmpObj isKindOfClass:[NSNumber class]])	{
+									[newBuffer setTargetHeightString:VVFMTSTRING(@"%d",[tmpObj intValue])];
+									bufferRequiresEval = YES;
+								}
 							}
 							NSNumber			*tmpNum = [bufferDescription objectForKey:@"FLOAT"];
 							if (tmpNum!=nil && [tmpNum isKindOfClass:[NSNumber class]] && [tmpNum boolValue])

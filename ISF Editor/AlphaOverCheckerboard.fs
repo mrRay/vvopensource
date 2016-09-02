@@ -68,8 +68,10 @@ void main()	{
 	vec2		normMaskSrcCoord;
 	normMaskSrcCoord.x = (gl_FragCoord.x-rectOfResizedInputImage.x)/rectOfResizedInputImage.z;
 	normMaskSrcCoord.y = (gl_FragCoord.y-rectOfResizedInputImage.y)/rectOfResizedInputImage.w;
+	vec2		pixelMaskSrcCoord = floor(normMaskSrcCoord * IMG_SIZE(inputImage)) + vec2(0.5);
 	//	get the color of the pixel from the input image for these normalized coords (the color is transparent black if there should be no image here as a result of the rect resize)
-	vec4		inputImagePixel = (normMaskSrcCoord.x>=0.0 && normMaskSrcCoord.x<=1.0 && normMaskSrcCoord.y>=0.0 && normMaskSrcCoord.y<=1.0) ? IMG_NORM_PIXEL(inputImage, normMaskSrcCoord) : vec4(0,0,0,0);
+	//vec4		inputImagePixel = (normMaskSrcCoord.x>=0.0 && normMaskSrcCoord.x<=1.0 && normMaskSrcCoord.y>=0.0 && normMaskSrcCoord.y<=1.0) ? IMG_NORM_PIXEL(inputImage, normMaskSrcCoord) : vec4(0,0,0,0);
+	vec4		inputImagePixel = (normMaskSrcCoord.x>=0.0 && normMaskSrcCoord.x<=1.0 && normMaskSrcCoord.y>=0.0 && normMaskSrcCoord.y<=1.0) ? IMG_PIXEL(inputImage, pixelMaskSrcCoord) : vec4(0,0,0,0);
 	
 	//	now we do the "source atop" composition that will show the checkerboard backing
 	

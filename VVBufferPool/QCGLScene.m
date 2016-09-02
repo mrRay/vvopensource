@@ -374,8 +374,10 @@ pthread_mutex_t			_globalQCContextLock;
 }
 - (void) _initialize	{
 	//NSLog(@"%s",__func__);
-	if (context == nil)
+	if (context == nil)	{
 		NSLog(@"\t\terr: context nil, %s",__func__);
+		return;
+	}
 	//	if there's no renderer, make one
 	if (renderer == nil)	{
 		//NSLog(@"\t\tshould be making a renderer");
@@ -386,11 +388,15 @@ pthread_mutex_t			_globalQCContextLock;
 				NSLog(@"\terr: QCComposition was nil %s",__func__);
 			else	{
 				pthread_mutex_lock(&universalInitializeLock);
+				CGLLockContext([context CGLContextObj]);
+				//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
 				renderer = [[QCRenderer alloc]
 					initWithCGLContext:[context CGLContextObj]
 					pixelFormat:[customPixelFormat CGLPixelFormatObj]
 					colorSpace:colorSpace
 					composition:composition];
+				//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
+				CGLUnlockContext([context CGLContextObj]);
 				if (renderer == nil)
 					NSLog(@"\t\terr: couldn't create QCRenderer, %s",__func__);
 				pthread_mutex_unlock(&universalInitializeLock);
