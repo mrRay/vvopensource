@@ -1,6 +1,7 @@
 /*{
 	"DESCRIPTION": "draws the passed image over a checkerboard such that the alpha channel in the image is visible.  the passed image is automatically scaled to always fit within the GL context.",
 	"CREDIT": "by zoidberg WOOP WOOP WOOP WOOP WOOP",
+	"ISFVSN": "2",
 	"CATEGORIES": [
 	],
 	"INPUTS": [

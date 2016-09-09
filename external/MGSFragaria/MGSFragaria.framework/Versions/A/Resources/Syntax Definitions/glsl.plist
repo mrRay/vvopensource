@@ -44,10 +44,15 @@
 		<string>IMG_NORM_PIXEL</string>
 		<string>IMG_THIS_PIXEL</string>
 		<string>IMG_THIS_NORM_PIXEL</string>
+		<string>IMG_SIZE</string>
 		<string>PASSINDEX</string>
 		<string>RENDERSIZE</string>
+		<string>isf_vertexShaderInit</string>
 		<string>isf_FragNormCoord</string>
 		<string>TIME</string>
+		<string>TIMEDELTA</string>
+		<string>DATE</string>
+		<string>FRAMEINDEX</string>
 		<string>attribute</string>
 		<string>varying</string>
 		<string>const</string>

@@ -1581,7 +1581,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				else	{
 					NSString		*newFuncString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
-					newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					//newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					newFuncString = VVFMTSTRING(@"(_%@_imgSize.xy)",samplerName);
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
@@ -1800,7 +1801,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				else	{
 					NSString		*newFuncString = nil;
 					NSString		*samplerName = [varArray objectAtIndex:0];
-					newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					//newFuncString = VVFMTSTRING(@"(_%@_imgRect.zw)",samplerName);
+					newFuncString = VVFMTSTRING(@"(_%@_imgSize.xy)",samplerName);
 					[modSrcString replaceCharactersInRange:fullFuncRangeToReplace withString:newFuncString];
 					tmpRange.location = fullFuncRangeToReplace.location + [newFuncString length];
 					tmpRange.length = [modSrcString length] - tmpRange.location;
