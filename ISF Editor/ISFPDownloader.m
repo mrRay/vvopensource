@@ -356,6 +356,8 @@
 				//	if the vertString is the default vertString, we can skip it
 				if ([vertString isEqualToString:@"void main() {\n\tvv_vertShaderInit();\n}"])
 					vertString = nil;
+				else if ([vertString isEqualToString:@"void main() {\n\tisf_vertShaderInit();\n}"])
+					vertString = nil;
 				
 				//	if the folder doesn't already exist
 				NSString		*shaderDir = VVFMTSTRING(@"%@/%d",baseDir,[idNum intValue]);

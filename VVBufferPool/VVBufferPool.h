@@ -55,6 +55,7 @@
 extern id				_globalVVBufferPool;	//	retained, nil on launch- this is the "main" buffer pool, used to generate image resources for hardware-accelerated image processing.  can't be created automatically, b/c it needs to be based on a shared context.
 #if !TARGET_OS_IPHONE
 extern int				_msaaMaxSamples;
+extern int				_glMaxTextureDimension;
 #endif	//	!TARGET_OS_IPHONE
 extern BOOL			_bufferPoolInitialized;
 extern VVStopwatch	*_bufferTimestampMaker;

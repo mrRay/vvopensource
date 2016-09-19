@@ -18,6 +18,7 @@
 id _globalVVBufferPool = nil;
 #if !TARGET_OS_IPHONE
 int				_msaaMaxSamples = 0;
+int				_glMaxTextureDimension = 1024;
 #endif	//	!TARGET_OS_IPHONE
 BOOL			_bufferPoolInitialized = NO;
 VVStopwatch		*_bufferTimestampMaker = nil;
@@ -58,6 +59,8 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		GLint			tmp;
 		glGetIntegerv(GL_MAX_SAMPLES_EXT,&tmp);
 		_msaaMaxSamples = tmp;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &tmp);
+		_glMaxTextureDimension = tmp;
 		[tmpContext release];
 	}
 #else	//	NOT !TARGET_OS_IPHONE

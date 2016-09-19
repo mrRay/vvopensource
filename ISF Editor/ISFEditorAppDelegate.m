@@ -1048,8 +1048,16 @@
 								lineDelta = 0;
 							}
 							else	{
-								NSInteger			numberOfLinesAppendedToVS = [[compiledVertSrc substringFromIndex:rangeOfEndOfVS.location] numberOfLines];
-								lineDelta = [precompiledVertSrc numberOfLines] - ([compiledVertSrc numberOfLines]-numberOfLinesAppendedToVS);
+								firstLineAppendedToVS = @"\nvoid isf_vertShaderInit(void)\t{";
+								rangeOfEndOfVS = [compiledVertSrc rangeOfString:firstLineAppendedToVS];
+								if (rangeOfEndOfVS.location==NSNotFound || rangeOfEndOfVS.length!=[firstLineAppendedToVS length])	{
+									NSLog(@"\t\tERR: couldn't locate end of precompiled shader in compiled vertex shader, %s",__func__);
+									lineDelta = 0;
+								}
+								else	{
+									NSInteger			numberOfLinesAppendedToVS = [[compiledVertSrc substringFromIndex:rangeOfEndOfVS.location] numberOfLines];
+									lineDelta = [precompiledVertSrc numberOfLines] - ([compiledVertSrc numberOfLines]-numberOfLinesAppendedToVS);
+								}
 							}
 						}
 						//	if there's no difference in line numbers, just copy the error log in its entirety
