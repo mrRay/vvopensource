@@ -17,7 +17,8 @@
 			return [NSString stringWithFormat:@"<OSCVal s %@>",(id)value];
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
-			return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(long)(*((long long *)value)>>32),(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
+			return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
 		case OSCVal64Int:
 			return [NSString stringWithFormat:@"<OSCVal h: %qi>",*(long long *)value];
 		case OSCValDouble:
@@ -58,7 +59,8 @@
 		case OSCValString:
 			return [NSString stringWithFormat:@"string \"%@\"",(id)value];
 		case OSCValTimeTag:
-			return [NSString stringWithFormat:@"Time Tag %ld-%ld",(long)(*((long long *)value)>>32),(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+			//return [NSString stringWithFormat:@"Time Tag %ld-%ld",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
+			return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
 		case OSCVal64Int:
 			return [NSString stringWithFormat:@"64-bit Integer %qi",*(long long *)value];
 		case OSCValDouble:
@@ -113,8 +115,20 @@
 		return nil;
 	return [returnMe autorelease];
 }
-+ (id) createWithTimeSeconds:(long)s microSeconds:(long)ms	{
++ (id) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithTimeSeconds:s microSeconds:ms];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createWithOSCTimetag:(uint64_t)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initWithOSCTimetag:n];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
++ (id) createTimeWithDate:(NSDate *)n	{
+	OSCValue		*returnMe = [[OSCValue alloc] initTimeWithDate:n];
 	if (returnMe == nil)
 		return nil;
 	return [returnMe autorelease];
@@ -226,22 +240,39 @@
 	[self release];
 	return nil;
 }
-- (id) initWithTimeSeconds:(long)s microSeconds:(long)ms	{
+- (id) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
 	if (self = [super init])	{
-		value = malloc(sizeof(long long));
-		*(long long *)value = ((((long long)s)<<32)&(0xFFFFFFFF00000000)) | ((long long)ms);
+		value = malloc(sizeof(uint64_t));
+		*(uint64_t *)value = ((((uint64_t)s)<<32)&(0xFFFFFFFF00000000)) | ((uint64_t)ms);
 		type = OSCValTimeTag;
 		return self;
-		/*
-		value = malloc(sizeof(long)*2);
-		long		*valPtr;
-		valPtr = value;
-		*valPtr = s;
-		valPtr += 1;
-		*valPtr = ms;
+	}
+	[self release];
+	return nil;
+}
+- (id) initWithOSCTimetag:(uint64_t)n	{
+	if (self = [super init])	{
+		value = malloc(sizeof(uint64_t));
+		*(uint64_t *)value = n;
 		type = OSCValTimeTag;
 		return self;
-		*/
+	}
+	[self release];
+	return nil;
+}
+- (id) initTimeWithDate:(NSDate *)n	{
+	if (self = [super init])	{
+		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
+		double		tmpVal = [n timeIntervalSinceReferenceDate];
+		tmpVal += 3187296000.;
+		//NSLog(@"\t\ttime since ref date is %f",tmpVal);
+		uint64_t	time_s = floor(tmpVal);
+		uint64_t	time_us = floor((double)1000000.0 * (tmpVal - (double)time_s));
+		value = malloc(sizeof(uint64_t));
+		*(uint64_t *)value = time_s<<32 | time_us;
+		//NSLog(@"\t\tvalue is %qu",*(uint64_t *)value);
+		type = OSCValTimeTag;
+		return self;
 	}
 	[self release];
 	return nil;
@@ -413,7 +444,8 @@
 			break;
 		case OSCValTimeTag:
 			//returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:*((long *)(value)) microSeconds:*((long *)(value+1))];
-			returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:(long)(*((long long *)value)>>32) microSeconds:(long)((*(long long *)value) & 0x00000000FFFFFFFF)];
+			//returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:(unsigned long)(*((uint64_t *)value)>>32) microSeconds:(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
+			returnMe = [[OSCValue allocWithZone:z] initWithOSCTimetag:*(uint64_t *)value];
 			break;
 		case OSCVal64Int:
 			returnMe = [[OSCValue allocWithZone:z] initWithLongLong:*(long long *)value];
@@ -511,8 +543,8 @@
 }
 - (struct timeval) timeValue	{
 	struct timeval		returnMe;
-	returnMe.tv_sec = (*((long long *)value)>>32);
-	returnMe.tv_usec = ((*(long long *)value) & 0xFFFFFFFF);
+	returnMe.tv_sec = (*((uint64_t *)value)>>32);
+	returnMe.tv_usec = ((*(uint64_t *)value) & 0xFFFFFFFF);
 	return returnMe;
 	/*
 	struct timeval		returnMe;
@@ -525,9 +557,11 @@
 	*/
 }
 - (NSDate *) dateValue	{
-	double		tmpTime = 0;
-	tmpTime = (float)(*((long long *)value)>>32);
-	tmpTime += (float)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
+	double		tmpTime = 0.;
+	tmpTime = (double)(*((uint64_t *)value)>>32);
+	tmpTime += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 1000000.0;
+	//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
+	tmpTime -= 3187296000.;
 	NSDate		*returnMe = [NSDate dateWithTimeIntervalSinceReferenceDate:tmpTime];
 	return returnMe;
 }
@@ -637,8 +671,8 @@
 			//return ROUNDUP4(([(NSString *)value length] + 1));
 			break;
 		case OSCValTimeTag:
-			returnMe = (double)(*((long long *)value)>>32);
-			returnMe += (double)((*(long long *)value) & 0xFFFFFFFF) / 1000000.0;
+			returnMe = (double)(*((uint64_t *)value)>>32);
+			returnMe += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 1000000.0;
 			/*
 			returnMe = *((long *)(value));
 			returnMe += *((long *)(value+1));
@@ -894,16 +928,9 @@
 			++*t;
 			break;
 		case OSCValTimeTag:
-			*((long *)(b+*d)) = NSSwapHostLongToBig((long)(*((long long *)value)>>32));
-			*d += 4;
-			*((long *)(b+*d)) = NSSwapHostLongToBig((long)((*(long long *)value) & 0xFFFFFFFF));
-			*d += 4;
-			/*
-			*((long *)(b+*d)) = NSSwapHostLongToBig(*((long *)(value)));
-			*d += 4;
-			*((long *)(b+*d)) = NSSwapHostLongToBig(*((long *)(value+1)));
-			*d += 4;
-			*/
+			*((uint64_t *)(b+*d)) = NSSwapHostLongLongToBig(*(uint64_t *)value);
+			*d += 8;
+			
 			b[*t] = 't';
 			++*t;
 			break;

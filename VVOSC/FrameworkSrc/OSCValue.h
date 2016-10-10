@@ -30,7 +30,9 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 ///	Creates & returns an auto-released instance of OSCValue with an NSString
 + (id) createWithString:(NSString *)n;
 ///	Creates & returns an auto-released instance of OSCValue with the timeval represented as two 32-bit unsigned ints- seconds and microseconds
-+ (id) createWithTimeSeconds:(long)s microSeconds:(long)ms;
++ (id) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
++ (id) createWithOSCTimetag:(uint64_t)n;
++ (id) createTimeWithDate:(NSDate *)n;
 ///	Creates & returns an auto-released instance of OSCValue with a 64-bit signed integer
 + (id) createWithLongLong:(long long)n;
 ///	Creates & returns an auto-released instance of OSCValue with a 64-bit float (double)
@@ -60,7 +62,9 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (id) initWithInt:(int)n;
 - (id) initWithFloat:(float)n;
 - (id) initWithString:(NSString *)n;
-- (id) initWithTimeSeconds:(long)s microSeconds:(long)ms;
+- (id) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
+- (id) initWithOSCTimetag:(uint64_t)n;
+- (id) initTimeWithDate:(NSDate *)n;
 - (id) initWithLongLong:(long long)n;
 - (id) initWithDouble:(double)n;
 - (id) initWithChar:(char)n;

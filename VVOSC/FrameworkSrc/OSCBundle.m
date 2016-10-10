@@ -22,13 +22,15 @@
 		2)- the element itself, whether it's a message or a bundle
 */
 	//	calculate the timetag for the bundle...
-	long			time_s = NSSwapBigLongToHost(*((long *)(b+8)));
-	long			time_us = NSSwapBigLongToHost(*((long *)(b+12)));
+	uint32_t		time_s = CFSwapInt32HostToBig(*((uint32_t *)(b+8)));
+	uint32_t		time_us = CFSwapInt32HostToBig(*((uint32_t *)(b+12)));
 	NSDate			*localTimeTag = nil;
 	if (time_s==0 && (time_us==0 || time_us==1))
 		localTimeTag = d;
 	else	{
 		double			timeSinceRefDate = ((double)(time_s)) + ((double)time_us)/((double)1000000.0);
+		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
+		timeSinceRefDate -= 3187296000.;
 		localTimeTag = [NSDate dateWithTimeIntervalSinceReferenceDate:timeSinceRefDate];
 	}
 	int				baseIndex = 16;	//	baseIndex is now pointing to the int describing the length of the first element
@@ -212,10 +214,10 @@
 	else	{
 		//	the interval since ref date gives us the interval since 1/1/2001
 		NSTimeInterval		interval = [timeTag timeIntervalSinceReferenceDate];
-		//	...the "reference date" in OSC is 1/1/1900, so we have to add one century plus one year's worth of seconds to this...
+		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 		interval += 3187296000.;
-		long		time_s = NSSwapHostLongToBig(floor(interval));
-		long		time_us = NSSwapHostLongToBig((long)(floor((double)1000000.0 * ((double)(interval - (double)time_s)))));
+		uint32_t		time_s = CFSwapInt32HostToBig((uint32_t)floor(interval));
+		uint32_t		time_us = CFSwapInt32HostToBig((uint32_t)(floor((double)1000000.0 * ((double)(interval - floor(interval))))));
 		writeOffset = 8;
 		*((long *)(b+writeOffset)) = time_s;
 		writeOffset = 12;

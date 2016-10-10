@@ -349,9 +349,7 @@
 				tmpIndex += 8;
 				break;
 			case 't':			//	OSC-timetag (64-bit/8 byte)
-				tmpVal = [OSCValue
-					createWithTimeSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex)))
-					microSeconds:NSSwapBigLongToHost(*((long *)(b+tmpIndex+4)))];
+				tmpVal = [OSCValue createWithOSCTimetag:NSSwapBigLongLongToHost(*((uint64_t *)(b+tmpIndex)))];
 				if (arrayVals!=nil && [arrayVals count]>0)
 					[[arrayVals lastObject] addValue:tmpVal];
 				else
