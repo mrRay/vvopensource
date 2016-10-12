@@ -18,7 +18,12 @@
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
-			return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
+			//return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
+			{
+				NSDateFormatter		*fmt = [[[NSDateFormatter alloc] init] autorelease];
+				[fmt setDateFormat:@"dd/MM, HH:mm:ss.SSSSS"];
+				return [fmt stringFromDate:[self dateValue]];
+			}
 		case OSCVal64Int:
 			return [NSString stringWithFormat:@"<OSCVal h: %qi>",*(long long *)value];
 		case OSCValDouble:
@@ -265,9 +270,8 @@
 		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 		double		tmpVal = [n timeIntervalSinceReferenceDate];
 		tmpVal += 3187296000.;
-		//NSLog(@"\t\ttime since ref date is %f",tmpVal);
 		uint64_t	time_s = floor(tmpVal);
-		uint64_t	time_us = floor((double)1000000.0 * (tmpVal - (double)time_s));
+		uint64_t	time_us = (tmpVal - (double)time_s) * 4294967296.0;
 		value = malloc(sizeof(uint64_t));
 		*(uint64_t *)value = time_s<<32 | time_us;
 		//NSLog(@"\t\tvalue is %qu",*(uint64_t *)value);
@@ -559,7 +563,7 @@
 - (NSDate *) dateValue	{
 	double		tmpTime = 0.;
 	tmpTime = (double)(*((uint64_t *)value)>>32);
-	tmpTime += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 1000000.0;
+	tmpTime += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 4294967296.0;
 	//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 	tmpTime -= 3187296000.;
 	NSDate		*returnMe = [NSDate dateWithTimeIntervalSinceReferenceDate:tmpTime];
@@ -672,7 +676,7 @@
 			break;
 		case OSCValTimeTag:
 			returnMe = (double)(*((uint64_t *)value)>>32);
-			returnMe += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 1000000.0;
+			returnMe += (double)((*(uint64_t *)value) & 0xFFFFFFFF) / 4294967296.0;
 			/*
 			returnMe = *((long *)(value));
 			returnMe += *((long *)(value+1));

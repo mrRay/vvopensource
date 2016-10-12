@@ -28,7 +28,7 @@
 	if (time_s==0 && (time_us==0 || time_us==1))
 		localTimeTag = d;
 	else	{
-		double			timeSinceRefDate = ((double)(time_s)) + ((double)time_us)/((double)1000000.0);
+		double			timeSinceRefDate = ((double)(time_s)) + ((double)time_us)/((double)4294967296.0);
 		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 		timeSinceRefDate -= 3187296000.;
 		localTimeTag = [NSDate dateWithTimeIntervalSinceReferenceDate:timeSinceRefDate];
@@ -217,7 +217,7 @@
 		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 		interval += 3187296000.;
 		uint32_t		time_s = CFSwapInt32HostToBig((uint32_t)floor(interval));
-		uint32_t		time_us = CFSwapInt32HostToBig((uint32_t)(floor((double)1000000.0 * ((double)(interval - floor(interval))))));
+		uint32_t		time_us = CFSwapInt32HostToBig((uint32_t)(floor((double)4294967296.0 * ((double)(interval - floor(interval))))));
 		writeOffset = 8;
 		*((long *)(b+writeOffset)) = time_s;
 		writeOffset = 12;
