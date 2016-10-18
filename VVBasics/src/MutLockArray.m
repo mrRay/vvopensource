@@ -268,7 +268,7 @@
 	id	returnMe = nil;
 	
 	if ((array != nil) && ([array count]>0))	{
-		pthread_rwlock_wrlock(&arrayLock);
+		pthread_rwlock_rdlock(&arrayLock);
 			returnMe = [self lastObject];
 		pthread_rwlock_unlock(&arrayLock);
 	}
@@ -394,7 +394,7 @@
 	if ((array == nil) || (key == nil))
 		return nil;
 	id	returnMe = nil;
-	pthread_rwlock_wrlock(&arrayLock);
+	pthread_rwlock_rdlock(&arrayLock);
 		returnMe = [array valueForKey:key];
 	pthread_rwlock_unlock(&arrayLock);	
 	
@@ -709,7 +709,7 @@
 		return;
 	if (descriptors == nil)
 		return;
-	pthread_rwlock_rdlock(&arrayLock);
+	pthread_rwlock_wrlock(&arrayLock);
 		[self sortUsingDescriptors:descriptors];
 	pthread_rwlock_unlock(&arrayLock);
 }
