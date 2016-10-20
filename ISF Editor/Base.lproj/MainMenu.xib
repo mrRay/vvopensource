@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
         <development version="5100" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -1172,7 +1172,9 @@ Gw
                 <outlet property="appController" destination="494" id="pKb-Wd-iS0"/>
                 <outlet property="appWindow" destination="371" id="y8G-pH-nSi"/>
                 <outlet property="browseTypePUB" destination="wqN-7a-i1r" id="Czf-0q-cuy"/>
+                <outlet property="categoriesPUB" destination="ZoV-TF-RWC" id="zFc-n1-w1C"/>
                 <outlet property="docController" destination="T2L-7K-qBe" id="fTd-pt-rYk"/>
+                <outlet property="functionPUB" destination="URw-Ce-JRw" id="iYh-2s-5i5"/>
                 <outlet property="isfController" destination="577" id="4hu-fi-LOz"/>
                 <outlet property="myWindow" destination="IXB-EG-Xqv" id="Nkk-BP-0Qr"/>
                 <outlet property="searchField" destination="mfl-F1-cDD" id="M2l-gv-hWk"/>
@@ -1182,29 +1184,113 @@ Gw
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="IXB-EG-Xqv" userLabel="ISF Download Window">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="373" height="668"/>
+            <rect key="contentRect" x="196" y="240" width="373" height="820"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <view key="contentView" id="bkq-Qr-9ih">
-                <rect key="frame" x="0.0" y="0.0" width="373" height="668"/>
+                <rect key="frame" x="0.0" y="0.0" width="373" height="820"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <searchField wantsLayer="YES" verticalHuggingPriority="750" id="mfl-F1-cDD">
-                        <rect key="frame" x="71" y="626" width="231" height="22"/>
+                    <customView id="Q9s-W3-n9e">
+                        <rect key="frame" x="20" y="692" width="333" height="108"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="Wls-Z9-MIS">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </searchFieldCell>
-                        <connections>
-                            <action selector="searchFieldUsed:" target="Szs-Hm-w4d" id="pIe-vI-eVz"/>
-                        </connections>
-                    </searchField>
+                        <subviews>
+                            <searchField wantsLayer="YES" verticalHuggingPriority="750" id="mfl-F1-cDD">
+                                <rect key="frame" x="81" y="86" width="231" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="Wls-Z9-MIS">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </searchFieldCell>
+                                <connections>
+                                    <action selector="searchFieldUsed:" target="Szs-Hm-w4d" id="pIe-vI-eVz"/>
+                                </connections>
+                            </searchField>
+                            <popUpButton verticalHuggingPriority="750" id="wqN-7a-i1r">
+                                <rect key="frame" x="122" y="-3" width="172" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="3gf-RI-XM5">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="hob-kv-cRd">
+                                        <items>
+                                            <menuItem title="Latest" id="Gmy-a9-dea"/>
+                                            <menuItem title="Most Stars" id="4kr-ow-Ek3"/>
+                                            <menuItem title="Name" id="9Ui-DY-hPR"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="browseTypePUBUsed:" target="Szs-Hm-w4d" id="V8L-tX-RuL"/>
+                                </connections>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="AbL-2C-WJ6">
+                                <rect key="frame" x="19" y="88" width="50" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search:" id="BgQ-HK-N6a">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="mca-vU-Jhg">
+                                <rect key="frame" x="40" y="60" width="78" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="In Category:" id="8pP-Fq-dsj">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="K13-j4-JuZ">
+                                <rect key="frame" x="40" y="2" width="66" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="List order:" id="G77-2W-X0W">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" id="ZoV-TF-RWC">
+                                <rect key="frame" x="122" y="55" width="172" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="JyS-VG-OIZ">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="mv1-he-L7c"/>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="categoriesPUBUsed:" target="Szs-Hm-w4d" id="5cn-3B-vIJ"/>
+                                </connections>
+                            </popUpButton>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="4At-nR-nLR">
+                                <rect key="frame" x="40" y="31" width="38" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Type:" id="vbT-ii-2c6">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" id="URw-Ce-JRw">
+                                <rect key="frame" x="122" y="26" width="172" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="adc-vq-bwf">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="hCN-H3-v30"/>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="functionTypePUBUsed:" target="Szs-Hm-w4d" id="BgU-HJ-aT8"/>
+                                </connections>
+                            </popUpButton>
+                        </subviews>
+                    </customView>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="52" horizontalPageScroll="10" verticalLineScroll="52" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="4TU-pD-egk">
-                        <rect key="frame" x="20" y="87" width="333" height="503"/>
+                        <rect key="frame" x="20" y="87" width="333" height="597"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="eb5-wr-5Kb">
-                            <rect key="frame" x="1" y="1" width="331" height="501"/>
+                            <rect key="frame" x="1" y="1" width="331" height="595"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="50" rowSizeStyle="automatic" viewBased="YES" id="uOv-th-3Wx">
@@ -1293,23 +1379,6 @@ Gw
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <popUpButton verticalHuggingPriority="750" id="wqN-7a-i1r">
-                        <rect key="frame" x="69" y="594" width="236" height="26"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="push" title="Most Stars" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="4kr-ow-Ek3" id="3gf-RI-XM5">
-                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
-                            <menu key="menu" id="hob-kv-cRd">
-                                <items>
-                                    <menuItem title="Latest" id="Gmy-a9-dea"/>
-                                    <menuItem title="Most Stars" state="on" id="4kr-ow-Ek3"/>
-                                </items>
-                            </menu>
-                        </popUpButtonCell>
-                        <connections>
-                            <action selector="browseTypePUBUsed:" target="Szs-Hm-w4d" id="V8L-tX-RuL"/>
-                        </connections>
-                    </popUpButton>
                     <button verticalHuggingPriority="750" id="jsi-kb-aHH">
                         <rect key="frame" x="15" y="14" width="79" height="28"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1367,7 +1436,7 @@ Gw
                     </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="1234.5" y="120"/>
+            <point key="canvasLocation" x="1234.5" y="196"/>
         </window>
         <window title="Editor UI" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="NLs-iL-fox">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES" resizable="YES"/>
@@ -1384,23 +1453,23 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <customView id="ooF-Od-agM">
-                                <rect key="frame" x="0.0" y="0.0" width="740" height="454.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="740" height="455"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <splitView dividerStyle="paneSplitter" vertical="YES" id="kjw-ht-kvT">
-                                        <rect key="frame" x="0.0" y="0.0" width="740" height="454.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="740" height="455"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <customView id="iW5-GE-f64">
-                                                <rect key="frame" x="0.0" y="0.0" width="180" height="454.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="180" height="455"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <customView id="1qp-sj-jm5">
-                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438.5"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     </customView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Mxi-pV-9Ux">
-                                                        <rect key="frame" x="-2" y="440" width="159" height="14"/>
+                                                        <rect key="frame" x="-2" y="440.5" width="159" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF Fragment source code" id="cvX-Jm-4HK">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1411,15 +1480,15 @@ Gw
                                                 </subviews>
                                             </customView>
                                             <customView id="Ehs-uW-W1W">
-                                                <rect key="frame" x="190" y="0.0" width="180" height="454.5"/>
+                                                <rect key="frame" x="190" y="0.0" width="180" height="455"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <customView id="xFC-CC-KFN">
-                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438.5"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     </customView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="wC6-uq-FZh">
-                                                        <rect key="frame" x="-2" y="440" width="159" height="14"/>
+                                                        <rect key="frame" x="-2" y="440.5" width="159" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF Vertex source code" id="EcX-v7-erB">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1430,11 +1499,11 @@ Gw
                                                 </subviews>
                                             </customView>
                                             <customView id="Xp1-Bs-RiX">
-                                                <rect key="frame" x="380" y="0.0" width="360" height="454.5"/>
+                                                <rect key="frame" x="380" y="0.0" width="360" height="455"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="byU-ML-Czs">
-                                                        <rect key="frame" x="-2" y="440" width="270" height="14"/>
+                                                        <rect key="frame" x="-2" y="440.5" width="270" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF JSON Editor" id="KB3-dr-QMH">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1443,14 +1512,14 @@ Gw
                                                         </textFieldCell>
                                                     </textField>
                                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="169" horizontalPageScroll="10" verticalLineScroll="169" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="3mP-nT-B6h">
-                                                        <rect key="frame" x="0.0" y="0.0" width="360" height="438"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="360" height="438.5"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <clipView key="contentView" id="eYa-09-S9Q">
-                                                            <rect key="frame" x="1" y="1" width="358" height="436"/>
+                                                            <rect key="frame" x="1" y="1" width="358" height="436.5"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="167" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="E8r-I9-Sb5" customClass="UnselectableTableView">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="358" height="436"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="358" height="0.0"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                                     <color key="backgroundColor" white="1" alpha="0.24908577130000001" colorSpace="deviceWhite"/>
@@ -3082,21 +3151,21 @@ Gw
                                 </subviews>
                             </customView>
                             <customView id="U8R-cx-s3p">
-                                <rect key="frame" x="0.0" y="464.5" width="740" height="260.5"/>
+                                <rect key="frame" x="0.0" y="465" width="740" height="260"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <tabView controlSize="mini" id="zYC-sT-dJy">
-                                        <rect key="frame" x="-3" y="-7" width="746" height="267.5"/>
+                                        <rect key="frame" x="-3" y="-7" width="746" height="267"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <font key="font" metaFont="miniSystem"/>
                                         <tabViewItems>
                                             <tabViewItem label="GL Compiler Errors" identifier="1" id="qVp-CV-BRg">
                                                 <view key="view" id="ZGF-Li-y9p">
-                                                    <rect key="frame" x="10" y="19" width="726" height="235.5"/>
+                                                    <rect key="frame" x="10" y="28" width="726" height="226"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="HOu-6P-LFB">
-                                                            <rect key="frame" x="15" y="219" width="447" height="14"/>
+                                                            <rect key="frame" x="15" y="209.5" width="447" height="14"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="These errors refer to the compiled vertex or fragment shaders (adjacent)" id="yF9-PY-1sj">
                                                                 <font key="font" metaFont="smallSystem"/>
@@ -3105,7 +3174,7 @@ Gw
                                                             </textFieldCell>
                                                         </textField>
                                                         <customView id="X7a-Mo-Kvy">
-                                                            <rect key="frame" x="2" y="2" width="722" height="209"/>
+                                                            <rect key="frame" x="2" y="2" width="722" height="199.5"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </customView>
                                                     </subviews>

@@ -10,7 +10,8 @@
 
 typedef enum {
     ISFPDownloaderBrowseType_MostStars = 1,
-    ISFPDownloaderBrowseType_Latest = 2
+    ISFPDownloaderBrowseType_Latest = 2,
+    ISFPDownloaderBrowseType_Name = 3
 } ISFPDownloaderBrowseType;
 
 
@@ -27,6 +28,8 @@ typedef enum {
 	IBOutlet DocController	*docController;
 	
 	IBOutlet NSSearchField		*searchField;
+	IBOutlet NSPopUpButton		*categoriesPUB;	//	categories, culled from the CATEGORIES tag in the ISF file.  representedObject of each menu item is the title of the category (if nil, don't filter by cateogry)
+	IBOutlet NSPopUpButton		*functionPUB;	//	convention type (image generator vs image filter vs composition mode)
 	IBOutlet NSPopUpButton		*browseTypePUB;
 	
 	IBOutlet NSTableView		*tableView;
@@ -45,6 +48,12 @@ typedef enum {
 	
 	NSTimer						*reloadTableTimer;	//	used to throttle table view reloading (throttle necessary because of completedDownloads)
 }
+
+- (void) populateCategoriesPUB;
+- (void) populateCategoriesPUBWithCategories:(NSArray *)n;
+- (IBAction) categoriesPUBUsed:(id)sender;
+
+- (IBAction) functionTypePUBUsed:(id)sender;
 
 - (IBAction) searchFieldUsed:(id)sender;
 - (IBAction) browseTypePUBUsed:(id)sender;

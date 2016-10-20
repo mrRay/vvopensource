@@ -50,6 +50,30 @@
 	
 	if (!alreadyAwake)	{
 		//[self browseTypePUBUsed:browseTypePUB];
+		
+		[self populateCategoriesPUB];
+		
+		[functionPUB removeAllItems];
+		NSMenu		*tmpMenu = [functionPUB menu];
+		NSMenuItem	*tmpMenuItem = nil;
+		
+		tmpMenuItem = [[[NSMenuItem alloc]
+			initWithTitle:@"<All>"
+			action:nil
+			keyEquivalent:@""] autorelease];
+		[tmpMenu addItem:tmpMenuItem];
+		
+		NSArray		*functionTypes = @[@"generator", @"filter", @"transition"];
+		for (NSString *functionType in functionTypes)	{
+			tmpMenuItem = [[[NSMenuItem alloc]
+				initWithTitle:functionType
+				action:nil
+				keyEquivalent:@""] autorelease];
+			[tmpMenuItem setRepresentedObject:functionType];
+			[tmpMenu addItem:tmpMenuItem];
+		}
+		
+		[functionPUB selectItemAtIndex:0];
 	}
 	
 	alreadyAwake = YES;
@@ -59,8 +83,81 @@
 #pragma mark -
 
 
+- (void) populateCategoriesPUB	{
+	NSLog(@"%s",__func__);
+	//	first, populate the categories PUB with a list of standard categories that will be used until we download the official list of categories from the server
+	NSArray			*defaultCats = @[@"Generator", @"Color Effect", @"Color Adjustment",@"Halftone Effect", @"Geometry Adjustment",@"Blur",@"Sharpen",@"Stylize",@"Glitch",@"Tile Effect",@"Distortion Effect",@"Film",@"Masking",@"Patterns"];
+	[self populateCategoriesPUBWithCategories:defaultCats];
+	//	now begin downloading the array of categories from the server
+	
+	VVCURLDL		*dl = [[VVCURLDL alloc] initWithAddress:@"https://www.interactiveshaderformat.com/api/v1/categories"];
+	[dl setDNSCacheTimeout:10];
+	[dl setConnectTimeout:10];
+	[dl appendStringToHeader:@"Accept: application/json"];
+	[dl performAsync:YES withBlock:^(VVCURLDL *finished)	{
+		NSString		*responseString = [finished responseString];
+		NSDictionary	*topLevelJSONObj = [responseString objectFromJSONString];
+		NSLog(@"\t\traw categories are %@",topLevelJSONObj);
+		NSMutableArray	*tmpCatArray = MUTARRAY;
+		//NSLog(@"\t\tcategories topLevelJSONObj is %@",topLevelJSONObj);
+		if (topLevelJSONObj!=nil && [topLevelJSONObj isKindOfClass:[NSDictionary class]])	{
+			NSArray			*catDictArray = [topLevelJSONObj objectForKey:@"categories"];
+			for (NSDictionary *catDict in catDictArray)	{
+				if ([catDict isKindOfClass:[NSDictionary class]])	{
+					NSString		*catName = [catDict objectForKey:@"name"];
+					if (catName != nil)
+						[tmpCatArray addObject:catName];
+				}
+			}
+		}
+		NSLog(@"\t\tfetched categories from server: %@",tmpCatArray);
+		[self populateCategoriesPUBWithCategories:tmpCatArray];
+	}];
+}
+- (void) populateCategoriesPUBWithCategories:(NSArray *)n	{
+	//NSLog(@"%s ... %@",__func__,n);
+	//	get the title of the currently selected menu item
+	NSString			*origSelectedItemName = [categoriesPUB titleOfSelectedItem];
+	//	clear the menu
+	NSMenu				*menu = [categoriesPUB menu];
+	NSMenuItem			*tmpItem = nil;
+	[menu removeAllItems];
+	//	add the "all categories" item
+	tmpItem = [[[NSMenuItem alloc]
+		initWithTitle:@"<All categories>"
+		action:nil
+		keyEquivalent:@""] autorelease];
+	[tmpItem setRepresentedObject:nil];
+	[menu addItem:tmpItem];
+	//	run through the passed array, making menu items for each name
+	if (n!=nil && [n count]>0)	{
+		[menu addItem:[NSMenuItem separatorItem]];
+		for (NSString *category in n)	{
+			tmpItem = [[[NSMenuItem alloc]
+				initWithTitle:category
+				action:nil
+				keyEquivalent:@""] autorelease];
+			[tmpItem setRepresentedObject:category];
+			[menu addItem:tmpItem];
+		}
+	}
+	//	if there was a selected menu item when we began, re-select it.
+	if (origSelectedItemName != nil)
+		[categoriesPUB selectItemWithTitle:origSelectedItemName];
+	//	if there wasn't a selected menu item when we began, select the "all categories" item
+	else
+		[categoriesPUB selectItemAtIndex:0];
+}
+- (IBAction) categoriesPUBUsed:(id)sender	{
+	NSLog(@"%s",__func__);
+	[self searchFieldUsed:searchField];
+}
+- (IBAction) functionTypePUBUsed:(id)sender	{
+	NSLog(@"%s",__func__);
+	[self searchFieldUsed:searchField];
+}
 - (IBAction) searchFieldUsed:(id)sender	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s",__func__);
 	//	deselect everything in the categories PUB
 	//[browseTypePUB selectItem:nil];
 	
@@ -125,6 +222,12 @@
 		
 		//[self setPageBaseURL:nil];
 		[self setBrowseType:ISFPDownloaderBrowseType_MostStars];
+	}
+	else if ([selectedTitle isEqualToString:@"Name"])	{
+		//[self setPageBaseURL:@"https://www.interactiveshaderformat.com/api/v1/shaders?"];
+		
+		//[self setPageBaseURL:nil];
+		[self setBrowseType:ISFPDownloaderBrowseType_Name];
 	}
 	
 	//	reset the page start indexes
@@ -255,21 +358,49 @@
 - (NSString *) createQueryURL	{
 	NSLog(@"%s",__func__);
 	NSString		*returnMe = nil;
-	NSString		*baseString = @"https://www.interactiveshaderformat.com/api/v1/shaders";
+	NSString		*baseString = @"https://www.interactiveshaderformat.com/api/v1/search";
 	NSArray			*searchTermsArray = [self pageQueryTerms];
 	NSString		*searchTermsString = (searchTermsArray==nil || [searchTermsArray count]<1) ? nil : VVFMTSTRING(@"query=%@",[searchTermsArray componentsJoinedByString:@","]);
-	NSString		*sortString = ([self browseType]==ISFPDownloaderBrowseType_Latest) ? @"sort=newest" : nil;
+	NSString		*categoryString = [[categoriesPUB selectedItem] representedObject];
+	NSString		*categoryTermsString = (categoryString==nil) ? nil : VVFMTSTRING(@"category=%@",categoryString);
+	NSString		*functionString = [[functionPUB selectedItem] representedObject];
+	NSString		*functionTermsString = (functionString==nil) ? nil : VVFMTSTRING(@"shader_type=%@",functionString);
+	//NSString		*sortString = ([self browseType]==ISFPDownloaderBrowseType_Latest) ? @"order=newest" : nil;
+	NSString		*sortString = nil;
+	switch ([self browseType])	{
+	case ISFPDownloaderBrowseType_MostStars:
+		sortString = @"order=popular";
+		break;
+	case ISFPDownloaderBrowseType_Latest:
+		sortString = @"order=newest";
+		break;
+	case ISFPDownloaderBrowseType_Name:
+		sortString = @"order=name";
+		break;
+	}
 	NSString		*offsetString = VVFMTSTRING(@"offset=%ld&limit=%d",(long)[self pageStartIndex],DOWNLOADCOUNT);
+	//NSLog(@"\t\tcategoryString is %@, functionString is %@",categoryString,functionString);
+	
+	NSCharacterSet	*urlChars = [NSCharacterSet URLQueryAllowedCharacterSet];
+	searchTermsString = [searchTermsString stringByAddingPercentEncodingWithAllowedCharacters:urlChars];
+	categoryTermsString = [categoryTermsString stringByAddingPercentEncodingWithAllowedCharacters:urlChars];
+	categoryTermsString = [categoryTermsString lowercaseString];
+	functionTermsString = [functionTermsString stringByAddingPercentEncodingWithAllowedCharacters:urlChars];
 	
 	NSMutableArray	*queryArray = [NSMutableArray arrayWithCapacity:0];
 	if (searchTermsString != nil)
 		[queryArray addObject:searchTermsString];
+	if (categoryTermsString != nil)
+		[queryArray addObject:categoryTermsString];
+	if (functionTermsString != nil)
+		[queryArray addObject:functionTermsString];
 	if (sortString != nil)
 		[queryArray addObject:sortString];
 	if (offsetString != nil)
 		[queryArray addObject:offsetString];
 	
 	returnMe = VVFMTSTRING(@"%@?%@",baseString,[queryArray componentsJoinedByString:@"&"]);
+	NSLog(@"\t\tquery URL is %@",returnMe);
 	
 	return returnMe;
 }
@@ -289,6 +420,7 @@
 				NSLog(@"\t\terr: %s, topLevelJSONObj nil, string was %@",__func__,responseString);
 			else
 				NSLog(@"\t\terr: %s, topLevelJSONObj was a %@ instead of an array",__func__,NSStringFromClass([topLevelJSONObj class]));
+				NSLog(@"\t\tcontent is %@",topLevelJSONObj);
 		}
 		else	{
 			//	if i'm here then we've got a JSON array to work with, so we most likely have some results...
