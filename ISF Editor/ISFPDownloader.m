@@ -63,13 +63,13 @@
 			keyEquivalent:@""] autorelease];
 		[tmpMenu addItem:tmpMenuItem];
 		
-		NSArray		*functionTypes = @[@"generator", @"filter", @"transition"];
+		NSArray		*functionTypes = @[@"Generator", @"Filter", @"Transition"];
 		for (NSString *functionType in functionTypes)	{
 			tmpMenuItem = [[[NSMenuItem alloc]
 				initWithTitle:functionType
 				action:nil
 				keyEquivalent:@""] autorelease];
-			[tmpMenuItem setRepresentedObject:functionType];
+			[tmpMenuItem setRepresentedObject:[functionType lowercaseString]];
 			[tmpMenu addItem:tmpMenuItem];
 		}
 		
@@ -84,7 +84,7 @@
 
 
 - (void) populateCategoriesPUB	{
-	NSLog(@"%s",__func__);
+	//NSLog(@"%s",__func__);
 	//	first, populate the categories PUB with a list of standard categories that will be used until we download the official list of categories from the server
 	NSArray			*defaultCats = @[@"Generator", @"Color Effect", @"Color Adjustment",@"Halftone Effect", @"Geometry Adjustment",@"Blur",@"Sharpen",@"Stylize",@"Glitch",@"Tile Effect",@"Distortion Effect",@"Film",@"Masking",@"Patterns"];
 	[self populateCategoriesPUBWithCategories:defaultCats];
@@ -97,7 +97,6 @@
 	[dl performAsync:YES withBlock:^(VVCURLDL *finished)	{
 		NSString		*responseString = [finished responseString];
 		NSDictionary	*topLevelJSONObj = [responseString objectFromJSONString];
-		NSLog(@"\t\traw categories are %@",topLevelJSONObj);
 		NSMutableArray	*tmpCatArray = MUTARRAY;
 		//NSLog(@"\t\tcategories topLevelJSONObj is %@",topLevelJSONObj);
 		if (topLevelJSONObj!=nil && [topLevelJSONObj isKindOfClass:[NSDictionary class]])	{
@@ -110,7 +109,6 @@
 				}
 			}
 		}
-		NSLog(@"\t\tfetched categories from server: %@",tmpCatArray);
 		[self populateCategoriesPUBWithCategories:tmpCatArray];
 	}];
 }
@@ -412,7 +410,7 @@
 	[dl appendStringToHeader:@"Accept: application/json"];
 	[dl performAsync:YES withBlock:^(VVCURLDL *finished)	{
 		//NSLog(@"\t\tdownloaded string %@",[finished responseString]);
-		//NSLog(@"\t\tdownloaded JSON object %@",[[finished responseString] objectFromJSONString]);
+		NSLog(@"\t\tdownloaded JSON object %@",[[finished responseString] objectFromJSONString]);
 		NSString		*responseString = [finished responseString];
 		NSArray			*topLevelJSONObj = [responseString objectFromJSONString];
 		if (topLevelJSONObj==nil || ![topLevelJSONObj isKindOfClass:[NSArray class]])	{

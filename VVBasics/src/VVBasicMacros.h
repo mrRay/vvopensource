@@ -156,6 +156,7 @@
 
 
 #if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
 //	not actually a macro- a function to replace NSRunAlertPanel, which is deprecated in 10.10
 NSInteger VVRunAlertPanel(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC);
 NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString *btnA, NSString *btnB, NSString *btnC, NSString *suppressString, BOOL *returnSuppressValue);
