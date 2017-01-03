@@ -77,7 +77,7 @@ id				_mainVVOSCAddressSpace;
 						keyEquivalent:@""];
 					//	if i actually made the item- set it up, apply the submenu, add it to the menu i'm returning!
 					if (newItem != nil)	{
-						[newItem setToolTip:[nodePtr fullName]];
+						//[newItem setToolTip:[nodePtr fullName]];
 						[newItem setTarget:t];
 						[newItem setAction:a];
 						if (subNodesMenu != nil)

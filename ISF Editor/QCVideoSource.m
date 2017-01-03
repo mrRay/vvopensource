@@ -58,8 +58,8 @@
 	OSSpinLockLock(&propLock);
 	if (propPath != nil)	{
 		VVRELEASE(propScene);
-		//propScene = [[QCGLScene alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] sized:NSMakeSize(1280,720)];
-		propScene = [[QCGLScene alloc] initCommonBackendSceneSized:NSMakeSize(1280,720)];
+		//propScene = [[QCGLScene alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] sized:NSMakeSize(1920,1080)];
+		propScene = [[QCGLScene alloc] initCommonBackendSceneSized:NSMakeSize(1920,1080)];
 		[propScene useFile:propPath];
 		VVRELEASE(propPath);
 	}

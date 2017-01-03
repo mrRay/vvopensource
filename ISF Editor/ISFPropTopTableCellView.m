@@ -75,13 +75,13 @@
 		}
 		else	{
 			NSArray			*terms = nil;
-			terms = [tmpString componentsSeparatedByRegex:@"[^\\w]+"];
+			terms = [tmpString componentsSeparatedByRegex:@"[,]+"];
 			//NSLog(@"\t\tcats are %@",terms);
 			for (NSString *term in terms)	{
 				if ([term length]>0)	{
 					if (newCats==nil)
 						newCats = MUTARRAY;
-					[newCats addObject:term];
+					[newCats addObject:[term stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 				}
 			}
 		}
