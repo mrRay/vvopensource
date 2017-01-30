@@ -466,6 +466,20 @@
 		1A7129281B610E3A00528CDB /* ClassAMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7129271B610E3A00528CDB /* ClassAMCXLocal.m */; };
 		1A71292B1B610E4600528CDB /* ClassBMCXLocal.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A71292A1B610E4600528CDB /* ClassBMCXLocal.m */; };
 		1A7629A11D65EE1A001CACEA /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
+		1A76E3141E3F568B00512B03 /* HapInAVFAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A76E3131E3F568B00512B03 /* HapInAVFAppDelegate.m */; };
+		1A76E3171E3F568B00512B03 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A76E3161E3F568B00512B03 /* main.m */; };
+		1A76E3191E3F568B00512B03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A76E3181E3F568B00512B03 /* Assets.xcassets */; };
+		1A76E31C1E3F568B00512B03 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A76E31A1E3F568B00512B03 /* MainMenu.xib */; };
+		1A76E3291E3F56BA00512B03 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
+		1A76E32A1E3F56BA00512B03 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
+		1A76E32B1E3F56BA00512B03 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
+		1A76E32C1E3F56BA00512B03 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		1A76E32E1E3F56D100512B03 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E32F1E3F56D100512B03 /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E3301E3F56D100512B03 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E3311E3F56D100512B03 /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E3331E3F570200512B03 /* HapInAVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */; };
+		1A76E3341E3F570700512B03 /* HapInAVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1A7AB8CB1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */; };
 		1A7AB8CE1BED159100B2B129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CD1BED159100B2B129 /* main.m */; };
 		1A7AB8D01BED159100B2B129 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CF1BED159100B2B129 /* Assets.xcassets */; };
@@ -505,6 +519,9 @@
 		1A8A19971C15E09F0096BCB8 /* ISF_ES_Compatibility.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A19961C15E09F0096BCB8 /* ISF_ES_Compatibility.txt */; };
 		1A9BF64D1C430F2A009544C1 /* blueelectricspiral.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A9BF64C1C430F2A009544C1 /* blueelectricspiral.fs */; };
 		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
+		1AB6E8E51E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E31E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs */; };
+		1AB6E8E61E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E41E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs */; };
+		1AB6E8EA1E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E91E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m */; };
 		1ABD308B1CDBFFBC0008AD36 /* ISFQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABD30891CDBFFBC0008AD36 /* ISFQLRendererRemote.h */; };
 		1ABD308C1CDBFFBC0008AD36 /* ISFQLRendererRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ABD308A1CDBFFBC0008AD36 /* ISFQLRendererRemote.m */; };
 		1ABD308E1CDBFFC50008AD36 /* ISFQL.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1ABD308D1CDBFFC50008AD36 /* ISFQL.entitlements */; };
@@ -1143,6 +1160,34 @@
 			remoteGlobalIDString = 1A7128F71B610B6F00528CDB;
 			remoteInfo = MultiClassXPCTestService;
 		};
+		1A76E3211E3F56AE00512B03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961EA8EC100E8565007E6C25;
+			remoteInfo = "VVBasics-mac";
+		};
+		1A76E3231E3F56AE00512B03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96C8073919817C1600FA7825;
+			remoteInfo = "VVBufferPool-mac";
+		};
+		1A76E3251E3F56AE00512B03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 96C8071119817BFE00FA7825;
+			remoteInfo = "DDMathParser-mac";
+		};
+		1A76E3271E3F56AE00512B03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 964FF27C1981B5AF00CCC808;
+			remoteInfo = "VVISFKit-mac";
+		};
 		1A8840C01CDBE38700F9FF25 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1621,6 +1666,21 @@
 				1A7129041B610B7000528CDB /* MultiClassXPCTestService.xpc in Embed XPC Services */,
 			);
 			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A76E32D1E3F56C000512B03 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A76E32E1E3F56D100512B03 /* VVBasics.framework in Embed Frameworks */,
+				1A76E32F1E3F56D100512B03 /* DDMathParser.framework in Embed Frameworks */,
+				1A76E3301E3F56D100512B03 /* VVBufferPool.framework in Embed Frameworks */,
+				1A76E3311E3F56D100512B03 /* VVISFKit.framework in Embed Frameworks */,
+				1A76E3341E3F570700512B03 /* HapInAVFoundation.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1A7AB8F11BED266300B2B129 /* CopyFiles */ = {
@@ -2200,6 +2260,14 @@
 		1A7129271B610E3A00528CDB /* ClassAMCXLocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassAMCXLocal.m; sourceTree = "<group>"; };
 		1A7129291B610E4600528CDB /* ClassBMCXLocal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassBMCXLocal.h; sourceTree = "<group>"; };
 		1A71292A1B610E4600528CDB /* ClassBMCXLocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassBMCXLocal.m; sourceTree = "<group>"; };
+		1A76E3101E3F568B00512B03 /* HapInAVF Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HapInAVF Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A76E3121E3F568B00512B03 /* HapInAVFAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HapInAVFAppDelegate.h; sourceTree = "<group>"; };
+		1A76E3131E3F568B00512B03 /* HapInAVFAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HapInAVFAppDelegate.m; sourceTree = "<group>"; };
+		1A76E3161E3F568B00512B03 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A76E3181E3F568B00512B03 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A76E31B1E3F568B00512B03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A76E31D1E3F568B00512B03 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HapInAVFoundation.framework; sourceTree = "<group>"; };
 		1A7AB8C71BED159000B2B129 /* SyphonToAndFromVVBuffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyphonToAndFromVVBuffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A7AB8C91BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyphonToAndFromVVBufferAppDelegate.h; sourceTree = "<group>"; };
 		1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyphonToAndFromVVBufferAppDelegate.m; sourceTree = "<group>"; };
@@ -2231,6 +2299,10 @@
 		1A9ECF611C0F9BF800CCEB70 /* VVBufferGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferGLKView.h; sourceTree = "<group>"; };
 		1A9ECF621C0F9BF800CCEB70 /* VVBufferGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferGLKView.m; sourceTree = "<group>"; };
 		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
+		1AB6E8E31E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-ScaledCoCgYplusAtoRGBA.fs"; sourceTree = "<group>"; };
+		1AB6E8E41E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-ScaledCoCgYtoRGBA.fs"; sourceTree = "<group>"; };
+		1AB6E8E81E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleVVBufferPoolAdditions.h; sourceTree = "<group>"; };
+		1AB6E8E91E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleVVBufferPoolAdditions.m; sourceTree = "<group>"; };
 		1ABD30891CDBFFBC0008AD36 /* ISFQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFQLRendererRemote.h; sourceTree = "<group>"; };
 		1ABD308A1CDBFFBC0008AD36 /* ISFQLRendererRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFQLRendererRemote.m; sourceTree = "<group>"; };
 		1ABD308D1CDBFFC50008AD36 /* ISFQL.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ISFQL.entitlements; sourceTree = "<group>"; };
@@ -2747,6 +2819,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A76E30D1E3F568B00512B03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A76E3291E3F56BA00512B03 /* DDMathParser.framework in Frameworks */,
+				1A76E3331E3F570200512B03 /* HapInAVFoundation.framework in Frameworks */,
+				1A76E32A1E3F56BA00512B03 /* VVBasics.framework in Frameworks */,
+				1A76E32B1E3F56BA00512B03 /* VVBufferPool.framework in Frameworks */,
+				1A76E32C1E3F56BA00512B03 /* VVISFKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A7AB8C41BED159000B2B129 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3098,6 +3182,7 @@
 				1A1A01F91CDBFE4900E49E5A /* com.vidvox.ISFQL-Renderer.app */,
 				1AC5A4CC1CEE4138004DF358 /* MTCSender.app */,
 				1AFE77281D65AC9B003D8E7C /* ISF Editor.app */,
+				1A76E3101E3F568B00512B03 /* HapInAVF Test App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3643,6 +3728,32 @@
 				1A7128F91B610B7000528CDB /* MultiClassXPCTestService */,
 			);
 			name = "MultiClassXPC Test App + Service";
+			sourceTree = "<group>";
+		};
+		1A76E3111E3F568B00512B03 /* HapInAVF Test App */ = {
+			isa = PBXGroup;
+			children = (
+				1A76E3121E3F568B00512B03 /* HapInAVFAppDelegate.h */,
+				1A76E3131E3F568B00512B03 /* HapInAVFAppDelegate.m */,
+				1AB6E8E31E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs */,
+				1AB6E8E41E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs */,
+				1A76E3181E3F568B00512B03 /* Assets.xcassets */,
+				1A76E31A1E3F568B00512B03 /* MainMenu.xib */,
+				1A76E31D1E3F568B00512B03 /* Info.plist */,
+				1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */,
+				1A76E3151E3F568B00512B03 /* Supporting Files */,
+				1AB6E8E81E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.h */,
+				1AB6E8E91E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m */,
+			);
+			path = "HapInAVF Test App";
+			sourceTree = "<group>";
+		};
+		1A76E3151E3F568B00512B03 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A76E3161E3F568B00512B03 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		1A7AB8C81BED159100B2B129 /* SyphonToAndFromVVBuffer */ = {
@@ -4224,6 +4335,7 @@
 				1AE1A7ED1CDA682C005F924D /* GPUDownloadBenchmark */,
 				1AC5A4CD1CEE4138004DF358 /* MTCSender */,
 				1AFE77291D65AC9B003D8E7C /* ISF Editor */,
+				1A76E3111E3F568B00512B03 /* HapInAVF Test App */,
 			);
 			name = Applications;
 			sourceTree = "<group>";
@@ -5124,6 +5236,28 @@
 			productReference = 1A7128F81B610B6F00528CDB /* MultiClassXPCTestService.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		1A76E30F1E3F568B00512B03 /* HapInAVF Test App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A76E3201E3F568B00512B03 /* Build configuration list for PBXNativeTarget "HapInAVF Test App" */;
+			buildPhases = (
+				1A76E30C1E3F568B00512B03 /* Sources */,
+				1A76E30D1E3F568B00512B03 /* Frameworks */,
+				1A76E30E1E3F568B00512B03 /* Resources */,
+				1A76E32D1E3F56C000512B03 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A76E3221E3F56AE00512B03 /* PBXTargetDependency */,
+				1A76E3241E3F56AE00512B03 /* PBXTargetDependency */,
+				1A76E3261E3F56AE00512B03 /* PBXTargetDependency */,
+				1A76E3281E3F56AE00512B03 /* PBXTargetDependency */,
+			);
+			name = "HapInAVF Test App";
+			productName = "HapInAVF Test App";
+			productReference = 1A76E3101E3F568B00512B03 /* HapInAVF Test App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		1A7AB8C61BED159000B2B129 /* SyphonToAndFromVVBuffer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A7AB8D51BED159100B2B129 /* Build configuration list for PBXNativeTarget "SyphonToAndFromVVBuffer" */;
@@ -5705,6 +5839,9 @@
 					1A7128F71B610B6F00528CDB = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					1A76E30F1E3F568B00512B03 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					1A7AB8C61BED159000B2B129 = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -5800,6 +5937,7 @@
 				1A68C24A1CDBDD54001FF7D6 /* QCQL_Renderer */,
 				1A1A01E81CDBFE3D00E49E5A /* ISFQL */,
 				1A1A01F81CDBFE4900E49E5A /* ISFQL_Renderer */,
+				1A76E30F1E3F568B00512B03 /* HapInAVF Test App */,
 			);
 		};
 /* End PBXProject section */
@@ -5927,6 +6065,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A76E30E1E3F568B00512B03 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A76E3191E3F568B00512B03 /* Assets.xcassets in Resources */,
+				1AB6E8E61E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs in Resources */,
+				1AB6E8E51E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs in Resources */,
+				1A76E31C1E3F568B00512B03 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6484,6 +6633,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A76E30C1E3F568B00512B03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A76E3171E3F568B00512B03 /* main.m in Sources */,
+				1AB6E8EA1E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m in Sources */,
+				1A76E3141E3F568B00512B03 /* HapInAVFAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A7AB8C31BED159000B2B129 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7006,6 +7165,26 @@
 			target = 1A7128F71B610B6F00528CDB /* MultiClassXPCTestService */;
 			targetProxy = 1A7129021B610B7000528CDB /* PBXContainerItemProxy */;
 		};
+		1A76E3221E3F56AE00512B03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961EA8EC100E8565007E6C25 /* VVBasics-mac */;
+			targetProxy = 1A76E3211E3F56AE00512B03 /* PBXContainerItemProxy */;
+		};
+		1A76E3241E3F56AE00512B03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96C8073919817C1600FA7825 /* VVBufferPool-mac */;
+			targetProxy = 1A76E3231E3F56AE00512B03 /* PBXContainerItemProxy */;
+		};
+		1A76E3261E3F56AE00512B03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 96C8071119817BFE00FA7825 /* DDMathParser-mac */;
+			targetProxy = 1A76E3251E3F56AE00512B03 /* PBXContainerItemProxy */;
+		};
+		1A76E3281E3F56AE00512B03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 964FF27C1981B5AF00CCC808 /* VVISFKit-mac */;
+			targetProxy = 1A76E3271E3F56AE00512B03 /* PBXContainerItemProxy */;
+		};
 		1A8840C11CDBE38700F9FF25 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1A68C23A1CDBDD46001FF7D6 /* QCQL */;
@@ -7368,6 +7547,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				1A7128E01B610B4700528CDB /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1A76E31A1E3F568B00512B03 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A76E31B1E3F568B00512B03 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -8970,6 +9157,97 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Vidvox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1A76E31E1E3F568B00512B03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(PROJECT_DIR)/HapInAVF Test App\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "HapInAVF Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.HapInAVF-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1A76E31F1E3F568B00512B03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(PROJECT_DIR)/HapInAVF Test App\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "HapInAVF Test App/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.HapInAVF-Test-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -10992,6 +11270,15 @@
 			buildConfigurations = (
 				1A7129061B610B7000528CDB /* Debug */,
 				1A7129071B610B7000528CDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A76E3201E3F568B00512B03 /* Build configuration list for PBXNativeTarget "HapInAVF Test App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A76E31E1E3F568B00512B03 /* Debug */,
+				1A76E31F1E3F568B00512B03 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
