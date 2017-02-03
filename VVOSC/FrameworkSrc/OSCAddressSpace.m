@@ -78,6 +78,7 @@ id				_mainVVOSCAddressSpace;
 					//	if i actually made the item- set it up, apply the submenu, add it to the menu i'm returning!
 					if (newItem != nil)	{
 						//[newItem setToolTip:[nodePtr fullName]];
+						[newItem setRepresentedObject:[nodePtr fullName]];
 						[newItem setTarget:t];
 						[newItem setAction:a];
 						if (subNodesMenu != nil)
