@@ -21,7 +21,7 @@ int				_msaaMaxSamples = 0;
 int				_glMaxTextureDimension = 1024;
 #endif	//	!TARGET_OS_IPHONE
 BOOL			_bufferPoolInitialized = NO;
-VVStopwatch		*_bufferTimestampMaker = nil;
+VVMStopwatch		*_bufferTimestampMaker = nil;
 
 
 
@@ -68,7 +68,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 #endif	//	!TARGET_OS_IPHONE
 	
 	
-	_bufferTimestampMaker = [[VVStopwatch alloc] init];
+	_bufferTimestampMaker = [[VVMStopwatch alloc] init];
 	
 	_bufferPoolInitialized = YES;
 }
@@ -2552,9 +2552,7 @@ VVStopwatch		*_bufferTimestampMaker = nil;
 		//	get the CMSampleBuffer timing info, apply it to the buffer
 		CMTime				bufferTime = CMSampleBufferGetPresentationTimeStamp(n);
 		double				timeInSec = (!CMTIME_IS_VALID(bufferTime)) ? 0. : CMTimeGetSeconds(bufferTime);
-		struct timeval		tmpTimestamp;
-		tmpTimestamp.tv_sec = (long)floor(timeInSec);
-		tmpTimestamp.tv_usec = (__int32_t)((1000000.*timeInSec) - (1000000.*(double)tmpTimestamp.tv_sec));
+		uint64_t			tmpTimestamp = SWatchAbsTimeUnitForTime(timeInSec);
 		[returnMe setContentTimestampFromPtr:&tmpTimestamp];
 	}
 	else	{

@@ -24,7 +24,7 @@
 	
 	BOOL			onlyDrawNewStuff;	//	NO by default. if YES, only draws buffers with content timestamps different from the timestamp of the last buffer displayed
 	OSSpinLock		onlyDrawNewStuffLock;
-	struct timeval	onlyDrawNewStuffTimestamp;
+	uint64_t		onlyDrawNewStuffTimestamp;
 }
 
 - (void) redraw;

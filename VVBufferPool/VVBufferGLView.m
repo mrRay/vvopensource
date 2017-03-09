@@ -25,8 +25,7 @@
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
 		onlyDrawNewStuffLock = OS_SPINLOCK_INIT;
-		onlyDrawNewStuffTimestamp.tv_sec = 0;
-		onlyDrawNewStuffTimestamp.tv_usec = 0;
+		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
 	if (self != nil)
@@ -47,8 +46,7 @@
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
 		onlyDrawNewStuffLock = OS_SPINLOCK_INIT;
-		onlyDrawNewStuffTimestamp.tv_sec = 0;
-		onlyDrawNewStuffTimestamp.tv_usec = 0;
+		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
 	if (self != nil)
@@ -106,9 +104,9 @@
 	
 	OSSpinLockLock(&onlyDrawNewStuffLock);
 	if (onlyDrawNewStuff)	{
-		struct timeval		bufferTimestamp;
+		uint64_t		bufferTimestamp;
 		[b getContentTimestamp:&bufferTimestamp];
-		if (onlyDrawNewStuffTimestamp.tv_sec==bufferTimestamp.tv_sec && onlyDrawNewStuffTimestamp.tv_usec==bufferTimestamp.tv_usec)
+		if (onlyDrawNewStuffTimestamp==bufferTimestamp)
 			bail = YES;
 	}
 	OSSpinLockUnlock(&onlyDrawNewStuffLock);
@@ -202,8 +200,7 @@
 - (void) setOnlyDrawNewStuff:(BOOL)n	{
 	OSSpinLockLock(&onlyDrawNewStuffLock);
 	onlyDrawNewStuff = n;
-	onlyDrawNewStuffTimestamp.tv_sec = 0;
-	onlyDrawNewStuffTimestamp.tv_usec = 0;
+	onlyDrawNewStuffTimestamp = 0;
 	OSSpinLockUnlock(&onlyDrawNewStuffLock);
 }
 - (void) setRetainDraw:(BOOL)n	{

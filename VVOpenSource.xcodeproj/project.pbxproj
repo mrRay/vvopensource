@@ -557,6 +557,10 @@
 		1AD54C071D65C8AD008063FD /* ISF QuickLook Plugin.pkg in Resources */ = {isa = PBXBuildFile; fileRef = 1AD54C051D65C8AD008063FD /* ISF QuickLook Plugin.pkg */; };
 		1AD54C081D65C8AD008063FD /* Vidvox ISF resources.pkg in Resources */ = {isa = PBXBuildFile; fileRef = 1AD54C061D65C8AD008063FD /* Vidvox ISF resources.pkg */; };
 		1AD65DBE1D00B80E004427DC /* SwizzleISF-RGBAtoBGRA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */; };
+		1AD9E8E71E70899200497CB5 /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AD9E8E81E70899200497CB5 /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AD9E8E91E70899200497CB5 /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */; };
+		1AD9E8EA1E70899200497CB5 /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */; };
 		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
 		1AE102A91CDBDF8B0034EA89 /* QCQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */; };
@@ -2322,6 +2326,8 @@
 		1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTCMIDIManager.m; sourceTree = "<group>"; };
 		1AD54C051D65C8AD008063FD /* ISF QuickLook Plugin.pkg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ISF QuickLook Plugin.pkg"; sourceTree = "<group>"; };
 		1AD54C061D65C8AD008063FD /* Vidvox ISF resources.pkg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Vidvox ISF resources.pkg"; sourceTree = "<group>"; };
+		1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVMStopwatch.h; path = VVBasics/src/VVMStopwatch.h; sourceTree = "<group>"; };
+		1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVMStopwatch.m; path = VVBasics/src/VVMStopwatch.m; sourceTree = "<group>"; };
 		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
 		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
 		1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQLRendererRemote.h; sourceTree = "<group>"; };
@@ -4065,6 +4071,8 @@
 				96A9911F108D668C00895DC1 /* VVCrashReporter */,
 				9658C25F18F86BCF004A6BCF /* VVSysVersion.h */,
 				9658C26018F86BCF004A6BCF /* VVSysVersion.m */,
+				1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */,
+				1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */,
 			);
 			name = "VVBasics framework";
 			sourceTree = "<group>";
@@ -4686,6 +4694,7 @@
 				1A486EFA1C42F50300B4291E /* VVAssertionHandler.h in Headers */,
 				1A486F061C42F50300B4291E /* VVStopwatch.h in Headers */,
 				1A486EF81C42F50300B4291E /* VVThreadLoop.h in Headers */,
+				1AD9E8E81E70899200497CB5 /* VVMStopwatch.h in Headers */,
 				1A486EFE1C42F50300B4291E /* MutLockArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4843,6 +4852,7 @@
 				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
 				96AC180C185A41A500917830 /* MAZeroingWeakRef.h in Headers */,
 				96AC180F185A41A500917830 /* MAZeroingWeakRefNativeZWRNotAllowedTable.h in Headers */,
+				1AD9E8E71E70899200497CB5 /* VVMStopwatch.h in Headers */,
 				9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6477,6 +6487,7 @@
 				1A486F031C42F50300B4291E /* MutNRLockArray.m in Sources */,
 				1A486F011C42F50300B4291E /* ObjectHolder.m in Sources */,
 				1A486EFB1C42F50300B4291E /* VVAssertionHandler.m in Sources */,
+				1AD9E8EA1E70899200497CB5 /* VVMStopwatch.m in Sources */,
 				1A486EF71C42F50300B4291E /* VVBasicMacros.m in Sources */,
 				1A486EF91C42F50300B4291E /* VVThreadLoop.m in Sources */,
 				1A486F051C42F50300B4291E /* MutNRLockDict.m in Sources */,
@@ -6823,6 +6834,7 @@
 				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
 				96AC180D185A41A500917830 /* MAZeroingWeakRef.m in Sources */,
 				9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */,
+				1AD9E8E91E70899200497CB5 /* VVMStopwatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,6 +4,7 @@
 #import "VVThreadLoop.h"
 #import "VVAssertionHandler.h"
 #import "VVStopwatch.h"
+#import "VVMStopwatch.h"
 #import "ObjectHolder.h"
 #import "MutLockArray.h"
 #import "MutLockDict.h"

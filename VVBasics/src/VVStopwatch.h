@@ -9,7 +9,7 @@
 
 
 
-///	This class is used to measure how long it takes to do things; much easier to work with than NSDate.
+///	This class is used to measure how long it takes to do things; much easier to work with than NSDate.  Not monotonic, uses gettimeofday().
 /**
 \ingroup VVBasics
 */

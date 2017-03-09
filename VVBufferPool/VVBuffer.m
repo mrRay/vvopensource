@@ -248,8 +248,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 		backingSize = VVMAKESIZE(0,0);
 		auxTransMatrix = nil;
 		auxOpacity = 1.0;
-		contentTimestamp.tv_sec = 0;
-		contentTimestamp.tv_usec = 0;
+		contentTimestamp = 0;
 		userInfo = nil;
 		
 		backingID = VVBufferBackID_None;
@@ -416,26 +415,21 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 @synthesize srcRect;
 @synthesize flipped;
 @synthesize backingSize;
-- (struct timeval *) contentTimestampPtr	{
+- (uint64_t *) contentTimestampPtr	{
 	return &contentTimestamp;
 }
-- (void) getContentTimestamp:(struct timeval *)n	{
+- (void) getContentTimestamp:(uint64_t *)n	{
 	if (n == nil)
 		return;
-	(*(n)).tv_sec = contentTimestamp.tv_sec;
-	(*(n)).tv_usec = contentTimestamp.tv_usec;
+	*n = contentTimestamp;
 }
-- (void) setContentTimestampFromPtr:(struct timeval *)n	{
+- (void) setContentTimestampFromPtr:(uint64_t *)n	{
 	if (n==nil)
 		return;
-	contentTimestamp.tv_sec = (*(n)).tv_sec;
-	contentTimestamp.tv_usec = (*(n)).tv_usec;
+	contentTimestamp = *n;
 }
 - (double) contentTimestampInSeconds	{
-	double		returnMe = 0.;
-	returnMe += (double)contentTimestamp.tv_sec;
-	returnMe += (((double)contentTimestamp.tv_usec) / 1000000.);
-	return returnMe;
+	return SWatchTimeForAbsTimeUnit(contentTimestamp);
 }
 - (void) setUserInfo:(id)n	{
 	VVRELEASE(userInfo);
@@ -567,9 +561,11 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	BOOL		returnMe = NO;
 	if (n == nil)
 		return returnMe;
-	struct timeval		*src = [self contentTimestampPtr];
-	struct timeval		*dst = [n contentTimestampPtr];
-	if ((*(src)).tv_sec==(*(dst)).tv_sec && (*(src)).tv_usec==(*(dst)).tv_usec)
+	uint64_t		*src = [self contentTimestampPtr];
+	uint64_t		*dst = [n contentTimestampPtr];
+	//if ((*(src)).tv_sec==(*(dst)).tv_sec && (*(src)).tv_usec==(*(dst)).tv_usec)
+	//	returnMe = YES;
+	if (*src == *dst)
 		returnMe = YES;
 	return returnMe;
 }

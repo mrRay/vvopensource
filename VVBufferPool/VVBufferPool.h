@@ -58,7 +58,7 @@ extern int				_msaaMaxSamples;
 extern int				_glMaxTextureDimension;
 #endif	//	!TARGET_OS_IPHONE
 extern BOOL			_bufferPoolInitialized;
-extern VVStopwatch	*_bufferTimestampMaker;
+extern VVMStopwatch	*_bufferTimestampMaker;
 
 
 
