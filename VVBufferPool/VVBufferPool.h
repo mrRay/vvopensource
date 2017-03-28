@@ -307,6 +307,7 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 - (VVBuffer *) allocRGBACPUBackedTexRangeSized:(NSSize)s;
 - (VVBuffer *) allocBGRACPUBackedTexRangeSized:(NSSize)s;
 - (VVBuffer *) allocBGRAFloatCPUBackedTexRangeSized:(NSSize)s;
+- (VVBuffer *) allocYCbCrCPUBackedTexRangeSized:(NSSize)s;
 
 //	these methods make VVBuffers using DMA GL textures from image objects created by other APIs
 - (VVBuffer *) allocTexRangeForCMSampleBuffer:(CMSampleBufferRef)n;

@@ -2524,6 +2524,32 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
 	return returnMe;
 }
+- (VVBuffer *) allocYCbCrCPUBackedTexRangeSized:(NSSize)s	{
+	VVBufferDescriptor		desc;
+	desc.type = VVBufferType_Tex;
+	desc.target = GL_TEXTURE_RECTANGLE_EXT;
+	desc.internalFormat = VVBufferIF_RGB;
+	desc.pixelFormat = VVBufferPF_YCBCR_422;
+	desc.pixelType = VVBufferPT_U_Short_88;
+	//desc.backingType = VVBufferBack_Pixels;
+	desc.cpuBackingType = VVBufferCPUBack_Internal;
+	desc.gpuBackingType = VVBufferGPUBack_Internal;
+	desc.name = 0;
+	desc.texRangeFlag = YES;
+	desc.texClientStorageFlag = YES;
+	desc.msAmount = 0;
+	desc.localSurfaceID = 0;
+	VVBuffer		*returnMe = [self copyFreeBufferMatchingDescriptor:&desc sized:s];
+	if (returnMe != nil)
+		return returnMe;
+	
+	void			*bufferMemory = malloc(VVBufferDescriptorCalculateCPUBackingForSize(&desc,s));
+	returnMe = [self allocBufferForDescriptor:&desc sized:s backingPtr:bufferMemory backingSize:s];
+	[returnMe setBackingID:VVBufferBackID_Pixels];	//	purely for reference- so we know what's in the callback context
+	[returnMe setBackingReleaseCallback:VVBuffer_ReleasePixelsCallback];	//	this is the function we want to call to release the callback context
+	[returnMe setBackingReleaseCallbackContext:bufferMemory];	//	this is the callback context
+	return returnMe;
+}
 
 
 /*===================================================================================*/
