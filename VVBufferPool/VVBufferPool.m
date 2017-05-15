@@ -92,13 +92,16 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	}
 }
 #if !TARGET_OS_IPHONE
-+ (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n	{
++ (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n	pixelFormat:(NSOpenGLPixelFormat*)p {
 	VVRELEASE(_globalVVBufferPool);
 	if (n==nil)
 		return;
-	_globalVVBufferPool = [[VVBufferPool alloc] initWithSharedContext:n pixelFormat:[GLScene defaultPixelFormat] sized:VVMAKESIZE(1,1)];
+	_globalVVBufferPool = [[VVBufferPool alloc] initWithSharedContext:n pixelFormat:p sized:VVMAKESIZE(1,1)];
 	if (_globalVVBufferCopier == nil)
 		[VVBufferCopier createGlobalVVBufferCopierWithSharedContext:n];
+}
++ (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n	{
+    return [self createGlobalVVBufferPoolWithSharedContext:n pixelFormat:[GLScene defaultPixelFormat]];
 }
 #else	//	NOT !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferPoolWithSharegroup:(EAGLSharegroup *)n	{

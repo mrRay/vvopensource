@@ -101,6 +101,7 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 @param n The NSOpenGLContext you want the buffer pool to share.  This context should not be freed as long as VVBufferPool exists!
 */
 #if !TARGET_OS_IPHONE
++ (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n	pixelFormat:(NSOpenGLPixelFormat*)p;
 + (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n;
 #else	//	NOT !TARGET_OS_IPHONE
 + (void) createGlobalVVBufferPoolWithSharegroup:(EAGLSharegroup *)n;
