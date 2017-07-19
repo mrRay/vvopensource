@@ -61,6 +61,8 @@
 				break;
 		}
 		++lexIndex;
+		if (lexIndex >= [self length])
+			return NSMakeRange(0,0);
 	} while (openGroupingCount>0);
 	NSRange			rangeToReplace = NSMakeRange(funcNameRange.location, lexIndex-funcNameRange.location);
 	return rangeToReplace;

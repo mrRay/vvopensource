@@ -178,7 +178,9 @@
 	
 	
 	
+	//NSLog(@"**********************************************");
 	//NSLog(@"\t\tparsedDownload is %@",parsedDownload);
+	//NSLog(@"**********************************************");
 	NSDictionary		*parsedDict = nil;
 	if ([parsedDownload respondsToSelector:@selector(objectAtIndex:)])
 		parsedDict = [parsedDownload objectAtIndex:0];
@@ -359,22 +361,83 @@
 		} while (returnMe == nil);
 		return returnMe;
 	};
-	//	create a block that converts a buffer id number to the name of the buffer
-	NSString*	(^NameForBufferID)(int bufferIDNum) = ^(int bufferIDNum)	{
-		switch (bufferIDNum)	{
-			case 257:
-				return @"BufferA";
-			case 258:
-				return @"BufferB";
-			case 259:
-				return @"BufferC";
-			case 260:
-				return @"BufferD";
+	
+	
+	//	render passes are identified by 'id', which is now a string.
+	__block NSMutableArray		*renderOutputNames = MUTARRAY;
+	//	after we sort the array of render passes, we run through each pass and store the name of the output id, so we can convert from render pass index to id
+	for (NSDictionary *renderpassDict in sortedRenderpassArray)	{
+		//	get the array of OUTPUTS for this pass- if there's more than one, bail with error
+		NSArray			*renderpassOutputs = [renderpassDict objectForKey:@"outputs"];
+		if (renderpassOutputs==nil || [renderpassOutputs count]>1)	{
+			NSLog(@"\t\terr: renderpass outputs array is of unexpected length, bailing, %s",__func__);
+			return;
 		}
-		return @"UnknownBufferName";
+		//	if there aren't any render passes, assume we're fine
+		if ([renderpassOutputs count]==0)	{
+			continue;
+		}
+		//	get what i'm presently assuming is the main output
+		NSDictionary	*outputDict = [renderpassOutputs objectAtIndex:0];
+		if (outputDict==nil || ![outputDict isKindOfClass:[NSDictionary class]])	{
+			NSLog(@"\t\terr: renderpass output dict is of unexpected type, bailing, %s",__func__);
+			return;
+		}
+		//	get the id of the main output- '4dfGRr' is the last step (draw to screen).
+		id				outputIDString = [outputDict objectForKey:@"id"];
+		if (outputIDString==nil || ![outputIDString isKindOfClass:[NSString class]])	{
+			NSLog(@"\t\terr: not output id found, bailing, %s",__func__);
+			return;
+		}
+		//	add the output string to the array
+		if (![outputIDString isEqualToString:@"4dfGRr"])
+			[renderOutputNames addObject:outputIDString];
+	}
+	NSLog(@"\t\trenderOutputNames are %@",renderOutputNames);
+	//	create a block that converts a buffer id string to the name of the buffer
+	NSString* (^NameForBufferIDString)(NSString *bufferIDString) = ^(NSString *bufferIDString)	{
+		NSString		*returnMe = nil;
+		if (bufferIDString == nil)
+			return returnMe;
+		BOOL		found = NO;
+		int			tmpInt = 0;
+		for (NSString *tmpString in renderOutputNames)	{
+			if ([tmpString isEqualToString:bufferIDString])	{
+				found = YES;
+				break;
+			}
+			++tmpInt;
+		}
+		if (found)	{
+			switch (tmpInt)	{
+			case 0:
+				return @"BufferA";
+			case 1:
+				return @"BufferB";
+			case 2:
+				return @"BufferC";
+			case 3:
+				return @"BufferD";
+			}
+		}
+		return returnMe;
 	};
-	
-	
+	NSString* (^NameForRenderPassIndex)(int tmpIndex) = ^(int tmpIndex)	{
+		NSString		*returnMe = nil;
+		if (tmpIndex<0 || tmpIndex>=[renderOutputNames count])
+			return returnMe;
+		switch (tmpIndex)	{
+		case 0:
+			return @"BufferA";
+		case 1:
+			return @"BufferB";
+		case 2:
+			return @"BufferC";
+		case 3:
+			return @"BufferD";
+		}
+		return returnMe;
+	};
 	
 	
 	//	create an array with the source code for each of the passes- we'll need this later when we're find-and-replacing source
@@ -394,19 +457,30 @@
 	NSInteger			passIndex = 0;
 	for (NSDictionary *renderpassDict in sortedRenderpassArray)	{
 		
-		//	get the array of OUTPUTS for this pass- if there's more or less than one, bail with error
+		//	get the array of OUTPUTS for this pass- if there's more than one, bail with error
 		NSArray			*renderpassOutputs = [renderpassDict objectForKey:@"outputs"];
-		if (renderpassOutputs==nil || [renderpassOutputs count]!=1)	{
-			NSLog(@"\t\terr: renderpass outputs array is of unexpected length, bailing, %s",__func__);
+		if (renderpassOutputs==nil || [renderpassOutputs count]>1)	{
+			NSLog(@"\t\terr: renderpass outputs array B is of unexpected length, bailing, %s",__func__);
 			return;
 		}
-		//	get what i'm presently assuming is the main output
-		NSDictionary	*outputDict = [renderpassOutputs objectAtIndex:0];
-		//	get the id of the main output- 37 is the last step (draw to screen).  257-260 are output buffers (persistent, floating-point)
-		id				outputNum = [outputDict objectForKey:@"id"];
-		if (outputNum==nil || ![outputNum isKindOfClass:[NSNumber class]])	{
-			NSLog(@"\t\terr: no output id found, bailing, %s",__func__);
-			return;
+		id				outputIDString = nil;
+		//	if there aren't any outputs, assume that this is the final output
+		if ([renderpassOutputs count]==0)
+			outputIDString = @"4dfGRr";
+		//	else there are outputs- we have to get the output id string
+		else	{
+			//	get what i'm presently assuming is the main output
+			NSDictionary	*outputDict = [renderpassOutputs objectAtIndex:0];
+			if (outputDict==nil || ![outputDict isKindOfClass:[NSDictionary class]])	{
+				NSLog(@"\t\terr: renderpass output dict B is of unexpected type, bailing, %s",__func__);
+				return;
+			}
+			//	get the id of the main output- '4dfGRr' is the last step (draw to screen).
+			outputIDString = [outputDict objectForKey:@"id"];
+			if (outputIDString==nil || ![outputIDString isKindOfClass:[NSString class]])	{
+				NSLog(@"\t\terr: not output id B found, bailing, %s",__func__);
+				return;
+			}
 		}
 		
 		
@@ -417,19 +491,22 @@
 			[passes addObject:newPassDict];
 		}
 		
-		//	37 is the id of the "main output", we just want to display it to screen- we don't need to make a pass or anything
-		if ([outputNum intValue] == 37)	{
 		
+		//	'4dfGRr' is the last step (draw to screen).
+		if ([outputIDString isEqualToString:@"4dfGRr"])	{
+			
 		}
-		//	else the output id isn't 37- we're outputting to a buffer
+		//	else the output id string isn't '4dfGRr'- we're outputting to a buffer
 		else	{
-			NSString		*targetBufferName = NameForBufferID([outputNum intValue]);
+			NSString		*targetBufferName = NameForBufferIDString(outputIDString);
 			if (targetBufferName != nil)	{
 				[newPassDict setObject:targetBufferName forKey:@"TARGET"];
 				[newPassDict setObject:NUMBOOL(YES) forKey:@"PERSISTENT"];
 				[newPassDict setObject:NUMBOOL(YES) forKey:@"FLOAT"];
 			}
 		}
+		
+		
 		
 		//	make a dict that we'll use to store the names we need to swap
 		NSMutableDictionary		*passVarNameSwapDict = MUTDICT;
@@ -442,8 +519,8 @@
 		//	run through the inputs
 		for (NSDictionary *renderpassInput in renderpassInputs)	{
 			NSNumber		*channelNum = [renderpassInput objectForKey:@"channel"];
-			NSString		*channelType = [renderpassInput objectForKey:@"ctype"];
-			NSString		*channelSrc = [[renderpassInput objectForKey:@"src"] lastPathComponent];
+			NSString		*channelType = [renderpassInput objectForKey:@"type"];
+			NSString		*channelSrc = [[renderpassInput objectForKey:@"filepath"] lastPathComponent];
 			NSString		*channelName = VVFMTSTRING(@"iChannel%@",channelNum);
 			
 			//	make sure the channel name is unique (a prior pass may have added an input or something with this name)
@@ -491,9 +568,13 @@
 				[channelDict setObject:uniqueChannelName forKey:@"NAME"];
 				//	cubemaps only list one path even though there are six.  so we have to parse the string, then synthesize all the path names from that.  weak, right?
 				NSMutableArray	*pathArray = MUTARRAY;
-				NSString		*regex = @"([\\s_-]*)([0-9]+)(\\.((jpg)|(png)))";
+				NSString		*regex = @"([\\w]+)(\\.((jpg)|(png)))";
 				for (int i=0; i<6; ++i)	{
-					NSString		*modString = [channelSrc stringByReplacingOccurrencesOfRegex:regex withString:VVFMTSTRING(@"$1%d$3",i)];
+					NSString		*modString = nil;
+					if (i==0)
+						modString = channelSrc;
+					else
+						modString = [channelSrc stringByReplacingOccurrencesOfRegex:regex withString:VVFMTSTRING(@"$1_%d$2",i)];
 					if (modString==nil)	{
 						NSLog(@"\t\tERR: couldn't calculate cubemap file name in %s",__func__);
 						NSLog(@"\t\tsrc string was %@",channelSrc);
@@ -523,8 +604,10 @@
 			//	buffers are the results of prior rendering passes
 			else if ([channelType isEqualToString:@"buffer"])	{
 				//	results of prior rendering passes have unique names (A, B, C, or D)
-				NSNumber		*tmpNum = [renderpassInput objectForKey:@"id"];
-				NSString		*bufferName = NameForBufferID([tmpNum intValue]);
+				//NSNumber		*tmpNum = [renderpassInput objectForKey:@"id"];
+				//NSString		*bufferName = NameForBufferID([tmpNum intValue]);
+				NSString		*tmpString = [renderpassInput objectForKey:@"id"];
+				NSString		*bufferName = NameForBufferIDString(tmpString);
 				//	since we have a static name, we know we need to replace stuff
 				[passVarNameSwapDict setObject:bufferName forKey:channelName];
 			}
@@ -747,6 +830,7 @@
 											}
 											else	{
 												NSLog(@"\t\tERR: variable count wrong searching for texture lookup: %@, %@",newLine,tmpVarArray);
+												break;
 											}
 										}
 									} while (tmpRange.length>0);
@@ -906,6 +990,18 @@
 	//NSLog(@"\t\tenvironmentProvidedSamplers are %@",environmentProvidedSamplers);
 	//NSLog(@"\t\tvarSwapNameDicts are %@",varSwapNameDicts);
 	
+	NSDictionary* (^ImportedDictForBufferName)(NSString *bufferName) = ^(NSString *bufferName)	{
+		NSDictionary		*returnMe = nil;
+		for (NSDictionary *tmpDict in [suppEntries objectForKey:@"IMPORTED"])	{
+			NSString			*tmpName = [tmpDict objectForKey:@"NAME"];
+			if (tmpName!=nil && [tmpName isEqualToString:bufferName])	{
+				returnMe = tmpDict;
+				break;
+			}
+		}
+		return returnMe;
+	};
+	
 	
 	/*	this is a little complicated.
 		- i have an array of dictionaries (one dict per pass)- these dicts describe variables that 
@@ -931,6 +1027,7 @@
 	//	make a block that accepts a mutable string and a var swap name dict and find-and-replaces 
 	//	the string with the contents of the var swap name dict and also the standard strings.
 	void		(^LineFindAndReplaceBlock)(NSMutableString *targetLine, NSDictionary *varSwapNameDict, NSString *rawString, NSRange targetRangeInRaw) = ^(NSMutableString *targetLine, NSDictionary *varSwapNameDict, NSString *rawString, NSRange targetRangeInRaw)	{
+		//NSLog(@"LineFindAndReplaceBlock() ... %@",targetLine);
 		//	we have a dictionary of names that need to be replaced- iterate through it, checking every entry against this line
 		[varSwapNameDict enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *newKey, BOOL *stop) {
 			//	the key is the string we want to replace, the object is the new value...
@@ -960,6 +1057,7 @@
 			__block NSDictionary		*srcStrings = @{
 				@"iDate": @"DATE",
 				@"iGlobalTime": @"TIME",
+				@"iTime": @"TIME",
 				@"iChannelTime\\[[0-9]\\]": @"TIME",
 				@"iTimeDelta": @"TIMEDELTA",
 				@"iResolution": @"RENDERSIZE",
@@ -1007,27 +1105,57 @@
 			NSRange			tmpRange;
 			do	{
 				BOOL		textureLookupWas2D = NO;
+				BOOL		textureLookupWasCube = NO;
 				//tmpRange = [targetLine rangeOfString:@"texture2DRect("];
 				tmpRange = [targetLine rangeOfRegex:@"texture2DRect[\\s]*\\("];
 				if (tmpRange.length!=0)	{
+					//NSLog(@"\t\tfound a texture2DRect() call...");
 					--tmpRange.length;	//	i searched for the string + left parenthesis
 				}
 				else	{
 					//tmpRange = [targetLine rangeOfString:@"texture2D("];
 					tmpRange = [targetLine rangeOfRegex:@"texture2D[\\s]*\\("];
 					if (tmpRange.length!=0)	{
+						//NSLog(@"\t\tfound a texture2D() call...");
 						--tmpRange.length;	//	i searched for the string + left parenthesis
 						textureLookupWas2D = YES;
 					}
+					else	{
+						tmpRange = [targetLine rangeOfRegex:@"texture[\\s]*\\("];
+						if (tmpRange.length!=0)	{
+							//NSLog(@"\t\tfound a texture() call...");
+							--tmpRange.length;	//	i searched for the string + left parenthesis
+							//	'texture()' implies a newer GL environment, and may be referring to a cube sampler- so we can't just assume it's 2D and replace it...
+							NSMutableArray	*tmpVarArray = [NSMutableArray arrayWithCapacity:0];
+							NSRange			fullFuncRangeToReplace = [targetLine lexFunctionCallInRange:tmpRange addVariablesToArray:tmpVarArray];
+							//NSLog(@"\t\ttexture() call's vars are %@",tmpVarArray);
+							if ([tmpVarArray count]>0 && [environmentProvidedSamplers containsObject:[tmpVarArray objectAtIndex:0]])	{
+								//NSLog(@"\t\ttexture() call phase A complete");
+								NSDictionary		*importDict = ImportedDictForBufferName([tmpVarArray objectAtIndex:0]);
+								//NSLog(@"\t\ttexture() call's importDict is %@",importDict);
+								if (importDict!=nil && [importDict objectForKey:@"TYPE"]!=nil)	{
+									textureLookupWasCube = YES;
+								}
+								else
+									textureLookupWas2D = YES;
+							}
+							else
+								textureLookupWas2D = YES;
+							
+						}
+						else	{
+							//NSLog(@"\t\tdidn't find any texture-related calls!");
+						}
+					}
 				}
 				if (tmpRange.length!=0)	{
-					NSLog(@"\t\tline matches a texture lookup:\n%@",targetLine);
+					//NSLog(@"\t\tline matches a texture lookup:\n%@",targetLine);
 					NSRange			funcNameRange = tmpRange;
 					NSMutableArray	*tmpVarArray = [NSMutableArray arrayWithCapacity:0];
 					NSRange			fullFuncRangeToReplace = [targetLine lexFunctionCallInRange:funcNameRange addVariablesToArray:tmpVarArray];
 					//NSRange			absoluteFuncNameRange = NSMakeRange(funcNameRange.location+targetRangeInRaw.location, funcNameRange.length);
 					//NSRange			fullFuncRangeToReplace = [rawString lexFunctionCallInRange:absoluteFuncNameRange addVariablesToArray:tmpVarArray];
-					NSLog(@"\t\tfullFuncRangeToReplace is %@, variables are %@",NSStringFromRange(fullFuncRangeToReplace),tmpVarArray);
+					//NSLog(@"\t\tfullFuncRangeToReplace is %@, variables are %@",NSStringFromRange(fullFuncRangeToReplace),tmpVarArray);
 					//	i only want to replace this function if the sampler is one of the samplers i'm converting/replacing
 					if ([tmpVarArray count]>0 && [environmentProvidedSamplers containsObject:[tmpVarArray objectAtIndex:0]])	{
 						if ([tmpVarArray count]==2)	{
@@ -1036,6 +1164,9 @@
 							NSString		*samplerCoord = [tmpVarArray objectAtIndex:1];
 							if (textureLookupWas2D)	{
 								newFuncString = [NSString stringWithFormat:@"IMG_NORM_PIXEL(%@,mod(%@,1.0))",samplerName,samplerCoord];
+							}
+							else if (textureLookupWasCube)	{
+								newFuncString = [NSString stringWithFormat:@"textureCube(%@,%@)",samplerName,samplerCoord];
 							}
 							else	{
 								newFuncString = [NSString stringWithFormat:@"IMG_PIXEL(%@,%@)",samplerName,samplerCoord];
@@ -1050,6 +1181,9 @@
 							if (textureLookupWas2D)	{
 								newFuncString = [NSString stringWithFormat:@"IMG_NORM_PIXEL(%@,mod(%@,1.0),%@)",samplerName,samplerCoord,samplerBias];
 							}
+							else if (textureLookupWasCube)	{
+								newFuncString = [NSString stringWithFormat:@"textureCube(%@,%@)",samplerName,samplerCoord];
+							}
 							else	{
 								newFuncString = [NSString stringWithFormat:@"IMG_PIXEL(%@,%@,%@)",samplerName,samplerCoord,samplerBias];
 							}
@@ -1057,6 +1191,7 @@
 						}
 						else	{
 							NSLog(@"\t\tERR: variable count wrong searching for texture lookup: %@, %@",targetLine,tmpVarArray);
+							break;
 						}
 						//NSLog(@"\t\tafter replacing, targetLine is %@",targetLine);
 					}
