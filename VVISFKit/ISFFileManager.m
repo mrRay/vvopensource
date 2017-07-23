@@ -80,6 +80,46 @@
 	}
 	return NO;
 }
++ (NSArray *) categoriesForISF:(NSString *)pathToFile	{
+	if (pathToFile==nil)
+		return [NSArray array];
+	NSString		*rawFile = [NSString stringWithContentsOfFile:pathToFile encoding:NSUTF8StringEncoding error:nil];
+	if (rawFile == nil)	{
+		NSLog(@"\t\terr: couldn't load file %@ in %s",pathToFile,__func__);
+		return [NSArray array];
+	}
+	//	there should be a JSON blob at the very beginning of the file describing the script's attributes and parameters- this is inside comments...
+	NSRange			openCommentRange;
+	NSRange			closeCommentRange;
+	openCommentRange = [rawFile rangeOfString:@"/*"];
+	closeCommentRange = [rawFile rangeOfString:@"*/"];
+	if (openCommentRange.length!=0 && closeCommentRange.length!=0)	{
+		//	parse the JSON string, turning it into a dictionary and values
+		NSString		*jsonString = [rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))];
+		id				jsonObject = [jsonString objectFromJSONString];
+		if (jsonObject==nil)	{
+			NSLog(@"\t\terr: couldn't make jsonObject in %s, string was %@",__func__,jsonString);
+			return [NSArray array];
+		}
+		else	{
+			if ([jsonObject isKindOfClass:[NSDictionary class]])	{
+				//	check the "INPUTS" section of the JSON dict
+				NSArray		*categories = [jsonObject objectForKey:@"CATEGORIES"];
+				if (categories==nil || ![categories isKindOfClass:[NSArray class]])	{
+					NSLog(@"\t\terr: categories was nil, or was the wrong type, %s",__func__);
+					return [NSArray array];
+				}
+				return [[categories retain] autorelease];
+			}
+			else	{
+				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
+				NSLog(@"\t\tfile was %@",pathToFile);
+				return [NSArray array];
+			}
+		}
+	}
+	return [NSArray array];
+}
 + (NSMutableArray *) _filtersInDirectory:(NSString *)folder recursive:(BOOL)r matchingFunctionality:(ISFFunctionality)func	{
 	if (folder==nil)
 		return nil;
@@ -163,7 +203,7 @@
 				//	check the "INPUTS" section of the JSON dict
 				NSArray		*inputs = [jsonObject objectForKey:@"INPUTS"];
 				if (inputs==nil || ![inputs isKindOfClass:[NSArray class]])	{
-					NSLog(@"\t\terr: inputs was nil, or was the wrong type, %s",__func__);
+					NSLog(@"\t\terr: inputs was nil, or was the wrong type, %s - %@",__func__,pathToFile);
 					return NO;
 				}
 				for (NSDictionary *inputDict in inputs)	{

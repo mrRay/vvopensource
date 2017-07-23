@@ -57,6 +57,7 @@ only returns paths corresponding to valid ISF files
 + (NSMutableArray *) defaultGenerativeSources;
 
 + (BOOL) fileIsProbablyAnISF:(NSString *)pathToFile;
++ (NSArray *) categoriesForISF:(NSString *)pathToFile;
 
 + (NSMutableArray *) _filtersInDirectory:(NSString *)folder recursive:(BOOL)r matchingFunctionality:(ISFFunctionality)func;
 + (BOOL) _isAFilter:(NSString *)pathToFile;
