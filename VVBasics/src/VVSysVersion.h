@@ -19,7 +19,10 @@ typedef NS_ENUM(NSInteger, VVOSVersion)	{
 	VVLion = 7,	//!<	10.7
 	VVMountainLion = 8,	//!<	10.8
 	VVMavericks = 9,	//!<	10.9
-	VVYosemite = 10	//!<	10.10
+	VVYosemite = 10,	//!<	10.10
+	VVElCapitan = 11,	//!<	10.11
+	VVSierra = 12,	//!<	10.12
+	VVHighSierra = 13, //!<	10.13
 };
 #else
 typedef enum VVOSVersion	{
@@ -32,7 +35,10 @@ typedef enum VVOSVersion	{
 	VVLion = 7,	//!<	10.7
 	VVMountainLion = 8,	//!<	10.8
 	VVMavericks = 9,	//!<	10.9
-	VVYosemite = 10	//!<	10.10
+	VVYosemite = 10,	//!<	10.10
+	VVElCapitan = 11,	//!<	10.11
+	VVSierra = 12,	//!<	10.12
+	VVHighSierra = 13, //!<	10.13
 } VVOSVersion;
 #endif
 
