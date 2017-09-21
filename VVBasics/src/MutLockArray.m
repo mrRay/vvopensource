@@ -713,5 +713,17 @@
 		[self sortUsingDescriptors:descriptors];
 	pthread_rwlock_unlock(&arrayLock);
 }
+- (void) sortUsingComparator:(NSComparator)c	{
+	if (array == nil || c == nil)
+		return;
+	[array sortUsingComparator:c];
+}
+- (void) lockSortUsingComparator:(NSComparator)c	{
+	if (array == nil || c == nil)
+		return;
+	pthread_rwlock_wrlock(&arrayLock);
+		[self sortUsingComparator:c];
+	pthread_rwlock_unlock(&arrayLock);
+}
 
 @end
