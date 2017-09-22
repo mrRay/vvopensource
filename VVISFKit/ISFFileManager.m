@@ -73,7 +73,7 @@
 			}
 			else	{
 				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
-				NSLog(@"\t\tfile was %@",pathToFile);
+				NSLog(@"\t\terr: file was %@",pathToFile);
 				return NO;
 			}
 		}
@@ -113,7 +113,7 @@
 			}
 			else	{
 				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
-				NSLog(@"\t\tfile was %@",pathToFile);
+				NSLog(@"\t\terr: file was %@",pathToFile);
 				return [NSArray array];
 			}
 		}
@@ -175,7 +175,10 @@
 			}
 		}
 	}
-	return [returnMe autorelease];
+	//return [returnMe autorelease];
+	return [[[returnMe sortedArrayUsingComparator:^(NSString *obj1, NSString *obj2)	{
+		return [obj1 caseInsensitiveCompare:obj2];
+	}] mutableCopy] autorelease];
 }
 + (BOOL) _isAFilter:(NSString *)pathToFile	{
 	if (pathToFile==nil)
@@ -220,7 +223,7 @@
 			}
 			else	{
 				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
-				NSLog(@"\t\tfile was %@",pathToFile);
+				NSLog(@"\t\terr: file was %@",pathToFile);
 				return NO;
 			}
 		}
