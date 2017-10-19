@@ -219,6 +219,13 @@ long			_spriteGLViewSysVers;
 	}
 	[vvSubviews unlock];
 }
+- (void) setWantsLayer:(BOOL)n	{
+	[super setWantsLayer:NO];
+	
+	pthread_mutex_lock(&glLock);
+	initialized = NO;
+	pthread_mutex_unlock(&glLock);
+}
 - (void)viewDidMoveToWindow	{
 	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
