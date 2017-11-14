@@ -501,7 +501,8 @@
 		++tmpIndex;
 	}
 	if (ixsToRemove != nil)
-		[[delegateArray array] removeObjectsAtIndexes:ixsToRemove];
+		[delegateArray removeObjectsAtIndexes:ixsToRemove];
+	[delegateArray purgeEmptyHolders];
 	[delegateArray unlock];
 }
 - (void) informDelegatesOfNameChange	{

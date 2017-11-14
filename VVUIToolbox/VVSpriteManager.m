@@ -610,6 +610,7 @@ MutLockArray		*_spriteManagerArray;
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
+	/*
 	[spriteArray rdlock];
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
 		VVSprite	*spritePtr;
@@ -617,6 +618,14 @@ MutLockArray		*_spriteManagerArray;
 			[spritePtr drawInContext:cgl_ctx];
 		}
 	[spriteArray unlock];
+	*/
+	
+	NSMutableArray		*tmpSprites = [spriteArray lockCreateArrayCopy];
+	NSEnumerator		*it = [tmpSprites reverseObjectEnumerator];
+	VVSprite			*spritePtr;
+	while (spritePtr = [it nextObject])	{
+		[spritePtr drawInContext:cgl_ctx];
+	}
 }
 #endif
 #if !TARGET_OS_IPHONE

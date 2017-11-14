@@ -620,7 +620,7 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 }
 - (void) scrollToNormalizedVal:(VVPOINT)n	{
 	if (deleted || vScrollTrack==nil || vScrollBar==nil || hScrollTrack==nil || hScrollBar==nil)	{
-		NSLog(@"\t\terr: bailing, %s",__func__);
+		NSLog(@"\t\terr: bailing, %s, (%0.2f, %0.2f)",__func__,n.x,n.y);
 		return;
 	}
 	VVPOINT			newPoint = VVMAKEPOINT(fmin(fmax(n.x,0.0),1.0), fmin(fmax(n.y,0.0),1.0));
