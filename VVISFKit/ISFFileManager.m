@@ -130,7 +130,7 @@
 		return nil;
 	if (!isDirectory)
 		return nil;
-	NSMutableArray			*returnMe = [[NSMutableArray alloc] initWithCapacity:0];
+	NSMutableArray			*rawFiles = [[NSMutableArray alloc] initWithCapacity:0];
 	if (r)	{
 		NSDirectoryEnumerator	*it = [fm enumeratorAtPath:trimmedPath];
 		NSString				*file = nil;
@@ -139,15 +139,15 @@
 			if (ext!=nil && ([ext isEqualToString:@"fs"] || [ext isEqualToString:@"frag"]))	{
 				NSString		*fullPath = [NSString stringWithFormat:@"%@/%@",trimmedPath,file];
 				if (func == ISFF_All)
-					[returnMe addObject:fullPath];
+					[rawFiles addObject:fullPath];
 				else	{
 					if ([self _isAFilter:fullPath])	{
 						if (func == ISFF_Filter)
-							[returnMe addObject:fullPath];
+							[rawFiles addObject:fullPath];
 					}
 					else	{
 						if (func == ISFF_Source)
-							[returnMe addObject:fullPath];
+							[rawFiles addObject:fullPath];
 					}
 				}
 			}
@@ -161,24 +161,32 @@
 			if (ext!=nil && ([ext isEqualToString:@"fs"] || [ext isEqualToString:@"frag"]))	{
 				NSString		*fullPath = [NSString stringWithFormat:@"%@/%@",trimmedPath,file];
 				if (func == ISFF_All)
-					[returnMe addObject:fullPath];
+					[rawFiles addObject:fullPath];
 				else	{
 					if ([self _isAFilter:fullPath])	{
 						if (func == ISFF_Filter)
-							[returnMe addObject:fullPath];
+							[rawFiles addObject:fullPath];
 					}
 					else	{
 						if (func == ISFF_Source)
-							[returnMe addObject:fullPath];
+							[rawFiles addObject:fullPath];
 					}
 				}
 			}
 		}
 	}
-	//return [returnMe autorelease];
-	return [[[returnMe sortedArrayUsingComparator:^(NSString *obj1, NSString *obj2)	{
+	//return [rawFiles autorelease];
+	//return [[[rawFiles sortedArrayUsingComparator:^(NSString *obj1, NSString *obj2)	{
+	//	return [obj1 caseInsensitiveCompare:obj2];
+	//}] mutableCopy] autorelease];
+	
+	NSArray				*sorted = [rawFiles sortedArrayUsingComparator:^(NSString *obj1, NSString *obj2)	{
 		return [obj1 caseInsensitiveCompare:obj2];
-	}] mutableCopy] autorelease];
+	}];
+	[rawFiles release];
+	rawFiles = nil;
+	return [[sorted mutableCopy] autorelease];
+	
 }
 + (BOOL) _isAFilter:(NSString *)pathToFile	{
 	if (pathToFile==nil)

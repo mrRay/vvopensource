@@ -76,11 +76,13 @@ id _globalVVBufferCopier = nil;
 	//pthread_mutex_lock(&renderLock);
 		if (!deleted)
 			[self prepareToBeDeleted];
-		[super dealloc];
+	
 	//pthread_mutex_unlock(&renderLock);
 	pthread_mutex_destroy(&renderLock);
 	VVRELEASE(geoXYVBO);
 	VVRELEASE(geoSTVBO);
+	
+	[super dealloc];
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) prepareToBeDeleted	{

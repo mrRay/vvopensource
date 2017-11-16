@@ -96,6 +96,8 @@
 		VVRELEASE(errDict);
 		OSSpinLockUnlock(&errDictLock);
 	}
+	VVRELEASE(vertexShaderString);
+	VVRELEASE(fragmentShaderString);
 	[super dealloc];
 }
 

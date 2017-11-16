@@ -85,13 +85,18 @@
 		}
 		//	get the root patch dict
 		rootPatchDict = [fileDict objectForKey:@"rootPatch"];
-		if (rootPatchDict == nil)
+		if (rootPatchDict == nil)	{
+			VVRELEASE(fileDict);
 			goto BAIL;
+		}
 		[rootPatchDict retain];
 		//	get the state dict
 		stateDict = [rootPatchDict objectForKey:@"state"];
-		if (stateDict == nil)
+		if (stateDict == nil)	{
+			VVRELEASE(fileDict);
+			VVRELEASE(rootPatchDict);
 			goto BAIL;
+		}
 		[stateDict retain];
 		
 		protocols = [fileDict objectForKey:@"protocols"];

@@ -387,11 +387,23 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 #endif
 		case VVBufferType_Tex:
 		{
-			if (descriptor.target==GL_TEXTURE_2D)
-				return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+			if (descriptor.target==GL_TEXTURE_2D)	{
+				if (localSurfaceRef != NULL)
+					return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, L, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+				else if (remoteSurfaceRef != NULL)
+					return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, R, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+				else
+					return [NSString stringWithFormat:@"<VVBuffer:2D Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+			}
 #if !TARGET_OS_IPHONE
-			else if (descriptor.target==GL_TEXTURE_RECTANGLE_EXT)
-				return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+			else if (descriptor.target==GL_TEXTURE_RECTANGLE_EXT)	{
+				if (localSurfaceRef != NULL)
+					return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, L, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+				else if (remoteSurfaceRef != NULL)
+					return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, R, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+				else
+					return [NSString stringWithFormat:@"<VVBuffer:RECT Tex %u, %0.0f x %0.0f>",descriptor.name,size.width,size.height];
+			}
 #endif
 		}
 	}
