@@ -901,7 +901,6 @@ long			_spriteGLViewSysVers;
 			//NSLog(@"\t\tneed to initialize...");
 			if ([NSThread isMainThread])	{
 				[self initializeGL];
-				initialized = YES;
 			}
 			//else
 				//NSLog(@"\t\tcan't initialize, not a main thread");
@@ -941,7 +940,6 @@ long			_spriteGLViewSysVers;
 		dispatch_async(dispatch_get_main_queue(), ^{
 			pthread_mutex_lock(&glLock);
 			[self initializeGL];
-			initialized = YES;
 			pthread_mutex_unlock(&glLock);
 		});
 		return;
@@ -1171,6 +1169,8 @@ long			_spriteGLViewSysVers;
 	if (deleted)
 		return;
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
+	if (cgl_ctx == NULL)
+		return;
 	//VVRECT				bounds = [self bounds];
 	//long				cpSwapInterval = 1;
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];

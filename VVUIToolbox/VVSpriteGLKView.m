@@ -765,7 +765,6 @@
 	
 	if (!initialized)	{
 		[self initializeGL];
-		initialized = YES;
 	}
 	//[EAGLContext makeCurrentContext:[self context]];
 	
