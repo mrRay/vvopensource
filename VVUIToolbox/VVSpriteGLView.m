@@ -896,6 +896,18 @@ long			_spriteGLViewSysVers;
 	[self setNeedsDisplay:YES];
 }
 - (void) drawRect:(VVRECT)r	{
+	pthread_mutex_lock(&glLock);
+		if (!initialized)	{
+			//NSLog(@"\t\tneed to initialize...");
+			if ([NSThread isMainThread])	{
+				[self initializeGL];
+				initialized = YES;
+			}
+			//else
+				//NSLog(@"\t\tcan't initialize, not a main thread");
+		}
+	pthread_mutex_unlock(&glLock);
+	
 	[self performDrawing:r];
 }
 //	split off into its own method so i can invoke drawing without triggering any of my superclass's drawRect:-related backend
@@ -921,8 +933,18 @@ long			_spriteGLViewSysVers;
 		[self updateSprites];
 	
 	if (!initialized)	{
-		[self initializeGL];
-		initialized = YES;
+		//	as of 10.13, we can't initializeGL on the render thread, because this usually involves -[NSOpenGLView setOpenGLContext:] getting called, and it's apparently illegal to call that outside the main thread because it screws with the view hierarchy.
+		//[self initializeGL];
+		//initialized = YES;
+		pthread_mutex_unlock(&glLock);
+		
+		dispatch_async(dispatch_get_main_queue(), ^{
+			pthread_mutex_lock(&glLock);
+			[self initializeGL];
+			initialized = YES;
+			pthread_mutex_unlock(&glLock);
+		});
+		return;
 	}
 	NSOpenGLContext		*context = [self openGLContext];
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
