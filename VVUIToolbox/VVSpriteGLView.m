@@ -50,6 +50,7 @@ long			_spriteGLViewSysVers;
 	
 	deleted = NO;
 	initialized = NO;
+	waitingForMainThread = NO;
 	flipped = NO;
 	localToBackingBoundsMultiplier = 1.0;
 	vvSubviews = [[MutLockArray alloc] init];
@@ -931,15 +932,21 @@ long			_spriteGLViewSysVers;
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	
-	if (!initialized)	{
+	if (waitingForMainThread)	{
+		pthread_mutex_unlock(&glLock);
+		return;
+	}
+	else if (!initialized)	{
 		//	as of 10.13, we can't initializeGL on the render thread, because this usually involves -[NSOpenGLView setOpenGLContext:] getting called, and it's apparently illegal to call that outside the main thread because it screws with the view hierarchy.
 		//[self initializeGL];
 		//initialized = YES;
+		waitingForMainThread = YES;
 		pthread_mutex_unlock(&glLock);
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
 			pthread_mutex_lock(&glLock);
 			[self initializeGL];
+			waitingForMainThread = NO;
 			pthread_mutex_unlock(&glLock);
 		});
 		return;

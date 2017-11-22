@@ -55,6 +55,7 @@ extern long			_spriteGLViewSysVers;
 	BOOL					deleted;
 	
 	BOOL					initialized;
+	BOOL					waitingForMainThread;
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
