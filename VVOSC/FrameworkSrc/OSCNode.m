@@ -89,9 +89,6 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
-		
-		autoQueryReply = NO;
-		queryDelegate = nil;
 		return self;
 	}
 	BAIL:
@@ -116,9 +113,6 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
-		
-		autoQueryReply = NO;
-		queryDelegate = nil;
 		return self;
 	}
 	[self autorelease];
@@ -138,23 +132,11 @@
 		[delegateArray release];
 		delegateArray = nil;
 	}
-	/*
-	if (queryDelegateArray != nil)	{
-		[queryDelegateArray wrlock];
-			[queryDelegateArray bruteForceMakeObjectsPerformSelector:@selector(nodeDeleted:) withObject:self];
-			[queryDelegateArray removeAllObjects];
-		[queryDelegateArray unlock];
-		[queryDelegateArray release];
-		queryDelegateArray = nil;
-	}
-	*/
 	[nodeContents rdlock];
 	for (OSCNode *nodePtr in [nodeContents array])	{
 		[nodePtr prepareToBeDeleted];
 	}
 	[nodeContents unlock];
-	autoQueryReply = NO;
-	queryDelegate = nil;
 	deleted = YES;
 }
 - (void) dealloc	{
@@ -554,121 +536,7 @@
 	//	retain the message so it doesn't disappear during this callback
 	[m retain];
 	NSMutableArray		*tmpCopy = nil;
-	OSCMessageType		mType = [m messageType];
-	OSCQueryType		qType;
 	
-	NSString			*tmpString = nil;
-	NSMutableArray		*tmpArray = nil;
-	OSCValue			*tmpValue = nil;
-	OSCMessage			*reply = nil;
-	
-	switch (mType)	{
-		case OSCMessageTypeUnknown:	//	the received message has an unknown message type
-		case OSCMessageTypeControl:	//	the received message is a simple control message (most common by far)
-			
-			OSSpinLockLock(&lastReceivedMessageLock);
-				if (lastReceivedMessage != nil)
-					[lastReceivedMessage release];
-				lastReceivedMessage = m;
-				if (lastReceivedMessage != nil)
-					[lastReceivedMessage retain];
-			OSSpinLockUnlock(&lastReceivedMessageLock);
-			
-			[delegateArray wrlock];
-			tmpCopy = [delegateArray createArrayCopyFromObjects];
-			[delegateArray unlock];
-			if (tmpCopy != nil)	{
-				for (id delegate in tmpCopy)	{
-					[delegate node:self receivedOSCMessage:m];
-				}
-			}
-			
-			break;
-		case OSCMessageTypeQuery:	//	the received message is a query
-			qType = [m queryType];
-			if (queryDelegate != nil)	{
-				switch (qType)	{
-					case OSCQueryTypeDocumentation:	//	DOCUMENTATION QUERY
-						tmpString = [queryDelegate docStringForNode:self];
-						if (tmpString != nil)	{
-							reply = [OSCMessage createReplyForMessage:m];
-							[reply addString:tmpString];
-						}
-						break;
-					case OSCQueryTypeNamespaceExploration:	//	NAMESPACE QUERY
-						tmpArray = [queryDelegate namespaceArrayForNode:self];
-						if (tmpArray != nil)	{
-							reply = [OSCMessage createReplyForMessage:m];
-							for (NSString *anObj in tmpArray)
-								[reply addString:anObj];
-						}
-						break;
-					case OSCQueryTypeTypeSignature:	//	TYPE QUERY- EXPECTED VALUE FORMAT
-						tmpString = [queryDelegate typeSignatureForNode:self];
-						if (tmpString != nil)	{
-							reply = [OSCMessage createReplyForMessage:m];
-							[reply addString:tmpString];
-						}
-						break;
-					case OSCQueryTypeCurrentValue:	//	VALUE QUERY
-						tmpValue = [queryDelegate currentValueForNode:self];
-						if (tmpValue != nil)	{
-							reply = [OSCMessage createReplyForMessage:m];
-							[reply addValue:tmpValue];
-						}
-						break;
-					case OSCQueryTypeReturnTypeSignature:	//	TYPE QUERY- RETURN VALUE FORMAT
-						tmpString = [queryDelegate returnTypeStringForNode:self];
-						if (tmpString != nil)	{
-							reply = [OSCMessage createReplyForMessage:m];
-							[reply addString:tmpString];
-						}
-						break;
-					case OSCQueryTypeUnknown:
-						NSLog(@"\t\tERR: %s",__func__);
-						//	dunno!
-						break;
-				}
-			}
-			if (reply==nil && autoQueryReply)	{
-				reply = [self generateAutomaticResponseForQuery:m];
-			}
-			break;
-		case OSCMessageTypeReply:
-			NSLog(@"\t\treceived reply %@ %s",m,__func__);
-			break;
-		case OSCMessageTypeError:
-			NSLog(@"\t\treceived error %@ %s",m,__func__);
-			break;
-	}
-	//	if there's a reply, give it to the address space, which will notify its delegate what to do about it!
-	if (reply != nil)	{
-		//NSLog(@"\t\tshould be sending reply %@",reply);
-		//NSLog(@"\t\treply has %d values",[reply valueCount]);
-		//NSLog(@"\t\tfirst val is %@",[reply valueAtIndex:0]);
-		//NSLog(@"\t\tsecond val is %@",[reply valueAtIndex:1]);
-		[_mainVVOSCAddressSpace _dispatchReplyOrError:reply];
-	}
-	
-	
-	
-	
-	
-	//	release the message!
-	[m release];
-	
-	
-	/*
-	if ((m==nil)||(deleted))
-		return;
-	//	retain the message so it doesn't disappear during this callback
-	[m retain];
-	NSMutableArray		*tmpCopy = [delegateArray lockCreateArrayCopy];
-	for (ObjectHolder *holder in tmpCopy)	{
-		id		delegate = [holder object];
-		if (delegate != nil)
-			[delegate node:self receivedOSCMessage:m];
-	}
 	OSSpinLockLock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)
 			[lastReceivedMessage release];
@@ -676,167 +544,24 @@
 		if (lastReceivedMessage != nil)
 			[lastReceivedMessage retain];
 	OSSpinLockUnlock(&lastReceivedMessageLock);
+	
+	[delegateArray wrlock];
+	tmpCopy = [delegateArray createArrayCopyFromObjects];
+	[delegateArray unlock];
+	if (tmpCopy != nil)	{
+		for (id delegate in tmpCopy)	{
+			[delegate node:self receivedOSCMessage:m];
+		}
+	}
+	
+	
+	
+	
+	
 	//	release the message!
 	[m release];
-	*/
-}
-
-
-/*===================================================================================*/
-#pragma mark --------------------- auto-query reply!
-/*------------------------------------*/
-
-
-- (OSCMessage *) generateAutomaticResponseForQuery:(OSCMessage *)m	{
-	//NSLog(@"%s ... %@",__func__,m);
-	NSString			*tmpString = nil;
-	NSMutableArray		*tmpArray = nil;
-	OSCMessage			*reply = nil;
-	OSCQueryType		qType = [m queryType];
-	switch (qType)	{
-		case OSCQueryTypeDocumentation:	//	DOCUMENTATION QUERY
-			//	ask the delegate for documentation, if it returns nil make my own answer
-			if (queryDelegate!=nil && [(id)queryDelegate respondsToSelector:@selector(docStringForNode:)])
-				tmpString = [queryDelegate docStringForNode:self];
-			//	if the string's nil for any reason, AND autoQueryReply is YES, make my own string
-			if (tmpString==nil && autoQueryReply)	{
-				switch (nodeType)	{
-					case OSCNodeTypeUnknown:
-						tmpString = [NSString stringWithFormat:@"%@: OSC node of unknown type.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeDirectory:
-						tmpString = [NSString stringWithFormat:@"%@: Directory-type OSC node- potentially contains subnodes.  this node does not have any other specific data type.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeTypeNumber:
-						tmpString = [NSString stringWithFormat:@"%@: Number-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeType2DPoint:
-						tmpString = [NSString stringWithFormat:@"%@: 2D point-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeTypeColor:
-						tmpString = [NSString stringWithFormat:@"%@: Color-type OSC node, may contain subnodes.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-					case OSCNodeTypeString:
-						tmpString = [NSString stringWithFormat:@"%@: String-type OSC node.  last received message is %@",nodeName,lastReceivedMessage];
-						break;
-				}
-			}
-			//	make a reply
-			reply = [OSCMessage createReplyForMessage:m];
-			if (tmpString != nil)
-				[reply addString:tmpString];
-			break;
-		case OSCQueryTypeNamespaceExploration:	//	NAMESPACE QUERY
-			switch (nodeType)	{
-				case OSCNodeDirectory:
-				case OSCNodeType2DPoint:
-				case OSCNodeTypeColor:
-					if (nodeContents!=nil && [nodeContents count]>0)	{
-						[nodeContents rdlock];
-						for (OSCNode *nodePtr in [nodeContents array])	{
-							if (![nodePtr hiddenInMenu])	{
-								if (tmpArray==nil)
-									tmpArray = [NSMutableArray arrayWithCapacity:0];
-								[tmpArray addObject:[nodePtr nodeName]];
-							}
-						}
-						[nodeContents unlock];
-					}
-					break;
-				case OSCNodeTypeUnknown:
-				case OSCNodeTypeNumber:
-				case OSCNodeTypeString:
-					break;
-			}
-			//	make a reply
-			reply = [OSCMessage createReplyForMessage:m];
-			//	if there's a tmpArray, add the objects in the array (the node names) to the reply
-			if (tmpArray != nil)	{
-				for (NSString *tmpName in tmpArray)	{
-					[reply addString:tmpName];
-				}
-			}
-			break;
-		case OSCQueryTypeTypeSignature:	//	TYPE QUERY- EXPECTED VALUE FORMAT
-		case OSCQueryTypeReturnTypeSignature:	//	TYPE QUERY- RETURN VALUE FORMAT
-			reply = [OSCMessage createReplyForMessage:m];
-			switch (nodeType)	{
-				case OSCNodeTypeUnknown:	//	nothing (empty)
-				case OSCNodeDirectory:	//	nothing (empty)
-					break;
-				case OSCNodeTypeNumber:	//	float
-					[reply addValue:[OSCValue createWithString:@"f"]];
-					break;
-				case OSCNodeType2DPoint:	//	two floats
-					[reply addValue:[OSCValue createWithString:@"ff"]];
-					break;
-				case OSCNodeTypeColor:	//	color
-					[reply addValue:[OSCValue createWithString:@"r"]];
-					break;
-				case OSCNodeTypeString:	//	string
-					[reply addValue:[OSCValue createWithString:@"s"]];
-					break;
-			}
-			break;
-		case OSCQueryTypeCurrentValue:	//	VALUE QUERY
-			reply = [OSCMessage createReplyForMessage:m];
-			switch (nodeType)	{
-				case OSCNodeTypeUnknown:
-				case OSCNodeDirectory:
-					break;
-				case OSCNodeTypeNumber:
-				case OSCNodeTypeColor:
-				case OSCNodeTypeString:
-					OSSpinLockLock(&lastReceivedMessageLock);
-					if (lastReceivedMessage != nil)	{
-						OSCValue		*lastVal = [lastReceivedMessage value];
-						if (lastVal != nil)
-							[reply addValue:lastVal];
-						
-						/*
-						switch ([lastVal type])	{
-							case OSCValInt:
-								[reply addValue:[OSCValue createWithFloat:(float)[lastVal intValue]]];
-								break;
-							case OSCValFloat:
-								[reply addValue:lastVal];
-								break;
-							case OSCValDouble:
-								[reply addValue:[OSCValue createWithFloat:(float)[lastVal doubleValue]]];
-								break;
-							case OSCVal64Int:
-								[reply addValue:[OSCValue createWithFloat:(float)[lastVal longLongValue]]];
-								break;
-							case OSCValBool:
-								[reply addValue:[OSCValue createWithFloat:(([lastVal boolValue]) ? (1.0) : (0.0))]];
-								break;
-							
-							case OSCValString:
-							case OSCValTimeTag:
-							case OSCValChar:
-							case OSCValColor:
-							case OSCValMIDI:
-							case OSCValNil:
-							case OSCValInfinity:
-							case OSCValArray:
-							case OSCValBlob:
-							case OSCValSMPTE:
-								break;
-						}
-						*/
-					}
-					OSSpinLockUnlock(&lastReceivedMessageLock);
-					break;
-				case OSCNodeType2DPoint:
-					break;
-			}
-			break;
-		case OSCQueryTypeUnknown:
-			//	dunno!
-			NSLog(@"\t\tERR: INCOMPLETE %s",__func__);
-			break;
-	}
-	return reply;
+	
+	
 }
 
 
@@ -957,27 +682,6 @@
 }
 - (id) delegateArray	{
 	return delegateArray;
-}
-/*
-- (id) queryDelegateArray	{
-	return queryDelegateArray;
-}
-*/
-- (BOOL) autoQueryReply	{
-	return autoQueryReply;
-}
-- (void) setAutoQueryReply:(BOOL)n	{
-	autoQueryReply = n;
-}
-- (id <OSCNodeQueryDelegate>) queryDelegate	{
-	return queryDelegate;
-}
-- (void) setQueryDelegate:(id <OSCNodeQueryDelegate>)n	{
-	queryDelegate = nil;
-	if (n!=nil && [(id)n conformsToProtocol:@protocol(OSCNodeQueryDelegate)])
-		queryDelegate = n;
-	else
-		NSLog(@"**** ERR: query delegate doesn't support OSCNodeQueryDelegate, %s",__func__);
 }
 
 

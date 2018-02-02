@@ -15,7 +15,6 @@
 
 #import "OSCNode.h"
 #import "OSCAddressSpace.h"
-#import "OSCQueryReply.h"
 
 #import "OSCStringAdditions.h"
 
@@ -79,7 +78,6 @@ VVOSC is an Objective-c framework for assembling, sending, and receiving OSC (Op
 <li>Processing frequency defaults to 100hz, but may be adjusted dynamically and has been tested up to 1khz</li>
 <li>Multithreaded- each input port runs on its own thread- and threadsafe.</li>
 <li>Optional OSC address space classes (OSCNode & OSCAddressSpace) may be used to quickly and easily construct a threadsafe address space for controlling your software.  Address space includes POSIX regex-based pattern matching for dispatching a single message to multiple addresses.</li>
-<li>Native support for an experimental query protocol described here: (http://opensoundcontrol.org/publication/query-system-open-sound-control).  The API for this protocol supports both blocks and delegate/callbacks for easy asynchronous OSC communication.</li>
 <li>Built on a handful of small, easy-to-grok classes written specifically for OS X.  Very easy to understand, modify, subclass, or extend.</li>
 <li>Project includes targets that build and install an SDK for using VVOSC in iOS apps</li>
 </p>
@@ -91,7 +89,6 @@ VVOSC is an Objective-c framework for assembling, sending, and receiving OSC (Op
 <li>The OSC specification describes a limited subset of regex to be used in wildcard/pattern matching for OSC dispatch.  VVOSC's message dispatch is presently a POSIX regex engine simply because it was faster and easier to get going (it's built into the OS) than rolling my own.  The specific engine used may change if message dispatch becomes a speed issue in the future; presumably, this ambiguity is why the OSC spec describes a specific and limited subset of regex!</li>
 <li>The OSC spec describes the optional type characters [ and ] to delineate arrays and basic node-based structures for ad-hoc data types.  Support for arrays has been added, but lacking any published examples of dictionaries, this isn't supported yet- if someone wants to send me a specific example i can use to support this protocol properly, please let me know!</li>
 <li>While VVOSC parses, stores, and allows you to set OSC time tags (and even create and pass time tags as values), it doesn't perform any delay or scheduling if it receives an OSC bundle with a time tag which is later than the current time.  Parsed time tags are available to your applications as the 'timeTag' variable of a passed OSCMessage, which is stored as an NSDate (which, internally, is a double which basically represents 64-bit NTP time, as I understand it).</li>
-<li>VVOSC supports an experimental OSC query protocol described here: <A HREF="http://opensoundcontrol.org/publication/query-system-open-sound-control">http://opensoundcontrol.org/publication/query-system-open-sound-control</A>.  This protocol isn't part of the official OSC specifical, and you shouldn't expect other apps to support it.</li>
 </p>
 
 
@@ -142,53 +139,6 @@ OSCNode				*myNode = [as findNodeForAddress:@"/A/B/C" createIfMissing:YES];<BR>
 [as dispatchMessage:receivedMessage];<BR>
 </div>
 
-
-<BR>
-<big>Sample code- OSC query protocol, sending queries (optional)</big>
-<div style="width: 100%; border: 1px #000 solid; background-color: #F0F0F0; padding: 5px; margin: 5px; color: black; font-family: Courier; font-size: 10pt; font-style: normal;">
-//	assemble the query message<BR>
-OSCMessage		*queryMsg = [OSCMessage createQueryType:OSCQueryTypeNamespaceExploration forAddress:@"/"];<BR>
-<BR>
-//	dispatch the query to your chosen out port via the OSC manager- this example uses a block<BR>
-[oscManager<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;dispatchQuery:queryMsg<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;toOutPort:targetOutPort<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;timeout:1.0<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;replyHandler:^(OSCMessage *replyMsg)	{<BR>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//	the code in here is executed when a reply is received (or the timeout has passed)<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;}];<BR>
-<BR>
-//	here's another way to dispatch a query, using a more old-fashioned delegate<BR>
-[oscManager<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;dispatchQuery:queryMsg<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;toOutPort:targetOutPort<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;timeout:1.0<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;replyDelegate:self];<BR>
-<BR>
-- (void) oscQueryReplyReceived:(OSCMessage *)replyMsg	{<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;//	this method is called when a reply is received or the timeout passes<BR>
-}<BR>
-</div>
-
-
-<BR>
-<big>Sample code- OSC query protocol, responding to queries (optional)</big>
-<div style="width: 100%; border: 1px #000 solid; background-color: #F0F0F0; padding: 5px; margin: 5px; color: black; font-family: Courier; font-size: 10pt; font-style: normal;">
-//	get the OSC address space<BR>
-OSCAddressSpace		*as = [OSCAddressSpace mainAddressSpace];<BR>
-<BR>
-//	create a node in the address space<BR>
-OSCNode				*myNode = [as findNodeForAddress:@"/A/B/C" createIfMissing:YES];<BR>
-<BR>
-//	set 'autoQueryReply' to YES and the OSCNode instance will automatically generate replies to received queries<BR>
-[myNode setAutoQueryReply:YES];<BR>
-<BR>
-//	for more precise control, you can set the node's queryDelegate to generate customized responses to specific queries<BR>
-[myNode setQueryDelegate:self];<BR>
-- (NSMutableArray *) namespaceArrayForNode:(id)n	{<BR>
-	&nbsp;&nbsp;&nbsp;&nbsp;//	this and other methods in the OSCNodeQueryDelegate protocol are called on the queryDelegate when the node receives queries<BR>
-}<BR>
-</div>
 
 \endhtmlonly
 */

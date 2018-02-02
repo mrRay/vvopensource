@@ -12,8 +12,6 @@
 //	OSCAddressSpace delegate protocol
 @protocol OSCAddressSpaceDelegateProtocol
 - (void) nodeRenamed:(OSCNode *)n;
-//	this method is called by other nodes in the address space replying to queries.  the passed message is the reply or error in response to a query- this response needs to be transmitted (sent via an output).  this response can probably be transmitted via OSCManager's "transmitReplyOrError:" method, but the OSC address space and the OSC manager aren't necessarily related so we have this as a separate delegate method.
-- (void) queryResponseNeedsToBeSent:(OSCMessage *)m;
 @end
 
 
@@ -70,15 +68,10 @@ The basic workflow for address spaces is relatively straightforward: first locat
 
 ///	Sends the passed message to the appropriate node in the address space- this is how you pass received OSC data from a source (like an OSCInPort) to your address space.  First it finds the OSCNode corresponding to the passed message's address, and then calls "dispatchMessage:" on it, which ultimately results in the node's delegates acquiring the passed OSC message.
 - (void) dispatchMessage:(OSCMessage *)m;
-//	Don't call this method externally- this gets called by an OSCNode inside me (or by me), and you probably won't need to ever call this method.  The passed message is a reply or error that needs to be sent back in response to a query.  The passed OSCMessage contains the IP address and port of the destination.  This method just passes the data on to the addres space's delegate- it does NOT actually send anything out, this is something you'll have to implement in the delegate.
-- (void) _dispatchReplyOrError:(OSCMessage *)m;
 
 - (void) addDelegate:(id)d forPath:(NSString *)p;
 - (void) removeDelegate:(id)d forPath:(NSString *)p;
-/*
-- (void) addQueryDelegate:(id)d forPath:(NSString *)p;
-- (void) removeQueryDelegate:(id)d forPath:(NSString *)p;
-*/
+
 @property (assign, readwrite) id delegate;
 
 

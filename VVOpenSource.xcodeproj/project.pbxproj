@@ -118,8 +118,6 @@
 		1A09FBF61C42FB0B008736D6 /* OSCBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D0FE100E8A6700C3944E /* OSCBundle.m */; };
 		1A09FBF71C42FB0B008736D6 /* OSCPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D105100E8A6700C3944E /* OSCPacket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBF81C42FB0B008736D6 /* OSCPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D102100E8A6700C3944E /* OSCPacket.m */; };
-		1A09FBF91C42FB0B008736D6 /* OSCQueryReply.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A09FBFA1C42FB0B008736D6 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
 		1A09FBFB1C42FB0B008736D6 /* OSCManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D112100E8A6700C3944E /* OSCManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBFC1C42FB0B008736D6 /* OSCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D10D100E8A6700C3944E /* OSCManager.m */; };
 		1A09FBFD1C42FB0B008736D6 /* OSCInPort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D109100E8A6700C3944E /* OSCInPort.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -885,8 +883,6 @@
 		96C24B061981A7F600C53395 /* VVBufferCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C24B041981A7F500C53395 /* VVBufferCopier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96C24B071981A7F600C53395 /* VVBufferCopier.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C24B051981A7F600C53395 /* VVBufferCopier.m */; };
 		96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96C7DD7217CE8AD10012A030 /* OSCQueryReply.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */; };
 		96C8071319817BFE00FA7825 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96C8071919817BFE00FA7825 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 96C8071719817BFE00FA7825 /* InfoPlist.strings */; };
 		96C8073B19817C1600FA7825 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -2639,8 +2635,6 @@
 		96C24B041981A7F500C53395 /* VVBufferCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferCopier.h; sourceTree = "<group>"; };
 		96C24B051981A7F600C53395 /* VVBufferCopier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferCopier.m; sourceTree = "<group>"; };
 		96C2F2131017815F004E19B0 /* OSCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCConstants.h; path = VVOSC/FrameworkSrc/OSCConstants.h; sourceTree = "<group>"; };
-		96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSCQueryReply.h; path = VVOSC/FrameworkSrc/OSCQueryReply.h; sourceTree = "<group>"; };
-		96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCQueryReply.m; path = VVOSC/FrameworkSrc/OSCQueryReply.m; sourceTree = "<group>"; };
 		96C8071219817BFE00FA7825 /* DDMathParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DDMathParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96C8071619817BFE00FA7825 /* DDMathParser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DDMathParser-Info.plist"; sourceTree = "<group>"; };
 		96C8071819817BFE00FA7825 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -4112,8 +4106,6 @@
 				9628D0FE100E8A6700C3944E /* OSCBundle.m */,
 				9628D105100E8A6700C3944E /* OSCPacket.h */,
 				9628D102100E8A6700C3944E /* OSCPacket.m */,
-				96C7DD7017CE8AD10012A030 /* OSCQueryReply.h */,
-				96C7DD7117CE8AD10012A030 /* OSCQueryReply.m */,
 			);
 			name = "basic data types";
 			sourceTree = "<group>";
@@ -4789,7 +4781,6 @@
 				1A09FBEE1C42FB0B008736D6 /* OSCConstants.h in Headers */,
 				1A09FBF31C42FB0B008736D6 /* OSCMessage.h in Headers */,
 				1A09FBF51C42FB0B008736D6 /* OSCBundle.h in Headers */,
-				1A09FBF91C42FB0B008736D6 /* OSCQueryReply.h in Headers */,
 				1A09FC031C42FB0B008736D6 /* OSCAddressSpace.h in Headers */,
 				1A09FC011C42FB0B008736D6 /* OSCNode.h in Headers */,
 				1A09FBED1C42FB0B008736D6 /* VVOSC.h in Headers */,
@@ -4865,7 +4856,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				969FCEA0120DB9EF0067E617 /* lgpl-3.0.txt in Headers */,
-				96C7DD7217CE8AD10012A030 /* OSCQueryReply.h in Headers */,
 				9628D0F1100E8A5200C3944E /* OSCAddressSpace.h in Headers */,
 				9628D113100E8A6700C3944E /* OSCZeroConfManager.h in Headers */,
 				9628D117100E8A6700C3944E /* OSCOutPort.h in Headers */,
@@ -6582,7 +6572,6 @@
 				1A09FC021C42FB0B008736D6 /* OSCNode.m in Sources */,
 				1A09FBF61C42FB0B008736D6 /* OSCBundle.m in Sources */,
 				1A09FBF41C42FB0B008736D6 /* OSCMessage.m in Sources */,
-				1A09FBFA1C42FB0B008736D6 /* OSCQueryReply.m in Sources */,
 				1A09FC061C42FB0B008736D6 /* OSCZeroConfManager.m in Sources */,
 				1A09FBF81C42FB0B008736D6 /* OSCPacket.m in Sources */,
 				1A09FBFC1C42FB0B008736D6 /* OSCManager.m in Sources */,
@@ -6858,7 +6847,6 @@
 				9628D123100E8A6700C3944E /* OSCOutPort.m in Sources */,
 				9628D124100E8A6700C3944E /* OSCManager.m in Sources */,
 				9628D128100E8A6700C3944E /* OSCInPort.m in Sources */,
-				96C7DD7317CE8AD10012A030 /* OSCQueryReply.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

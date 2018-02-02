@@ -125,7 +125,7 @@
 	ignoreReceivedVals = YES;
 	[swatch start];
 	//[outPort sendThisMessage:msg];
-	[inPort _dispatchQuery:msg toOutPort:outPort];
+	[inPort _dispatchMessage:msg toOutPort:outPort];
 }
 - (void) receivedOSCMessage:(OSCMessage *)n	{
 	NSLog(@"%s ... %@",__func__,n);
@@ -137,8 +137,8 @@
 	}
 	else	{
 		NSLog(@"\t\tshould be returning the message!");
-		unsigned int		txAddr = [n queryTXAddress];
-		unsigned int		txPort = [n queryTXPort];
+		unsigned int		txAddr = [n txAddress];
+		unsigned int		txPort = [n txPort];
 		NSLog(@"\t\ttxPort is  %d",txPort);
 		if (txAddr==0 || txPort==0)
 			NSLog(@"\t\terr, addr or port 0 at %s",__func__);

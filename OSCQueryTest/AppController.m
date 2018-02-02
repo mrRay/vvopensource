@@ -85,7 +85,7 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+	[oscManager dispatchMessage:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
 		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
@@ -103,7 +103,7 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+	[oscManager dispatchMessage:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
 		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
@@ -121,7 +121,7 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+	[oscManager dispatchMessage:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
 		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
@@ -139,7 +139,7 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+	[oscManager dispatchMessage:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
 		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
@@ -157,7 +157,7 @@
 	[self addTXMsg:msg];
 	
 	//	i send the query out the OSC MANAGER- it has to be dispatched through an input or the raw packet header won't have a return address with a port that i'm listening to!
-	[oscManager dispatchQuery:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
+	[oscManager dispatchMessage:msg toOutPort:manualOutput timeout:5.0 replyHandler:^(OSCMessage *replyMsg)	{
 		NSLog(@"%s- %@",__func__,replyMsg);
 		[self addRXMsg:replyMsg];
 	}];
@@ -257,13 +257,6 @@
 
 - (void) nodeRenamed:(OSCNode *)n	{
 	/*		left intentionally blank- don't need to do anything, just want to avoid a warning for not having this method		*/
-}
-- (void) queryResponseNeedsToBeSent:(OSCMessage *)m	{
-	//	add the message to the array of msgs that were sent for display in the data view
-	[self addTXMsg:m];
-	
-	//	tell the OSC manager to tranmist the reply- this actually sends the reply over the network
-	[oscManager transmitReplyOrError:m];
 }
 
 

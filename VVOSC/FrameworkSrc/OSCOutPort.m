@@ -121,25 +121,6 @@
 		[self sendThisPacket:packet];
 }
 - (void) sendThisMessage:(OSCMessage *)m	{
-	/*
-	if ((deleted) || (m==nil))
-		return;
-	//	if it's a query, i can't just send it out- my socket isn't bound to a port, so when OS X 
-	//	goes to send the UDP packet it'll be coming from a random port- and the OSC client that 
-	//	receives it won't know where to send the reply or error...
-	OSCMessageType		mType = [m messageType];
-	if (mType==OSCMessageTypeQuery)	{
-		//	in order for the raw network packet to have a UDP origin header that matches a port i'm receiving on, i have to send it from an OSCInPort
-		[XXXXXXX _dispatchQuery:m toOutPort:self];
-		return;
-	}
-	//	if i'm here, it's not a query- it's a normal message, and i can just send that shit out
-	if (sock==-1)
-		return;
-	OSCPacket		*newPacket = [OSCPacket createWithContent:m];
-	if (newPacket != nil)
-		[self sendThisPacket:newPacket];
-	*/
 	
 	//NSLog(@"%s ... %@",__func__,m);
 	if ((deleted) || (sock == -1) || (m == nil))

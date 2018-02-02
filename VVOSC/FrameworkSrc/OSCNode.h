@@ -25,24 +25,6 @@
 @end
 
 
-///	An OSCNode's queryDelegate must respond to these methods, which are called when a query-type OSCMessage is dispatched to an OSCNode.
-/**
-\ingroup VVOSC
-*/
-@protocol OSCNodeQueryDelegate
-///	The receiver should return an auto-released array of NSString instances corresponding to the sub-nodes in response to the query.
-- (NSMutableArray *) namespaceArrayForNode:(id)n;
-///	The receiver should return an auto-released NSString instance containing the documentation for the passed node.
-- (NSString *) docStringForNode:(id)n;
-///	The receiver should return an auto-released NSString instance containing the type signature for the passed node (the format of the messages you want the node to reply to).
-- (NSString *) typeSignatureForNode:(id)n;
-///	The receiver should return an auto-released OSCValue instance that best represents the current value of the passed node.
-- (OSCValue *) currentValueForNode:(id)n;
-///	The receiver should return an auto-released NSString instance describing the format of the values returned by the passed node.
-- (NSString *) returnTypeStringForNode:(id)n;
-@end
-
-
 
 
 ///	OSCNode describes a single destination for OSC addresses.  The OSC address space is made up of many different nodes.  This class is optional- it is not used for basic OSC message sending/receiving, and only gets used if you start working with OSCAddressSpace.
@@ -69,9 +51,6 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	OSCMessage			*lastReceivedMessage;	//	retained
 	OSSpinLock			lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
-	
-	BOOL				autoQueryReply;	//	NO by default
-	id <OSCNodeQueryDelegate>	queryDelegate;	//	NOT RETAINED
 }
 
 /*	only called by the address space to craft a formatted string for logging purposes	*/
@@ -128,11 +107,8 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 - (void) informDelegatesOfNameChange;
 - (void) addDelegatesFromNode:(OSCNode *)n;
 
-///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).  If the passed message is a query, this tries to assemble a reply (either from the queryDelegate or automatically if autoQueryReply is enabled) which is sent to the main address space.
+///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).
 - (void) dispatchMessage:(OSCMessage *)m;
-
-///	Generates a default reply for a query of the passed type.  if "autoQueryReply" is enabled, this is how the reply is generated- this is a discrete method so query delegates can quickly generate query replies without having to implement reply methods in every query delegate class!
-- (OSCMessage *) generateAutomaticResponseForQuery:(OSCMessage *)m;
 
 @property (assign, readwrite) id addressSpace;
 ///	Sets or gets the node's local name.  The node "/A/B/C" would return "C".
@@ -151,9 +127,5 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 ///	Convenience method for returning the first value from the last received message
 @property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
-///	Only used for the OSC query protocol.  NO by default. if YES and the queryDelegate is nil or doesn't respond to one of the delegate methods or returns nil from one of the delegate methods, the OSCNode will try to automatically respond to the query
-@property (assign,readwrite) BOOL autoQueryReply;
-///	Only used for the OSC query protocol.  nil by default, NOT retained, must respond to the OSCNodeQueryDelegate protocol; unlike "normal" delegates, an OSCNode has a single query delegate...
-@property (assign,readwrite) id<OSCNodeQueryDelegate> queryDelegate;
 
 @end

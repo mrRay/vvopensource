@@ -336,58 +336,6 @@
 
 
 /*===================================================================================*/
-#pragma mark --------------------- OSC query reply/error message dispatch
-/*------------------------------------*/
-
-
-//- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o	{
-- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyHandler:(void (^)(OSCMessage *replyMsg))block	{
-	if (m==nil || o==nil)
-		return;
-	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
-	if (inPort == nil)
-		return;
-	[inPort dispatchQuery:m toOutPort:o timeout:t replyHandler:block];
-}
-- (void) dispatchQuery:(OSCMessage *)m toOutPort:(OSCOutPort *)o timeout:(float)t replyDelegate:(id <OSCQueryReplyDelegate>)d	{
-	if (m==nil || o==nil)
-		return;
-	OSCInPort			*inPort = [inPortArray lockObjectAtIndex:0];
-	if (inPort == nil)
-		return;
-	[inPort dispatchQuery:m toOutPort:o timeout:t replyDelegate:d];
-}
-- (void) transmitReplyOrError:(OSCMessage *)m	{
-	//NSLog(@"%s ... %@",__func__,m);
-	//	make sure that the passed message is either a reply or error
-	OSCMessageType		mType = [m messageType];
-	if (mType==OSCMessageTypeReply || mType==OSCMessageTypeError)	{
-		//	make sure that the passed message has a valid reply-to address & port
-		unsigned int		txAddr = [m queryTXAddress];
-		unsigned short		txPort = [m queryTXPort];
-		if (txAddr!=0 && txPort!=0)	{
-			//	find the out port which corresponds to the reply-to address & port (create it if it can't be found)
-			OSCOutPort		*outPort = [self findOutputWithRawAddress:txAddr andPort:txPort];
-			if (outPort == nil)	{
-				struct in_addr		tmpAddr;
-				tmpAddr.s_addr = txAddr;
-				outPort = [self
-					createNewOutputToAddress:[NSString stringWithCString:inet_ntoa(tmpAddr) encoding:NSASCIIStringEncoding]
-					atPort:ntohs(txPort)];
-				//NSLog(@"\t\tcouldn't find output, created %@",outPort);
-			}
-			//	send the message out the port
-			if (outPort != nil)	{
-				//NSLog(@"\t\tfound matching output (%@), sending the reply...",outPort);
-				[outPort sendThisMessage:m];
-			}
-		}
-	}
-	
-}
-
-
-/*===================================================================================*/
 #pragma mark --------------------- working with ports
 /*------------------------------------*/
 
