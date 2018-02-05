@@ -9,26 +9,26 @@
 
 
 - (id) initWithTimeInterval:(double)i target:(id)t selector:(SEL)s	{
-	if ((t==nil) || (s==nil) || (![t respondsToSelector:s]))
-		return nil;
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		[self generalInit];
 		[self setInterval:i];
 		targetObj = t;
 		targetSel = s;
-		return self;
+		if ((t==nil) || (s==nil) || (![t respondsToSelector:s]))	{
+			[self release];
+			self = nil;
+		}
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithTimeInterval:(double)i	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		[self generalInit];
 		[self setInterval:i];
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (void) generalInit	{
 	interval = 0.1;

@@ -11,6 +11,58 @@ id				_mainVVOSCAddressSpace;
 
 
 
+@interface OSCNode (OSCNodeLogging)
+/*	only called by the address space to craft a formatted string for logging purposes	*/
+- (void) _logDescriptionToString:(NSMutableString *)s tabDepth:(int)d;
+@end
+
+@implementation OSCNode (OSCNodeLogging)
+- (void) _logDescriptionToString:(NSMutableString *)s tabDepth:(int)d	{
+	int				i;
+	
+	//	add the tabs
+	for (i=0;i<d;++i)
+		[s appendString:@"\t"];
+	
+	//	write the description
+	OSSpinLockLock(&nameLock);
+		[s appendFormat:@"<%@>",nodeName];
+	OSSpinLockUnlock(&nameLock);
+	
+	//	if there are contents
+	if ((nodeContents!=nil)&&([nodeContents count]>0))	{
+		[s appendString:@"\t{"];
+		//	call this method on my contents
+		[nodeContents rdlock];
+		OSCNode				*nodePtr = nil;
+		for (nodePtr in [nodeContents array])	{
+			[s appendString:@"\n"];
+			[nodePtr _logDescriptionToString:s tabDepth:d+1];
+		}
+		[nodeContents unlock];
+		
+		/*
+		NSEnumerator		*it = [nodeContents objectEnumerator];
+		OSCNode				*nodePtr;
+		while (nodePtr = [it nextObject])	{
+			[s appendString:@"\n"];
+			[nodePtr _logDescriptionToString:s tabDepth:d+1];
+		}
+		[nodeContents unlock];
+		*/
+		
+		//	add the tabs, close the description
+		[s appendString:@"\n"];
+		for (i=0;i<d;++i)
+			[s appendString:@"\t"];
+		[s appendString:@"}"];
+	}
+}
+@end
+
+
+
+
 @implementation OSCAddressSpace
 
 
@@ -24,7 +76,7 @@ id				_mainVVOSCAddressSpace;
 #if !TARGET_OS_IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a	{
 	NSMenu				*returnMe = nil;
-	NSMutableIndexSet	*tmpSet = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeString+1)];
+	NSMutableIndexSet	*tmpSet = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(OSCNodeTypeUnknown,OSCNodeTypeData+1)];
 	returnMe = [OSCAddressSpace
 		makeMenuForNode:n
 		ofType:tmpSet
@@ -114,14 +166,17 @@ id				_mainVVOSCAddressSpace;
 	if (_mainVVOSCAddressSpace != nil)
 		return;
 	//NSLog(@"\t\tallocating main address space!");
-	_mainVVOSCAddressSpace = [[OSCAddressSpace alloc] init];
+	_mainVVOSCAddressSpace = [[OSCAddressSpace alloc] initWithName:@"/"];
 	[_mainVVOSCAddressSpace setNodeType:OSCNodeDirectory];
+	[_mainVVOSCAddressSpace setOSCDescription:@"root node"];
+	
 	//NSLog(@"\t\t_mainVVOSCAddressSpace is %@",_mainVVOSCAddressSpace);
 }
 
 
 
 
+/*
 - (NSString *) description	{
 	NSMutableString		*mutString = [NSMutableString stringWithCapacity:0];
 	[mutString appendString:@"\n"];
@@ -136,12 +191,14 @@ id				_mainVVOSCAddressSpace;
 	
 	return mutString;
 }
+*/
 - (id) init	{
 	//NSLog(@"%s",__func__);
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		delegate = nil;
+		fullName = [@"/" retain];
 #if TARGET_OS_IPHONE
-
 #else
 		//	register to receive notifications that the app's about to terminate so i can stop running
 		[[NSNotificationCenter defaultCenter]
@@ -150,10 +207,26 @@ id				_mainVVOSCAddressSpace;
 			name:NSApplicationWillTerminateNotification
 			object:nil];
 #endif
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
+}
+- (id) initWithName:(NSString *)n	{
+	//NSLog(@"%s ... %@",__func__,n);
+	self = [super initWithName:n];
+	if (self != nil)	{
+		delegate = nil;
+		fullName = [@"/" retain];
+#if TARGET_OS_IPHONE
+#else
+		//	register to receive notifications that the app's about to terminate so i can stop running
+		[[NSNotificationCenter defaultCenter]
+			addObserver:self
+			selector:@selector(applicationWillTerminateNotification:)
+			name:NSApplicationWillTerminateNotification
+			object:nil];
+#endif
+	}
+	return self;
 }
 - (void) applicationWillTerminateNotification:(NSNotification *)note	{
 	[self prepareToBeDeleted];
@@ -162,6 +235,10 @@ id				_mainVVOSCAddressSpace;
 	//NSLog(@"%s",__func__);
 	//if (_mainVVOSCAddressSpace == self)
 	//	_mainVVOSCAddressSpace = nil;
+#if TARGET_OS_IPHONE
+#else
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
+#endif
 	[super dealloc];
 }
 
@@ -240,7 +317,6 @@ id				_mainVVOSCAddressSpace;
 	
 	OSCNode			*beforeParent = nil;
 	OSCNode			*afterParent = nil;
-	
 	//	retain the node i'm about to insert so it doesn't get released while this is happening
 	if (n != nil)
 		[n retain];

@@ -18,29 +18,29 @@
 	return [returnMe autorelease];
 }
 - (id) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t {
-	if ((d == nil) || (m == nil))
-		goto BAIL;
-	
-	if (self = [super init])	{
-		domainString = [d copy];
-		
-		servicesArray = [[MutLockArray arrayWithCapacity:0] retain];
+	self = [super init];
+	if (self != nil)	{
+		domainString = nil;
+		servicesArray = nil;
 		domainManager = nil;
 		
-		domainManager = m;
-		
-		serviceBrowser = [[NSNetServiceBrowser alloc] init];
-		[serviceBrowser setDelegate:(id)self];
-		//[serviceBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
-		[serviceBrowser searchForServicesOfType:t inDomain:domainString];
-		
-		return self;
+		if (d==nil || m==nil)	{
+			[self release];
+			self = nil;
+		}
+		else	{
+			
+			domainString = [d copy];
+			servicesArray = [[MutLockArray arrayWithCapacity:0] retain];
+			domainManager = m;
+			
+			serviceBrowser = [[NSNetServiceBrowser alloc] init];
+			[serviceBrowser setDelegate:(id)self];
+			//[serviceBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
+			[serviceBrowser searchForServicesOfType:t inDomain:domainString];
+		}
 	}
-	
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	return self;
 }
 
 - (void) dealloc	{

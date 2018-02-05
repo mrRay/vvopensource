@@ -73,11 +73,6 @@
 	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
-	/*
-	if (threadLooper != nil)
-		[threadLooper release];
-	threadLooper = nil;
-	*/
 	VVRELEASE(scratchArray);
 	
 	if (portLabel != nil)

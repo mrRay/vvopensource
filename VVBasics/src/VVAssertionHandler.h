@@ -7,7 +7,6 @@
 
 
 
-
 #define USE_CUSTOM_ASSERTION_HANDLER																			\
 {																												\
 	NSThread				*__currentThread = [NSThread currentThread];										\

@@ -21,18 +21,6 @@
 
 
 
-///	Most common means of passing OSC data to your application.  Delegates of OSCManager and OSCInPort should support this protocol.
-/*!
-When instances of OSCInPort and OSCManager receive OSC data, they pass it to their delegate by calling this method.  If you want to receive OSC data, your OSCManager's delegate must respond to this method!
-*/
-@protocol OSCDelegateProtocol
-///	This method is called whenever your in port/manager receives an OSCMessage.
-- (void) receivedOSCMessage:(OSCMessage *)m;
-@end
-
-
-
-
 /*
 	the following stuff is for doxygen
 */

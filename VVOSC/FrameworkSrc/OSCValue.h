@@ -23,6 +23,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 	void			*value;	//!<The actual value is stored here; this memory is allocated dynamically, and the size of this pointer varies depending on the type.  Whenever possible the value is stored as a basic C data type, but it falls back to NSObjects (NSString, NSColor/UIColor, etc) for more complex data types.
 }
 
++ (NSString *) typeTagStringForType:(OSCValueType)t;
++ (OSCValueType) typeForTypeTagString:(NSString *)t;
 ///	Creates & returns an auto-released instance of OSCValue with an int
 + (id) createWithInt:(int)n;
 ///	Creates & returns an auto-released instance of OSCValue with a float
@@ -121,10 +123,14 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 ///	Returns a double value, regardless as to the type of the OSCValue
 - (double) calculateDoubleValue;
 
+- (id) jsonValue;
+
 @property (nonatomic, readonly) OSCValueType type;
 
 - (long) bufferLength;
 - (long) typeSignatureLength;
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d;
+- (NSString *) typeTagString;
+- (NSComparisonResult) compare:(OSCValue *)n;
 
 @end

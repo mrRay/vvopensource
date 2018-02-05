@@ -1,6 +1,7 @@
+#import <Foundation/Foundation.h>
 
-/*
-	this class offers a very limited, very simple cocoa interface to libcurl for doing extremely 
+
+/*	this class offers a very limited, very simple cocoa interface to libcurl for doing extremely 
 	basic http transfer ops
 	
 	basically, this class exists because at this time NSURLConnection is problematic and 
@@ -14,12 +15,6 @@
 */
 
 
-#import <Cocoa/Cocoa.h>
-#import <curl/curl.h>
-
-
-
-
 @protocol VVCURLDLDelegate
 - (void) dlFinished:(id)h;
 @end
@@ -29,7 +24,6 @@
 
 @interface VVCURLDL : NSObject {
 	NSString				*urlString;
-	CURL					*curlHandle;
 	
 	long					dnsCacheTimeout;
 	long					connectTimeout;
@@ -42,6 +36,7 @@
 	long					httpResponseCode;
 	NSMutableData			*responseData;
 	
+	void					*curlHandle;	//	really a CURL*, but declared here as a void* so when you import this header you don't wind up importing curl.h and adding it as a dependency
 	struct curl_slist		*headerList;	//	nil by default- if non-nil, supplied to the handle as CURLOPT_HTTPHEADER
 	NSMutableData			*postData;		//	if non-nil, simply posted as CURLOPT_POSTFIELDS
 	struct curl_httppost	*firstFormPtr;	//	if postData was nil but this isn't, posted as CURLOPT_HTTPPOST
@@ -49,7 +44,7 @@
 	
 	BOOL					returnOnMain;
 	BOOL					performing;
-	CURLcode				err;
+	long					err;
 }
 
 + (id) createWithAddress:(NSString *)a;
@@ -57,20 +52,9 @@
 
 - (void) perform;
 - (void) performAsync:(BOOL)as withDelegate:(id <VVCURLDLDelegate>)d;
-- (void) _performAsyncWithDelegate:(id <VVCURLDLDelegate>)d;
-- (void) _performWithDelegate:(id <VVCURLDLDelegate>)d;
-
 - (void) performAsync:(BOOL)as withBlock:(void (^)(VVCURLDL *completedDL))b;
-- (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b;
-- (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b;
-
 - (void) performOnQueue:(dispatch_queue_t)q block:(void (^)(VVCURLDL *completedDL))b;
 
-- (void) _execute;
-
-//- (struct curl_slist *) headerList;
-//- (struct curl_httppost *) firstFormPtr;
-//- (struct curl_httppost *) lastFormPtr;
 - (void) appendDataToPOST:(NSData *)d;
 - (void) appendStringToPOST:(NSString *)s;
 @property (readonly) NSString *urlString;
@@ -86,15 +70,12 @@
 - (void) addFormNSString:(NSString *)s forName:(NSString *)n;
 - (void) addFormZipData:(NSData *)d forName:(NSString *)n;
 
-@property (assign,readwrite) struct curl_slist *headerList;
-@property (assign,readwrite) struct curl_httppost *firstFormPtr;
-@property (assign,readwrite) struct curl_httppost *lastFormPtr;
 @property (assign,readwrite) BOOL returnOnMain;
 @property (readonly) long httpResponseCode;
 @property (readonly) NSMutableData *responseData;
 @property (readonly) NSString *responseString;
-@property (readonly) CURLcode err;
+@property (readonly) long err;	//	really a CURLcode
 
 @end
 
-size_t vvcurlWriteFunction(void *ptr, size_t size, size_t nmemb, void *stream);
+size_t CURLDLWriteFunction(void *ptr, size_t size, size_t nmemb, void *stream);

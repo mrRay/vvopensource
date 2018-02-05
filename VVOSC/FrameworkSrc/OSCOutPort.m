@@ -29,30 +29,27 @@
 	return [self initWithAddress:a andPort:p labelled:nil];
 }
 - (id) initWithAddress:(NSString *)a andPort:(unsigned short)p labelled:(NSString *)l	{
-	if ((a==nil) || (p<1024))
-		goto BAIL;
-	
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		deleted = NO;
 		sock = -1;
 		port = p;
 		addressString = [a retain];
-		portLabel = nil;
+		portLabel = [l retain];
 		
-		if (l != nil)
-			portLabel = [l copy];
+		if (a==nil || p<1024)	{
+			NSLog(@"\t\terr in %s, bailing. a was %@ p was %d",__func__,a,p);
+			[self release];
+			return nil;
+		}
+		else if (![self createSocket])	{
+			NSLog(@"\t\terr in %s, bailing.  no socket.",__func__);
+			[self release];
+			return nil;
+		}
 		
-		//	if i can't make a socket, return nil
-		if (![self createSocket])
-			goto BAIL;
-		
-		return self;
 	}
-	
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	return self;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);

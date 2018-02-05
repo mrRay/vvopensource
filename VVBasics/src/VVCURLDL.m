@@ -1,5 +1,20 @@
 #import "VVCURLDL.h"
-#import "VVBasicMacros.h"
+#import <curl/curl.h>
+#import <VVBasics/VVBasicMacros.h>
+
+
+
+@interface VVCURLDL ()
+- (void) _performAsyncWithDelegate:(id <VVCURLDLDelegate>)d;
+- (void) _performWithDelegate:(id <VVCURLDLDelegate>)d;
+- (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b;
+- (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b;
+- (void) _execute;
+@property (assign,readwrite) struct curl_slist *headerList;
+@property (assign,readwrite) struct curl_httppost *firstFormPtr;
+@property (assign,readwrite) struct curl_httppost *lastFormPtr;
+@property (assign,readwrite) BOOL performing;
+@end
 
 
 
@@ -28,14 +43,13 @@
 		referer = nil;
 		acceptedEncoding = nil;
 		postData = nil;
-		//headerArray = nil;
 		httpResponseCode = 0;
 		responseData = nil;
 		headerList = nil;
 		firstFormPtr = nil;
 		lastFormPtr = nil;
 		returnOnMain = NO;
-		performing = NO;
+		[self setPerforming:NO];
 		err = 0;
 		return self;
 	}
@@ -141,8 +155,8 @@
 
 
 - (void) _execute	{
-	performing = YES;
-	curlHandle = curl_easy_init();
+	[self setPerforming:YES];
+	curlHandle = (CURL*)curl_easy_init();
 	if (curlHandle)	{
 		char			errBuffer[CURL_ERROR_SIZE];
 		//	set up the error buffer
@@ -207,7 +221,7 @@
 		}
 		
 		//	set up a write function so libcurl can send me data it receives
-		curl_easy_setopt(curlHandle,CURLOPT_WRITEFUNCTION,vvcurlWriteFunction);
+		curl_easy_setopt(curlHandle,CURLOPT_WRITEFUNCTION,CURLDLWriteFunction);
 		//	i'm going to pass a pointer to myself as the file stream, so i can get back into objective-c
 		curl_easy_setopt(curlHandle,CURLOPT_WRITEDATA,self);
 		
@@ -225,7 +239,7 @@
 		curl_easy_getinfo(curlHandle, CURLINFO_RESPONSE_CODE, &httpResponseCode);
 		
 		if (err)	{
-			NSLog(@"\terr %u at curl_easy_perform for %@",err,urlString);
+			NSLog(@"\terr %ld at curl_easy_perform for %@",err,urlString);
 			//NSLog(@"\t\terrBuffer is %s",errBuffer);
 			
 			//	returns error code 6 when the machine isn't connected to a network
@@ -253,7 +267,7 @@
 		NSLog(@"\terror at curl_easy_init() in %s",__func__);
 	}
 	
-	performing = NO;
+	[self setPerforming:NO];
 }
 
 
@@ -332,6 +346,7 @@
 @synthesize returnOnMain;
 @synthesize httpResponseCode;
 @synthesize responseData;
+@synthesize performing;
 @synthesize err;
 
 - (NSString *) responseString	{
@@ -347,7 +362,7 @@
 @end
 
 
-size_t vvcurlWriteFunction(void *ptr, size_t size, size_t nmemb, void *stream)	{
+size_t CURLDLWriteFunction(void *ptr, size_t size, size_t nmemb, void *stream)	{
 	if (stream != nil)
 		[(VVCURLDL *)stream writePtr:ptr size:size*nmemb];
 	return size*nmemb;

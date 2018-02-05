@@ -10,37 +10,30 @@
 
 
 - (id) initWithOSCManager:(id)m serviceType:(NSString *)t {
-	if (m == nil)
-		goto BAIL;
-	//NSLog(@"%s",__func__);
-	pthread_rwlockattr_t		attr;
-	
-	if (self = [super init])	{
-        
-        serviceTypeString = (t==nil) ? nil : [t retain];
-        
+	self = [super init];
+	if (self != nil)	{
+		domainBrowser = nil;
+		domainDict = [[NSMutableDictionary alloc] init];
+		pthread_rwlockattr_t		attr;
 		pthread_rwlockattr_init(&attr);
 		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 		pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_PRIVATE);
 		pthread_rwlock_init(&domainLock, &attr);
 		pthread_rwlockattr_destroy(&attr);
-		
-		domainBrowser = [[NSNetServiceBrowser alloc] init];
-		//[domainBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
-		[domainBrowser setDelegate:(id)self];
-		[domainBrowser searchForRegistrationDomains];
-		
-		domainDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
-		
 		oscManager = m;
-		//NSLog(@"\t\t%s - FINISHED",__func__);
-		return self;
+		serviceTypeString = t;
+		if (m == nil)	{
+			[self release];
+			self = nil;
+		}
+		else	{
+			domainBrowser = [[NSNetServiceBrowser alloc] init];
+			//[domainBrowser setDelegate:(id <NSNetServiceBrowserDelegate>)self];
+			[domainBrowser setDelegate:(id)self];
+			[domainBrowser searchForRegistrationDomains];
+		}
 	}
-	
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	return self;
 }
 - (void) dealloc	{
 	oscManager = nil;

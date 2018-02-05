@@ -67,18 +67,16 @@
 	return [self initWithInPortClass:i outPortClass:o serviceType:@"_osc._udp"];
 }
 - (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		[self _generalInit];
 		if (i != nil)
 			inPortClass = i;
 		if (o != nil)
 			outPortClass = o;
 		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:t];
-		return self;
 	}
-	if (self != nil)
-		[self release];
-	return nil;
+	return self;
 }
 - (void) _generalInit	{
 	//NSLog(@"%s",__func__);
@@ -633,20 +631,6 @@
 - (id) inPortClass	{
 	return inPortClass;
 }
-- (NSString *) inPortLabelBase	{
-	return inPortLabelBase;
-	/*
-	if ((delegate!=nil)&&([delegate respondsToSelector:@selector(inPortLabelBase)]))
-		return [delegate inPortLabelBase];
-	return [NSString stringWithString:@"VVOSC"];
-	*/
-}
-- (void) setInPortLabelBase:(NSString *)n	{
-	if (n == nil)
-		return;
-	VVRELEASE(inPortLabelBase);
-	inPortLabelBase = [n retain];
-}
 /*!
 	by default, this method returns [OSCOutPort class].  it’s called when creating an input port. this method exists so if you subclass OSCOutPort you can override this method to have your manager create your custom subclass with the default port creation methods
 */
@@ -672,6 +656,7 @@
 - (id) outPortArray	{
 	return outPortArray;
 }
+@synthesize inPortLabelBase;
 
 
 @end

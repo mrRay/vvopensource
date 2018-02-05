@@ -16,47 +16,6 @@
 	OSSpinLockUnlock(&nameLock);
 	return returnMe;
 }
-- (void) _logDescriptionToString:(NSMutableString *)s tabDepth:(int)d	{
-	int				i;
-	
-	//	add the tabs
-	for (i=0;i<d;++i)
-		[s appendString:@"\t"];
-	
-	//	write the description
-	OSSpinLockLock(&nameLock);
-		[s appendFormat:@"<%@>",nodeName];
-	OSSpinLockUnlock(&nameLock);
-	
-	//	if there are contents
-	if ((nodeContents!=nil)&&([nodeContents count]>0))	{
-		[s appendString:@"\t{"];
-		//	call this method on my contents
-		[nodeContents rdlock];
-		OSCNode				*nodePtr = nil;
-		for (nodePtr in [nodeContents array])	{
-			[s appendString:@"\n"];
-			[nodePtr _logDescriptionToString:s tabDepth:d+1];
-		}
-		[nodeContents unlock];
-		
-		/*
-		NSEnumerator		*it = [nodeContents objectEnumerator];
-		OSCNode				*nodePtr;
-		while (nodePtr = [it nextObject])	{
-			[s appendString:@"\n"];
-			[nodePtr _logDescriptionToString:s tabDepth:d+1];
-		}
-		[nodeContents unlock];
-		*/
-		
-		//	add the tabs, close the description
-		[s appendString:@"\n"];
-		for (i=0;i<d;++i)
-			[s appendString:@"\t"];
-		[s appendString:@"}"];
-	}
-}
 + (id) createWithName:(NSString *)n	{
 	OSCNode		*returnMe = [[OSCNode alloc] initWithName:n];
 	if (returnMe == nil)
@@ -81,6 +40,7 @@
 		nameLock = OS_SPINLOCK_INIT;
 		nodeName = [[n trimFirstAndLastSlashes] retain];
 		fullName = nil;
+		lastFullName = nil;
 		nodeContents = nil;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
@@ -89,6 +49,16 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
+		
+		oscDescription = nil;
+		typeTagString = nil;
+		extendedType = nil;
+		critical = NO;
+		access = OSCNodeAccess_None;
+		range = nil;
+		tags = nil;
+		clipmode = nil;
+		units = nil;
 		return self;
 	}
 	BAIL:
@@ -105,6 +75,7 @@
 		nameLock = OS_SPINLOCK_INIT;
 		nodeName = nil;
 		fullName = nil;
+		lastFullName = nil;
 		nodeContents = nil;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
@@ -113,6 +84,16 @@
 		lastReceivedMessage = nil;
 		lastReceivedMessageLock = OS_SPINLOCK_INIT;
 		delegateArray = nil;
+		
+		oscDescription = nil;
+		typeTagString = nil;
+		extendedType = nil;
+		critical = NO;
+		access = OSCNodeAccess_None;
+		range = nil;
+		tags = nil;
+		clipmode = nil;
+		units = nil;
 		return self;
 	}
 	[self autorelease];
@@ -151,6 +132,9 @@
 		if (fullName != nil)
 			[fullName release];
 		fullName = nil;
+		if (lastFullName != nil)
+			[lastFullName release];
+		lastFullName = nil;
 	OSSpinLockUnlock(&nameLock);
 	
 	if (nodeContents != nil)
@@ -163,6 +147,15 @@
 		[lastReceivedMessage release];
 	lastReceivedMessage = nil;
 	OSSpinLockUnlock(&lastReceivedMessageLock);
+	
+	VVRELEASE(oscDescription);
+	VVRELEASE(typeTagString);
+	VVRELEASE(extendedType);
+	access = OSCNodeAccess_None;
+	VVRELEASE(range);
+	VVRELEASE(tags);
+	VVRELEASE(clipmode);
+	VVRELEASE(units);
 	
 	[super dealloc];
 }
@@ -279,6 +272,10 @@
 - (void) removeFromAddressSpace	{
 	if (deleted || _mainVVOSCAddressSpace==nil || fullName==nil)
 		return;
+	OSSpinLockLock(&nameLock);
+	VVRELEASE(lastFullName);
+	lastFullName = (fullName==nil) ? nil : [fullName retain];
+	OSSpinLockUnlock(&nameLock);
 	[_mainVVOSCAddressSpace setNode:nil forAddress:fullName];
 }
 
@@ -492,6 +489,8 @@
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
 	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
 	OSSpinLockLock(&nameLock);
+		VVRELEASE(lastFullName);
+		lastFullName = (fullName==nil) ? nil : [fullName retain];
 		VVRELEASE(fullName);
 		if (parentNode == addressSpace)
 			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
@@ -613,6 +612,12 @@
 	OSSpinLockUnlock(&nameLock);
 	return returnMe;
 }
+- (NSString *) lastFullName	{
+	OSSpinLockLock(&nameLock);
+		NSString		*returnMe = (lastFullName==nil) ? nil : [[lastFullName retain] autorelease];
+	OSSpinLockUnlock(&nameLock);
+	return returnMe;
+}
 - (id) nodeContents	{
 	return nodeContents;
 }
@@ -683,6 +688,17 @@
 - (id) delegateArray	{
 	return delegateArray;
 }
+
+
+@synthesize oscDescription;
+@synthesize typeTagString;
+@synthesize extendedType;
+@synthesize critical;
+@synthesize access;
+@synthesize range;
+@synthesize tags;
+@synthesize clipmode;
+@synthesize units;
 
 
 @end

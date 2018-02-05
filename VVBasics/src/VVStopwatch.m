@@ -15,13 +15,12 @@
 }
 - (id) init	{
 	//NSLog(@"%s",__func__);
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		timeLock = OS_SPINLOCK_INIT;
 		[self start];
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 
 

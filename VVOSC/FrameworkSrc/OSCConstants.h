@@ -4,6 +4,22 @@
 \brief Constants and Macros used by one or more of the OSC classes in this framework
 */
 
+
+
+
+///	Most common means of passing OSC data to your application.  Delegates of OSCManager and OSCInPort should support this protocol.
+/*!
+When instances of OSCInPort and OSCManager receive OSC data, they pass it to their delegate by calling this method.  If you want to receive OSC data, your OSCManager's delegate must respond to this method!
+*/
+@class OSCMessage;
+@protocol OSCDelegateProtocol
+///	This method is called whenever your in port/manager receives an OSCMessage.
+- (void) receivedOSCMessage:(OSCMessage *)m;
+@end
+
+
+
+
 ///	OSCValueType
 /*!
 \ingroup VVOSC
@@ -14,6 +30,7 @@ typedef NS_ENUM(NSInteger, OSCValueType)	{
 #else
 typedef enum OSCValueType	{
 #endif
+	OSCValUnknown = 0,
 	OSCValInt = 1,	//!<Integer -2147483648 to 2147483647
 	OSCValFloat = 2,	//!<Float
 	OSCValString = 3,	//!<String
@@ -117,10 +134,28 @@ typedef enum OSCNodeType	{
 	OSCNodeType2DPoint,	//!<The node describes a 2D point
 	OSCNodeTypeColor,
 	OSCNodeTypeString,
+	OSCNodeTypeData,
 #if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
 };
 #else
 } OSCNodeType;
+#endif
+
+
+
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+typedef NS_ENUM(NSInteger, OSCNodeAccess)	{
+#else
+typedef enum OSCNodeAccess	{
+#endif
+	OSCNodeAccess_None = 0,
+	OSCNodeAccess_Read = 1,
+	OSCNodeAccess_Write = 2,
+	OSCNodeAccess_RW = 3
+#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+};
+#else
+} OSCNodeAccess;
 #endif
 
 

@@ -20,26 +20,25 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 	return (returnMe==nil) ? nil : [returnMe autorelease];
 }
 - (id) initWithString:(NSString *)n	{
-	if (self = [super init])	{
-		regexString = nil;
-		regex = nil;
-		if (n==nil)
-			goto BAIL;
+	self = [super init];
+	if (self != nil)	{
 		regexString = [n retain];
 		regex = calloc(1,sizeof(regex_t));
-		const char		*cStr = [regexString cStringUsingEncoding:NSASCIIStringEncoding];
-		if (cStr == nil)
-			goto BAIL;
-		int				err = regcomp(regex,cStr,REG_EXTENDED|REG_NOSUB);
-		if (err != 0)	{
-			NSLog(@"\t\terr %d while compiling regex in %s",err,__func__);
-			goto BAIL;
+		const char		*cStr = (regexString==nil) ? nil : [regexString cStringUsingEncoding:NSASCIIStringEncoding];
+		if (cStr == nil)	{
+			[self release];
+			self = nil;
 		}
-		return self;
+		else	{
+			int				err = regcomp(regex, cStr, REG_EXTENDED | REG_NOSUB);
+			if (err != 0)	{
+				NSLog(@"\t\terr %d while compiling regex in %s",err,__func__);
+				[self release];
+				self = nil;
+			}
+		}
 	}
-	BAIL:
-	[self release];
-	return nil;
+	return self;
 }
 - (void) dealloc	{
 	if (regexString != nil)	{

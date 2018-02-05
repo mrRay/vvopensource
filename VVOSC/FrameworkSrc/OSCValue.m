@@ -9,6 +9,8 @@
 
 - (NSString *) description	{
 	switch (type)	{
+		case OSCValUnknown:
+			return @"<OSCVal ?>";
 		case OSCValInt:
 			return [NSString stringWithFormat:@"<OSCVal i %d>",*(int *)value];
 		case OSCValFloat:
@@ -57,6 +59,8 @@
 	CGFloat		colorComps[4];
 #endif
 	switch (type)	{
+		case OSCValUnknown:
+			return @"unknown";
 		case OSCValInt:
 			return [NSString stringWithFormat:@"integer %d",*(int *)value];
 		case OSCValFloat:
@@ -102,6 +106,71 @@
 }
 
 
++ (NSString *) typeTagStringForType:(OSCValueType)t	{
+	switch (t)	{
+		case OSCValUnknown:
+			return @"";
+		case OSCValInt:
+			return @"i";
+		case OSCValFloat:
+			return @"f";
+		case OSCValString:
+			return @"s";
+		case OSCValTimeTag:
+			//return [NSString stringWithFormat:@"Time Tag %ld-%ld",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
+			return @"t";
+		case OSCVal64Int:
+			return @"h";
+		case OSCValDouble:
+			return @"d";
+		case OSCValChar:
+			return @"c";
+		case OSCValColor:
+			return @"r";
+		case OSCValMIDI:
+			return @"m";
+		case OSCValBool:
+			return @"";
+		case OSCValNil:
+			return @"N";
+		case OSCValInfinity:
+			return @"I";
+		case OSCValArray:
+			return @"";
+		case OSCValBlob:
+			return @"b";
+		case OSCValSMPTE:
+			return @"E";
+	}
+	return @"";
+}
++ (OSCValueType) typeForTypeTagString:(NSString *)t	{
+	OSCValueType		returnMe = OSCValUnknown;
+	if (t != nil)	{
+		unichar		tmpChar = [t characterAtIndex:0];
+		switch (tmpChar)	{
+		case 'i':		returnMe = OSCValInt;		break;
+		case 'f':		returnMe = OSCValFloat;		break;
+		case 's':
+		case 'S':		returnMe = OSCValString;		break;
+		case 'b':		returnMe = OSCValBlob;		break;
+		case 'h':		returnMe = OSCVal64Int;		break;
+		case 't':		returnMe = OSCValTimeTag;		break;
+		case 'd':		returnMe = OSCValDouble;		break;
+		case 'c':		returnMe = OSCValChar;		break;
+		case 'r':		returnMe = OSCValColor;		break;
+		case 'm':		returnMe = OSCValMIDI;		break;
+		case 'T':
+		case 'F':		returnMe = OSCValBool;		break;
+		case 'N':		returnMe = OSCValNil;		break;
+		case 'I':		returnMe = OSCValInfinity;		break;
+		case '[':
+		case ']':		returnMe = OSCValArray;		break;
+		case 'E':		returnMe = OSCValSMPTE;		break;
+		}
+	}
+	return returnMe;
+}
 + (id) createWithInt:(int)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithInt:n];
 	if (returnMe == nil)
@@ -213,24 +282,22 @@
 
 
 - (id) initWithInt:(int)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(int));
 		*(int *)value = n;
 		type = OSCValInt;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithFloat:(float)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(float));
 		*(float *)value = n;
 		type = OSCValFloat;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithString:(NSString *)n	{
 	if (n == nil)
@@ -246,27 +313,26 @@
 	return nil;
 }
 - (id) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(uint64_t));
 		*(uint64_t *)value = ((((uint64_t)s)<<32)&(0xFFFFFFFF00000000)) | ((uint64_t)ms);
 		type = OSCValTimeTag;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithOSCTimetag:(uint64_t)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(uint64_t));
 		*(uint64_t *)value = n;
 		type = OSCValTimeTag;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initTimeWithDate:(NSDate *)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
 		double		tmpVal = [n timeIntervalSinceReferenceDate];
 		tmpVal += 3187296000.;
@@ -276,40 +342,35 @@
 		*(uint64_t *)value = time_s<<32 | time_us;
 		//NSLog(@"\t\tvalue is %qu",*(uint64_t *)value);
 		type = OSCValTimeTag;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithLongLong:(long long)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(long long));
 		*(long long *)value = n;
 		type = OSCVal64Int;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithDouble:(double)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(double));
 		*(double *)value = n;
 		type = OSCValDouble;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithChar:(char)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(char));
 		*(char *)value = n;
 		type = OSCValChar;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithColor:(id)n	{
 	if (n == nil)
@@ -331,54 +392,49 @@
 	return nil;
 }
 - (id) initWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(Byte)*4);
 		((Byte *)value)[0] = c;
 		((Byte *)value)[1] = s;
 		((Byte *)value)[2] = d1;
 		((Byte *)value)[3] = d2;
 		type = OSCValMIDI;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithBool:(BOOL)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(BOOL));
 		*(BOOL *)value = n;
 		type = OSCValBool;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithNil	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = nil;
 		type = OSCValNil;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithInfinity	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = nil;
 		type = OSCValInfinity;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initArray	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = [[NSMutableArray alloc] initWithCapacity:0];
 		type = OSCValArray;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithNSDataBlob:(NSData *)d	{
 	if (d == nil)	{
@@ -394,8 +450,8 @@
 	return nil;
 }
 - (id) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
-	//NSLog(@"%s ... %d, %d, %d, %d, %d",__func__,fps,d,h,m,s,f);
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		UInt32		tmpVal = 0x00000000;
 		//	first 4 bits are the FPS mode (OSCSMPTEFPS)
 		tmpVal = tmpVal | (fps & 0x0F);
@@ -419,24 +475,32 @@
 		*(int *)value = tmpVal;
 		type = OSCValSMPTE;
 		//NSLog(@"\t\tchecking: %@",[self SMPTEString]);
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 - (id) initWithSMPTEChunk:(int)n	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		value = malloc(sizeof(int));
 		*(int *)value = n;
 		type = OSCValSMPTE;
-		return self;
 	}
-	[self release];
-	return nil;
+	return self;
+}
+- (id) init	{
+	self = [super init];
+	if (self != nil)	{
+		value = nil;
+		type = OSCValUnknown;
+	}
+	return self;
 }
 - (id) copyWithZone:(NSZone *)z	{
 	OSCValue		*returnMe = nil;
 	switch (type)	{
+		case OSCValUnknown:
+			returnMe = [[OSCValue allocWithZone:z] init];
+			break;
 		case OSCValInt:
 			returnMe = [[OSCValue allocWithZone:z] initWithInt:*((int *)value)];
 			break;
@@ -524,6 +588,7 @@
 			break;
 		case OSCValNil:
 		case OSCValInfinity:
+		case OSCValUnknown:
 			break;
 		case OSCValBlob:
 			if (value != nil)
@@ -664,6 +729,8 @@
 	double		returnMe = (double)0.0;
 	CGFloat		comps[4];
 	switch (type)	{
+		case OSCValUnknown:
+			break;
 		case OSCValInt:
 			returnMe = (double)(*(int *)value);
 			break;
@@ -789,6 +856,61 @@
 	}
 	return returnMe;
 }
+- (id) jsonValue	{
+	switch (type)	{
+	case OSCValUnknown:
+		return nil;
+	case OSCValInt:
+		return [NSNumber numberWithInteger:[self intValue]];
+	case OSCValFloat:
+		return [NSNumber numberWithFloat:[self floatValue]];
+	case OSCValString:
+		return [self stringValue];
+	case OSCValTimeTag:
+		return [NSNumber numberWithLongLong:*((long long *)value)];
+	case OSCVal64Int:
+		return [NSNumber numberWithLongLong:[self longLongValue]];
+	case OSCValDouble:
+		return [NSNumber numberWithDouble:[self doubleValue]];
+	case OSCValChar:
+		return [NSString stringWithFormat:@"%c",[self charValue]];
+	case OSCValColor:
+		{
+			NSColor		*tmpColor = [self colorValue];
+			CGFloat		components[4];
+			[tmpColor getComponents:components];
+			NSArray		*returnMe = @[
+				[NSNumber numberWithFloat:components[0]],
+				[NSNumber numberWithFloat:components[1]],
+				[NSNumber numberWithFloat:components[2]],
+				[NSNumber numberWithFloat:components[3]],
+			];
+			return returnMe;
+		}
+	case OSCValMIDI:
+		return nil;
+	case OSCValBool:
+		return [NSNumber numberWithBool:[self boolValue]];
+	case OSCValNil:
+	case OSCValInfinity:
+		return nil;
+	case OSCValArray:
+		{
+			NSMutableArray		*returnMe = [[NSMutableArray alloc] init];
+			for (OSCValue *tmpVal in [self valueArray])	{
+				id			tmpNSVal = [tmpVal jsonValue];
+				if (tmpNSVal != nil)
+					[returnMe addObject:tmpNSVal];
+			}
+			return returnMe;
+		}
+	case OSCValBlob:
+		return [self blobNSData];
+	case OSCValSMPTE:
+		return [NSNumber numberWithInteger:[self SMPTEValue]];
+	}
+	return nil;
+}
 
 
 @synthesize type;
@@ -819,6 +941,7 @@
 		case OSCValBool:
 		case OSCValNil:
 		case OSCValInfinity:
+		case OSCValUnknown:
 			return 0;
 			break;
 		case OSCValArray:
@@ -844,6 +967,8 @@
 - (long) typeSignatureLength	{
 	long		returnMe = 0;
 	switch (type)	{
+		case OSCValUnknown:
+			break;
 		case OSCValInt:
 		case OSCValFloat:
 		case OSCValString:
@@ -886,6 +1011,8 @@
 #endif
 	
 	switch (type)	{
+		case OSCValUnknown:
+			break;
 		case OSCValInt:
 			//*((uint32_t *)(b+*d)) = CFSwapInt32HostToBig(*((uint32_t *)(value)));
 			*((unsigned int *)(b+*d)) = NSSwapHostIntToBig(*((unsigned int *)(value)));
@@ -1038,6 +1165,43 @@
 			break;
 	}
 	
+}
+- (NSString *) typeTagString	{
+	if (type != OSCValArray)	{
+		if (type == OSCValBool)	{
+			if ([self boolValue])
+				return @"T";
+			else
+				return @"F";
+		}
+		return [OSCValue typeTagStringForType:type];
+	}
+	NSMutableString		*returnMe = [[NSMutableString alloc] initWithCapacity:[self typeSignatureLength]];
+	[returnMe appendString:@"["];
+	
+	NSArray				*tmpArray = [self valueArray];
+	for (OSCValue *tmpVal in tmpArray)	{
+		[returnMe appendString:[tmpVal typeTagString]];
+	}
+	
+	[returnMe appendString:@"]"];
+	
+	return returnMe;
+}
+- (NSComparisonResult) compare:(OSCValue *)n	{
+	if (n==nil)
+		return NSOrderedDescending;
+	
+	if (type==OSCValString && [n type]==OSCValString)	{
+		return [[self stringValue] compare:[n stringValue]];
+	}
+	
+	NSNumber		*myNum = [NSNumber numberWithDouble:[self calculateDoubleValue]];
+	NSNumber		*compNum = [NSNumber numberWithDouble:[n calculateDoubleValue]];
+	if (myNum!=nil && compNum!=nil)
+		return [myNum compare:compNum];
+	
+	return NSOrderedSame;
 }
 
 

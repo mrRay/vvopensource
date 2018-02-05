@@ -1,7 +1,68 @@
 #import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
 
+
+
+
+#define PREFIX_ONE(a) 1##a
+#define EMPTY_DEFINE(a) (PREFIX_ONE(a) == 1)
+// Memory management kind
+#if !defined(USING_GC)
+#  if defined(__OBJC_GC__)
+#     define USING_GC 1
+#  else
+#    define USING_GC 0
+#  endif
+#elif EMPTY_DEFINE(USING_GC) 
+#   undef USING_GC
+#   define USING_GC 1
+#endif
+#if !defined(USING_ARC)
+#  if __has_feature(objc_arc)
+#     define USING_ARC 1
+#  else
+#    define USING_ARC 0
+#  endif
+#elif EMPTY_DEFINE(USING_ARC)
+#   undef USING_ARC
+#   define USING_ARC 1
+#endif
+#if !defined(USING_MRC)
+#  if USING_ARC || USING_GC
+#     define USING_MRC 0
+#  else
+#    define USING_MRC 1
+#  endif
+#elif EMPTY_DEFINE(USING_MRC)
+#   undef USING_MRC
+#   define USING_MRC 1
+#endif
+// Remove utility
+#undef PREFIX_ONE
+#undef EMPTY_DEFINE
+// Sanity checks
+#if USING_GC
+#   if USING_ARC || USING_MRC
+#      error "Cannot specify GC and RC memory management"
+#   endif
+#elif USING_ARC
+#   if USING_MRC
+#      error "Cannot specify ARC and MRC memory management"
+#   endif
+#elif !USING_MRC
+#   error "Must specify GC, ARC or MRC memory management"
+#endif
+#if USING_ARC
+#   if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#      error "ARC requires at least 10.6"
+#   endif
+#endif
+
+
+
+
 //	macros for checking to see if something is nil, and if it's not releasing and setting it to nil
+#if USING_MRC
 #define VVRELEASE(item) {if (item != nil)	{			\
 	[item release];										\
 	item = nil;											\
@@ -10,6 +71,14 @@
 	[item autorelease];									\
 	item = nil;											\
 }}
+#elif USING_ARC
+#define VVRELEASE(item) {if (item != nil)	{			\
+	item = nil;											\
+}}
+#define VVAUTORELEASE(item) {if (item != nil)	{		\
+	item = nil;											\
+}}
+#endif
 
 
 

@@ -74,32 +74,6 @@
 			}
 		}
 		
-		/*
-		//	parse the first element, which is either a bundle...
-		if (c[baseIndex] == '#')	{
-			[OSCBundle
-				parseRawBuffer:b+baseIndex
-				ofMaxLength:length
-				toInPort:p
-				inheritedTimeTag:localTimeTag
-				fromAddr:txAddr
-				port:txPort];
-		}
-		//	...or a message.
-		else if (c[baseIndex] == '/')	{
-			OSCMessage		*tmpMsg = [OSCMessage
-				parseRawBuffer:b+baseIndex
-				ofMaxLength:length
-				fromAddr:txAddr
-				port:txPort];
-			if (tmpMsg != nil)	{
-				if (localTimeTag != nil)
-					[tmpMsg setTimeTag:localTimeTag];
-				//	now that i've assembed the message, send it to the in port
-				[p _addMessage:tmpMsg];
-			}
-		}
-		*/
 		//	advance the baseIndex so it's pointing at the the int describing the length of the next element (or done)
 		baseIndex = baseIndex + length;
 	}
@@ -158,15 +132,6 @@
 			[elementArray addObject:anObj];
 		}
 	}
-	/*
-	NSEnumerator		*it = [a objectEnumerator];
-	id					anObj;
-	while (anObj = [it nextObject])	{
-		if (([anObj isKindOfClass:[OSCBundle class]]) || ([anObj isKindOfClass:[OSCMessage class]]))	{
-			[elementArray addObject:anObj];
-		}
-	}
-	*/
 }
 
 - (long) bufferLength	{
@@ -241,14 +206,9 @@
 		writeOffset = writeOffset + elementLength;
 	}
 }
-- (void) setTimeTag:(NSDate *)n	{
-	VVRELEASE(timeTag);
-	if (n != nil)
-		timeTag = [n retain];
-}
-- (NSDate *) timeTag	{
-	return timeTag;
-}
+
+
+@synthesize timeTag;
 
 
 @end

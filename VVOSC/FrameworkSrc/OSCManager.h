@@ -8,6 +8,7 @@
 #import "OSCZeroConfManager.h"
 #import "OSCInPort.h"
 #import "OSCOutPort.h"
+#import "OSCConstants.h"
 
 
 
@@ -33,7 +34,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 
 
 
-@interface OSCManager : NSObject {
+@interface OSCManager : NSObject <OSCDelegateProtocol> {
 	MutLockArray			*inPortArray;	//	Array of OSCInPorts in a locking array for threadsafe access
 	MutLockArray			*outPortArray;	//	Array of OSCOutPorts in a locking array for threadsafe access
 	
@@ -116,8 +117,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 ///	By default, returns [OSCInPort class]- subclass around to use different subclasses of OSCInPort
 - (id) inPortClass;
 //	By default, returns @"VVOSC"- subclass around this to use a different base string when generating in port labels
-- (NSString *) inPortLabelBase;
-- (void) setInPortLabelBase:(NSString *)n;
+@property (retain) NSString * inPortLabelBase;
 ///	By default, returns [OSCOutPort class]- subclass around to use different subclasses of OSCOutPort
 - (id) outPortClass;
 

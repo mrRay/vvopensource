@@ -359,7 +359,8 @@
 }
 //	DOES NO CHECKING WHATSOEVER.  MEANT TO BE FAST, NOT SAFE.  USE OTHER CREATE/INIT METHODS.
 - (id) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
-	if (self = [super init])	{
+	self = [super init];
+	if (self != nil)	{
 		address = (addr==nil)?nil:[addr retain];
 		valueCount = 0;
 		value = nil;
@@ -369,11 +370,8 @@
 		txAddress = qTxAddr;
 		txPort = qTxPort;
 		msgInfo = nil;
-		return self;
 	}
-	BAIL:
-	[self release];
-	return nil;
+	return self;
 }
 - (id) copyWithZone:(NSZone *)z	{
 	//OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initWithAddress:address];

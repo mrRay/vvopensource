@@ -82,34 +82,33 @@
 }
 - (id) initWithContent:(id)c	{
 	//NSLog(@"%s ... %@",__func__,c);
-	if (c == nil)
-		goto BAIL;
-	
-	if (self = [super init])	{
-		bufferLength = [c bufferLength];
+	self = [super init];
+	if (self != nil)	{
+		bufferLength = (c==nil) ? 0 : [c bufferLength];
 		payload = NULL;
-		if (bufferLength < 1)
-			goto BAIL;
-		payload = malloc(bufferLength * sizeof(unsigned char));
-		memset(payload,'\0',bufferLength);
-		[c writeToBuffer:payload];
-		/*
-		printf("******************************\n");
-		int				bundleIndexCount;
-		unsigned char	*bufferCharPtr=payload;
-		for (bundleIndexCount=0; bundleIndexCount<(bufferLength/4); ++bundleIndexCount)	{
-			printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
-				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
-				*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
+		
+		if (bufferLength < 1)	{
+			[self release];
+			self = nil;
 		}
-		printf("******************************\n");
-		*/
-		return self;
+		else	{
+			payload = malloc(bufferLength * sizeof(unsigned char));
+			memset(payload,'\0',bufferLength);
+			[c writeToBuffer:payload];
+			/*
+			printf("******************************\n");
+			int				bundleIndexCount;
+			unsigned char	*bufferCharPtr=payload;
+			for (bundleIndexCount=0; bundleIndexCount<(bufferLength/4); ++bundleIndexCount)	{
+				printf("\t(%d)\t\t%c\t%c\t%c\t%c\t\t%d\t\t%d\t\t%d\t\t%d\n",bundleIndexCount * 4,
+					*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3),
+					*(bufferCharPtr+bundleIndexCount*4), *(bufferCharPtr+bundleIndexCount*4+1), *(bufferCharPtr+bundleIndexCount*4+2), *(bufferCharPtr+bundleIndexCount*4+3));
+			}
+			printf("******************************\n");
+			*/
+		}
 	}
-	BAIL:
-	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	return self;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
