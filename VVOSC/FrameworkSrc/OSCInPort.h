@@ -42,6 +42,7 @@ the documentation here only covers the basics, the header file for this class is
 	NSThread				*thread;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
+	BOOL					zeroConfEnabled;	//	YES by default
 	OSSpinLock				zeroConfLock;
 	VVStopwatch				*zeroConfSwatch;	//	bonjour services need ~5 seconds between destroy/creation or the changes get ignored- this is how we track this time
 	NSNetService			*zeroConfDest;	//	bonjour service for publishing this input's address...only active if there's a portLabel!
@@ -85,6 +86,8 @@ the documentation here only covers the basics, the header file for this class is
 
 - (unsigned short) port;
 - (void) setPort:(unsigned short)n;
+- (BOOL) zeroConfEnabled;
+- (void) setZeroConfEnabled:(BOOL)n;
 - (NSString *) portLabel;
 - (void) setPortLabel:(NSString *)n;
 - (NSString *) zeroConfName;

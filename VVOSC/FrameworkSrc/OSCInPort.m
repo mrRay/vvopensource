@@ -49,6 +49,7 @@
 		portLabel = nil;
 		if (l != nil)
 			portLabel = [l copy];
+		zeroConfEnabled = YES;
 		zeroConfSwatch = [[VVStopwatch alloc] init];
 		zeroConfLock = OS_SPINLOCK_INIT;
 		
@@ -305,7 +306,7 @@
 				[self handleScratchArray:tmpArray];
 			}
 			//	is it time to start advertising a bonjour/zeroconf service yet?
-			if (zeroConfDest==nil)	{
+			if (zeroConfEnabled && zeroConfDest==nil)	{
 				OSSpinLockLock(&zeroConfLock);
 				if (zeroConfDest==nil && portLabel!=nil && [zeroConfSwatch timeSinceStart]>1.0)	{
 					zeroConfDest = [[NSNetService alloc]
@@ -578,6 +579,32 @@
 		if (bound)
 			[self start];
 	}
+}
+- (BOOL) zeroConfEnabled	{
+	OSSpinLockLock(&zeroConfLock);
+	BOOL		returnMe = zeroConfEnabled;
+	OSSpinLockUnlock(&zeroConfLock);
+	return returnMe;
+}
+- (void) setZeroConfEnabled:(BOOL)n	{
+	OSSpinLockLock(&zeroConfLock);
+	BOOL		changed = (zeroConfEnabled==n) ? NO : YES;
+	zeroConfEnabled = n;
+	if (changed)	{
+		//	if i'm enable zero conf networking
+		if (n)	{
+			//	intentionally blank- the thread loop will create this automatically during its upkeep
+		}
+		//	else i'm disabling zero conf networking
+		else	{
+			if (zeroConfDest != nil)	{
+				[zeroConfDest stop];
+				[zeroConfDest autorelease];
+				zeroConfDest = nil;
+			}
+		}
+	}
+	OSSpinLockUnlock(&zeroConfLock);
 }
 - (NSString *) portLabel	{
 	return portLabel;

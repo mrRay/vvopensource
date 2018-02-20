@@ -130,7 +130,7 @@
 		case OSCValMIDI:
 			return @"m";
 		case OSCValBool:
-			return @"";
+			return @"T";
 		case OSCValNil:
 			return @"N";
 		case OSCValInfinity:
@@ -856,6 +856,139 @@
 	}
 	return returnMe;
 }
+- (int) calculateIntValue	{
+	int		returnMe = (int)0;
+	CGFloat		comps[4];
+	switch (type)	{
+		case OSCValUnknown:
+			break;
+		case OSCValInt:
+			returnMe = (int)(*(int *)value);
+			break;
+		case OSCValFloat:
+			returnMe = (int)*(float *)value;
+			break;
+		case OSCValString:
+			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
+			//return ROUNDUP4(([(NSString *)value length] + 1));
+			break;
+		case OSCValTimeTag:
+			returnMe = (int)(*((uint64_t *)value)>>32);
+			returnMe += (int)((*(uint64_t *)value) & 0xFFFFFFFF) / 4294967296.0;
+			/*
+			returnMe = *((long *)(value));
+			returnMe += *((long *)(value+1));
+			*/
+			break;
+		case OSCVal64Int:
+			returnMe = (int)(*(long long *)value);
+			break;
+		case OSCValDouble:
+			returnMe = (int)(*(double *)value);
+			break;
+		case OSCValChar:
+			returnMe = (int)(*(char *)value);
+			break;
+		case OSCValColor:
+#if TARGET_OS_IPHONE
+			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
+#else
+			[(NSColor *)value getComponents:comps];
+#endif
+			returnMe = (int)(comps[0]+comps[1]+comps[2])/(double)3.0;
+			break;
+		case OSCValMIDI:
+			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
+			switch ((OSCMIDIType)(((Byte *)value)[1]))	{
+				case OSCMIDINoteOffVal:
+				case OSCMIDIBeginSysexDumpVal:
+				case OSCMIDIUndefinedCommon1Val:
+				case OSCMIDIUndefinedCommon2Val:
+				case OSCMIDIEndSysexDumpVal:
+					returnMe = (int)0;
+					break;
+				case OSCMIDINoteOnVal:
+				case OSCMIDIAfterTouchVal:
+				case OSCMIDIControlChangeVal:
+					returnMe = [self midiData2];
+					break;
+				case OSCMIDIProgramChangeVal:
+				case OSCMIDIChannelPressureVal:
+				case OSCMIDIMTCQuarterFrameVal:
+				case OSCMIDISongSelectVal:
+					returnMe = [self midiData1];
+					break;
+				case OSCMIDIPitchWheelVal:
+				case OSCMIDISongPosPointerVal:
+					returnMe = (int)(([self midiData2] << 7) | ([self midiData1]));
+					break;
+				case OSCMIDITuneRequestVal:
+				case OSCMIDIClockVal:
+				case OSCMIDITickVal:
+				case OSCMIDIStartVal:
+				case OSCMIDIContinueVal:
+				case OSCMIDIStopVal:
+				case OSCMIDIUndefinedRealtime1Val:
+				case OSCMIDIActiveSenseVal:
+				case OSCMIDIResetVal:
+					returnMe = (int)1;
+					break;
+			}
+			break;
+		case OSCValBool:
+			returnMe = (*(BOOL *)value) ? (int)1 : (int)0;
+			break;
+		case OSCValNil:
+			returnMe = (int)0;
+			break;
+		case OSCValInfinity:
+			returnMe = (int)1;
+			break;
+		case OSCValArray:
+			returnMe = (int)0;
+			break;
+		case OSCValBlob:
+			returnMe = (int)1;
+			break;
+		case OSCValSMPTE:
+			/*
+			returnMe = 0.0;
+			//	switching the "osc smpte fps mode", so i can convert frames into a double/seconds
+			switch ((*(int *)value) >> 28)	{
+				case OSCSMPTEFPS24:
+					returnMe += (double)((*(int *)value) & 0xFF)/24.0;
+					break;
+				case OSCSMPTEFPS25:
+					returnMe += (double)((*(int *)value) & 0xFF)/25.0;
+					break;
+				case OSCSMPTEFPS30:
+					returnMe += (double)((*(int *)value) & 0xFF)/30.0;
+					break;
+				case OSCSMPTEFPS48:
+					returnMe += (double)((*(int *)value) & 0xFF)/48.0;
+					break;
+				case OSCSMPTEFPS50:
+					returnMe += (double)((*(int *)value) & 0xFF)/50.0;
+					break;
+				case OSCSMPTEFPS60:
+					returnMe += (double)((*(int *)value) & 0xFF)/60.0;
+					break;
+				case OSCSMPTEFPS120:
+					returnMe += (double)((*(int *)value) & 0xFF)/120.0;
+					break;
+				case OSCSMPTEFPSUnknown:
+				default:
+					break;
+			}
+			returnMe += (double)(((*(int *)value) >> 8) & 0x3F);	//	seconds
+			returnMe += (double)(((*(int *)value) >> 14) & 0x3F) * 60.0;	//	minutes
+			returnMe += (double)(((*(int *)value) >> 20) & 0x1F) * 60.0 * 60.0;	//	hours
+			returnMe += (double)(((*(int *)value) >> 25) & 0x07) * 60.0 * 60.0 * 24.0;	//	days
+			*/
+			break;
+	}
+	return returnMe;
+}
 - (id) jsonValue	{
 	switch (type)	{
 	case OSCValUnknown:
@@ -877,7 +1010,7 @@
 	case OSCValColor:
 		{
 			NSColor		*tmpColor = [self colorValue];
-			CGFloat		components[4];
+			CGFloat		components[6];
 			[tmpColor getComponents:components];
 			NSArray		*returnMe = @[
 				[NSNumber numberWithFloat:components[0]],
@@ -902,7 +1035,7 @@
 				if (tmpNSVal != nil)
 					[returnMe addObject:tmpNSVal];
 			}
-			return returnMe;
+			return [returnMe autorelease];
 		}
 	case OSCValBlob:
 		return [self blobNSData];
@@ -1186,7 +1319,7 @@
 	
 	[returnMe appendString:@"]"];
 	
-	return returnMe;
+	return [returnMe autorelease];
 }
 - (NSComparisonResult) compare:(OSCValue *)n	{
 	if (n==nil)

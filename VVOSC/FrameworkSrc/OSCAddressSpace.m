@@ -196,6 +196,7 @@ id				_mainVVOSCAddressSpace;
 	//NSLog(@"%s",__func__);
 	self = [super init];
 	if (self != nil)	{
+		addressSpace = self;
 		delegate = nil;
 		fullName = [@"/" retain];
 #if TARGET_OS_IPHONE
@@ -214,6 +215,7 @@ id				_mainVVOSCAddressSpace;
 	//NSLog(@"%s ... %@",__func__,n);
 	self = [super initWithName:n];
 	if (self != nil)	{
+		addressSpace = self;
 		delegate = nil;
 		fullName = [@"/" retain];
 #if TARGET_OS_IPHONE

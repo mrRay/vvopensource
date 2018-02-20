@@ -75,6 +75,11 @@ According to the OSC spec, a message consists of an address path (where the mess
 ///	Returns 0.0 if 'valueArray' is empty, otherwise calculates the float val for the OSCValue in 'valueArray' at the specified index
 - (double) calculateDoubleValueAtIndex:(int)i;
 
+///	Returns a 0.0 if 'valueArray' is empty, otherwise calculates the int val for the first OSCValue in 'valueArray'
+- (int) calculateIntValue;
+///	Returns a 0.0 if 'valueArray' is empty, otherwise calculates the int val for the OSCValue in 'valueArray' at the specified index
+- (int) calculateIntValueAtIndex:(int)i;
+
 ///	Returns the address variable
 - (NSString *) address;
 - (int) valueCount;

@@ -527,6 +527,25 @@
 }
 
 
+- (int) calculateIntValue	{
+	return [self calculateIntValueAtIndex:0];
+}
+- (int) calculateIntValueAtIndex:(int)i	{
+	if (valueCount < 2)	{
+		if (value != nil)
+			return (i==0) ? [(OSCValue *)value calculateIntValue] : (int)0;
+		return (int)0;
+	}
+	//	get the OSCValue at the index
+	if ((i<valueCount)&&(valueArray!=nil))	{
+		OSCValue	*tmpVal = [valueArray objectAtIndex:i];
+		return (tmpVal != nil ) ? [tmpVal calculateIntValue] : (int)0;
+	}
+	//	return -1.0 if i couldn't find the value!
+	return (int)-1;
+}
+
+
 - (NSString *) address	{
 	return address;
 }

@@ -59,6 +59,7 @@
 		tags = nil;
 		clipmode = nil;
 		units = nil;
+		userInfo = nil;
 		return self;
 	}
 	BAIL:
@@ -94,6 +95,7 @@
 		tags = nil;
 		clipmode = nil;
 		units = nil;
+		userInfo = nil;
 		return self;
 	}
 	[self autorelease];
@@ -156,6 +158,8 @@
 	VVRELEASE(tags);
 	VVRELEASE(clipmode);
 	VVRELEASE(units);
+	
+	[self setUserInfo:nil];
 	
 	[super dealloc];
 }
@@ -304,6 +308,7 @@
 	//	if i couldn't find the node and i'm supposed to create it, do so
 	if ((returnMe==nil) && (c))	{
 		returnMe = [OSCNode createWithName:n];
+		[returnMe setAddressSpace:addressSpace];
 		[self addLocalNode:returnMe];
 	}
 	return returnMe;
@@ -379,6 +384,7 @@
 		//	if i couldn't find a node matching the name, create one
 		if ((foundNode==nil) && (c))	{
 			foundNode = [OSCNode createWithName:targetName];
+			[foundNode setAddressSpace:addressSpace];
 			//	if the node i'm creating now is known to have sub-nodes, set its type to directory automatically
 			if (tmpIndex <= lastDirectoryIndex)
 				[foundNode setNodeType:OSCNodeDirectory];
@@ -492,6 +498,7 @@
 		VVRELEASE(lastFullName);
 		lastFullName = (fullName==nil) ? nil : [fullName retain];
 		VVRELEASE(fullName);
+		//NSLog(@"\t\tparentNode is %p, addressSpace is %p",parentNode,addressSpace);
 		if (parentNode == addressSpace)
 			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
 		else if (parentNode != nil)
@@ -699,6 +706,9 @@
 @synthesize tags;
 @synthesize clipmode;
 @synthesize units;
+
+
+@synthesize userInfo;
 
 
 @end

@@ -122,6 +122,8 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (float) calculateFloatValue;
 ///	Returns a double value, regardless as to the type of the OSCValue
 - (double) calculateDoubleValue;
+///	Returns an int value, regardless as to the type of the OSCValue
+- (int) calculateIntValue;
 
 - (id) jsonValue;
 

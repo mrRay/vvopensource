@@ -287,8 +287,8 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 }
 //	called when a midi device is plugged in or unplugged
 - (void) setupChanged	{
-	if ((virtualSource==nil) || (virtualDest==nil))
-		return;
+	//if ((virtualSource==nil) || (virtualDest==nil))
+	//	return;
 	[self loadMIDIInputSources];
 	[self loadMIDIOutputDestinations];
 	//NSLog(@"\t\t%@",delegate);
