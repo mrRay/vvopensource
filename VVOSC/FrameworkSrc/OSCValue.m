@@ -145,29 +145,32 @@
 	return @"";
 }
 + (OSCValueType) typeForTypeTagString:(NSString *)t	{
+	if (t==nil || [t length]<1)
+		return OSCValUnknown;
+	unichar		tmpChar = [t characterAtIndex:0];
+	return [self typeForTypeTagChar:tmpChar];
+}
++ (OSCValueType) typeForTypeTagChar:(unichar)c	{
 	OSCValueType		returnMe = OSCValUnknown;
-	if (t != nil)	{
-		unichar		tmpChar = [t characterAtIndex:0];
-		switch (tmpChar)	{
-		case 'i':		returnMe = OSCValInt;		break;
-		case 'f':		returnMe = OSCValFloat;		break;
-		case 's':
-		case 'S':		returnMe = OSCValString;		break;
-		case 'b':		returnMe = OSCValBlob;		break;
-		case 'h':		returnMe = OSCVal64Int;		break;
-		case 't':		returnMe = OSCValTimeTag;		break;
-		case 'd':		returnMe = OSCValDouble;		break;
-		case 'c':		returnMe = OSCValChar;		break;
-		case 'r':		returnMe = OSCValColor;		break;
-		case 'm':		returnMe = OSCValMIDI;		break;
-		case 'T':
-		case 'F':		returnMe = OSCValBool;		break;
-		case 'N':		returnMe = OSCValNil;		break;
-		case 'I':		returnMe = OSCValInfinity;		break;
-		case '[':
-		case ']':		returnMe = OSCValArray;		break;
-		case 'E':		returnMe = OSCValSMPTE;		break;
-		}
+	switch (c)	{
+	case 'i':		returnMe = OSCValInt;		break;
+	case 'f':		returnMe = OSCValFloat;		break;
+	case 's':
+	case 'S':		returnMe = OSCValString;		break;
+	case 'b':		returnMe = OSCValBlob;		break;
+	case 'h':		returnMe = OSCVal64Int;		break;
+	case 't':		returnMe = OSCValTimeTag;		break;
+	case 'd':		returnMe = OSCValDouble;		break;
+	case 'c':		returnMe = OSCValChar;		break;
+	case 'r':		returnMe = OSCValColor;		break;
+	case 'm':		returnMe = OSCValMIDI;		break;
+	case 'T':
+	case 'F':		returnMe = OSCValBool;		break;
+	case 'N':		returnMe = OSCValNil;		break;
+	case 'I':		returnMe = OSCValInfinity;		break;
+	case '[':
+	case ']':		returnMe = OSCValArray;		break;
+	case 'E':		returnMe = OSCValSMPTE;		break;
 	}
 	return returnMe;
 }
@@ -989,6 +992,239 @@
 	}
 	return returnMe;
 }
+- (long long) calculateLongLongValue	{
+	long long	returnMe = (long long)0;
+	CGFloat		comps[4];
+	switch (type)	{
+		case OSCValUnknown:
+			break;
+		case OSCValInt:
+			returnMe = (long long)(*(int *)value);
+			break;
+		case OSCValFloat:
+			returnMe = (long long)*(float *)value;
+			break;
+		case OSCValString:
+			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
+			//return ROUNDUP4(([(NSString *)value length] + 1));
+			break;
+		case OSCValTimeTag:
+			returnMe = (long long)(*((uint64_t *)value)>>32);
+			returnMe += (long long)((*(uint64_t *)value) & 0xFFFFFFFF) / 4294967296.0;
+			/*
+			returnMe = *((long *)(value));
+			returnMe += *((long *)(value+1));
+			*/
+			break;
+		case OSCVal64Int:
+			returnMe = (long long)(*(long long *)value);
+			break;
+		case OSCValDouble:
+			returnMe = (long long)(*(double *)value);
+			break;
+		case OSCValChar:
+			returnMe = (long long)(*(char *)value);
+			break;
+		case OSCValColor:
+#if TARGET_OS_IPHONE
+			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
+#else
+			[(NSColor *)value getComponents:comps];
+#endif
+			returnMe = (long long)(comps[0]+comps[1]+comps[2])/(double)3.0;
+			break;
+		case OSCValMIDI:
+			//	if it's a MIDI-type OSC value, return the note velocity or the controller value
+			switch ((OSCMIDIType)(((Byte *)value)[1]))	{
+				case OSCMIDINoteOffVal:
+				case OSCMIDIBeginSysexDumpVal:
+				case OSCMIDIUndefinedCommon1Val:
+				case OSCMIDIUndefinedCommon2Val:
+				case OSCMIDIEndSysexDumpVal:
+					returnMe = (long long)0;
+					break;
+				case OSCMIDINoteOnVal:
+				case OSCMIDIAfterTouchVal:
+				case OSCMIDIControlChangeVal:
+					returnMe = (long long)[self midiData2];
+					break;
+				case OSCMIDIProgramChangeVal:
+				case OSCMIDIChannelPressureVal:
+				case OSCMIDIMTCQuarterFrameVal:
+				case OSCMIDISongSelectVal:
+					returnMe = (long long)[self midiData1];
+					break;
+				case OSCMIDIPitchWheelVal:
+				case OSCMIDISongPosPointerVal:
+					returnMe = (long long)(([self midiData2] << 7) | ([self midiData1]));
+					break;
+				case OSCMIDITuneRequestVal:
+				case OSCMIDIClockVal:
+				case OSCMIDITickVal:
+				case OSCMIDIStartVal:
+				case OSCMIDIContinueVal:
+				case OSCMIDIStopVal:
+				case OSCMIDIUndefinedRealtime1Val:
+				case OSCMIDIActiveSenseVal:
+				case OSCMIDIResetVal:
+					returnMe = (long long)1;
+					break;
+			}
+			break;
+		case OSCValBool:
+			returnMe = (*(BOOL *)value) ? (long long)1 : (long long)0;
+			break;
+		case OSCValNil:
+			returnMe = (long long)0;
+			break;
+		case OSCValInfinity:
+			returnMe = (long long)1;
+			break;
+		case OSCValArray:
+			returnMe = (long long)0;
+			break;
+		case OSCValBlob:
+			returnMe = (long long)1;
+			break;
+		case OSCValSMPTE:
+			/*
+			returnMe = 0.0;
+			//	switching the "osc smpte fps mode", so i can convert frames into a double/seconds
+			switch ((*(int *)value) >> 28)	{
+				case OSCSMPTEFPS24:
+					returnMe += (double)((*(int *)value) & 0xFF)/24.0;
+					break;
+				case OSCSMPTEFPS25:
+					returnMe += (double)((*(int *)value) & 0xFF)/25.0;
+					break;
+				case OSCSMPTEFPS30:
+					returnMe += (double)((*(int *)value) & 0xFF)/30.0;
+					break;
+				case OSCSMPTEFPS48:
+					returnMe += (double)((*(int *)value) & 0xFF)/48.0;
+					break;
+				case OSCSMPTEFPS50:
+					returnMe += (double)((*(int *)value) & 0xFF)/50.0;
+					break;
+				case OSCSMPTEFPS60:
+					returnMe += (double)((*(int *)value) & 0xFF)/60.0;
+					break;
+				case OSCSMPTEFPS120:
+					returnMe += (double)((*(int *)value) & 0xFF)/120.0;
+					break;
+				case OSCSMPTEFPSUnknown:
+				default:
+					break;
+			}
+			returnMe += (double)(((*(int *)value) >> 8) & 0x3F);	//	seconds
+			returnMe += (double)(((*(int *)value) >> 14) & 0x3F) * 60.0;	//	minutes
+			returnMe += (double)(((*(int *)value) >> 20) & 0x1F) * 60.0 * 60.0;	//	hours
+			returnMe += (double)(((*(int *)value) >> 25) & 0x07) * 60.0 * 60.0 * 24.0;	//	days
+			*/
+			break;
+	}
+	return returnMe;
+}
+- (NSString *) calculateStringValue	{
+	switch (type)	{
+		case OSCValUnknown:
+			return @"?";
+		case OSCValInt:
+			return [NSString stringWithFormat:@"%d",*(int *)value];
+		case OSCValFloat:
+			return [NSString stringWithFormat:@"%f",*(float *)value];
+		case OSCValString:
+			return [NSString stringWithFormat:@"%@",(id)value];
+		case OSCValTimeTag:
+			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
+			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
+			//return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
+			{
+				NSDateFormatter		*fmt = [[[NSDateFormatter alloc] init] autorelease];
+				[fmt setDateFormat:@"dd/MM, HH:mm:ss.SSSSS"];
+				return [fmt stringFromDate:[self dateValue]];
+			}
+		case OSCVal64Int:
+			return [NSString stringWithFormat:@"%qi",*(long long *)value];
+		case OSCValDouble:
+			return [NSString stringWithFormat:@"%f",*(double *)value];
+		case OSCValChar:
+			return [NSString stringWithFormat:@"%s",(char *)value];
+		case OSCValColor:
+			return [NSString stringWithFormat:@"%@",(id)value];
+		case OSCValMIDI:
+			return [NSString stringWithFormat:@"%d-%d-%d-%d",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
+		case OSCValBool:
+			if (*(BOOL *)value)
+				return @"T";
+			else
+				return @"F";
+		case OSCValNil:
+			return [NSString stringWithFormat:@"<OSCVal N>"];
+		case OSCValInfinity:
+			return [NSString stringWithFormat:@"<OSCVal I>"];
+		case OSCValArray:
+			{
+				NSMutableString		*mutString = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
+				[mutString appendString:@"["];
+				for (OSCValue *tmpVal in [self valueArray])	{
+					[mutString appendString:[tmpVal calculateStringValue]];
+				}
+				[mutString appendString:@"]"];
+				return mutString;
+			}
+		case OSCValBlob:
+			return [NSString stringWithFormat:@"<OSCVal b: %@>",value];
+		case OSCValSMPTE:
+			return [NSString stringWithFormat:@"<OSCVal E: %d>",*(int *)value];
+	}
+	return [NSString stringWithFormat:@"??"];
+}
+- (OSCValue *) createValByConvertingToType:(OSCValueType)t	{
+	//	if i'm already of the passed type, just return self immediately
+	if (type == t)
+		return self;
+	//	if i'm here, i need to actually convert stuff...
+	switch (t)	{
+	case OSCValUnknown:
+		return nil;
+	case OSCValInt:
+		return [OSCValue createWithInt:[self calculateIntValue]];
+	case OSCValFloat:
+		return [OSCValue createWithFloat:[self calculateFloatValue]];
+	case OSCValString:
+		return [OSCValue createWithString:[self calculateStringValue]];
+	case OSCValTimeTag:
+		return nil;
+	case OSCVal64Int:
+		return [OSCValue createWithLongLong:[self calculateLongLongValue]];
+	case OSCValDouble:
+		return [OSCValue createWithDouble:[self calculateDoubleValue]];
+	case OSCValChar:
+		return [OSCValue createWithChar:(char)[self calculateIntValue]];
+	case OSCValColor:
+		{
+			double		tmpVal = [self calculateDoubleValue];
+#if TARGET_OS_IPHONE
+			return [OSCValue createWithColor:[UIColor colorWithRed:tmpVal green:tmpVal blue:tmpVal alpha:1.0]];
+#else
+			return [OSCValue createWithColor:[NSColor colorWithDeviceRed:tmpVal green:tmpVal blue:tmpVal alpha:1.0]];
+#endif
+		}
+	case OSCValMIDI:
+	case OSCValArray:
+	case OSCValBlob:
+	case OSCValSMPTE:
+		return nil;	//	unhandled, returns nil!
+	case OSCValBool:
+		return [OSCValue createWithBool:([self calculateIntValue]>0) ? YES : NO];
+	case OSCValNil:
+		return [OSCValue createWithNil];
+	case OSCValInfinity:
+		return [OSCValue createWithInfinity];
+	}
+	return nil;
+}
 - (id) jsonValue	{
 	switch (type)	{
 	case OSCValUnknown:
@@ -1130,7 +1366,7 @@
 	return returnMe;
 }
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d	{
-	//NSLog(@"%s ... %d, %d, %@",__func__,*t,*d,self);
+	//NSLog(@"%s ... %p, %d, %d, %@",__func__,b,*t,*d,self);
 	
 	int					i;
 	long				tmpLong = 0;
@@ -1213,7 +1449,11 @@
 			++*t;
 			break;
 		case OSCValChar:
+			*((unsigned int *)(b+*d)) = NSSwapHostIntToBig(*((unsigned int *)(value)));
+			*d += 4;
 			
+			b[*t] = 'c';
+			++*t;
 			break;
 		case OSCValColor:
 #if TARGET_OS_IPHONE
@@ -1325,16 +1565,98 @@
 	if (n==nil)
 		return NSOrderedDescending;
 	
-	if (type==OSCValString && [n type]==OSCValString)	{
+	OSCValueType		otherType = [n type];
+	if (type==OSCValString && otherType==OSCValString)	{
 		return [[self stringValue] compare:[n stringValue]];
 	}
-	
+	else if (type == otherType)	{
+		switch (type)	{
+		case OSCValUnknown:
+		case OSCValBool:
+		case OSCValNil:
+		case OSCValInfinity:
+			return NSOrderedSame;
+		case OSCValInt:
+			{
+				int		myVal = [self intValue];
+				int		otherVal = [n intValue];
+				if (myVal < otherVal)
+					return NSOrderedAscending;
+				else if (myVal > otherVal)
+					return NSOrderedDescending;
+				return NSOrderedSame;
+			}
+			break;
+		case OSCVal64Int:
+			{
+				long long		myVal = [self longLongValue];
+				long long		otherVal = [n longLongValue];
+				if (myVal < otherVal)
+					return NSOrderedAscending;
+				else if (myVal > otherVal)
+					return NSOrderedDescending;
+				return NSOrderedSame;
+			}
+			break;
+		case OSCValFloat:
+			{
+				float		myVal = [self floatValue];
+				float		otherVal = [n floatValue];
+				if (myVal < otherVal)
+					return NSOrderedAscending;
+				else if (myVal > otherVal)
+					return NSOrderedDescending;
+				return NSOrderedSame;
+			}
+			break;
+		case OSCValDouble:
+			{
+				double		myVal = [self doubleValue];
+				double		otherVal = [n doubleValue];
+				if (myVal < otherVal)
+					return NSOrderedAscending;
+				else if (myVal > otherVal)
+					return NSOrderedDescending;
+				return NSOrderedSame;
+			}
+			break;
+		case OSCValString:
+			return [[self stringValue] compare:[n stringValue]];
+		case OSCValChar:
+			{
+				char		myVal = [self charValue];
+				char		otherVal = [n charValue];
+				if (myVal < otherVal)
+					return NSOrderedAscending;
+				else if (myVal > otherVal)
+					return NSOrderedDescending;
+				return NSOrderedSame;
+			}
+			break;
+		case OSCValColor:
+		case OSCValMIDI:
+		case OSCValTimeTag:
+		case OSCValArray:
+		case OSCValBlob:
+		case OSCValSMPTE:
+			return NSOrderedSame;
+		}
+	}
+	return NSOrderedSame;
+	/*
 	NSNumber		*myNum = [NSNumber numberWithDouble:[self calculateDoubleValue]];
 	NSNumber		*compNum = [NSNumber numberWithDouble:[n calculateDoubleValue]];
 	if (myNum!=nil && compNum!=nil)
 		return [myNum compare:compNum];
 	
 	return NSOrderedSame;
+	*/
+}
+- (BOOL) isEqual:(id)object	{
+	if (([object isKindOfClass:[OSCValue class]]) &&
+	([self compare:object]==NSOrderedSame))
+		return YES;
+	return NO;
 }
 
 

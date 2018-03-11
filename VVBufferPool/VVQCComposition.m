@@ -1,5 +1,6 @@
 #import "VVQCComposition.h"
 #import <VVBasics/VVBasics.h>
+#import <Quartz/Quartz.h>
 
 
 

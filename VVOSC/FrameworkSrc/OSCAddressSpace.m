@@ -176,7 +176,7 @@ id				_mainVVOSCAddressSpace;
 
 
 
-/*
+
 - (NSString *) description	{
 	NSMutableString		*mutString = [NSMutableString stringWithCapacity:0];
 	[mutString appendString:@"\n"];
@@ -191,7 +191,7 @@ id				_mainVVOSCAddressSpace;
 	
 	return mutString;
 }
-*/
+
 - (id) init	{
 	//NSLog(@"%s",__func__);
 	self = [super init];

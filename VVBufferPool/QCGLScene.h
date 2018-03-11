@@ -1,9 +1,10 @@
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
-#import <Quartz/Quartz.h>
+//#import <Quartz/Quartz.h>
 #import "VVBufferPool.h"
 @class VVQCComposition;
+@class QCRenderer;
 #import <pthread.h>
 
 

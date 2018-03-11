@@ -64,6 +64,7 @@ According to the OSC spec, a message consists of an address path (where the mess
 ///	NOT A KEY-VALUE METHOD- function depends on valueCount!  'value' either returns "val" or the first object in "valArray", depending on "valCount"
 - (OSCValue *) value;
 - (OSCValue *) valueAtIndex:(int)i;
+- (OSCValue *) valueAtFlatIndex:(int)targetIndex;
 
 ///	Returns 0.0 if 'valueArray' is empty, otherwise calculates the float val for the first OSCValue in 'valueArray'
 - (float) calculateFloatValue;

@@ -1,5 +1,6 @@
 #import "QCGLScene.h"
 #import "VVQCComposition.h"
+#import <Quartz/Quartz.h>
 
 
 

@@ -26,7 +26,7 @@
 #import "VVSizingTool.h"
 #import "GLScene.h"
 #import "GLShaderScene.h"
-#import "CIGLScene.h"
+//#import "CIGLScene.h"
 #import "VVBufferCopier.h"
 
 #if !TARGET_OS_IPHONE

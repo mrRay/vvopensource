@@ -234,7 +234,15 @@
 				tmpIndex = tmpIndex + 8;
 				break;
 			case 'c':			//	an ascii character, sent as 32 bits- NOT SUPPORTED
-				tmpIndex = tmpIndex + 4;
+				//tmpIndex = tmpIndex + 4;
+				
+				tmpVal = [OSCValue createWithChar:NSSwapBigIntToHost(*((unsigned int *)(b+tmpIndex)))];
+				if (arrayVals!=nil && [arrayVals count]>0)
+					[[arrayVals lastObject] addValue:tmpVal];
+				else
+					[returnMe addValue:tmpVal];
+				tmpIndex += 4;
+				
 				break;
 			case 'r':			//	32 bit RGBA color
 				//NSLog(@"%d, %d, %d, %d",*((unsigned char *)b+tmpIndex),*((unsigned char *)b+tmpIndex+1),*((unsigned char *)b+tmpIndex+2),*((unsigned char *)b+tmpIndex+3));
@@ -488,6 +496,52 @@
 		return [valueArray objectAtIndex:i];
 	
 	return nil;
+}
+- (OSCValue *) valueAtFlatIndex:(int)targetIndex	{
+	__block int			flatIndex = 0;
+	__block OSCValue	*foundValue = nil;
+	__block void		(^flatIndexValFinder)(OSCValue *);
+	
+	flatIndexValFinder = ^(OSCValue *inVal)	{
+		switch ([inVal type])	{
+		case OSCValUnknown:
+			break;
+		case OSCValNil:
+		case OSCValInfinity:
+		case OSCValBool:
+			//	these technically don't have a data type but the OSC framework creates OSCValue instances if it receives a message with these data types
+			if (flatIndex == targetIndex)
+				foundValue = inVal;
+			else
+				++flatIndex;
+			break;
+		case OSCValInt:
+		case OSCValFloat:
+		case OSCValString:
+		case OSCValTimeTag:
+		case OSCVal64Int:
+		case OSCValDouble:
+		case OSCValChar:
+		case OSCValColor:
+		case OSCValMIDI:
+		case OSCValBlob:
+		case OSCValSMPTE:
+			if (flatIndex == targetIndex)
+				foundValue = inVal;
+			else
+				++flatIndex;
+			break;
+		case OSCValArray:
+			for (OSCValue *tmpVal in [inVal valueArray])	{
+				if (foundValue!=nil || flatIndex>targetIndex)
+					return;
+				flatIndexValFinder(tmpVal);
+			}
+			break;
+		}
+	};
+	
+	return foundValue;
 }
 
 

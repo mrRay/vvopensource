@@ -1,4 +1,5 @@
 #import "TexRangeGLtoCPUtoGLAppDelegate.h"
+#import <VVBufferPool/CIGLScene.h>
 
 
 

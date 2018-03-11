@@ -25,6 +25,7 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 
 + (NSString *) typeTagStringForType:(OSCValueType)t;
 + (OSCValueType) typeForTypeTagString:(NSString *)t;
++ (OSCValueType) typeForTypeTagChar:(unichar)c;
 ///	Creates & returns an auto-released instance of OSCValue with an int
 + (id) createWithInt:(int)n;
 ///	Creates & returns an auto-released instance of OSCValue with a float
@@ -124,6 +125,12 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (double) calculateDoubleValue;
 ///	Returns an int value, regardless as to the type of the OSCValue
 - (int) calculateIntValue;
+///	Returns a long long value, regardless as to the type of the OSCValue
+- (long long) calculateLongLongValue;
+///	Returns a string value, regardless as to the type of the OSCValue
+- (NSString *) calculateStringValue;
+///	Returns an OSCValue of the specified type, attempts to convert existing value to the given type.  Returns 'self' is receiver is already of passed type.
+- (OSCValue *) createValByConvertingToType:(OSCValueType)t;
 
 - (id) jsonValue;
 
@@ -134,5 +141,6 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 - (void) writeToBuffer:(unsigned char *)b typeOffset:(int *)t dataOffset:(int *)d;
 - (NSString *) typeTagString;
 - (NSComparisonResult) compare:(OSCValue *)n;
+- (BOOL) isEqual:(id)object;
 
 @end

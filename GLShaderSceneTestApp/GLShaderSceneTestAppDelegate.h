@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import <VVBasics/VVBasics.h>
 #import <VVBufferPool/VVBufferPool.h>
+#import <VVBufferPool/CIGLScene.h>
 
 
 
