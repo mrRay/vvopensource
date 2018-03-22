@@ -1234,6 +1234,26 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 	[passes unlock];
 	
+	
+	//	now we have to run through the inputs, and set the value of any 'event'-type inputs that were YES to NO
+	[inputs rdlock];
+	for (ISFAttrib *attrib in [inputs array])	{
+		ISFAttribValType	attribType = [attrib attribType];
+		ISFAttribVal		attribVal = [attrib currentVal];
+		switch (attribType)	{
+		case ISFAT_Event:
+			if (attribVal.eventVal)	{
+				attribVal.eventVal = NO;
+				[attrib setCurrentVal:attribVal];
+			}
+			break;
+		default:	//	intentionally blank, only disabling events
+			break;
+		}
+	}
+	[inputs unlock];
+	
+	
 	//	don't forget to increment the render frame index!
 	++renderFrameIndex;
 	
@@ -2272,7 +2292,6 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				findNewUniformsBlock();
 				if (samplerLoc>=0)
 					glUniform1i(samplerLoc, ((attribVal.eventVal)?1:0));
-				attribVal.eventVal = NO;
 				[attrib setCurrentVal:attribVal];
 				break;
 			case ISFAT_Bool:
