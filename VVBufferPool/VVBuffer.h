@@ -116,7 +116,7 @@ If you want to extend VVBuffer/VVBufferPool to be compatible with other graphics
 */
 typedef NS_ENUM(NSInteger, VVBufferBackID)	{
 	VVBufferBackID_None = 0,	//!<	the buffer was wholly created by this framework- there's no backing
-	VVBufferBackID_GWorld,	//<	the buffer was created from a gworld
+	VVBufferBackID_GWorld,	//!<	the buffer was created from a gworld
 	VVBufferBackID_Pixels,	//!<	the buffer was created from a pointer to pixels which were also allocated by this framework
 	VVBufferBackID_CVPixBuf,	//!<	the buffer was created from a CVPixelBufferRef
 	VVBufferBackID_CVTex,	//!<	the buffer was created from a CVOpenGLTextureRef
@@ -160,6 +160,9 @@ void VVBufferQuadPopulate(VVBufferQuad *b, VVRECT geoRect, VVRECT texRect);
 
 
 
+#ifdef __cplusplus
+extern "C"	{
+#endif
 ///	Populates the passed VVBufferDescriptor pointer with default values
 void VVBufferDescriptorPopulateDefault(VVBufferDescriptor *d);
 ///	Copies the contents of the src to dst
@@ -170,6 +173,10 @@ BOOL VVBufferDescriptorCompare(VVBufferDescriptor *a, VVBufferDescriptor *b);
 BOOL VVBufferDescriptorCompareForRecycling(VVBufferDescriptor *a, VVBufferDescriptor *b);
 ///	Calculates the size (in bytes) that would be required to create a CPU-based backing for a buffer of the passed dimensions matching the passed buffer descriptor.
 unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, VVSIZE s);
+unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSIZE s);
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -342,10 +349,16 @@ VVBuffers conform to the NSCopying protocol, but this behavior isn't straightfor
 
 
 
+#ifdef __cplusplus
+extern "C"	{
+#endif
 void VVBuffer_ReleasePixelsCallback(id b, void *c);
 void VVBuffer_ReleaseCVGLT(id b, void *c);
 void VVBuffer_ReleaseCVPixBuf(id b, void *c);
 void VVBuffer_ReleaseBitmapRep(id b, void *c);
+#ifdef __cplusplus
+}
+#endif
 
 
 

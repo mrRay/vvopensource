@@ -149,11 +149,11 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 - (VVBuffer *) allocFBO;
 #if !TARGET_OS_IPHONE
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel RECT texture with a BGRA internal format.
-- (VVBuffer *) allocBGRTexSized:(VVSIZE)s;
-#endif
 /**
 @param s The size of the texture you want to create, in pixels, as an VVSIZE structure
 */
+- (VVBuffer *) allocBGRTexSized:(VVSIZE)s;
+#endif
 ///	Allocates and returns a VVBuffer instance that represents an OpenGL texture.  Specifically, returns an 8-bit per channel 2D texture with a BGRA internal format.
 /**
 @param s The size of the texture you want to create, in pixels, as an VVSIZE structure.

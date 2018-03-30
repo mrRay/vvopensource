@@ -498,6 +498,10 @@
 	return nil;
 }
 - (OSCValue *) valueAtFlatIndex:(int)targetIndex	{
+	if (targetIndex >= valueCount)
+		return nil;
+	if (targetIndex==0 && valueCount==1)
+		return value;
 	__block int			flatIndex = 0;
 	__block OSCValue	*foundValue = nil;
 	__block void		(^flatIndexValFinder)(OSCValue *);
@@ -540,6 +544,12 @@
 			break;
 		}
 	};
+	
+	for (OSCValue *tmpVal in [self valueArray])	{
+		if (foundValue!=nil || flatIndex>targetIndex)
+			break;;
+		flatIndexValFinder(tmpVal);
+	}
 	
 	return foundValue;
 }

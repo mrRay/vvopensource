@@ -116,6 +116,9 @@ BOOL VVBufferDescriptorCompareForRecycling(VVBufferDescriptor *a, VVBufferDescri
 	return YES;
 }
 unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b, VVSIZE s)	{
+	return (VVBufferDescriptorCalculateBytesPerRow(b,s) * s.height);
+}
+unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSIZE s)	{
 	unsigned long			bytesPerRow = 4 * s.width;	//	starting with the assumption of 32 bits per pixel
 	switch (b->pixelType)	{
 		case VVBufferPT_None:
@@ -213,7 +216,7 @@ unsigned long VVBufferDescriptorCalculateCPUBackingForSize(VVBufferDescriptor *b
 	//NSLog(@"\t\tpassed dims are %f x %f",s.width,s.height);
 	//NSLog(@"\t\tbytesPerRow is %ld",bytesPerRow);
 	
-	return (bytesPerRow * s.height);
+	return bytesPerRow;
 }
 
 

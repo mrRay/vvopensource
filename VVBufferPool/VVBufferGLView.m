@@ -117,66 +117,68 @@
 	pthread_mutex_lock(&renderLock);
 		if (initialized)	{
 			CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			
-			//glBlendFunc(GL_ONE, GL_ZERO);
-			//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
-			glDisable(GL_DEPTH_TEST);
-			glClearColor(0.0, 0.0, 0.0, 1.0);
-			
-			glEnable(target);
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			
-			//	bilinear filtering stuff
-			//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			
-			//	set up the view to draw
-			VVRECT				bounds = [self bounds];
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
-			//if (flipped)
-				glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, 1.0, -1.0);
-			//else
-			//	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y+bounds.size.height, bounds.origin.y, 1.0, -1.0);
-			//glEnable(GL_BLEND);
-			//glBlendFunc(GL_SRC_ALPHA,GL_DST_ALPHA);
-			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glDisable(GL_BLEND);
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			//	clear the view
-			glClearColor(0.0,0.0,0.0,0.0);
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			
-			if (b != nil)	{
-				[b retain];
-				//VVSIZE			bufferSize = [b size];
-				//BOOL			bufferFlipped = [b flipped];
-				VVRECT			destRect = [VVSizingTool
-					//rectThatFitsRect:VVMAKERECT(0,0,bufferSize.width,bufferSize.height)
-					rectThatFitsRect:[b srcRect]
-					inRect:[self bounds]
-					sizingMode:sizingMode];
+			if (cgl_ctx != NULL)	{
+				glEnableClientState(GL_VERTEX_ARRAY);
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				
+				//glBlendFunc(GL_ONE, GL_ZERO);
+				//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+				glHint(GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL_FASTEST);
+				glDisable(GL_DEPTH_TEST);
+				glClearColor(0.0, 0.0, 0.0, 1.0);
+				
+				glEnable(target);
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				
+				//	bilinear filtering stuff
+				//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				
+				//	set up the view to draw
+				VVRECT				bounds = [self bounds];
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glViewport(0, 0, (GLsizei) bounds.size.width, (GLsizei) bounds.size.height);
+				//if (flipped)
+					glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y, bounds.origin.y+bounds.size.height, 1.0, -1.0);
+				//else
+				//	glOrtho(bounds.origin.x, bounds.origin.x+bounds.size.width, bounds.origin.y+bounds.size.height, bounds.origin.y, 1.0, -1.0);
+				//glEnable(GL_BLEND);
+				//glBlendFunc(GL_SRC_ALPHA,GL_DST_ALPHA);
+				//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+				glDisable(GL_BLEND);
+				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+				//	clear the view
+				glClearColor(0.0,0.0,0.0,0.0);
+				glClear(GL_COLOR_BUFFER_BIT);
 				
 				
-				GLDRAWTEXQUADMACRO([b name],[b target],[b flipped],[b glReadySrcRect],destRect);
+				if (b != nil)	{
+					[b retain];
+					//VVSIZE			bufferSize = [b size];
+					//BOOL			bufferFlipped = [b flipped];
+					VVRECT			destRect = [VVSizingTool
+						//rectThatFitsRect:VVMAKERECT(0,0,bufferSize.width,bufferSize.height)
+						rectThatFitsRect:[b srcRect]
+						inRect:[self bounds]
+						sizingMode:sizingMode];
+					
+					
+					GLDRAWTEXQUADMACRO([b name],[b target],[b flipped],[b glReadySrcRect],destRect);
+				}
+				//	flush!
+				glFlush();
+				if (b != nil)
+					[b release];
+				
+				glDisable(target);
 			}
-			//	flush!
-			glFlush();
-			if (b != nil)
-				[b release];
-			
-			glDisable(target);
 		}
 	pthread_mutex_unlock(&renderLock);
 }
