@@ -93,6 +93,8 @@
 	//NSLog(@"%s",__func__);
 	BOOL			bail = NO;
 	
+	[b retain];
+	
 	OSSpinLockLock(&retainDrawLock);
 	if (retainDraw)	{
 		if (retainDrawBuffer != b)	{
@@ -110,8 +112,10 @@
 			bail = YES;
 	}
 	OSSpinLockUnlock(&onlyDrawNewStuffLock);
-	if (bail)
+	if (bail)	{
+		VVRELEASE(b);
 		return;
+	}
 	
 	GLuint			target = (b==nil) ? GL_TEXTURE_RECTANGLE_EXT : [b target];
 	pthread_mutex_lock(&renderLock);
@@ -160,7 +164,6 @@
 				
 				
 				if (b != nil)	{
-					[b retain];
 					//VVSIZE			bufferSize = [b size];
 					//BOOL			bufferFlipped = [b flipped];
 					VVRECT			destRect = [VVSizingTool
@@ -174,13 +177,13 @@
 				}
 				//	flush!
 				glFlush();
-				if (b != nil)
-					[b release];
 				
 				glDisable(target);
 			}
 		}
 	pthread_mutex_unlock(&renderLock);
+	
+	VVRELEASE(b);
 }
 - (void) setSharedGLContext:(NSOpenGLContext *)c	{
 	if (c == nil)

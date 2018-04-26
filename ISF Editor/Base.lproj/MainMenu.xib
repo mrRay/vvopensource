@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="101000" identifier="macosx"/>
-        <development version="5100" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -797,16 +797,16 @@ select to view a filter)</string>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="CkJ-Bb-9kY">
                             <rect key="frame" x="1" y="1" width="260" height="388"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" id="542">
-                                    <rect key="frame" x="0.0" y="0.0" width="260" height="19"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="260" height="388"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="257" minWidth="40" maxWidth="1000" id="546">
+                                        <tableColumn identifier="" editable="NO" width="257" minWidth="40" maxWidth="1000" id="546">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="File name">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -826,7 +826,6 @@ select to view a filter)</string>
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="543">
                             <rect key="frame" x="1" y="182" width="238" height="15"/>
@@ -861,8 +860,8 @@ select to view a filter)</string>
                         <rect key="frame" x="280" y="40" width="262" height="556"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="imG-tQ-36j">
-                            <rect key="frame" x="1" y="1" width="245" height="554"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <rect key="frame" x="1" y="1" width="260" height="554"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <view id="569">
                                     <rect key="frame" x="0.0" y="0.0" width="190" height="985"/>
@@ -1291,16 +1290,16 @@ Gw
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="eb5-wr-5Kb">
                             <rect key="frame" x="1" y="1" width="331" height="595"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="50" rowSizeStyle="automatic" viewBased="YES" id="uOv-th-3Wx">
-                                    <rect key="frame" x="0.0" y="0.0" width="331" height="0.0"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="331" height="595"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn width="328" minWidth="40" maxWidth="1000" id="s6a-dE-ZkI">
+                                        <tableColumn identifier="" width="328" minWidth="40" maxWidth="1000" id="s6a-dE-ZkI">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1368,7 +1367,6 @@ Gw
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="yld-lC-1YY">
                             <rect key="frame" x="-100" y="-100" width="223" height="15"/>
@@ -1465,11 +1463,11 @@ Gw
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <customView id="1qp-sj-jm5">
-                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="439"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     </customView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Mxi-pV-9Ux">
-                                                        <rect key="frame" x="-2" y="440.5" width="159" height="14"/>
+                                                        <rect key="frame" x="-2" y="441" width="159" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF Fragment source code" id="cvX-Jm-4HK">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1484,11 +1482,11 @@ Gw
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <customView id="xFC-CC-KFN">
-                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="438.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="180" height="439"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     </customView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="wC6-uq-FZh">
-                                                        <rect key="frame" x="-2" y="440.5" width="159" height="14"/>
+                                                        <rect key="frame" x="-2" y="441" width="159" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF Vertex source code" id="EcX-v7-erB">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1503,7 +1501,7 @@ Gw
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="byU-ML-Czs">
-                                                        <rect key="frame" x="-2" y="440.5" width="270" height="14"/>
+                                                        <rect key="frame" x="-2" y="441" width="270" height="14"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ISF JSON Editor" id="KB3-dr-QMH">
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1512,20 +1510,20 @@ Gw
                                                         </textFieldCell>
                                                     </textField>
                                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="169" horizontalPageScroll="10" verticalLineScroll="169" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="3mP-nT-B6h">
-                                                        <rect key="frame" x="0.0" y="0.0" width="360" height="438.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="360" height="439"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <clipView key="contentView" id="eYa-09-S9Q">
-                                                            <rect key="frame" x="1" y="1" width="358" height="436.5"/>
+                                                            <rect key="frame" x="1" y="1" width="358" height="437"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="167" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="E8r-I9-Sb5" customClass="UnselectableTableView">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="358" height="0.0"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="358" height="1391"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                                     <color key="backgroundColor" white="1" alpha="0.24908577130000001" colorSpace="deviceWhite"/>
                                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                                     <tableColumns>
-                                                                        <tableColumn width="355" minWidth="40" maxWidth="1000" id="pGd-Ca-zsi">
+                                                                        <tableColumn identifier="" width="355" minWidth="40" maxWidth="1000" id="pGd-Ca-zsi">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                                                 <font key="font" metaFont="smallSystem"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -3125,7 +3123,6 @@ Gw
                                                                     </connections>
                                                                 </tableView>
                                                             </subviews>
-                                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </clipView>
                                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Ptv-g9-F35">
                                                             <rect key="frame" x="-100" y="-100" width="223" height="15"/>
@@ -3165,7 +3162,7 @@ Gw
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="HOu-6P-LFB">
-                                                            <rect key="frame" x="15" y="209.5" width="447" height="14"/>
+                                                            <rect key="frame" x="15" y="210" width="447" height="14"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="These errors refer to the compiled vertex or fragment shaders (adjacent)" id="yF9-PY-1sj">
                                                                 <font key="font" metaFont="smallSystem"/>
@@ -3174,7 +3171,7 @@ Gw
                                                             </textFieldCell>
                                                         </textField>
                                                         <customView id="X7a-Mo-Kvy">
-                                                            <rect key="frame" x="2" y="2" width="722" height="199.5"/>
+                                                            <rect key="frame" x="2" y="2" width="722" height="200"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </customView>
                                                     </subviews>

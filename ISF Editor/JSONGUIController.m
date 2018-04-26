@@ -134,30 +134,68 @@ id			_globalJSONGUIController = nil;
 }
 - (CGFloat) tableView:(NSTableView *)tv heightOfRow:(NSInteger)row	{
 	CGFloat			returnMe = 17.;
-	NSView			*tmpView = nil;
+	//NSView			*tmpView = nil;
 	NSInteger		indexOfInputsGroupCell = 1;
 	NSInteger		indexOfPassesGroupCell = indexOfInputsGroupCell + [[[top inputsGroup] contents] lockCount] + 1;
 	//	if this is the row for the 'top' item
 	if (row==0)	{
-		tmpView = [tv makeViewWithIdentifier:@"TopCell" owner:self];
-		returnMe = [tmpView frame].size.height;
+		//tmpView = [tv makeViewWithIdentifier:@"TopCell" owner:self];
+		//returnMe = [tmpView frame].size.height;
+		returnMe = 127;
 	}
 	//	else if this is a row for a group ("inputs" or "passes")
 	else if (row==indexOfInputsGroupCell || row==indexOfPassesGroupCell)	{
-		tmpView = [tv makeViewWithIdentifier:@"GroupCell" owner:self];
-		returnMe = [tmpView frame].size.height;
+		//tmpView = [tv makeViewWithIdentifier:@"GroupCell" owner:self];
+		//returnMe = [tmpView frame].size.height;
+		returnMe = 32;
 	}
 	//	else if this is a pass
 	else if (row>indexOfPassesGroupCell)	{
-		tmpView = [tv makeViewWithIdentifier:@"PassCell" owner:self];
-		returnMe = [tmpView frame].size.height;
+		//tmpView = [tv makeViewWithIdentifier:@"PassCell" owner:self];
+		//returnMe = [tmpView frame].size.height;
+		returnMe = 144;
 	}
 	//	else this is an input
 	else	{
 		JSONGUIInput	*input = [[[top inputsGroup] contents] lockObjectAtIndex:row-(indexOfInputsGroupCell+1)];
 		NSString		*typeString = [(JSONGUIInput *)input objectForKey:@"TYPE"];
-		tmpView = [self makeTableCellViewForISFTypeString:typeString];
-		returnMe = [tmpView frame].size.height;
+		//tmpView = [self makeTableCellViewForISFTypeString:typeString];
+		//returnMe = [tmpView frame].size.height;
+		
+		
+		if (typeString==nil)	{
+			//returnMe = nil;
+		}
+		else if (![typeString isKindOfClass:[NSString class]])	{
+			//returnMe = nil;
+		}
+		else if ([typeString isEqualToString:@"event"])	{
+			returnMe = 79;
+		}
+		else if ([typeString isEqualToString:@"bool"])	{
+			returnMe = 123;
+		}
+		else if ([typeString isEqualToString:@"long"])	{
+			returnMe = 167;
+		}
+		else if ([typeString isEqualToString:@"float"])	{
+			returnMe = 123;
+		}
+		else if ([typeString isEqualToString:@"point2D"])	{
+			returnMe = 167;
+		}
+		else if ([typeString isEqualToString:@"color"])	{
+			returnMe = 124;
+		}
+		else if ([typeString isEqualToString:@"image"])	{
+			returnMe = 79;
+		}
+		else if ([typeString isEqualToString:@"audio"])	{
+			returnMe = 101;
+		}
+		else if ([typeString isEqualToString:@"audioFFT"])	{
+			returnMe = 101;
+		}
 	}
 	
 	return returnMe;
