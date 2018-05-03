@@ -63,6 +63,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	NSArray				*tags;	//	nil by default, corresponds to TAGS in OSC query protocol.  array contains strings.  tags used for human-readable tags with the goal of aiding search/filtering.
 	NSArray				*clipmode;	//	nil by default, corresponds to CLIPMODE in OSC query protocol.  # of items in the array is the # of arguments in the type tag string.  each item in this array is expected to be a recognzied clipmode string ("none", "low", "high", or "both")
 	NSArray				*units;	//	nil by default, corresponds to UNITS in OSC query protocol.  # of items in the array is the # of arguments in the type tag string.  strings describe the units of the values managd by this node.
+	NSArray				*overloads;	//	nil by default, corresponds to OVERLOADS in OSC query protocol.  if non-nil, contains NSStrings, each of which is an additional alternate type tag string.
 	
 	id					userInfo;
 }
@@ -149,6 +150,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (retain) NSArray * tags;
 @property (retain) NSArray * clipmode;
 @property (retain) NSArray * units;
+@property (retain) NSArray * overloads;
 
 @property (retain) id userInfo;
 

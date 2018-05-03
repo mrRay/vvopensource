@@ -59,6 +59,7 @@
 		tags = nil;
 		clipmode = nil;
 		units = nil;
+		overloads = nil;
 		userInfo = nil;
 		return self;
 	}
@@ -95,6 +96,7 @@
 		tags = nil;
 		clipmode = nil;
 		units = nil;
+		overloads = nil;
 		userInfo = nil;
 		return self;
 	}
@@ -158,6 +160,7 @@
 	VVRELEASE(tags);
 	VVRELEASE(clipmode);
 	VVRELEASE(units);
+	VVRELEASE(overloads);
 	
 	[self setUserInfo:nil];
 	
@@ -706,6 +709,7 @@
 @synthesize tags;
 @synthesize clipmode;
 @synthesize units;
+@synthesize overloads;
 
 
 @synthesize userInfo;
