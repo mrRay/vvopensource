@@ -49,5 +49,6 @@
 - (void) setNSObjectValue:(id)n;
 
 @property (retain,readwrite) NSDictionary *userInfoDict;
+@property (readonly) ISFAttribValType type;
 
 @end

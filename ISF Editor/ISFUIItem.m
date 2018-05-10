@@ -545,6 +545,7 @@
 	return [NSString stringWithFormat:@"<ISFUIItem %@>",name];
 }
 @synthesize userInfoDict;
+@synthesize type;
 
 
 @end

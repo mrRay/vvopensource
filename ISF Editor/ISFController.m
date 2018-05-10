@@ -194,6 +194,9 @@
 			//NSLog(@"\t\t%@ - %@",[itemPtr name],tmpVal);
 			[scene setNSObjectVal:tmpVal forInputKey:[itemPtr name]];
 		}
+		else if (tmpVal==nil && [itemPtr type]==ISFAT_Image)	{
+			[scene setNSObjectVal:n forInputKey:[itemPtr name]];
+		}
 	}
 	[itemArray unlock];
 	
