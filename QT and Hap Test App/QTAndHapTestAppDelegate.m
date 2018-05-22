@@ -1,4 +1,5 @@
 #import "QTAndHapTestAppDelegate.h"
+#import <QuickTime/QuickTime.h>
 
 
 

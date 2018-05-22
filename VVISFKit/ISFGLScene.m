@@ -2119,7 +2119,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 - (void) _renderPrep	{
 	//NSLog(@"%s",__func__);
 	//	assemble a string that describes whether the images to be passed to the shader are 2d or rect textures
-	NSMutableString		*tmpMutString = [NSMutableString stringWithCapacity:0];
+	NSMutableString		*tmpMutString = [[NSMutableString alloc] initWithCapacity:32];
 	[imageInputs rdlock];
 	for (ISFAttrib *attrib in [imageInputs array])	{
 		ISFAttribValType		attribType = [attrib attribType];
@@ -2228,6 +2228,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	}
 	else
 		OSSpinLockUnlock(&srcLock);
+	//	release the temp mut string here
+	VVRELEASE(tmpMutString);
 	
 	
 	//	store these values, then check them after the super's "_renderPrep"...
