@@ -380,6 +380,8 @@
 		1A68C2521CDBDD55001FF7D6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68C2511CDBDD55001FF7D6 /* main.m */; };
 		1A68C2541CDBDD55001FF7D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A68C2531CDBDD55001FF7D6 /* Assets.xcassets */; };
 		1A68C2571CDBDD55001FF7D6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A68C2551CDBDD55001FF7D6 /* MainMenu.xib */; };
+		1A6CF32120E59DA100CF4502 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6CF32020E59DA000CF4502 /* Sparkle.framework */; };
+		1A6CF32220E59DAB00CF4502 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6CF32020E59DA000CF4502 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A6E9AB21B610ECE00F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB31B610ED300F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB51B610EE600F8C8A6 /* MultiClassXPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -530,6 +532,7 @@
 		1AE1A81F1CDA691F005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1AE1A8201CDA691F005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE3C7FD1B3B858000D37189 /* IOKit.framework */; };
+		1AE4D15220E6AF5A00699A35 /* ISFEditorAppIcon.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 1AE4D15120E6AF5A00699A35 /* ISFEditorAppIcon.iconset */; };
 		1AE4FE1C20AF6A4C00A7AC72 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE4FE1B20AF6A4C00A7AC72 /* QuickTime.framework */; };
 		1AE80BFA1CDA582B001D4FC4 /* PBOCPUGLStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BAF1CDA57FA001D4FC4 /* PBOCPUGLStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE80BFB1CDA582B001D4FC4 /* PBOGLCPUStreamer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE80BB11CDA57FA001D4FC4 /* PBOGLCPUStreamer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1746,6 +1749,7 @@
 				1AFE774A1D65B039003D8E7C /* VVBufferPool.framework in Embed Frameworks */,
 				1AFE774B1D65B039003D8E7C /* VVISFKit.framework in Embed Frameworks */,
 				1A39E62F1D65B6D80065F271 /* Syphon.framework in Embed Frameworks */,
+				1A6CF32220E59DAB00CF4502 /* Sparkle.framework in Embed Frameworks */,
 				1A39E5AC1D65B45D0065F271 /* MGSFragaria.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -2060,6 +2064,7 @@
 		1A68C2531CDBDD55001FF7D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A68C2561CDBDD55001FF7D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1A68C2581CDBDD55001FF7D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A6CF32020E59DA000CF4502 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = external/Sparkle.framework; sourceTree = "<group>"; };
 		1A7128AF1B61065000528CDB /* MultiClassXPC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MultiClassXPC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A7128B21B61065000528CDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A7128B31B61065000528CDB /* MultiClassXPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiClassXPC.h; sourceTree = "<group>"; };
@@ -2183,6 +2188,7 @@
 		1AE1A7F71CDA682C005F924D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1AE1A7F91CDA682C005F924D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AE3C7FD1B3B858000D37189 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		1AE4D15120E6AF5A00699A35 /* ISFEditorAppIcon.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = ISFEditorAppIcon.iconset; sourceTree = "<group>"; };
 		1AE4FE1B20AF6A4C00A7AC72 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework; sourceTree = DEVELOPER_DIR; };
 		1AE80BAF1CDA57FA001D4FC4 /* PBOCPUGLStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBOCPUGLStreamer.h; sourceTree = "<group>"; };
 		1AE80BB01CDA57FA001D4FC4 /* PBOCPUGLStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBOCPUGLStreamer.m; sourceTree = "<group>"; };
@@ -2793,6 +2799,7 @@
 				1AFE77411D65B012003D8E7C /* DDMathParser.framework in Frameworks */,
 				1AFE77421D65B012003D8E7C /* VVBasics.framework in Frameworks */,
 				1A39E62E1D65B6A90065F271 /* Syphon.framework in Frameworks */,
+				1A6CF32120E59DA100CF4502 /* Sparkle.framework in Frameworks */,
 				1AFE77431D65B012003D8E7C /* VVBufferPool.framework in Frameworks */,
 				1AFE77441D65B012003D8E7C /* VVISFKit.framework in Frameworks */,
 			);
@@ -3795,6 +3802,7 @@
 		1AFE77291D65AC9B003D8E7C /* ISF Editor */ = {
 			isa = PBXGroup;
 			children = (
+				1AE4D15120E6AF5A00699A35 /* ISFEditorAppIcon.iconset */,
 				1A39E4F31D65B1D60065F271 /* AlphaOverCheckerboard.fs */,
 				1A39E59F1D65B21F0065F271 /* Cube Array.qtz */,
 				1AD54C051D65C8AD008063FD /* ISF QuickLook Plugin.pkg */,
@@ -4201,6 +4209,7 @@
 		96ACD7221706416300138AE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A6CF32020E59DA000CF4502 /* Sparkle.framework */,
 				1AE4FE1B20AF6A4C00A7AC72 /* QuickTime.framework */,
 				1AFE77451D65B01D003D8E7C /* OpenGL.framework */,
 				1A64E4B01CD96BD000DC3310 /* CoreMedia.framework */,
@@ -5914,6 +5923,7 @@
 			files = (
 				1A39E58D1D65B1D60065F271 /* NewFileTemplate.txt in Resources */,
 				1AFB60F01F1F7544003BD1E3 /* 3083c722c0c738cad0f468383167a0d246f91af2bfa373e9c5c094fb8c8413e0.png in Resources */,
+				1AE4D15220E6AF5A00699A35 /* ISFEditorAppIcon.iconset in Resources */,
 				1AFB60CA1F1F7544003BD1E3 /* 1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg in Resources */,
 				1AFB60D61F1F7544003BD1E3 /* 488bd40303a2e2b9a71987e48c66ef41f5e937174bf316d3ed0e86410784b919_5.jpg in Resources */,
 				1AFB60D41F1F7544003BD1E3 /* 488bd40303a2e2b9a71987e48c66ef41f5e937174bf316d3ed0e86410784b919_3.jpg in Resources */,
@@ -9590,6 +9600,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/external/MGSFragaria",
 					"$(PROJECT_DIR)/SyphonToAndFromVVBuffer",
+					"$(PROJECT_DIR)/external",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -9634,7 +9645,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application: Vidvox, LLC (KH97KZU7A7)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9644,6 +9655,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/external/MGSFragaria",
 					"$(PROJECT_DIR)/SyphonToAndFromVVBuffer",
+					"$(PROJECT_DIR)/external",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -9684,7 +9696,7 @@
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Debug;
 		};
@@ -9705,7 +9717,7 @@
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 			};
 			name = Release;
 		};

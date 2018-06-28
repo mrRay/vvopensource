@@ -3,6 +3,7 @@
 #import "VVOSC.h"
 #include <ifaddrs.h>
 #include <arpa/inet.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 
 
