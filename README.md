@@ -21,7 +21,7 @@ I'm not a programmer, I just want to download a MIDI/OSC/ISF test application!
 --------------------------------------------------------------------------
 
 Here's the ISF Editor:
-http://www.vidvox.net/rays_oddsnends/ISF_Editor_2.9.7.1.zip
+http://www.vidvox.net/download/ISF_Editor_2.9.7.3.zip
 
 Here's an OSC test application:
 http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.7.zip
