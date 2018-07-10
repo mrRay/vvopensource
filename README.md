@@ -21,16 +21,16 @@ I'm not a programmer, I just want to download a MIDI/OSC/ISF test application!
 --------------------------------------------------------------------------
 
 Here's the ISF Editor:
-http://www.vidvox.net/download/ISF_Editor_2.9.7.3.zip
+https://www.vidvox.net/download/ISF_Editor_2.9.7.3.dmg
 
 Here's an OSC test application:
-http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.7.zip
+https://www.vidvox.net/rays_oddsnends/vvopensource_downloads/OSCTestApp_0.2.7.zip
 
 Here's an application that sends MIDI input on one computer to another computer over the network/internet using OSC:
-http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.5.zip
+https://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDIviaOSC_0.1.5.zip
 
 Here's an extremely crude MIDI test application ("MIDIMonitor" from snoize is much more comprehensive and fully-featured!):
-http://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.6.zip
+https://www.vidvox.net/rays_oddsnends/vvopensource_downloads/MIDITestApp_1.0.6.zip
 
 
 What does this project include/do/make?
@@ -42,7 +42,7 @@ What does this project include/do/make?
 	* VVMIDI is an Objective-C framework for quickly and easily working with MIDI data.
 	* VVUIToolbox is an objective-c framework that I use extensively to ease the process of creating UI items.  It contains a number of objects that standardize the act of creating, drawing, and interacting with sprites that work transparently with both NS and GL views.
 	* VVBufferPool is an objective-c framework for creating and managing GL-backed resources.  This framework is used as the basis for the rendering engines I build for various proejcts, and is focused on the general goal of simplifying the task of "rendering to a texture" in an extensible manner to better work with a variety of APIs and formats.
-	* VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](http://www.vidvox.net/rays_oddsnends/ISF.html).
+	* VVISFKit is an objective-c framework that opens and renders ISF files.  ISF is a simple/minimal image filter format based on GLSL- more about ISF files can be found [here](https://www.vidvox.net/rays_oddsnends/ISF.html).
 	* MultiClassXPC is an objective-c framework that simplifies the process of quickly setting upa number of different classes to work in an XPC service.
   - Potentially useful apps
     * OSCTestApp is a Cocoa application used for testing and debugging OSC Applications (created entirely with VVOSC).  Capable of both sending and receiving a number of OSC data types, it also demonstrates the use of bonjour/zero-configuration networking to automatically auto-locate and set up OSC Input Ports for OSC destinations found on the local network.  In other words, two copies of OSCTestApp on different machines on the same local network will "see" each other, and automatically do the backend work necessary to send data to one another.
@@ -93,7 +93,7 @@ Documentation and sample code
 
 Doxygen was used to generate documentation for most things in this project, which can be found here:
 
-[http://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html]
+[https://www.vidvox.net/rays_oddsnends/vvopensource_doc/index.html]
 
 ...if you're reading this on the doc page, start by checking out the "Modules", which breaks down the documentation by framework!
 
@@ -101,4 +101,4 @@ Doxygen was used to generate documentation for most things in this project, whic
 Licensing
 ---------
 
-This project is made available under the terms of the LGPL: http://www.gnu.org/copyleft/lesser.html.  Some classes in this project use code from other open-source projects- all third-party code and licensing information is located in the top-level "external" directory.  At present, the third-party code used includes MAZeroingWeakRef from Mike Ash, and DDMathParser from Dave DeLong.
+This project is made available under the terms of the LGPL: https://www.gnu.org/copyleft/lesser.html.  Some classes in this project use code from other open-source projects- all third-party code and licensing information is located in the top-level "external" directory.  At present, the third-party code used includes MAZeroingWeakRef from Mike Ash, and DDMathParser from Dave DeLong.
