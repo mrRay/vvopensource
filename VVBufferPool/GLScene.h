@@ -56,6 +56,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 #else
 	EAGLContext				*context;	//	RETAINED- the context i render into!
 #endif
+	int						currentVirtualScreen;
 	CGColorSpaceRef			colorSpace;
 	
 	id						renderTarget;	//	NOT RETAINED- the target of my render method
@@ -187,5 +188,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 - (void) setRenderBlock:(void (^)(void))n;
 @property (assign, readwrite) VVGLFlushMode flushMode;
 @property (assign, readwrite) int swapInterval;
+@property (assign, readwrite) int currentVirtualScreen;
+- (NSString *) gpuRendererName;
 
 @end

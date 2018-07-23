@@ -44,6 +44,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	
 	VVRELEASE(_globalCIContextGLContext);
 	_globalCIContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
+	[_globalCIContextGLContext setCurrentVirtualScreen:[c currentVirtualScreen]];
 	
 	pthread_mutex_unlock(&_globalCIContextLock);
 }

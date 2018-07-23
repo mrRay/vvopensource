@@ -97,8 +97,10 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	if (n==nil)
 		return;
 	_globalVVBufferPool = [[VVBufferPool alloc] initWithSharedContext:n pixelFormat:p sized:VVMAKESIZE(1,1)];
-	if (_globalVVBufferCopier == nil)
+	[_globalVVBufferPool setCurrentVirtualScreen:[n currentVirtualScreen]];
+	if (_globalVVBufferCopier == nil)	{
 		[VVBufferCopier createGlobalVVBufferCopierWithSharedContext:n];
+	}
 }
 + (void) createGlobalVVBufferPoolWithSharedContext:(NSOpenGLContext *)n	{
     return [self createGlobalVVBufferPoolWithSharedContext:n pixelFormat:[GLScene defaultPixelFormat]];

@@ -71,6 +71,7 @@
 		return;
 	if (ctx == nil)	{
 		ctx = [[NSOpenGLContext alloc] initWithFormat:[GLScene defaultPixelFormat] shareContext:[_globalVVBufferPool sharedContext]];
+		[ctx setCurrentVirtualScreen:[_globalVVBufferPool currentVirtualScreen]];
 		//[swizzleNode setCopyToIOSurface:NO];	//	added recently- stuff was refactored, and this was **NOT** the default value before the refactor.
 	}
 }

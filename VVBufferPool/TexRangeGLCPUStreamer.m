@@ -69,6 +69,7 @@
 	else	{
 		//NSLog(@"\t\tcreating GL context in %s",__func__);
 		ctx = [[NSOpenGLContext alloc] initWithFormat:[_globalVVBufferPool customPixelFormat] shareContext:[_globalVVBufferPool sharedContext]];
+		[ctx setCurrentVirtualScreen:[_globalVVBufferPool currentVirtualScreen]];
 	}
 	if (ctx==nil)
 		return;
@@ -109,6 +110,7 @@
 		[destTex release];
 		if (copyObj == nil)	{
 			copyObj = [[VVBufferCopier alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] sized:NSMakeSize(4,3)];
+			[copyObj setCurrentVirtualScreen:[_globalVVBufferPool currentVirtualScreen]];
 			[copyObj setCopySize:copySize];
 			[copyObj setCopyAndResize:copyAndResize];
 			[copyObj setCopyToIOSurface:NO];
@@ -221,6 +223,7 @@
 	if (wPtr==nil)
 		NSLog(@"\t\terr: can't download, cpuBackingPtr nil in %s",__func__);
 	else	{
+		//NSLog(@"\t\t%s, currentVirtualScreen is %d",__func__,[ctx currentVirtualScreen]);
 		glGetTexImage(desc->target,
 			0,
 			desc->pixelFormat,

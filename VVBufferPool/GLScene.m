@@ -448,6 +448,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//NSLog(@"%s",__func__);
 	//context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
 	//context = nil;
+	currentVirtualScreen = 0;
 	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
 	colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
@@ -808,6 +809,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (context == nil)	{
 #if !TARGET_OS_IPHONE
 		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+		[context setCurrentVirtualScreen:currentVirtualScreen];
 #else
 		NSLog(@"\t\terr: no context, %s",__func__);
 #endif
@@ -1171,6 +1173,19 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	clearColor[2]=b;
 	clearColor[3]=a;
 	clearColorUpdated = YES;
+}
+- (void) setCurrentVirtualScreen:(int)n	{
+	currentVirtualScreen = n;
+	if (context != nil)	{
+		[context setCurrentVirtualScreen:n];
+	}
+}
+- (int) currentVirtualScreen	{
+	return currentVirtualScreen;
+}
+- (NSString *) gpuRendererName	{
+	CGLContextObj		cgl_ctx = [context CGLContextObj];
+	return VVFMTSTRING(@"%s",glGetString(GL_RENDERER));
 }
 
 

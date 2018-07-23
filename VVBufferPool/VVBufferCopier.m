@@ -21,6 +21,7 @@ id _globalVVBufferCopier = nil;
 		_globalVVBufferCopier = nil;
 	}
 	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharedContext:c sized:VVMAKESIZE(4,3)];
+	[_globalVVBufferCopier setCurrentVirtualScreen:[c currentVirtualScreen]];
 	[_globalVVBufferCopier setCopyToIOSurface:NO];
 }
 #else

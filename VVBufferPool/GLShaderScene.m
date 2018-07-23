@@ -46,8 +46,10 @@
 - (void) generalInit	{
 	[super generalInit];
 #if !TARGET_OS_IPHONE
-	if (context==nil)
+	if (context==nil)	{
 		context = [[NSOpenGLContext alloc] initWithFormat:customPixelFormat shareContext:sharedContext];
+		[context setCurrentVirtualScreen:currentVirtualScreen];
+	}
 #endif
 	pthread_mutexattr_t		attr;
 	pthread_mutexattr_init(&attr);

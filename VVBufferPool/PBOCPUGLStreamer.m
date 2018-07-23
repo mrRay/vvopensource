@@ -58,6 +58,7 @@
 	else	{
 		//NSLog(@"\t\tcreating GL context in %s",__func__);
 		ctx = [[NSOpenGLContext alloc] initWithFormat:[_globalVVBufferPool customPixelFormat] shareContext:[_globalVVBufferPool sharedContext]];
+		[ctx setCurrentVirtualScreen:[_globalVVBufferPool currentVirtualScreen]];
 	}
 	if (ctx==nil)
 		return;

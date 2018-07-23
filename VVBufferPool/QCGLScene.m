@@ -56,6 +56,7 @@ pthread_mutex_t			_globalQCContextLock;
 	_globalQCContextPixelFormat = [p retain];
 	VVRELEASE(_globalQCContextGLContext);
 	_globalQCContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
+	[_globalQCContextGLContext setCurrentVirtualScreen:[c currentVirtualScreen]];
 	pthread_mutex_unlock(&_globalQCContextLock);
 }
 
