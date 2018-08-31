@@ -1248,12 +1248,13 @@
 			NSColor		*tmpColor = [self colorValue];
 			CGFloat		components[6];
 			[tmpColor getComponents:components];
-			NSArray		*returnMe = @[
-				[NSNumber numberWithFloat:components[0]],
-				[NSNumber numberWithFloat:components[1]],
-				[NSNumber numberWithFloat:components[2]],
-				[NSNumber numberWithFloat:components[3]],
-			];
+			//NSArray		*returnMe = @[
+			//	[NSNumber numberWithFloat:components[0]],
+			//	[NSNumber numberWithFloat:components[1]],
+			//	[NSNumber numberWithFloat:components[2]],
+			//	[NSNumber numberWithFloat:components[3]],
+			//];
+			NSString		*returnMe = [NSString stringWithFormat:@"#%0.2X%0.2X%0.2X%0.2X",(int)round(components[0]*255.0),(int)round(components[1]*255.0),(int)round(components[2]*255.0),(int)round(components[3]*255.0)];
 			return returnMe;
 		}
 	case OSCValMIDI:
