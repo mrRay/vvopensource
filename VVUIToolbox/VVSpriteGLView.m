@@ -658,10 +658,12 @@ long			_spriteGLViewSysVers;
 	initialized = NO;
 }
 - (void) update	{
+	pthread_mutex_lock(&glLock);
 	[super update];
 	
 	spritesNeedUpdate = YES;
 	initialized = NO;
+	pthread_mutex_unlock(&glLock);
 }
 
 
