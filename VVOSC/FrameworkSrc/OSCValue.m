@@ -1232,7 +1232,13 @@
 	case OSCValInt:
 		return [NSNumber numberWithInteger:[self intValue]];
 	case OSCValFloat:
-		return [NSNumber numberWithFloat:[self floatValue]];
+		{
+			//return [NSNumber numberWithFloat:[self floatValue]];
+			float		tmpFloat = [self floatValue];
+			if (isnan(tmpFloat))
+				tmpFloat = 0.0;
+			return [NSNumber numberWithFloat:tmpFloat];
+		}
 	case OSCValString:
 		return [self stringValue];
 	case OSCValTimeTag:
@@ -1240,7 +1246,13 @@
 	case OSCVal64Int:
 		return [NSNumber numberWithLongLong:[self longLongValue]];
 	case OSCValDouble:
-		return [NSNumber numberWithDouble:[self doubleValue]];
+		{
+			//return [NSNumber numberWithDouble:[self doubleValue]];
+			double		tmpDouble = [self doubleValue];
+			if (isnan(tmpDouble))
+				tmpDouble = 0.0;
+			return [NSNumber numberWithDouble:tmpDouble];
+		}
 	case OSCValChar:
 		return [NSString stringWithFormat:@"%c",[self charValue]];
 	case OSCValColor:
