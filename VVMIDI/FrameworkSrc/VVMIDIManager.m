@@ -328,8 +328,8 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 	VVMIDIMessage		*msgPtr = nil;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
-	msgIt = [a objectEnumerator];
-	while (msgPtr = [msgIt nextObject])
+	//msgIt = [a objectEnumerator];
+	//while (msgPtr = [msgIt nextObject])
 		[destArray lockMakeObjectsPerformSelector:@selector(sendMsgs:) withObject:a];
 	
 	//	now send the msg to the virtual output destination
