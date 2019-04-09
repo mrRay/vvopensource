@@ -650,9 +650,17 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								[targetBuffer setTargetWidthString:tmpString];
 								bufferRequiresEval = YES;
 							}
+							else if (tmpString!=nil && [tmpString isKindOfClass:[NSNumber class]])	{
+								[targetBuffer setTargetWidthString:VVFMTSTRING(@"%d",[(NSNumber*)tmpString intValue])];
+								bufferRequiresEval = YES;
+							}
 							tmpString = [rawPassDict objectForKey:@"HEIGHT"];
 							if (tmpString != nil && [tmpString isKindOfClass:stringClass])	{
 								[targetBuffer setTargetHeightString:tmpString];
+								bufferRequiresEval = YES;
+							}
+							else if (tmpString != nil && [tmpString isKindOfClass:[NSNumber class]])	{
+								[targetBuffer setTargetHeightString:VVFMTSTRING(@"%d",[(NSNumber*)tmpString intValue])];
 								bufferRequiresEval = YES;
 							}
 							NSNumber			*tmpNum = [rawPassDict objectForKey:@"FLOAT"];
