@@ -61,6 +61,7 @@
 	program = 0;
 	vertexShader = 0;
 	fragmentShader = 0;
+	programReady = NO;
 	vertexShaderString = nil;
 	fragmentShaderString = nil;
 	//samplerTarget = nil;
@@ -201,6 +202,7 @@
 			glDeleteShader(fragmentShader);
 			fragmentShader = 0;
 		}
+		programReady = NO;
 		
 		OSSpinLockLock(&errDictLock);
 		VVRELEASE(errDict);
@@ -253,6 +255,7 @@
 				NSLog(@"\t\terror compiling fragment shader:");
 				NSLog(@"\t\terr: %s",log);
 				//NSLog(@"\t\tshader was %s",shaderSrc);
+				encounteredError = YES;
 				
 				OSSpinLockLock(&errDictLock);
 				if (errDict == nil)
@@ -299,6 +302,8 @@
 				glDeleteProgram(program);
 				program = 0;
 			}
+			else
+				programReady = YES;
 		}
 		
 		vertexShaderUpdated = NO;
@@ -334,10 +339,19 @@
 @synthesize program;
 @synthesize vertexShader;
 @synthesize fragmentShader;
+@synthesize programReady;
 //@synthesize samplerTarget;
 //@synthesize samplerSelector;
 @synthesize vertexShaderString;
 @synthesize fragmentShaderString;
+
+
+- (void) compileProgramIfNecessary	{
+	[self _renderPrep];
+	if (context != nil)	{
+		[self _renderCleanup];
+	}
+}
 
 
 @end

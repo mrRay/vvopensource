@@ -104,6 +104,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 + (NSOpenGLPixelFormat *) defaultQTPixelFormat;
 + (NSOpenGLPixelFormat *) fsaaPixelFormat;
 + (NSOpenGLPixelFormat *) doubleBufferFSAAPixelFormat;
++ (NSOpenGLPixelFormat *) gl4PixelFormat;
 #endif
 
 #if !TARGET_OS_IPHONE

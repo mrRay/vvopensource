@@ -23,6 +23,7 @@
 	GLenum			program;
 	GLenum			vertexShader;
 	GLenum			fragmentShader;
+	BOOL			programReady;
 	NSString		*vertexShaderString;
 	NSString		*fragmentShaderString;
 	
@@ -45,5 +46,8 @@
 @property (readonly) GLenum vertexShader;
 ///	the (GL) name of the fragment shader after it's been compiled
 @property (readonly) GLenum fragmentShader;
+@property (readonly) BOOL programReady;
+
+- (void) compileProgramIfNecessary;
 
 @end

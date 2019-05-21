@@ -336,6 +336,32 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		return nil;
 	return [returnMe autorelease];
 }
++ (NSOpenGLPixelFormat *) gl4PixelFormat	{
+	NSOpenGLPixelFormat					*returnMe = nil;
+	GLuint								glDisplayMask = [GLScene glDisplayMaskForAllScreens];
+	NSOpenGLPixelFormatAttribute		attrs[] = {
+		NSOpenGLPFAAccelerated,
+		//NSOpenGLPFAAllRenderers,
+		//NSOpenGLPFAScreenMask,CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay),
+		kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_GL4_Core,
+		NSOpenGLPFAScreenMask,glDisplayMask,
+		NSOpenGLPFANoRecovery,
+		NSOpenGLPFAAllowOfflineRenderers,
+		//NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+		//NSOpenGLPFAColorSize,24,
+		//NSOpenGLPFAAlphaSize,8,
+		//NSOpenGLPFADoubleBuffer,
+		//NSOpenGLPFABackingStore,
+		//NSOpenGLPFADepthSize,16,
+		//NSOpenGLPFAMultisample,
+		//NSOpenGLPFASampleBuffers,1,
+		//NSOpenGLPFASamples,4,
+		0};
+	returnMe = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+	if (returnMe == nil)
+		return nil;
+	return [returnMe autorelease];
+}
 #endif
 
 
