@@ -695,6 +695,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				BOOL				isImageInput = NO;
 				BOOL				isAudioInput = NO;
 				BOOL				isFilterImageInput = NO;
+				BOOL				hasTransitionStart = NO;
+				BOOL				hasTransitionEnd = NO;
+				BOOL				hasTransitionProgress = NO;			
 				
 				for (NSDictionary *inputDict in inputsArray)	{
 					if ([inputDict isKindOfClass:dictClass])	{
@@ -731,6 +734,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								if ([inputKey isEqualToString:@"inputImage"])	{
 									isFilterImageInput = YES;
 									fileFunctionality = ISFF_Filter;
+								}
+								else if ([inputKey isEqualToString:@"startImage"])	{
+									hasTransitionStart = YES;
+								}
+								else if ([inputKey isEqualToString:@"endImage"])	{
+									hasTransitionEnd = YES;
 								}
 							}
 							else if ([typeString isEqualToString:@"audio"])	{
@@ -773,6 +782,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								defVal.floatVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0.5 : [tmpNum floatValue];
 								tmpNum = [inputDict objectForKey:@"IDENTITY"];
 								idenVal.floatVal = (tmpNum==nil || ![tmpNum isKindOfClass:numClass]) ? 0.5 : [tmpNum floatValue];
+								if ([inputKey isEqualToString:@"progress"])	{
+									hasTransitionProgress = YES;
+								}
 							}
 							else if ([typeString isEqualToString:@"bool"])	{
 								newAttribType = ISFAT_Bool;
@@ -978,11 +990,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 						}
 					}
 				}
+				
+				//	if the file had all of the requirements for a transition, set the functionality
+				if ((hasTransitionStart == YES)&&(hasTransitionEnd == YES)&&(hasTransitionProgress == YES))	{
+					fileFunctionality = ISFF_Transition;	
+				}
 			}
-			
-			
+
 		}
 	}
+	
 	
 	//	look for a vert shader that matches the name of the frag shader
 	NSString		*noExtPath = [p stringByDeletingPathExtension];

@@ -141,6 +141,10 @@
 				if (func == ISFF_All)
 					[rawFiles addObject:fullPath];
 				else	{
+					ISFFunctionality	fileFunc = [self _functionalityForFile:fullPath];
+					if (func == fileFunc)
+						[rawFiles addObject:fullPath];
+					/*
 					if ([self _isAFilter:fullPath])	{
 						if (func == ISFF_Filter)
 							[rawFiles addObject:fullPath];
@@ -149,6 +153,7 @@
 						if (func == ISFF_Source)
 							[rawFiles addObject:fullPath];
 					}
+					*/
 				}
 			}
 		}
@@ -163,6 +168,10 @@
 				if (func == ISFF_All)
 					[rawFiles addObject:fullPath];
 				else	{
+					ISFFunctionality	fileFunc = [self _functionalityForFile:fullPath];
+					if (func == fileFunc)
+						[rawFiles addObject:fullPath];					
+					/*
 					if ([self _isAFilter:fullPath])	{
 						if (func == ISFF_Filter)
 							[rawFiles addObject:fullPath];
@@ -171,6 +180,7 @@
 						if (func == ISFF_Source)
 							[rawFiles addObject:fullPath];
 					}
+					*/
 				}
 			}
 		}
@@ -238,7 +248,83 @@
 	}
 	return NO;
 }
++ (ISFFunctionality) _functionalityForFile:(NSString *)pathToFile	{
+	if (pathToFile==nil)
+		return ISFF_Source;
+	NSString		*rawFile = [NSString stringWithContentsOfFile:pathToFile encoding:NSUTF8StringEncoding error:nil];
+	if (rawFile == nil)	{
+		NSLog(@"\t\terr: couldn't load file %@ in %s",pathToFile,__func__);
+		return ISFF_Source;
+	}
+	//	there should be a JSON blob at the very beginning of the file describing the script's attributes and parameters- this is inside comments...
+	NSRange				openCommentRange;
+	NSRange				closeCommentRange;
+	openCommentRange = [rawFile rangeOfString:@"/*"];
+	closeCommentRange = [rawFile rangeOfString:@"*/"];
+	BOOL				hasTransitionStart = NO;
+	BOOL				hasTransitionEnd = NO;
+	BOOL				hasTransitionProgress = NO;
+	
+	if (openCommentRange.length!=0 && closeCommentRange.length!=0)	{
+		//	parse the JSON string, turning it into a dictionary and values
+		NSString		*jsonString = [rawFile substringWithRange:NSMakeRange(openCommentRange.location+openCommentRange.length, closeCommentRange.location-(openCommentRange.location+openCommentRange.length))];
+		id				jsonObject = [jsonString objectFromJSONString];
+		if (jsonObject==nil)	{
+			NSLog(@"\t\terr: couldn't make jsonObject in %s, string was %@",__func__,jsonString);
+			return ISFF_Source;
+		}
+		else	{
+			if ([jsonObject isKindOfClass:[NSDictionary class]])	{
+				//	check the "INPUTS" section of the JSON dict
+				NSArray		*inputs = [jsonObject objectForKey:@"INPUTS"];
+				if (inputs==nil || ![inputs isKindOfClass:[NSArray class]])	{
+					NSLog(@"\t\terr: inputs was nil, or was the wrong type, %s - %@",__func__,pathToFile);
+					return ISFF_Source;
+				}
+				for (NSDictionary *inputDict in inputs)	{
+					if ([inputDict isKindOfClass:[NSDictionary class]])	{
+						NSString		*tmpString = nil;
+						tmpString = [inputDict objectForKey:@"NAME"];
+						if (tmpString!=nil && [tmpString isEqualToString:@"inputImage"])	{
+							tmpString = [inputDict objectForKey:@"TYPE"];
+							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
+								return ISFF_Filter;
+						}
+						else if (tmpString!=nil && [tmpString isEqualToString:@"startImage"])	{
+							NSLog(@"\t\tstart image - %@", pathToFile);
+							tmpString = [inputDict objectForKey:@"TYPE"];
+							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
+								hasTransitionStart = YES;
+						}
+						else if (tmpString!=nil && [tmpString isEqualToString:@"endImage"])	{
+							NSLog(@"\t\tend image - %@", pathToFile);
+							tmpString = [inputDict objectForKey:@"TYPE"];
+							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
+								hasTransitionEnd = YES;
+						}
+						else if (tmpString!=nil && [tmpString isEqualToString:@"progress"])	{
+							NSLog(@"\t\tprogress float - %@", pathToFile);
+							tmpString = [inputDict objectForKey:@"TYPE"];
+							if (tmpString!=nil && [tmpString isEqualToString:@"float"])
+								hasTransitionProgress = YES;
+						}						
+					}
+					
+					if ((hasTransitionStart == YES)&&(hasTransitionEnd == YES)&&(hasTransitionProgress == YES))	{
+						return ISFF_Transition;
+					}
+				}
+			}
+			else	{
+				NSLog(@"\t\terr: jsonObject was wrong class, %s",__func__);
+				NSLog(@"\t\terr: file was %@",pathToFile);
+				return ISFF_Source;
+			}
+		}
+	}
 
+	return ISFF_Source;
+}
 
 @end
 

@@ -16,7 +16,8 @@
 typedef NS_ENUM(NSInteger, ISFFunctionality)	{
 	ISFF_All = 0,	//!< all image filters
 	ISFF_Source = 1,	//!< generative sources
-	ISFF_Filter = 2	//!< image filters
+	ISFF_Filter = 2,	//!< image filters
+	ISFF_Transition = 3	//!< transitions
 };
 
 
@@ -61,5 +62,6 @@ only returns paths corresponding to valid ISF files
 
 + (NSMutableArray *) _filtersInDirectory:(NSString *)folder recursive:(BOOL)r matchingFunctionality:(ISFFunctionality)func;
 + (BOOL) _isAFilter:(NSString *)pathToFile;
++ (ISFFunctionality) _functionalityForFile:(NSString *)pathToFile;
 
 @end
