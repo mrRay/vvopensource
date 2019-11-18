@@ -291,19 +291,19 @@
 								return ISFF_Filter;
 						}
 						else if (tmpString!=nil && [tmpString isEqualToString:@"startImage"])	{
-							NSLog(@"\t\tstart image - %@", pathToFile);
+							//NSLog(@"\t\tstart image - %@", pathToFile);
 							tmpString = [inputDict objectForKey:@"TYPE"];
 							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
 								hasTransitionStart = YES;
 						}
 						else if (tmpString!=nil && [tmpString isEqualToString:@"endImage"])	{
-							NSLog(@"\t\tend image - %@", pathToFile);
+							//NSLog(@"\t\tend image - %@", pathToFile);
 							tmpString = [inputDict objectForKey:@"TYPE"];
 							if (tmpString!=nil && [tmpString isEqualToString:@"image"])
 								hasTransitionEnd = YES;
 						}
 						else if (tmpString!=nil && [tmpString isEqualToString:@"progress"])	{
-							NSLog(@"\t\tprogress float - %@", pathToFile);
+							//NSLog(@"\t\tprogress float - %@", pathToFile);
 							tmpString = [inputDict objectForKey:@"TYPE"];
 							if (tmpString!=nil && [tmpString isEqualToString:@"float"])
 								hasTransitionProgress = YES;
