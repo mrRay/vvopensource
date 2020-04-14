@@ -10,6 +10,7 @@
 #import "MutLockDict.h"
 #import "MutNRLockArray.h"
 #import "MutNRLockDict.h"
+#import "VVLogger.h"
 
 #if !TARGET_OS_IPHONE
 	#import "VVCURLDL.h"

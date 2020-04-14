@@ -1,5 +1,6 @@
 
 #import "OSCValue.h"
+#import <VVBasics/VVBasics.h>
 
 
 
@@ -16,13 +17,13 @@
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"<OSCVal f %f>",*(float *)value];
 		case OSCValString:
-			return [NSString stringWithFormat:@"<OSCVal s %@>",(id)value];
+			return [NSString stringWithFormat:@"<OSCVal s %@>",(__bridge id)value];
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
 			//return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
 			{
-				NSDateFormatter		*fmt = [[[NSDateFormatter alloc] init] autorelease];
+				NSDateFormatter		*fmt = [[NSDateFormatter alloc] init];
 				[fmt setDateFormat:@"dd/MM, HH:mm:ss.SSSSS"];
 				return [fmt stringFromDate:[self dateValue]];
 			}
@@ -33,7 +34,7 @@
 		case OSCValChar:
 			return [NSString stringWithFormat:@"<OSCVal c: %s>",(char *)value];
 		case OSCValColor:
-			return [NSString stringWithFormat:@"<OSCVal r %@>",(id)value];
+			return [NSString stringWithFormat:@"<OSCVal r %@>",(__bridge id)value];
 		case OSCValMIDI:
 			return [NSString stringWithFormat:@"<OSCVal m %d-%d-%d-%d>",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
@@ -66,7 +67,7 @@
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"float %f",*(float *)value];
 		case OSCValString:
-			return [NSString stringWithFormat:@"string \"%@\"",(id)value];
+			return [NSString stringWithFormat:@"string \"%@\"",(__bridge id)value];
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"Time Tag %ld-%ld",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
 			return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
@@ -80,7 +81,7 @@
 #if TARGET_OS_IPHONE
 			return [NSString stringWithFormat:@"color %@",(id)value];
 #else
-			[(NSColor *)value getComponents:(CGFloat *)colorComps];
+			[(__bridge NSColor *)value getComponents:(CGFloat *)colorComps];
 			return [NSString stringWithFormat:@"color %0.2f-%0.2f-%0.2f-%0.2f",colorComps[0],colorComps[1],colorComps[2],colorComps[3]];
 #endif
 			
@@ -174,117 +175,81 @@
 	}
 	return returnMe;
 }
-+ (id) createWithInt:(int)n	{
++ (instancetype) createWithInt:(int)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithInt:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithFloat:(float)n	{
++ (instancetype) createWithFloat:(float)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithFloat:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithString:(NSString *)n	{
++ (instancetype) createWithString:(NSString *)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithString:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
++ (instancetype) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithTimeSeconds:s microSeconds:ms];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithOSCTimetag:(uint64_t)n	{
++ (instancetype) createWithOSCTimetag:(uint64_t)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithOSCTimetag:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createTimeWithDate:(NSDate *)n	{
++ (instancetype) createTimeWithDate:(NSDate *)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initTimeWithDate:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithLongLong:(long long)n	{
++ (instancetype) createWithLongLong:(long long)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithLongLong:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithDouble:(double)n	{
++ (instancetype) createWithDouble:(double)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithDouble:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithChar:(char)n	{
++ (instancetype) createWithChar:(char)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithChar:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithColor:(id)n	{
++ (instancetype) createWithColor:(id)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithColor:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2	{
++ (instancetype) createWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithMIDIChannel:c status:s data1:d1 data2:d2];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithBool:(BOOL)n	{
++ (instancetype) createWithBool:(BOOL)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithBool:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithNil	{
++ (instancetype) createWithNil	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithNil];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithInfinity	{
++ (instancetype) createWithInfinity	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithInfinity];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createArray	{
++ (instancetype) createArray	{
 	OSCValue		*returnMe = [[OSCValue alloc] initArray];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithNSDataBlob:(NSData *)d	{
++ (instancetype) createWithNSDataBlob:(NSData *)d	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithNSDataBlob:d];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
++ (instancetype) createWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithSMPTEVals:fps:d:h:m:s:f];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithSMPTEChunk:(int)n	{
++ (instancetype) createWithSMPTEChunk:(int)n	{
 	OSCValue		*returnMe = [[OSCValue alloc] initWithSMPTEChunk:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 
 
-- (id) initWithInt:(int)n	{
+- (instancetype) initWithInt:(int)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(int));
@@ -293,7 +258,7 @@
 	}
 	return self;
 }
-- (id) initWithFloat:(float)n	{
+- (instancetype) initWithFloat:(float)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(float));
@@ -302,20 +267,20 @@
 	}
 	return self;
 }
-- (id) initWithString:(NSString *)n	{
+- (instancetype) initWithString:(NSString *)n	{
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
-		value = [n retain];
+		value = CFBridgingRetain(n);
 		type = OSCValString;
 		return self;
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
-- (id) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
+- (instancetype) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(uint64_t));
@@ -324,7 +289,7 @@
 	}
 	return self;
 }
-- (id) initWithOSCTimetag:(uint64_t)n	{
+- (instancetype) initWithOSCTimetag:(uint64_t)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(uint64_t));
@@ -333,7 +298,7 @@
 	}
 	return self;
 }
-- (id) initTimeWithDate:(NSDate *)n	{
+- (instancetype) initTimeWithDate:(NSDate *)n	{
 	self = [super init];
 	if (self != nil)	{
 		//	...the "reference date" in OSC is 1/1/1900, so we have to account for one century plus one year's worth of seconds to this...
@@ -348,7 +313,7 @@
 	}
 	return self;
 }
-- (id) initWithLongLong:(long long)n	{
+- (instancetype) initWithLongLong:(long long)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(long long));
@@ -357,7 +322,7 @@
 	}
 	return self;
 }
-- (id) initWithDouble:(double)n	{
+- (instancetype) initWithDouble:(double)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(double));
@@ -366,7 +331,7 @@
 	}
 	return self;
 }
-- (id) initWithChar:(char)n	{
+- (instancetype) initWithChar:(char)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(char));
@@ -375,7 +340,7 @@
 	}
 	return self;
 }
-- (id) initWithColor:(id)n	{
+- (instancetype) initWithColor:(id)n	{
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
@@ -383,18 +348,18 @@
 		UIColor			*calibratedColor = n;
 #else
 		NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
-		NSColor			*calibratedColor = ((void *)[n colorSpace]==(void *)devRGBColorSpace) ? n :[n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+		NSColor			*calibratedColor = ((__bridge void *)[n colorSpace]==(__bridge void *)devRGBColorSpace) ? n :[n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 #endif
-		value = [calibratedColor retain];
+		value = CFBridgingRetain(calibratedColor);
 		type = OSCValColor;
 		return self;
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
-- (id) initWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2	{
+- (instancetype) initWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(Byte)*4);
@@ -406,7 +371,7 @@
 	}
 	return self;
 }
-- (id) initWithBool:(BOOL)n	{
+- (instancetype) initWithBool:(BOOL)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(BOOL));
@@ -415,7 +380,7 @@
 	}
 	return self;
 }
-- (id) initWithNil	{
+- (instancetype) initWithNil	{
 	self = [super init];
 	if (self != nil)	{
 		value = nil;
@@ -423,7 +388,7 @@
 	}
 	return self;
 }
-- (id) initWithInfinity	{
+- (instancetype) initWithInfinity	{
 	self = [super init];
 	if (self != nil)	{
 		value = nil;
@@ -431,28 +396,28 @@
 	}
 	return self;
 }
-- (id) initArray	{
+- (instancetype) initArray	{
 	self = [super init];
 	if (self != nil)	{
-		value = [[NSMutableArray alloc] initWithCapacity:0];
+		value = CFBridgingRetain([[NSMutableArray alloc] initWithCapacity:0]);
 		type = OSCValArray;
 	}
 	return self;
 }
-- (id) initWithNSDataBlob:(NSData *)d	{
+- (instancetype) initWithNSDataBlob:(NSData *)d	{
 	if (d == nil)	{
-		[self release];
-		return nil;
+		VVRELEASE(self);
+		return self;
 	}
 	if (self = [super init])	{
-		value = [d retain];
+		value = CFBridgingRetain(d);
 		type = OSCValBlob;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
-- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
+- (instancetype) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f	{
 	self = [super init];
 	if (self != nil)	{
 		UInt32		tmpVal = 0x00000000;
@@ -481,7 +446,7 @@
 	}
 	return self;
 }
-- (id) initWithSMPTEChunk:(int)n	{
+- (instancetype) initWithSMPTEChunk:(int)n	{
 	self = [super init];
 	if (self != nil)	{
 		value = malloc(sizeof(int));
@@ -490,7 +455,7 @@
 	}
 	return self;
 }
-- (id) init	{
+- (instancetype) init	{
 	self = [super init];
 	if (self != nil)	{
 		value = nil;
@@ -498,7 +463,7 @@
 	}
 	return self;
 }
-- (id) copyWithZone:(NSZone *)z	{
+- (instancetype) copyWithZone:(NSZone *)z	{
 	OSCValue		*returnMe = nil;
 	switch (type)	{
 		case OSCValUnknown:
@@ -511,7 +476,7 @@
 			returnMe = [[OSCValue allocWithZone:z] initWithFloat:*((float *)value)];
 			break;
 		case OSCValString:
-			returnMe = [[OSCValue allocWithZone:z] initWithString:((NSString *)value)];
+			returnMe = [[OSCValue allocWithZone:z] initWithString:((__bridge NSString *)value)];
 			break;
 		case OSCValTimeTag:
 			//returnMe = [[OSCValue allocWithZone:z] initWithTimeSeconds:*((long *)(value)) microSeconds:*((long *)(value+1))];
@@ -528,7 +493,7 @@
 			returnMe = [[OSCValue allocWithZone:z] initWithChar:*(char *)value];
 			break;
 		case OSCValColor:
-			returnMe = [[OSCValue allocWithZone:z] initWithColor:((id)value)];
+			returnMe = [[OSCValue allocWithZone:z] initWithColor:((__bridge id)value)];
 			break;
 		case OSCValMIDI:
 			returnMe = [[OSCValue allocWithZone:z]
@@ -548,16 +513,15 @@
 			break;
 		case OSCValArray:
 			returnMe = [[OSCValue allocWithZone:z] initArray];
-			for (OSCValue *valPtr in (NSMutableArray *)value)	{
+			for (OSCValue *valPtr in (__bridge NSMutableArray *)value)	{
 				OSCValue		*newVal = [valPtr copy];
 				if (newVal != nil)	{
 					[returnMe addValue:newVal];
-					[newVal release];
 				}
 			}
 			break;
 		case OSCValBlob:
-			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:value];
+			returnMe = [[OSCValue allocWithZone:z] initWithNSDataBlob:(__bridge NSData *)(value)];
 			break;
 		case OSCValSMPTE:
 			returnMe = [[OSCValue allocWithZone:z] initWithSMPTEChunk:*((int *)value)];
@@ -585,22 +549,18 @@
 		case OSCValString:
 		case OSCValColor:
 		case OSCValArray:
-			if (value != nil)
-				[(id)value release];
-			value = nil;
+			CFBridgingRelease(value);
 			break;
 		case OSCValNil:
 		case OSCValInfinity:
 		case OSCValUnknown:
 			break;
 		case OSCValBlob:
-			if (value != nil)
-				[(NSData *)value release];
-			value = nil;
+			CFBridgingRelease(value);
 			break;
 	}
 	value = nil;
-	[super dealloc];
+	
 }
 
 
@@ -611,7 +571,7 @@
 	return *(float *)value;
 }
 - (NSString *) stringValue	{
-	return (NSString *)value;
+	return (__bridge NSString *)value;
 }
 - (struct timeval) timeValue	{
 	struct timeval		returnMe;
@@ -647,7 +607,7 @@
 	return *(char *)value;
 }
 - (id) colorValue	{
-	return (id)value;
+	return (__bridge id)value;
 }
 - (Byte) midiPort	{
 	return ((Byte *)value)[0];
@@ -665,17 +625,17 @@
 	return *(BOOL *)value;
 }
 - (NSData *) blobNSData	{
-	return (NSData *)value;
+	return (__bridge NSData *)value;
 }
 - (void) addValue:(OSCValue *)n	{
 	if (n==nil || type!=OSCValArray || value==nil)
 		return;
-	[(NSMutableArray *)value addObject:n];
+	[(__bridge NSMutableArray *)value addObject:n];
 }
 - (NSMutableArray *) valueArray	{
 	if (type!=OSCValArray || value==nil)
 		return nil;
-	return (NSMutableArray *)value;
+	return (__bridge NSMutableArray *)value;
 }
 - (int) SMPTEValue	{
 	return *(int *)value;
@@ -765,7 +725,7 @@
 #if TARGET_OS_IPHONE
 			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
 #else
-			[(NSColor *)value getComponents:comps];
+			[(__bridge NSColor *)value getComponents:comps];
 #endif
 			returnMe = (double)(comps[0]+comps[1]+comps[2])/(double)3.0;
 			break;
@@ -896,7 +856,7 @@
 #if TARGET_OS_IPHONE
 			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
 #else
-			[(NSColor *)value getComponents:comps];
+			[(__bridge NSColor *)value getComponents:comps];
 #endif
 			returnMe = (int)(comps[0]+comps[1]+comps[2])/(double)3.0;
 			break;
@@ -1029,7 +989,7 @@
 #if TARGET_OS_IPHONE
 			*comps = *(CGColorGetComponents([(UIColor *)value CGColor]));
 #else
-			[(NSColor *)value getComponents:comps];
+			[(__bridge NSColor *)value getComponents:comps];
 #endif
 			returnMe = (long long)(comps[0]+comps[1]+comps[2])/(double)3.0;
 			break;
@@ -1134,13 +1094,13 @@
 		case OSCValFloat:
 			return [NSString stringWithFormat:@"%f",*(float *)value];
 		case OSCValString:
-			return [NSString stringWithFormat:@"%@",(id)value];
+			return [NSString stringWithFormat:@"%@",(__bridge id)value];
 		case OSCValTimeTag:
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",*(long *)(value),*(long *)(value+1)];
 			//return [NSString stringWithFormat:@"<OSCVal t: %ld-%ld>",(unsigned long)(*((uint64_t *)value)>>32),(unsigned long)((*(uint64_t *)value) & 0x00000000FFFFFFFF)];
 			//return [NSString stringWithFormat:@"<OSCVal t: %@>",[self dateValue]];
 			{
-				NSDateFormatter		*fmt = [[[NSDateFormatter alloc] init] autorelease];
+				NSDateFormatter		*fmt = [[NSDateFormatter alloc] init];
 				[fmt setDateFormat:@"dd/MM, HH:mm:ss.SSSSS"];
 				return [fmt stringFromDate:[self dateValue]];
 			}
@@ -1151,7 +1111,7 @@
 		case OSCValChar:
 			return [NSString stringWithFormat:@"%s",(char *)value];
 		case OSCValColor:
-			return [NSString stringWithFormat:@"%@",(id)value];
+			return [NSString stringWithFormat:@"%@",(__bridge id)value];
 		case OSCValMIDI:
 			return [NSString stringWithFormat:@"%d-%d-%d-%d",((Byte *)value)[0],((Byte *)value)[1],((Byte *)value)[2],((Byte *)value)[3]];
 		case OSCValBool:
@@ -1165,7 +1125,7 @@
 			return [NSString stringWithFormat:@"<OSCVal I>"];
 		case OSCValArray:
 			{
-				NSMutableString		*mutString = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
+				NSMutableString		*mutString = [[NSMutableString alloc] initWithCapacity:0];
 				[mutString appendString:@"["];
 				for (OSCValue *tmpVal in [self valueArray])	{
 					[mutString appendString:[tmpVal calculateStringValue]];
@@ -1284,7 +1244,7 @@
 				if (tmpNSVal != nil)
 					[returnMe addObject:tmpNSVal];
 			}
-			return [returnMe autorelease];
+			return returnMe;
 		}
 	case OSCValBlob:
 		return [self blobNSData];
@@ -1318,7 +1278,7 @@
 			break;
 		case OSCValString:
 			//	OSC STRINGS REQUIRE A NULL CHARACTER AFTER THEM!
-			return ROUNDUP4((strlen([(NSString *)value UTF8String]) + 1));
+			return ROUNDUP4((strlen([(__bridge NSString *)value UTF8String]) + 1));
 			break;
 		case OSCValBool:
 		case OSCValNil:
@@ -1330,7 +1290,7 @@
 			{
 				int		tmpVal = 0;
 				if (value!=nil)	{
-					for (OSCValue *valPtr in (NSMutableArray *)value)	{
+					for (OSCValue *valPtr in (__bridge NSMutableArray *)value)	{
 						tmpVal += [valPtr bufferLength];
 					}
 				}
@@ -1341,7 +1301,7 @@
 			if (value == nil)
 				return 0;
 			//	BLOBS DON'T REQUIRE A NULL CHARACTER AFTER THEM!
-			return ROUNDUP4((4 + [(NSData *)value length]));
+			return ROUNDUP4((4 + [(__bridge NSData *)value length]));
 			break;
 	}
 	return 0;
@@ -1370,7 +1330,7 @@
 		case OSCValArray:
 			returnMe += 2;
 			if (value != nil)	{
-				for (OSCValue *valPtr in (NSMutableArray *)value)	{
+				for (OSCValue *valPtr in (__bridge NSMutableArray *)value)	{
 					returnMe += [valPtr typeSignatureLength];
 				}
 			}
@@ -1431,8 +1391,8 @@
 			*/
 			break;
 		case OSCValString:
-			tmpLong = strlen([(NSString *)value UTF8String]);
-			charPtr = (unsigned char *)[(NSString *)value UTF8String];
+			tmpLong = strlen([(__bridge NSString *)value UTF8String]);
+			charPtr = (unsigned char *)[(__bridge NSString *)value UTF8String];
 			strncpy((char *)(b+*d),(char *)charPtr,tmpLong);
 			*d = *d + (int)tmpLong + (int)1;
 			*d = ROUNDUP4(*d);
@@ -1477,13 +1437,13 @@
 				b[*d+i] = tmpChar;
 			}
 #else
-			tmpChar = [(NSColor *)value redComponent] * 255.0;
+			tmpChar = [(__bridge NSColor *)value redComponent] * 255.0;
 			b[*d] = tmpChar;
-			tmpChar = [(NSColor *)value greenComponent] * 255.0;
+			tmpChar = [(__bridge NSColor *)value greenComponent] * 255.0;
 			b[*d+1] = tmpChar;
-			tmpChar = [(NSColor *)value blueComponent] * 255.0;
+			tmpChar = [(__bridge NSColor *)value blueComponent] * 255.0;
 			b[*d+2] = tmpChar;
-			tmpChar = [(NSColor *)value alphaComponent] * 255.0;
+			tmpChar = [(__bridge NSColor *)value alphaComponent] * 255.0;
 			b[*d+3] = tmpChar;
 #endif
 			*d += 4;
@@ -1518,7 +1478,7 @@
 			++*t;
 			
 			if (value != nil)	{
-				for (OSCValue *tmpVal in (NSMutableArray *)value)	{
+				for (OSCValue *tmpVal in (__bridge NSMutableArray *)value)	{
 					[tmpVal writeToBuffer:b typeOffset:t dataOffset:d];
 				}
 			}
@@ -1528,14 +1488,14 @@
 			break;
 		case OSCValBlob:
 			//	calculate the size of the blob, write it to the buffer
-			tmpLong = [(NSData *)value length];
+			tmpLong = [(__bridge NSData *)value length];
 			tmpLong = htonl((int)tmpLong);
 			for (i=0;i<4;++i)
 				b[*d+i] = 255 & (tmpLong >> (i*8));
 			*d += 4;
 			//	now write the actual contents of the blob to the buffer
-			tmpLong = [(NSData *)value length];
-			voidPtr = (void *)[(NSData *)value bytes];
+			tmpLong = [(__bridge NSData *)value length];
+			voidPtr = (void *)[(__bridge NSData *)value bytes];
 			memcpy((void *)(b+*d),(void *)voidPtr,tmpLong);
 			*d = *d + (int)tmpLong;
 			*d = ROUNDUP4(*d);
@@ -1572,7 +1532,7 @@
 	
 	[returnMe appendString:@"]"];
 	
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (NSComparisonResult) compare:(OSCValue *)n	{
 	if (n==nil)

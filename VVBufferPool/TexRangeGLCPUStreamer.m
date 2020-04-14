@@ -16,8 +16,8 @@
 		ctxArray = [[MutLockArray alloc] init];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
 	if (!deleted)
@@ -26,7 +26,7 @@
 	VVRELEASE(copyObj);
 	VVRELEASE(ctxArray);
 	
-	[super dealloc];
+	
 }
 
 
@@ -61,7 +61,6 @@
 		[ctxArray wrlock];
 			ctx = [ctxArray objectAtIndex:0];
 			if (ctx != nil)	{
-				[ctx retain];
 				[ctxArray removeObjectAtIndex:0];
 			}
 		[ctxArray unlock];
@@ -75,7 +74,6 @@
 		return;
 	//	store the GL context in the passed dict so i can retrieve it later!
 	[d setObject:ctx forKey:@"ctx"];
-	[ctx release];
 	
 	
 	VVBuffer				*destTex = nil;
@@ -107,7 +105,6 @@
 		//NSSizeLog(@"\t\ttargetSize is",targetSize);
 		//NSSizeLog(@"\t\tpassed image size is",imageSize);
 		[d setObject:destTex forKey:@"pullThisBack"];
-		[destTex release];
 		if (copyObj == nil)	{
 			copyObj = [[VVBufferCopier alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] sized:NSMakeSize(4,3)];
 			[copyObj setCurrentVirtualScreen:[_globalVVBufferPool currentVirtualScreen]];
@@ -212,7 +209,7 @@
 	
 	//NSLog(@"%s ... %@",__func__,n);
 	//NSLog(@"\t\tdest pixels are %p",[destTex pixels]);
-	id					returnMe = [destTex retain];
+	id					returnMe = destTex;
 	CGLContextObj		cgl_ctx = [ctx CGLContextObj];
 	//GLenum			status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	//if (status != GL_FRAMEBUFFER_COMPLETE_EXT)

@@ -17,6 +17,7 @@
 #   undef USING_GC
 #   define USING_GC 1
 #endif
+
 #if !defined(USING_ARC)
 #  if __has_feature(objc_arc)
 #     define USING_ARC 1
@@ -27,6 +28,7 @@
 #   undef USING_ARC
 #   define USING_ARC 1
 #endif
+
 #if !defined(USING_MRC)
 #  if USING_ARC || USING_GC
 #     define USING_MRC 0
@@ -37,21 +39,27 @@
 #   undef USING_MRC
 #   define USING_MRC 1
 #endif
+
 // Remove utility
 #undef PREFIX_ONE
 #undef EMPTY_DEFINE
 // Sanity checks
 #if USING_GC
+//#	warning "using GC!"
 #   if USING_ARC || USING_MRC
 #      error "Cannot specify GC and RC memory management"
 #   endif
 #elif USING_ARC
+//#	warning "using ARC!"
 #   if USING_MRC
 #      error "Cannot specify ARC and MRC memory management"
 #   endif
-#elif !USING_MRC
+#elif USING_MRC
+//#	warning "using MRC!"
+#else
 #   error "Must specify GC, ARC or MRC memory management"
 #endif
+
 #if USING_ARC
 #   if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 #      error "ARC requires at least 10.6"
@@ -72,12 +80,13 @@
 	item = nil;											\
 }}
 #elif USING_ARC
-#define VVRELEASE(item) {if (item != nil)	{			\
+#define VVRELEASE(item) {								\
 	item = nil;											\
-}}
-#define VVAUTORELEASE(item) {if (item != nil)	{		\
-	item = nil;											\
-}}
+}
+//#define VVAUTORELEASE(item) {if (item != nil)	{		\
+//	item = nil;											\
+//}}
+#define VVAUTORELEASE(item) {}
 #endif
 
 

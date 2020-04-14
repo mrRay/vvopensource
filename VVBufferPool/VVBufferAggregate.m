@@ -8,10 +8,10 @@
 
 /*
 - (NSString *) description	{
-	OSSpinLockLock(&planeLock);
+	os_unfair_lock_lock(&planeLock);
 	NSString		*returnMe = [NSString stringWithFormat:@"<VVBufferAggregate %p: %@, %@, %@, %@>",self,planes[0],planes[1],planes[2],planes[3]];
 	//NSString		*returnMe = [NSString stringWithFormat:@"<VVBufferAggregate %@, %@, %@, %@>",nil,nil,nil,nil];
-	OSSpinLockUnlock(&planeLock);
+	os_unfair_lock_unlock(&planeLock);
 	return returnMe;
 }
 */
@@ -31,44 +31,40 @@
 	if (self = [super init])	{
 		[self generalInit];
 		if (r != nil)
-			planes[0] = [r retain];
+			planes[0] = r;
 		if (g != nil)
-			planes[1] = [g retain];
+			planes[1] = g;
 		if (b != nil)
-			planes[2] = [b retain];
+			planes[2] = b;
 		if (a != nil)
-			planes[3] = [a retain];
+			planes[3] = a;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) generalInit	{
-	planeLock = OS_SPINLOCK_INIT;
+	planeLock = OS_UNFAIR_LOCK_INIT;
 	for (int i=0; i<4; ++i)
 		planes[i] = nil;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&planeLock);
+	os_unfair_lock_lock(&planeLock);
 	if (planes[0] != nil)	{
-		[planes[0] release];
 		planes[0] = nil;
 	}
 	if (planes[1] != nil)	{
-		[planes[1] release];
 		planes[1] = nil;
 	}
 	if (planes[2] != nil)	{
-		[planes[2] release];
 		planes[2] = nil;
 	}
 	if (planes[3] != nil)	{
-		[planes[3] release];
 		planes[3] = nil;
 	}
-	OSSpinLockUnlock(&planeLock);
-	[super dealloc];
+	os_unfair_lock_unlock(&planeLock);
+	
 }
 
 
@@ -91,11 +87,9 @@
 		return nil;
 	}
 	VVBuffer		*returnMe = nil;
-	OSSpinLockLock(&planeLock);
+	os_unfair_lock_lock(&planeLock);
 	returnMe = planes[i];
-	if (returnMe != nil)
-		[returnMe retain];
-	OSSpinLockUnlock(&planeLock);
+	os_unfair_lock_unlock(&planeLock);
 	return returnMe;
 }
 - (void) insertBuffer:(VVBuffer *)n atIndex:(int)i	{
@@ -105,13 +99,11 @@
 		NSLog(@"\t\tERR: bailing, passed buffer was nil, %s",__func__);
 		return;
 	}
-	if (n != nil)
-		[n retain];
-	OSSpinLockLock(&planeLock);
+	os_unfair_lock_lock(&planeLock);
 	if (planes[i]!=nil)
-		[planes[i] release];
+		planes[i] = nil;
 	planes[i] = n;
-	OSSpinLockUnlock(&planeLock);
+	os_unfair_lock_unlock(&planeLock);
 	//NSLog(@"\t\tafter, was %@",[self description]);
 }
 

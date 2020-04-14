@@ -42,7 +42,7 @@ extern EAGLContext				*_globalCIContextGLContext;
 	CGColorSpaceRef			outputColorSpace;
 	CIContext				*ciContext;
 	
-	id <CIGLSceneCleanup>	cleanupDelegate;	//	nil, NOT RETAINED
+	__weak id <CIGLSceneCleanup>	cleanupDelegate;	//	nil, NOT RETAINED
 }
 
 ///	If you want all instances of CIGLScene to use a single specific OpenGL context to render (CGLLockContext()/CGLUnlockContext() will be called before any rendering is performed), you need to call this method and pass it the context and pixel format you'll be using to do all the rendering.  Once you've called this, instances of CIGLScene that use the common backend can be instantiated via -[CIGLScene initCommonBackendSceneSized:].
@@ -84,6 +84,6 @@ extern EAGLContext				*_globalCIContextGLContext;
 @property (readonly) CGColorSpaceRef workingColorSpace;
 @property (readonly) CGColorSpaceRef outputColorSpace;
 @property (readonly) CIContext *ciContext;
-@property (assign,readwrite) id <CIGLSceneCleanup> cleanupDelegate;
+@property (weak,readwrite) id <CIGLSceneCleanup> cleanupDelegate;
 
 @end

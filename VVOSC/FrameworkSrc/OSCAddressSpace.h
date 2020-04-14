@@ -41,7 +41,7 @@ The basic workflow for address spaces is relatively straightforward: first locat
 }
 
 ///	Returns the main instance of the OSC address space (and creates it if necessary)
-+ (id) mainAddressSpace;
++ (instancetype) mainAddressSpace;
 + (void) refreshMenu;
 #if !TARGET_OS_IPHONE
 + (NSMenu *) makeMenuForNode:(OSCNode *)n withTarget:(id)t action:(SEL)a;
@@ -72,7 +72,7 @@ The basic workflow for address spaces is relatively straightforward: first locat
 - (void) addDelegate:(id)d forPath:(NSString *)p;
 - (void) removeDelegate:(id)d forPath:(NSString *)p;
 
-@property (assign, readwrite) id delegate;
+@property (weak, readwrite) id delegate;
 
 
 @end

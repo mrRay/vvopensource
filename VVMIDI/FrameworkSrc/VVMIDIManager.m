@@ -13,14 +13,14 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 
 
 + (void) initialize	{
-	static OSSpinLock		initLock = OS_SPINLOCK_INIT;
-	if (OSSpinLockTry(&initLock))	{
+	static os_unfair_lock		initLock = OS_UNFAIR_LOCK_INIT;
+	if (os_unfair_lock_trylock(&initLock))	{
 		OSStatus			err;
 		//	create a midi client which will receive incoming midi data
-		err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,self,&_VVMIDIProcessClientRef);
+		err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,(__bridge void * _Nullable)(self),&_VVMIDIProcessClientRef);
 		if (err != noErr)	{
 			NSLog(@"\t\terror %ld at MIDIClientCreate",(long)err);
-			OSSpinLockUnlock(&initLock);
+			os_unfair_lock_unlock(&initLock);
 		}
 	}
 }
@@ -29,7 +29,6 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 		[self generalInit];
 		return self;
 	}
-	[self release];
 	return nil;
 }
 - (void) generalInit	{
@@ -136,15 +135,10 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 	VVRELEASE(sourceArray);
 	VVRELEASE(destArray);
 	
-	if (virtualSource != nil)
-		[virtualSource release];
-	virtualSource = nil;
+	VVRELEASE(virtualSource);
+	VVRELEASE(virtualDest);
 	
-	if (virtualDest != nil)
-		[virtualDest release];
-	virtualDest = nil;
 	
-	[super dealloc];
 }
 
 - (void) loadMIDIInputSources	{
@@ -211,7 +205,6 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 				[newSource setDelegate:self];
 				[sourceArray lockAddObject:newSource];
 			}
-			[newSource release];
 		}
 	}
 }
@@ -248,7 +241,6 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 				[newDest setDelegate:self];
 				[destArray lockAddObject:newDest];
 			}
-			[newDest release];
 		}
 	}
 }
@@ -260,10 +252,7 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 		make the receiver- this node "owns" the receiver's destination: it is
 		responsible for handling data sent to the destination
 	*/
-	if (virtualSource != nil)	{
-		[virtualSource release];
-		virtualSource = nil;
-	}
+	VVRELEASE(virtualSource);
 	virtualSource = [[[self receivingNodeClass] alloc] initReceiverWithName:[self receivingNodeName]];
 	if (virtualSource != nil)
 		[virtualSource setDelegate:self];
@@ -272,10 +261,7 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 		make the sender- this node "owns" the destination: it is responsible for telling
 		any endpoints connected to this destination that it has received midi data
 	*/
-	if (virtualDest != nil)	{
-		[virtualDest release];
-		virtualDest = nil;
-	}
+	VVRELEASE(virtualDest);
 	virtualDest = [[[self sendingNodeClass] alloc] initSenderWithName:[self sendingNodeName]];
 	if (virtualDest != nil)
 		[virtualDest setDelegate:self];

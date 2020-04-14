@@ -3,64 +3,69 @@
 
 
 
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
+
+
+
+
 @implementation VVTrackingArea
 
 
-- (id) initWithRect:(VVRECT)r options:(NSTrackingAreaOptions)opt owner:(id)own userInfo:(NSDictionary *)ui	{
+- (instancetype) initWithRect:(VVRECT)r options:(NSTrackingAreaOptions)opt owner:(id)own userInfo:(NSDictionary *)ui	{
 	if (self = [super init])	{
-		attribLock = OS_SPINLOCK_INIT;
+		attribLock = OS_UNFAIR_LOCK_INIT;
 		rect = r;
 		options = opt;
 		owner = own;
-		userInfo = (ui==nil) ? nil : [ui retain];
+		userInfo = ui;
 		appleTrackingArea = nil;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	owner = nil;
 	VVRELEASE(userInfo);
 	VVRELEASE(appleTrackingArea);
-	OSSpinLockUnlock(&attribLock);
-	[super dealloc];
+	UNLOCK(&attribLock);
 }
 
 
 - (void) setRect:(VVRECT)n	{
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	rect = n;
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 }
 - (VVRECT) rect	{
 	VVRECT			returnMe = VVZERORECT;
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	returnMe = rect;
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 	return returnMe;
 }
 - (NSTrackingAreaOptions) options	{
 	NSTrackingAreaOptions		returnMe = 0;
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	returnMe = options;
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 	return returnMe;
 }
 - (id) owner	{
 	id				returnMe = nil;
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	returnMe = owner;
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 	return returnMe;
 }
 - (NSDictionary *) userInfo	{
 	NSDictionary		*returnMe = nil;
-	OSSpinLockLock(&attribLock);
-	returnMe = (userInfo==nil) ? nil : [userInfo retain];
-	OSSpinLockUnlock(&attribLock);
-	return (returnMe==nil) ? nil : [returnMe autorelease];
+	LOCK(&attribLock);
+	returnMe = (userInfo==nil) ? nil : userInfo;
+	UNLOCK(&attribLock);
+	return returnMe;
 }
 
 
@@ -70,7 +75,7 @@
 	if (v==nil)
 		return;
 	
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	NSTrackingArea		*old = appleTrackingArea;
 	appleTrackingArea = [[NSTrackingArea alloc]
 		initWithRect:r
@@ -79,37 +84,35 @@
 		userInfo:userInfo];
 	if (old != nil)	{
 		[v removeTrackingArea:old];
-		[old release];
-		old = nil;
+		VVRELEASE(old);
 	}
 	[v addTrackingArea:appleTrackingArea];
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 }
 - (void) removeAppleTrackingAreaFromContainerView:(NSView *)v	{
 	//NSLog(@"%s ... %@",__func__,v);
 	if (v==nil)
 		return;
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	if (appleTrackingArea != nil)	{
 		[v removeTrackingArea:appleTrackingArea];
-		[appleTrackingArea release];
-		appleTrackingArea = nil;
+		VVRELEASE(appleTrackingArea);
 	}
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 }
 
 /*
 - (void) setAppleTrackingArea:(NSTrackingArea *)n	{
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	VVRELEASE(appleTrackingArea);
 	appleTrackingArea = (n==nil) ? nil : [n retain];
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 }
 - (NSTrackingArea *) appleTrackingArea	{
 	NSTrackingArea		*returnMe = nil;
-	OSSpinLockLock(&attribLock);
+	LOCK(&attribLock);
 	returnMe = (appleTrackingArea==nil) ? nil : [appleTrackingArea retain];
-	OSSpinLockUnlock(&attribLock);
+	UNLOCK(&attribLock);
 	return (returnMe==nil) ? nil : [returnMe autorelease];
 }
 */

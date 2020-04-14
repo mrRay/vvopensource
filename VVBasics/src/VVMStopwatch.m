@@ -1,10 +1,11 @@
 #import "VVMStopwatch.h"
+#import "VVBasicMacros.h"
 
 
 
 
-#define LOCK OSSpinLockLock
-#define UNLOCK OSSpinLockUnlock
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
 
 
 
@@ -13,12 +14,13 @@
 
 
 + (id) create	{
-	return [[[VVMStopwatch alloc] init] autorelease];
+	VVMStopwatch		*returnMe = [[VVMStopwatch alloc] init];
+	return returnMe;
 }
 - (id) init	{
 	self = [super init];
 	if (self != nil)	{
-		timeLock = OS_SPINLOCK_INIT;
+		timeLock = OS_UNFAIR_LOCK_INIT;
 		paused = NO;
 		prePauseTimeSinceStart = 0.;
 		[self start];

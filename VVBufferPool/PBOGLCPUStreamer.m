@@ -13,14 +13,14 @@
 		ctxArray = [[MutLockArray alloc] init];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(ctxArray);
-	[super dealloc];
+	
 }
 - (void) setNextTexBufferForStream:(VVBuffer *)n	{
 	[self setNextObjForStream:n];
@@ -49,9 +49,7 @@
 	}
 	if (streamCtx != nil)
 		[ctxArray lockAddObject:streamCtx];
-	if (streamPBO != nil)
-		[streamPBO retain];
-	[streamDict release];
+	VVRELEASE(streamDict);
 	return streamPBO;
 }
 - (VVBuffer *) copyAndGetCPUBufferForStream	{
@@ -71,13 +69,13 @@
 	}
 	if (streamCtx == nil)	{
 		//NSLog(@"\t\terr: bailing, stream ctx nil, %s",__func__);
-		[streamDict release];
+		VVRELEASE(streamDict);
 		return nil;
 	}
 	if (streamPBO == nil)	{
 		//NSLog(@"\t\terr: bailing, stream pbo nil, %s",__func__);
 		[ctxArray lockAddObject:streamCtx];
-		[streamDict release];
+		VVRELEASE(streamDict);
 		return nil;
 	}
 	VVBufferDescriptor		*pboDesc = [streamPBO descriptorPtr];
@@ -95,7 +93,7 @@
 	}
 	//	release the stream dict so it doesn't leak, put the GL context in the ctxArray
 	[ctxArray lockAddObject:streamCtx];
-	[streamDict release];
+	VVRELEASE(streamDict);
 	
 	return returnMe;
 }
@@ -114,25 +112,21 @@
 	}
 	if (streamCtx == nil)	{
 		//NSLog(@"\t\tbailing A %s",__func__);
-		[streamDict release];
 		return NO;
 	}
 	if (streamPBO == nil)	{
 		//NSLog(@"\t\tbailing B %s",__func__);
 		[ctxArray lockAddObject:streamCtx];
-		[streamDict release];
 		return NO;
 	}
 	if (!NSEqualSizes(dataBufferSize, [streamPBO size]))	{
 		[ctxArray lockAddObject:streamCtx];
-		[streamDict release];
 		return NO;
 	}
 	//	copy the PBO into the passed buffer
 	[self _copyPBOBuffer:streamPBO toRawDataBuffer:b usingContext:[streamCtx CGLContextObj]];
 	//	release the stream dict so it doesn't leak, put the GL context in the ctxArray
 	[ctxArray lockAddObject:streamCtx];
-	[streamDict release];
 	return YES;
 }
 /*		NOT SAFE!  DOESN'T CHECK THE SIZE OF THE PBO WITH THE SIZE OF 'w', JUST ASSUMES EVERYTHING'S CORRECTLY-SIZED!		*/
@@ -224,7 +218,6 @@
 		[ctxArray wrlock];
 			ctx = [ctxArray objectAtIndex:0];
 			if (ctx != nil)	{
-				[ctx retain];
 				[ctxArray removeObjectAtIndex:0];
 			}
 		[ctxArray unlock];
@@ -240,7 +233,6 @@
 	}
 	//	store the GL context in the passed dict so i can retrieve it later!
 	[d setObject:ctx forKey:@"ctx"];
-	[ctx release];
 	
 	
 	
@@ -262,7 +254,6 @@
 	}
 	[pbo setUserInfo:[tex userInfo]];
 	[d setObject:pbo forKey:@"pbo"];
-	[pbo release];
 	
 	CGLContextObj		cgl_ctx = [ctx CGLContextObj];
 	//	set up the context, bind the appropriate texture & buffer

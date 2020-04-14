@@ -1,5 +1,6 @@
 
 #import "MutLockDict.h"
+#import "VVBasicMacros.h"
 
 
 
@@ -12,9 +13,7 @@
 }
 + (id) dictionaryWithCapacity:(NSInteger)c	{
 	MutLockDict		*returnMe = [[MutLockDict alloc] initWithCapacity:0];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 + (id) dictionaryWithDict:(NSDictionary *)d	{
 	id			returnMe = [[MutLockDict alloc] initWithCapacity:0];
@@ -22,21 +21,21 @@
 		return nil;
 	if (d != nil)
 		[[returnMe dict] addEntriesFromDictionary:d];
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithCapacity:(NSInteger)c	{
 	if (c < 0)	{
-		[self release];
-		return nil;
+		VVRELEASE(self);
+		return self;
 	}
 	
 	pthread_rwlockattr_t		attr;
 	
 	if (self = [super init])	{
-		dict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+		dict = [NSMutableDictionary dictionaryWithCapacity:0];
 		if (dict == nil)	{
-			[self release];
-			return nil;
+			VVRELEASE(self);
+			return self;
 		}
 		pthread_rwlockattr_init(&attr);
 		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
@@ -46,8 +45,8 @@
 		
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) init	{
 	return [self initWithCapacity:0];
@@ -55,10 +54,7 @@
 - (void) dealloc	{
 	[self lockRemoveAllObjects];
 	pthread_rwlock_destroy(&dictLock);
-	if (dict != nil)
-		[dict release];
-	dict = nil;
-	[super dealloc];
+	VVRELEASE(dict);
 }
 
 
@@ -78,9 +74,7 @@
 }
 - (NSMutableDictionary *) createDictCopy	{
 	NSMutableDictionary		*returnMe = [dict mutableCopy];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (NSMutableDictionary *) lockCreateDictCopy	{
 	NSMutableDictionary		*returnMe = nil;

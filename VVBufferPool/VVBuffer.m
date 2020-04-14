@@ -235,7 +235,7 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 	VVBuffer		*returnMe = [[VVBuffer alloc] initWithPool:p];
 	if (returnMe == nil)
 		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithPool:(id)p	{
 	//NSLog(@"%s",__func__);
@@ -265,29 +265,24 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 		remoteSurfaceRef = nil;
 #endif
 		
-		parentBufferPool = [p retain];
+		parentBufferPool = p;
 		copySourceBuffer = nil;
 		idleCount = 0;
 		return self;
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	if (self != nil)
-		[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 
 
 - (void) dealloc	{
 	//NSLog(@"%s ... %@",__func__,self);
 	//	if there's a user info, free it
-	if (userInfo != nil)	{
-		[userInfo release];
-		userInfo = nil;
-	}
+	VVRELEASE(userInfo);
 	//	if this instance was created by copying another buffer, just release that- this instance doesn't have any resources to free (the backing buffer will free its resources when it is freed)
 	if (copySourceBuffer != nil)	{
-		[copySourceBuffer release];
 		copySourceBuffer = nil;
 	}
 	//	else this instance of VVBuffer was created (not copied)- it has resources that need to be freed
@@ -339,8 +334,8 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 #endif
 	
 	//	don't forget to release the pool that created me!
-	[parentBufferPool release];
-	[super dealloc];
+	parentBufferPool = nil;
+	
 }
 
 
@@ -449,8 +444,6 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 - (void) setUserInfo:(id)n	{
 	VVRELEASE(userInfo);
 	userInfo = n;
-	if (userInfo != nil)
-		[userInfo retain];
 }
 - (id) userInfo	{
 	return userInfo;
@@ -602,7 +595,7 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 #endif
 #if !TARGET_OS_IPHONE
 - (NSBitmapImageRep *) bitmapRep	{
-	NSBitmapImageRep		*bitmapRep = (backingID==VVBufferBackID_NSBitImgRep) ? backingReleaseCallbackContext : nil;
+	NSBitmapImageRep		*bitmapRep = (backingID==VVBufferBackID_NSBitImgRep) ? (__bridge NSBitmapImageRep *)backingReleaseCallbackContext : nil;
 	return bitmapRep;
 }
 #endif
@@ -631,7 +624,7 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 	backingReleaseCallbackContext = n;
 }
 - (void) setBackingReleaseCallbackContextObject:(id)n	{
-	backingReleaseCallbackContext = (n==nil) ? nil : [n retain];
+	backingReleaseCallbackContext = (n==nil) ? nil : CFBridgingRetain(n);
 }
 - (void *) backingReleaseCallbackContext	{
 	return backingReleaseCallbackContext;
@@ -700,8 +693,6 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 - (void) setCopySourceBuffer:(id)n	{
 	VVRELEASE(copySourceBuffer);
 	copySourceBuffer = n;
-	if (copySourceBuffer != nil)
-		[copySourceBuffer retain];
 }
 @synthesize idleCount;
 - (void) _incrementIdleCount	{
@@ -746,9 +737,9 @@ void VVBuffer_ReleaseCVPixBuf(id b, void *c)	{
 }
 void VVBuffer_ReleaseBitmapRep(id b, void *c)	{
 	//NSBitmapImageRep	*tmpRep = c;
-	id					tmpRep = c;
-	if (tmpRep != nil)
-		[tmpRep release];
+	//id					tmpRep = c;
+	//tmpRep = nil;
+	CFBridgingRelease(c);
 }
 
 

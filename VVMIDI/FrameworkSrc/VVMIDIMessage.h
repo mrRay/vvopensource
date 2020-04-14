@@ -16,25 +16,25 @@
 	uint64_t		timestamp; // timestamp that message should be sent. if it's 0 we'll just use mach_absolute_time
 }
 
-+ (id) createWithType:(Byte)t channel:(Byte)c;
-+ (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
-+ (id) createWithSysexArray:(NSMutableArray *)s;
-+ (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
-+ (id) createWithSysexData:(NSData *)d;
-+ (id) createWithSysexData:(NSData *)d timestamp:(uint64_t)time;
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
++ (instancetype) createWithType:(Byte)t channel:(Byte)c;
++ (instancetype) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
++ (instancetype) createWithSysexArray:(NSMutableArray *)s;
++ (instancetype) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
++ (instancetype) createWithSysexData:(NSData *)d;
++ (instancetype) createWithSysexData:(NSData *)d timestamp:(uint64_t)time;
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
 
-- (id) initWithType:(Byte)t channel:(Byte)c;
-- (id) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
-- (id) initWithSysexArray:(NSMutableArray *)s;
-- (id) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
-- (id) initWithSysexData:(NSData *)d;
-- (id) initWithSysexData:(NSData *)d timestamp:(uint64_t)time;
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
+- (instancetype) initWithType:(Byte)t channel:(Byte)c;
+- (instancetype) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time;
+- (instancetype) initWithSysexArray:(NSMutableArray *)s;
+- (instancetype) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;
+- (instancetype) initWithSysexData:(NSData *)d;
+- (instancetype) initWithSysexData:(NSData *)d timestamp:(uint64_t)time;
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2;
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3;
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)t;
 
 - (NSString *) description;
 - (NSString *) lengthyDescription;

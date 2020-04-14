@@ -29,14 +29,14 @@
 	
 	pthread_mutex_t			renderLock;
 	
-	OSSpinLock				errDictLock;
+	os_unfair_lock				errDictLock;
 	NSMutableDictionary		*errDict;
 }
 
 ///	Set/get the vertex shader string
-@property (retain,readwrite) NSString *vertexShaderString;
+@property (strong,readwrite) NSString *vertexShaderString;
 ///	Set/get the fragment shader string
-@property (retain,readwrite) NSString *fragmentShaderString;
+@property (strong,readwrite) NSString *fragmentShaderString;
 
 @property (assign,readwrite) BOOL vertexShaderUpdated;
 @property (assign,readwrite) BOOL fragmentShaderUpdated;

@@ -79,42 +79,39 @@
 	}
 }
 
-+ (id) create	{
++ (instancetype) create	{
 	OSCBundle		*returnMe = [[OSCBundle alloc] init];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithElement:(id)n	{
++ (instancetype) createWithElement:(id)n	{
 	OSCBundle		*returnMe = [[OSCBundle alloc] init];
 	if (returnMe == nil)
 		return nil;
 	if (n != nil)
 		[returnMe addElement:n];
-	return [returnMe autorelease];
+	return returnMe;
 }
-+ (id) createWithElementArray:(id)a	{
++ (instancetype) createWithElementArray:(id)a	{
 	OSCBundle		*returnMe = [[OSCBundle alloc] init];
 	if (returnMe == nil)
 		return nil;
 	if (a != nil)
 		[returnMe addElementArray:a];
-	return [returnMe autorelease];
+	return returnMe;
 }
-- (id) init	{
+- (instancetype) init	{
 	if (self = [super init])	{
-		elementArray = [[NSMutableArray arrayWithCapacity:0] retain];
+		elementArray = [NSMutableArray arrayWithCapacity:0];
 		timeTag = nil;
 		return self;
 	}
-	[self release];
-	return nil;
+	return self;
 }
 
 - (void) dealloc	{
 	VVRELEASE(elementArray);
 	VVRELEASE(timeTag);
-	[super dealloc];
+	
 }
 
 - (void) addElement:(id)n	{

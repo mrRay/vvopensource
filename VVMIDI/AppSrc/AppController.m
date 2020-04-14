@@ -69,6 +69,34 @@
 		[midiManager sendMsg:msg];
 }
 
+
+static int tmpNote = 42;
+- (IBAction) tmpButtonUsed:(id)sender	{
+	NSLog(@"%s",__func__);
+	Byte				tmpChannel = [channelField intValue];
+	
+	NSArray				*msgs = @[
+		[VVMIDIMessage createWithType: (Byte)VVMIDIClockVal channel:tmpChannel],
+		[VVMIDIMessage createFromVals: (Byte)VVMIDINoteOnVal: tmpChannel: tmpNote: 127],
+		[VVMIDIMessage createFromVals: (Byte)VVMIDINoteOffVal: tmpChannel: tmpNote: 0]
+	];
+	[midiManager sendMsgs:msgs];
+	
+	/*
+	VVMIDIMessage		*msg = nil;
+	msg = [VVMIDIMessage createFromVals: (Byte)VVMIDINoteOnVal: tmpChannel: tmpNote: 127];
+	[midiManager sendMsg:msg];
+	msg = [VVMIDIMessage createFromVals: (Byte)VVMIDINoteOffVal: tmpChannel: tmpNote: 0];
+	
+	[midiManager sendMsg:msg];
+	*/
+	
+	++tmpNote;
+	if (tmpNote > 45)
+		tmpNote = 42;
+}
+
+
 - (NSInteger) numberOfRowsInTableView:(NSTableView *)tv	{
 	if (tv == sourcesTableView)
 		return [[midiManager sourceArray] count];

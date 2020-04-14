@@ -318,15 +318,12 @@
 			case ']':			//	indicates the end of an array
 				if (arrayVals!=nil && [arrayVals count]>0)	{
 					OSCValue	*finishedVal = [arrayVals lastObject];
-					[finishedVal retain];
 					[arrayVals removeLastObject];
 					
 					if ([arrayVals count]>0)
 						[[arrayVals lastObject] addValue:finishedVal];
 					else
 						[returnMe addValue:finishedVal];
-					
-					[finishedVal release];
 				}
 				break;
 			case 'E':			//	SMPTE timecode. AD-HOC DATA TYPE! ONLY SUPPORTED BY THIS FRAMEWORK!
@@ -340,23 +337,20 @@
 		}
 	}
 	//	return the msg- the bundle that parsed it will add an execution date (if appropriate) and send it to the port
-	return (returnMe==nil)?nil:[returnMe autorelease];
+	return (returnMe==nil)?nil:returnMe;
 }
-+ (id) createWithAddress:(NSString *)a	{
++ (instancetype) createWithAddress:(NSString *)a	{
 	OSCMessage		*returnMe = [[OSCMessage alloc] initWithAddress:a];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 
 
-- (id) initWithAddress:(NSString *)a	{
+- (instancetype) initWithAddress:(NSString *)a	{
 	if (a == nil)	{
-		if (self != nil)
-			[self release];
-		return nil;
+		VVRELEASE(self);
+		return self;
 	}
-	id			returnMe = nil;
+	OSCMessage			*returnMe = nil;
 	NSString	*addrString = [a stringByDeletingLastAndAddingFirstSlash];
 	returnMe = [self initFast:
 		addrString:
@@ -366,10 +360,10 @@
 	return returnMe;
 }
 //	DOES NO CHECKING WHATSOEVER.  MEANT TO BE FAST, NOT SAFE.  USE OTHER CREATE/INIT METHODS.
-- (id) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
+- (instancetype) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(unsigned int)qTxAddr :(unsigned short)qTxPort	{
 	self = [super init];
 	if (self != nil)	{
-		address = (addr==nil)?nil:[addr retain];
+		address = (addr==nil)?nil:addr;
 		valueCount = 0;
 		value = nil;
 		valueArray = nil;
@@ -381,7 +375,7 @@
 	}
 	return self;
 }
-- (id) copyWithZone:(NSZone *)z	{
+- (instancetype) copyWithZone:(NSZone *)z	{
 	//OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initWithAddress:address];
 	OSCMessage		*returnMe = [[OSCMessage allocWithZone:z] initFast:address:wildcardsInAddress:txAddress:txPort];
 	
@@ -399,25 +393,13 @@
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	if (address != nil)
-		[address release];
-	address = nil;
-	if (value != nil)
-		[value release];
-	value = nil;
-	if (valueArray != nil)
-		[valueArray release];
-	valueArray = nil;
+	VVRELEASE(address);
+	VVRELEASE(value)
+	VVRELEASE(valueArray);
 	valueCount = 0;
-	if (timeTag != nil)	{
-		[timeTag release];
-		timeTag = nil;
-	}
-	if (msgInfo != nil)	{
-		[msgInfo release];
-		msgInfo = nil;
-	}
-	[super dealloc];
+	VVRELEASE(timeTag);
+	VVRELEASE(msgInfo);
+	
 }
 
 - (void) addInt:(int)n	{
@@ -459,15 +441,14 @@
 		return;
 	//	if i haven't already stored a val, just store it at the single variable
 	if (valueCount == 0)
-		value = [n retain];
+		value = n;
 	//	else if there's more than 1 val, i'll be adding it to the array
 	else	{
 		//	if the array doesn't exist yet, create it (and clean up the existing val)
 		if (valueArray == nil)	{
-			valueArray = [[NSMutableArray arrayWithCapacity:0] retain];
+			valueArray = [NSMutableArray arrayWithCapacity:0];
 			[valueArray addObject:value];
-			[value release];
-			value = nil;
+			VVRELEASE(value);
 		}
 		//	add the new val to the array
 		[valueArray addObject:n];
@@ -626,13 +607,8 @@
 	return timeTag;
 }
 - (void) setTimeTag:(NSDate *)n	{
-	if (timeTag != nil)	{
-		[timeTag release];
-		timeTag = nil;
-	}
-	if (n != nil)	{
-		timeTag = [n retain];
-	}
+	VVRELEASE(timeTag);
+	timeTag = n;
 }
 
 
@@ -751,9 +727,8 @@
 
 
 - (void) setMsgInfo:(id)n	{
-	if (msgInfo != nil)
-		[msgInfo release];
-	msgInfo = (n==nil) ? nil : [n retain];
+	VVRELEASE(msgInfo);
+	msgInfo = n;
 }
 - (id) msgInfo	{
 	return msgInfo;

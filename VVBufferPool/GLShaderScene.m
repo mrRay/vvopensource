@@ -66,7 +66,7 @@
 	fragmentShaderString = nil;
 	//samplerTarget = nil;
 	//samplerSelector = nil;
-	errDictLock = OS_SPINLOCK_INIT;
+	errDictLock = OS_UNFAIR_LOCK_INIT;
 	errDict = nil;
 }
 - (void) prepareToBeDeleted	{
@@ -95,13 +95,13 @@
 		[self prepareToBeDeleted];
 	pthread_mutex_destroy(&renderLock);
 	if (errDict != nil)	{
-		OSSpinLockLock(&errDictLock);
+		os_unfair_lock_lock(&errDictLock);
 		VVRELEASE(errDict);
-		OSSpinLockUnlock(&errDictLock);
+		os_unfair_lock_unlock(&errDictLock);
 	}
 	VVRELEASE(vertexShaderString);
 	VVRELEASE(fragmentShaderString);
-	[super dealloc];
+	
 }
 
 
@@ -118,14 +118,14 @@
 	pthread_mutex_lock(&renderLock);
 		VVRELEASE(vertexShaderString);
 		if (n != nil)
-			vertexShaderString = [n retain];
+			vertexShaderString = n;
 		vertexShaderUpdated = YES;
 	pthread_mutex_unlock(&renderLock);
 }
 - (NSString *) vertexShaderString	{
 	NSString		*returnMe = nil;
 	pthread_mutex_lock(&renderLock);
-	returnMe = (vertexShaderString==nil) ? nil : [[vertexShaderString retain] autorelease];
+	returnMe = (vertexShaderString==nil) ? nil : vertexShaderString;
 	pthread_mutex_unlock(&renderLock);
 	return returnMe;
 }
@@ -142,14 +142,14 @@
 	pthread_mutex_lock(&renderLock);
 		VVRELEASE(fragmentShaderString);
 		if (n != nil)
-			fragmentShaderString = [n retain];
+			fragmentShaderString = n;
 		fragmentShaderUpdated = YES;
 	pthread_mutex_unlock(&renderLock);
 }
 - (NSString *) fragmentShaderString	{
 	NSString		*returnMe = nil;
 	pthread_mutex_lock(&renderLock);
-	returnMe = (fragmentShaderString==nil) ? nil : [[fragmentShaderString retain] autorelease];
+	returnMe = (fragmentShaderString==nil) ? nil : fragmentShaderString;
 	pthread_mutex_unlock(&renderLock);
 	return returnMe;
 }
@@ -204,9 +204,9 @@
 		}
 		programReady = NO;
 		
-		OSSpinLockLock(&errDictLock);
+		os_unfair_lock_lock(&errDictLock);
 		VVRELEASE(errDict);
-		OSSpinLockUnlock(&errDictLock);
+		os_unfair_lock_unlock(&errDictLock);
 		
 		BOOL			encounteredError = NO;
 		if (vertexShaderString != nil)	{
@@ -227,12 +227,12 @@
 				//NSLog(@"\t\tshader was %s",shaderSrc);
 				encounteredError = YES;
 				
-				OSSpinLockLock(&errDictLock);
+				os_unfair_lock_lock(&errDictLock);
 				if (errDict == nil)
-					errDict = [MUTDICT retain];
+					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"vertErrLog"];
 				[errDict setObject:vertexShaderString forKey:@"vertSrc"];
-				OSSpinLockUnlock(&errDictLock);
+				os_unfair_lock_unlock(&errDictLock);
 				
 				free(log);
 				glDeleteShader(vertexShader);
@@ -257,12 +257,12 @@
 				//NSLog(@"\t\tshader was %s",shaderSrc);
 				encounteredError = YES;
 				
-				OSSpinLockLock(&errDictLock);
+				os_unfair_lock_lock(&errDictLock);
 				if (errDict == nil)
-					errDict = [MUTDICT retain];
+					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"fragErrLog"];
 				[errDict setObject:fragmentShaderString forKey:@"fragSrc"];
-				OSSpinLockUnlock(&errDictLock);
+				os_unfair_lock_unlock(&errDictLock);
 				
 				free(log);
 				glDeleteShader(fragmentShader);
@@ -292,11 +292,11 @@
 				//NSLog(@"\t\tfrag shader is:");
 				//NSLog(@"%@",fragmentShaderString);
 				
-				OSSpinLockLock(&errDictLock);
+				os_unfair_lock_lock(&errDictLock);
 				if (errDict == nil)
-					errDict = [MUTDICT retain];
+					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"linkErrLog"];
-				OSSpinLockUnlock(&errDictLock);
+				os_unfair_lock_unlock(&errDictLock);
 				
 				free(log);
 				glDeleteProgram(program);

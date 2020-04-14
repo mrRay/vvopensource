@@ -10,13 +10,13 @@
 	if (self = [super init])	{
 		deleted = NO;
 		objNext = nil;
-		objLock = OS_SPINLOCK_INIT;
+		objLock = OS_UNFAIR_LOCK_INIT;
 		objArray = [[MutLockArray alloc] init];
 		objMaxCount = 2;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) prepareToBeDeleted	{
 	
@@ -25,23 +25,23 @@
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
-	OSSpinLockLock(&objLock);
+	os_unfair_lock_lock(&objLock);
 	VVRELEASE(objNext);
-	OSSpinLockUnlock(&objLock);
+	os_unfair_lock_unlock(&objLock);
 	VVRELEASE(objArray);
-	[super dealloc];
+	
 }
 
 
 - (void) setNextObjForStream:(id)n	{
 	if (deleted || n==nil)
 		return;
-	NSMutableDictionary		*tmpDict = [MUTDICT retain];
+	NSMutableDictionary		*tmpDict = MUTDICT;
 	[tmpDict setObject:n forKey:@"passed"];
-	OSSpinLockLock(&objLock);
+	os_unfair_lock_lock(&objLock);
 		VVRELEASE(objNext);
 		objNext = tmpDict;
-	OSSpinLockUnlock(&objLock);
+	os_unfair_lock_unlock(&objLock);
 }
 - (id) copyAndPullObjThroughStream	{
 	if (deleted)
@@ -51,10 +51,10 @@
 	
 	//	if there's an 'objNext', i'm going to be adding it to the array no matter what, so get that out of the spinlock now
 	NSMutableDictionary		*theNextDict = nil;
-	OSSpinLockLock(&objLock);
+	os_unfair_lock_lock(&objLock);
 		theNextDict = objNext;
 		objNext = nil;
-	OSSpinLockUnlock(&objLock);
+	os_unfair_lock_unlock(&objLock);
 	
 	
 	[objArray wrlock];
@@ -62,7 +62,6 @@
 	//	if there's a new dict, add it to the array (don't forget to release it so it doesn't leak!) and start processing it
 	if (theNextDict != nil)	{
 		[objArray addObject:theNextDict];
-		[theNextDict release];
 		//	this is the method where you start doing whatever it is you want to the object we're adding to the stream
 		[self startProcessingThisDict:theNextDict];
 	}
@@ -85,18 +84,18 @@
 - (void) clearStream	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&objLock);
+	os_unfair_lock_lock(&objLock);
 	VVRELEASE(objNext);
-	OSSpinLockUnlock(&objLock);
+	os_unfair_lock_unlock(&objLock);
 	[objArray lockRemoveAllObjects];
 }
 - (NSUInteger) streamCount	{
 	NSUInteger		returnMe = 0;
-	OSSpinLockLock(&objLock);
+	os_unfair_lock_lock(&objLock);
 	returnMe = [objArray count];
 	if (returnMe==0 && objNext!=nil)
 		++returnMe;
-	OSSpinLockUnlock(&objLock);
+	os_unfair_lock_unlock(&objLock);
 	return returnMe;
 }
 

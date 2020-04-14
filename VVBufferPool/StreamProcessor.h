@@ -20,7 +20,7 @@
 	BOOL					deleted;
 	
 	NSMutableDictionary		*objNext;	//	when you set a next object for the stream, it's stored here until you pull something out of the stream (at which point this gets moved to 'objArray')
-	OSSpinLock				objLock;
+	os_unfair_lock				objLock;
 	
 	MutLockArray			*objArray;	//	dictionaries are created for objects and added here when you pull on the stream
 	int						objMaxCount;	//	initially 2 (double-buffering)

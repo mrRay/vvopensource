@@ -37,10 +37,10 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	pthread_mutex_lock(&_globalCIContextLock);
 	
 	VVRELEASE(_globalCIContextSharedContext);
-	_globalCIContextSharedContext = [c retain];
+	_globalCIContextSharedContext = c;
 	
 	VVRELEASE(_globalCIContextPixelFormat);
-	_globalCIContextPixelFormat = [p retain];
+	_globalCIContextPixelFormat = p;
 	
 	VVRELEASE(_globalCIContextGLContext);
 	_globalCIContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
@@ -57,7 +57,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	pthread_mutex_lock(&_globalCIContextLock);
 	
 	VVRELEASE(_globalCIContextGLContext);
-	_globalCIContextGLContext = [c retain];
+	_globalCIContextGLContext = c;
 	
 	pthread_mutex_unlock(&_globalCIContextLock);
 }
@@ -76,11 +76,11 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	pthread_mutex_lock(&_globalCIContextLock);
 	
 	VVRELEASE(_globalCIContextGLContext);
-	_globalCIContextGLContext = [newCtx retain];
+	_globalCIContextGLContext = newCtx;
 	
 	pthread_mutex_unlock(&_globalCIContextLock);
 	
-	[newCtx release];
+	newCtx = nil;
 }
 #endif
 
@@ -120,18 +120,18 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	if (self!=nil)	{
 		size = n;
 		pthread_mutex_lock(&_globalCIContextLock);
-		context = (_globalCIContextGLContext==nil) ? nil : [_globalCIContextGLContext retain];
+		context = (_globalCIContextGLContext==nil) ? nil : _globalCIContextGLContext;
 		if (context!=nil)	{
 #if !TARGET_OS_IPHONE
-			sharedContext = (_globalCIContextSharedContext==nil) ? nil : [_globalCIContextSharedContext retain];
-			customPixelFormat = (_globalCIContextPixelFormat==nil) ? nil : [_globalCIContextPixelFormat retain];
+			sharedContext = (_globalCIContextSharedContext==nil) ? nil : _globalCIContextSharedContext;
+			customPixelFormat = (_globalCIContextPixelFormat==nil) ? nil : _globalCIContextPixelFormat;
 #endif
 		}
 		pthread_mutex_unlock(&_globalCIContextLock);
 		if (context==nil)	{
 			NSLog(@"\t\terr: couldn't make context, call +[CIGLScene prepCommonCIBackendToRenderOnContext:pixelFormat:] before trying to init a QCGLScene");
-			[self release];
-			self = nil;
+			VVRELEASE(self);
+			return self;
 		}
 	}
 	return self;
@@ -157,7 +157,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	
 	VVRELEASE(ciContext);	//	should have already been added to render thread's delete array & set to nil in prepareToBeDeleted!
 	
-	[super dealloc];
+	
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s ... %p",__func__,self);
@@ -166,12 +166,12 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	
 	if (ciContext != nil)	{
 		BOOL			addedToRenderThread = NO;
-		OSSpinLockLock(&renderThreadLock);
+		os_unfair_lock_lock(&renderThreadLock);
 		if (renderThreadDeleteArray != nil)	{
 			addedToRenderThread = YES;
 			[renderThreadDeleteArray lockAddObject:ciContext];
 		}
-		OSSpinLockUnlock(&renderThreadLock);
+		os_unfair_lock_unlock(&renderThreadLock);
 		if (!addedToRenderThread)	{
 #if !TARGET_OS_IPHONE
 			if (context!=nil)	{
@@ -180,8 +180,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 			}
 #endif
 			
-			[ciContext release];
-			ciContext = nil;
+			VVRELEASE(ciContext);
 			
 #if !TARGET_OS_IPHONE
 			if (context!=nil)	{
@@ -191,8 +190,7 @@ EAGLContext			*_globalCIContextGLContext = nil;
 #endif
 		}
 		else	{
-			[ciContext release];
-			ciContext = nil;
+			VVRELEASE(ciContext);
 		}
 	}
 	
@@ -310,11 +308,11 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&renderThreadLock);
+	os_unfair_lock_lock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	OSSpinLockUnlock(&renderThreadLock);
+	os_unfair_lock_unlock(&renderThreadLock);
 	
 	//	if i'm here and the context is nil, then i'm not sharing a single GL context for everything- i'm expected to create the GL context, which will be used exclusively by this CIContext
 	if (context==nil)
@@ -374,11 +372,11 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	texTarget = tt;
 	depth = 0;
 	
-	OSSpinLockLock(&renderThreadLock);
+	os_unfair_lock_lock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	OSSpinLockUnlock(&renderThreadLock);
+	os_unfair_lock_unlock(&renderThreadLock);
 	
 	//	if i'm here and the context is nil, then i'm not sharing a single GL context for everything- i'm expected to create the GL context, which will be used exclusively by this CIContext
 	if (context==nil)
@@ -474,8 +472,8 @@ EAGLContext			*_globalCIContextGLContext = nil;
 			pixelFormat:[customPixelFormat CGLPixelFormatObj]
 			colorSpace:workingColorSpace
 			options:[NSDictionary dictionaryWithObjectsAndKeys:
-				(id)outputColorSpace, kCIContextOutputColorSpace,
-				(id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
+					 (__bridge id)outputColorSpace, kCIContextOutputColorSpace,
+					 (__bridge id)workingColorSpace, kCIContextWorkingColorSpace, nil]	];
 #elif !TARGET_OS_IPHONE
 		//NSLog(@"\t\tcreating CIContext for CGLContextObj %p",[context CGLContextObj]);
 		ciContext = [CIContext
@@ -495,15 +493,13 @@ EAGLContext			*_globalCIContextGLContext = nil;
 				nil]	];
 #endif
 	}
-	if (ciContext != nil)
-		[ciContext retain];
 }
 
 
 @synthesize workingColorSpace;
 @synthesize outputColorSpace;
 - (CIContext *) ciContext	{
-	return [[ciContext retain] autorelease];
+	return ciContext;
 }
 - (void) setCleanupDelegate:(id <CIGLSceneCleanup>)n	{
 	//NSLog(@"%s ... %@",__func__,n);

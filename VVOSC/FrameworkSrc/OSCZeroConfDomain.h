@@ -27,8 +27,8 @@
 	id						domainManager;
 }
 
-+ (id) createWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t;
-- (id) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t;
++ (instancetype) createWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t;
+- (instancetype) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t;
 
 //	NSNetServiceBrowser delegate methods
 - (void)netServiceBrowser:(NSNetServiceBrowser *)n didFindService:(NSNetService *)x moreComing:(BOOL)m;

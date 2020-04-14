@@ -51,8 +51,8 @@ typedef enum VVSpriteEventType	{
 	BOOL			hidden;				//	whether or not the sprite should draw.  DOESN'T AFFECT ANYTHING IN THIS CLASS!  variable exists for the user's convenience, and is otherwise superfluous!
 	BOOL			dropFromMultiSpriteActions;	//	only valid if sprite manager's allowMultiSpriteInteraction' is YES.  NO by default.  if YES, then if you mousedown on this and any other sprite, this sprite gets dropped from the mousedown.  used for allowing multi-sprite interaction to prevent clicks from hitting "background" sprites (which have this set to YES)
 	long			spriteIndex;
-	id				manager;			//	the VVSpriteManager i exist within- NOT retained!
-	id				delegate;			//	NOT retained!
+	__weak id		manager;			//	the VVSpriteManager i exist within- NOT retained!
+	__weak id		delegate;			//	NOT retained!
 	SEL				drawCallback;		//	delegate method; passed a ptr to this sprite!
 	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
 #if !TARGET_OS_IPHONE
@@ -65,7 +65,7 @@ typedef enum VVSpriteEventType	{
 #else
 	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
 #endif
-	OSSpinLock		pathLock;
+	os_unfair_lock		pathLock;
 	
 	int				lastActionType;		//	updated whenever an action is received
 	VVPOINT			lastActionCoords;	//	coords at which last action took place
@@ -77,12 +77,12 @@ typedef enum VVSpriteEventType	{
 	long			mouseDownModifierFlags;
 	
 	id				userInfo;		//	RETAINED!  for storing a random thing...
-	id				NRUserInfo;		//	NOT RETAINED!  for storing something that *shouldn't* be retained...
+	__weak id		NRUserInfo;		//	NOT RETAINED!  for storing something that *shouldn't* be retained...
 	id				safeString;	//	nil on init- many sprites need formatted text, this is a convenience variable...
 }
 
-+ (id) createWithRect:(VVRECT)r inManager:(id)m;
-- (id) initWithRect:(VVRECT)r inManager:(id)m;
++ (instancetype) createWithRect:(VVRECT)r inManager:(id)m;
+- (instancetype) initWithRect:(VVRECT)r inManager:(id)m;
 
 - (void) prepareToBeDeleted;
 
@@ -108,7 +108,7 @@ typedef enum VVSpriteEventType	{
 @property (assign, readwrite) BOOL dropFromMultiSpriteActions;
 @property (readonly) long spriteIndex;
 @property (readonly) id manager;
-@property (assign, readwrite) id delegate;
+@property (weak, readwrite) id delegate;
 @property (assign, readwrite) SEL drawCallback;
 @property (assign, readwrite) SEL actionCallback;
 #if !TARGET_OS_IPHONE
@@ -116,7 +116,7 @@ typedef enum VVSpriteEventType	{
 #endif
 
 @property (assign, readwrite) VVRECT rect;
-//@property (retain,readwrite) NSBezierPath *path;
+//@property (strong,readwrite) NSBezierPath *path;
 #if TARGET_OS_IPHONE
 - (void) setBezierPath:(UIBezierPath *)n;
 - (UIBezierPath *) copyBezierPath;
@@ -133,8 +133,8 @@ typedef enum VVSpriteEventType	{
 @property (readonly) VVPOINT lastActionDelta;
 @property (readonly) VVPOINT mouseDownDelta;
 @property (readonly) long mouseDownModifierFlags;
-@property (assign,readwrite) id userInfo;
-@property (assign,readwrite) id NRUserInfo;
-@property (assign,readwrite) id safeString;
+@property (strong,readwrite) id userInfo;
+@property (weak,readwrite) id NRUserInfo;
+@property (strong,readwrite) id safeString;
 
 @end

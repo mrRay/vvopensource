@@ -51,23 +51,22 @@
 	}
 	return returnMe;
 }
-- (id) init	{
+- (instancetype) init	{
 	return [self initWithServiceType:@"_osc._udp"];
 }
-- (id) initWithServiceType:(NSString *)t	{
+- (instancetype) initWithServiceType:(NSString *)t	{
 	if (self = [super init])	{
 		[self _generalInit];
 		zeroConfManager = [[OSCZeroConfManager alloc] initWithOSCManager:self serviceType:t];
 		return self;
 	}
-	if (self != nil)
-		[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
-- (id) initWithInPortClass:(Class)i outPortClass:(Class)o	{
+- (instancetype) initWithInPortClass:(Class)i outPortClass:(Class)o	{
 	return [self initWithInPortClass:i outPortClass:o serviceType:@"_osc._udp"];
 }
-- (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
+- (instancetype) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t	{
 	self = [super init];
 	if (self != nil)	{
 		[self _generalInit];
@@ -81,28 +80,21 @@
 }
 - (void) _generalInit	{
 	//NSLog(@"%s",__func__);
-	inPortArray = [[MutLockArray arrayWithCapacity:0] retain];
-	outPortArray = [[MutLockArray arrayWithCapacity:0] retain];
+	inPortArray = [MutLockArray arrayWithCapacity:0];
+	outPortArray = [MutLockArray arrayWithCapacity:0];
 	delegate = nil;
 	inPortClass = [OSCInPort class];
-	inPortLabelBase = [@"VVOSC" retain];
+	inPortLabelBase = @"VVOSC";
 	outPortClass = [OSCOutPort class];
 }
 
 - (void) dealloc	{
-	if (zeroConfManager != nil)	{
-		[zeroConfManager release];
-		zeroConfManager = nil;
-	}
-	if (inPortArray != nil)
-		[inPortArray release];
-	inPortArray = nil;
-	if (outPortArray != nil)
-		[outPortArray release];
-	outPortArray = nil;
+	VVRELEASE(zeroConfManager);
+	VVRELEASE(inPortArray);
+	VVRELEASE(outPortArray);
 	delegate = nil;
 	VVRELEASE(inPortLabelBase);
-	[super dealloc];
+	
 }
 
 - (void) deleteAllInputs	{
@@ -187,7 +179,6 @@
 				[returnMe setDelegate:self];
 				[returnMe start];
 				[inPortArray addObject:returnMe];
-				[returnMe autorelease];
 			}
 		}
 	[inPortArray unlock];
@@ -279,7 +270,6 @@
 			
 			if (returnMe != nil)	{
 				[outPortArray addObject:returnMe];
-				[returnMe autorelease];
 			}
 		}
 	[outPortArray unlock];

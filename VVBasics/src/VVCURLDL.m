@@ -1,6 +1,6 @@
 #import "VVCURLDL.h"
 #import <curl/curl.h>
-#import <VVBasics/VVBasicMacros.h>
+#import "VVBasicMacros.h"
 
 
 
@@ -24,16 +24,14 @@
 
 + (id) createWithAddress:(NSString *)a	{
 	VVCURLDL		*returnMe = [[VVCURLDL alloc] initWithAddress:a];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithAddress:(NSString *)a	{
 	//NSLog(@"%s",__func__);
 	if (a==nil)
 		goto BAIL;
 	if (self = [super init])	{
-		urlString = [a retain];
+		urlString = a;
 		curlHandle = nil;
 		dnsCacheTimeout = 0;
 		connectTimeout = 0;
@@ -55,7 +53,7 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
+	VVRELEASE(self);
 	return nil;
 }
 - (void) dealloc	{
@@ -69,7 +67,6 @@
 	VVRELEASE(postData);
 	//VVRELEASE(headerArray);
 	VVRELEASE(responseData);
-	[super dealloc];
 }
 
 - (void) perform	{
@@ -85,12 +82,10 @@
 }
 //	NEVER CALL THIS METHOD DIRECTLY!
 - (void) _performAsyncWithDelegate:(id <VVCURLDLDelegate>)d	{
-	//	make a pool
-	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	//	perform the download
-	[self _performWithDelegate:d];
-	//	release the pool
-	[pool release];
+	@autoreleasepool	{
+		//	perform the download
+		[self _performWithDelegate:d];
+	}
 }
 //	NEVER CALL THIS METHOD DIRECTLY!
 - (void) _performWithDelegate:(id <VVCURLDLDelegate>)d	{
@@ -117,7 +112,8 @@
 
 
 - (void) performAsync:(BOOL)as withBlock:(void (^)(VVCURLDL *completedDL))b	{
-	void			(^tmpBlock)(VVCURLDL *completedDL) = (b==nil) ? nil : Block_copy(b);
+	//void			(^tmpBlock)(VVCURLDL *completedDL) = (b==nil) ? nil : Block_copy(b);
+	void			(^tmpBlock)(VVCURLDL *completedDL) = b;
 	
 	
 	//	if i'm performing asynchronously, spawn a thread (make an autorelease pool!) and go
@@ -128,28 +124,28 @@
 		[self _performWithBlock:tmpBlock];
 }
 - (void) _performAsyncWithBlock:(void (^)(VVCURLDL *completedDL))b	{
-	//	make a pool
-	NSAutoreleasePool		*pool = [[NSAutoreleasePool alloc] init];
-	//	perform the download
-	[self _performWithBlock:b];
-	//	release the pool
-	[pool release];
+	@autoreleasepool	{
+		//	perform the download
+		[self _performWithBlock:b];
+	}
 }
 - (void) _performWithBlock:(void (^)(VVCURLDL *completedDL))b	{
 	[self _execute];
 	
 	if (b != nil)	{
-		__block VVCURLDL	*blockSafeSelf = self;
+		//__block VVCURLDL	*blockSafeSelf = self;
 		if (returnOnMain)	{
 			dispatch_async(dispatch_get_main_queue(), ^{
-				b(blockSafeSelf);
+				//b(blockSafeSelf);
+				b(self);
 			});
 		}
 		else	{
-			b(blockSafeSelf);
+			//b(blockSafeSelf);
+			b(self);
 		}
 		
-		Block_release(b);
+		//Block_release(b);
 	}
 }
 
@@ -275,7 +271,7 @@
 	if (d == nil)
 		return;
 	if (postData == nil)
-		postData = [[NSMutableData dataWithCapacity:0] retain];
+		postData = [NSMutableData dataWithCapacity:0];
 	[postData appendData:d];
 }
 - (void) appendStringToPOST:(NSString *)s	{
@@ -290,9 +286,9 @@
 	if (u==nil || p==nil)
 		return;
 	VVRELEASE(log);
-	log = [u retain];
+	log = u;
 	VVRELEASE(pass);
-	pass = [p retain];
+	pass = p;
 }
 @synthesize userAgent;
 @synthesize referer;
@@ -312,7 +308,7 @@
 - (void) writePtr:(void *)ptr size:(size_t)s	{
 	//NSLog(@"%s",__func__);
 	if (responseData == nil)
-		responseData = [[NSMutableData dataWithCapacity:0] retain];
+		responseData = [NSMutableData dataWithCapacity:0];
 	[responseData appendBytes:ptr length:s];
 }
 - (void) appendStringToHeader:(NSString *)s	{
@@ -353,9 +349,7 @@
 	if (responseData == nil)
 		return nil;
 	NSString		*returnMe = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 
 
@@ -364,6 +358,6 @@
 
 size_t CURLDLWriteFunction(void *ptr, size_t size, size_t nmemb, void *stream)	{
 	if (stream != nil)
-		[(VVCURLDL *)stream writePtr:ptr size:size*nmemb];
+		[(__bridge VVCURLDL *)stream writePtr:ptr size:size*nmemb];
 	return size*nmemb;
 }

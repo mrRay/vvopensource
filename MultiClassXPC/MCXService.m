@@ -6,30 +6,27 @@
 @implementation MCXService
 
 
-- (id) init	{
+- (instancetype) init	{
 	//NSLog(@"%s",__func__);
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_SPINLOCK_INIT;
+		connLock = OS_UNFAIR_LOCK_INIT;
 		conn = nil;
-		classDictLock = OS_SPINLOCK_INIT;
-		classDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+		classDictLock = OS_UNFAIR_LOCK_INIT;
+		classDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	}
 	return self;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&classDictLock);
-	if (classDict!=nil)	{
-		[classDict release];
-		classDict = nil;
-	}
-	OSSpinLockUnlock(&classDictLock);
-	[super dealloc];
+	os_unfair_lock_lock(&classDictLock);
+	classDict = nil;
+	os_unfair_lock_unlock(&classDictLock);
+	
 }
 - (void) setConn:(NSXPCConnection *)n	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	os_unfair_lock_lock(&connLock);
 	conn = n;
 	[n setInvalidationHandler:^()	{
 		NSLog(@"MCXService invalidation handler");
@@ -38,7 +35,7 @@
 		NSLog(@"MCXService interruption handler");
 		exit(EXIT_FAILURE);
 	}];
-	OSSpinLockUnlock(&connLock);
+	os_unfair_lock_unlock(&connLock);
 }
 
 
@@ -62,9 +59,9 @@
 	[tmpDict setObject:d forKey:@"serviceDelegate"];
 	[tmpDict setObject:listener forKey:@"listener"];
 	//	add the dict storing everything to the class dict
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	[classDict setObject:tmpDict forKey:c];
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 }
 
 
@@ -75,8 +72,8 @@
 	//NSLog(@"%s",__func__);
 	//	assemble a dict- key is class name, object is listener endpoint
 	__block NSMutableDictionary		*thingToReturn = nil;
-	OSSpinLockLock(&classDictLock);
-	thingToReturn = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+	os_unfair_lock_lock(&classDictLock);
+	thingToReturn = [NSMutableDictionary dictionaryWithCapacity:0];
 	if (classDict!=nil)	{
 		[classDict enumerateKeysAndObjectsUsingBlock:^(NSString *tmpClassName, NSDictionary *tmpClassDict, BOOL *stop)	{
 			NSXPCListener			*listener = [tmpClassDict objectForKey:@"listener"];
@@ -86,9 +83,9 @@
 			}
 		}];
 	}
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 	//	pass the dict of endpoints to the ROP
-	OSSpinLockLock(&connLock);
+	os_unfair_lock_lock(&connLock);
 	if (conn!=nil)	{
 		id<MCXServiceManager>	rop = [conn remoteObjectProxy];
 		[thingToReturn enumerateKeysAndObjectsUsingBlock:^(NSString *tmpClassName, NSXPCListenerEndpoint *tmpEndpoint, BOOL *stop)	{
@@ -96,10 +93,7 @@
 		}];
 		[rop finishedFetchingEndpoints];
 	}
-	OSSpinLockUnlock(&connLock);
-	
-	if (thingToReturn!=nil)
-		[thingToReturn autorelease];
+	os_unfair_lock_unlock(&connLock);
 }
 
 

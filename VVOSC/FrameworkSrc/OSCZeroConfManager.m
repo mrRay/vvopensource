@@ -9,7 +9,7 @@
 @implementation OSCZeroConfManager
 
 
-- (id) initWithOSCManager:(id)m serviceType:(NSString *)t {
+- (instancetype) initWithOSCManager:(id)m serviceType:(NSString *)t {
 	self = [super init];
 	if (self != nil)	{
 		domainBrowser = nil;
@@ -23,8 +23,7 @@
 		oscManager = m;
 		serviceTypeString = t;
 		if (m == nil)	{
-			[self release];
-			self = nil;
+			VVRELEASE(self);
 		}
 		else	{
 			domainBrowser = [[NSNetServiceBrowser alloc] init];
@@ -40,15 +39,11 @@
 	pthread_rwlock_destroy(&domainLock);
 	if (domainBrowser != nil)	{
 		[domainBrowser stop];
-		[domainBrowser release];
-		domainBrowser = nil;
+		VVRELEASE(domainBrowser);
 	}
-	if (domainDict != nil)	{
-		[domainDict release];
-		domainDict = nil;
-	}
+	VVRELEASE(domainDict);
 	VVRELEASE(serviceTypeString);
-	[super dealloc];
+	
 }
 
 

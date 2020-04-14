@@ -7,6 +7,9 @@
 //
 
 #import "MutNRLockDict.h"
+#import "VVBasicMacros.h"
+
+
 
 
 @implementation MutNRLockDict
@@ -17,9 +20,8 @@
 }
 + (id) dictionaryWithCapacity:(NSInteger)c	{
 	MutNRLockDict	*returnMe = [[MutNRLockDict alloc] initWithCapacity:0];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
+	
 }
 - (NSMutableDictionary *) createDictCopy	{
 	NSMutableDictionary		*returnMe = [NSMutableDictionary dictionaryWithCapacity:0];

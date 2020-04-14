@@ -34,4 +34,6 @@
 
 - (IBAction) ctrlValSliderUsed:(id)sender;
 
+- (IBAction) tmpButtonUsed:(id)sender;
+
 @end

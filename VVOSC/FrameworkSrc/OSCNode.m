@@ -11,16 +11,14 @@
 
 
 - (NSString *) description	{
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 		NSString		*returnMe = [NSString stringWithFormat:@"<OSCNode %@>",nodeName];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_unlock(&nameLock);
 	return returnMe;
 }
-+ (id) createWithName:(NSString *)n	{
++ (instancetype) createWithName:(NSString *)n	{
 	OSCNode		*returnMe = [[OSCNode alloc] initWithName:n];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 
 
@@ -29,7 +27,7 @@
 /*------------------------------------*/
 
 
-- (id) initWithName:(NSString *)n	{
+- (instancetype) initWithName:(NSString *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	if (n == nil)
 		goto BAIL;
@@ -37,8 +35,8 @@
 		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
-		nameLock = OS_SPINLOCK_INIT;
-		nodeName = [[n trimFirstAndLastSlashes] retain];
+		nameLock = OS_UNFAIR_LOCK_INIT;
+		nodeName = [n trimFirstAndLastSlashes];
 		fullName = nil;
 		lastFullName = nil;
 		nodeContents = nil;
@@ -47,7 +45,7 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
-		lastReceivedMessageLock = OS_SPINLOCK_INIT;
+		lastReceivedMessageLock = OS_UNFAIR_LOCK_INIT;
 		delegateArray = nil;
 		
 		oscDescription = nil;
@@ -65,16 +63,16 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self autorelease];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
-- (id) init	{
+- (instancetype) init	{
 	//NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
 		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
-		nameLock = OS_SPINLOCK_INIT;
+		nameLock = OS_UNFAIR_LOCK_INIT;
 		nodeName = nil;
 		fullName = nil;
 		lastFullName = nil;
@@ -84,7 +82,7 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
-		lastReceivedMessageLock = OS_SPINLOCK_INIT;
+		lastReceivedMessageLock = OS_UNFAIR_LOCK_INIT;
 		delegateArray = nil;
 		
 		oscDescription = nil;
@@ -100,8 +98,8 @@
 		userInfo = nil;
 		return self;
 	}
-	[self autorelease];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) prepareToBeDeleted	{
 	if (delegateArray != nil)	{
@@ -114,8 +112,7 @@
 			[delegateArray removeAllObjects];
 		[delegateArray unlock];
 		
-		[delegateArray release];
-		delegateArray = nil;
+		VVRELEASE(delegateArray);
 	}
 	[nodeContents rdlock];
 	for (OSCNode *nodePtr in [nodeContents array])	{
@@ -129,28 +126,18 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
-	OSSpinLockLock(&nameLock);
-		if (nodeName != nil)
-			[nodeName release];
-		nodeName = nil;
-		if (fullName != nil)
-			[fullName release];
-		fullName = nil;
-		if (lastFullName != nil)
-			[lastFullName release];
-		lastFullName = nil;
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
+		VVRELEASE(nodeName);
+		VVRELEASE(fullName);
+		VVRELEASE(lastFullName);
+	os_unfair_lock_unlock(&nameLock);
 	
-	if (nodeContents != nil)
-		[nodeContents release];
-	nodeContents = nil;
+	VVRELEASE(nodeContents);
 	parentNode = nil;
 	
-	OSSpinLockLock(&lastReceivedMessageLock);
-	if (lastReceivedMessage != nil)
-		[lastReceivedMessage release];
-	lastReceivedMessage = nil;
-	OSSpinLockUnlock(&lastReceivedMessageLock);
+	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVRELEASE(lastReceivedMessage);
+	os_unfair_lock_unlock(&lastReceivedMessageLock);
 	
 	VVRELEASE(oscDescription);
 	VVRELEASE(typeTagString);
@@ -164,7 +151,7 @@
 	
 	[self setUserInfo:nil];
 	
-	[super dealloc];
+	
 }
 
 
@@ -181,9 +168,9 @@
 	NSComparisonResult		returnMe = NSOrderedSame;
 	NSString				*compNodeName = [comp nodeName];
 	
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 		returnMe = (compNodeName==nil) ? NSOrderedSame : [nodeName caseInsensitiveCompare:compNodeName];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_unlock(&nameLock);
 	
 	return returnMe;
 }
@@ -197,12 +184,10 @@
 	if (self == o)
 		return YES;
 	
-	OSSpinLockLock(&nameLock);
-		NSString		*tmpNodeName = nodeName;
-		[tmpNodeName retain];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
+	NSString		*tmpNodeName = nodeName;
+	os_unfair_lock_unlock(&nameLock);
 	
-	[tmpNodeName autorelease];
 	//	if it's the same class and the nodeName matches, return YES
 	if (([o isKindOfClass:[OSCNode class]]) && ([tmpNodeName isEqualToString:[o nodeName]]))
 		return YES;
@@ -247,42 +232,39 @@
 	if ((n == nil)||(deleted))
 		return;
 	long		indexOfIdenticalPtr = NSNotFound;
-	[n retain];
+	OSCNode		*tmpNode = n;
 	[nodeContents wrlock];
-		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:n];
+		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:tmpNode];
 		if (indexOfIdenticalPtr != NSNotFound)
 			[nodeContents removeObjectAtIndex:indexOfIdenticalPtr];
 	[nodeContents unlock];
 	
 	if (indexOfIdenticalPtr != NSNotFound)
-		[n setParentNode:nil];
-	
-	[n release];
+		[tmpNode setParentNode:nil];
 }
 - (void) deleteLocalNode:(OSCNode *)n	{
 	if ((n == nil)||(deleted))
 		return;
 	long		indexOfIdenticalPtr = NSNotFound;
-	[n retain];
+	OSCNode		*tmpNode = n;
 	[nodeContents wrlock];
-		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:n];
+		indexOfIdenticalPtr = [nodeContents indexOfIdenticalPtr:tmpNode];
 		if (indexOfIdenticalPtr != NSNotFound)
 			[nodeContents removeObjectAtIndex:indexOfIdenticalPtr];
 	[nodeContents unlock];
 	
 	if (indexOfIdenticalPtr != NSNotFound)
-		[n setParentNode:nil];
+		[tmpNode setParentNode:nil];
 	
-	[n prepareToBeDeleted];
-	[n release];
+	[tmpNode prepareToBeDeleted];
 }
 - (void) removeFromAddressSpace	{
 	if (deleted || _mainVVOSCAddressSpace==nil || fullName==nil)
 		return;
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 	VVRELEASE(lastFullName);
-	lastFullName = (fullName==nil) ? nil : [fullName retain];
-	OSSpinLockUnlock(&nameLock);
+	lastFullName = (fullName==nil) ? nil : fullName;
+	os_unfair_lock_unlock(&nameLock);
 	[_mainVVOSCAddressSpace setNode:nil forAddress:fullName];
 }
 
@@ -303,7 +285,7 @@
 	[nodeContents rdlock];
 		for (OSCNode *nodePtr in [nodeContents array])	{
 			if ([[nodePtr nodeName] isEqualToString:n])	{
-				returnMe = [[nodePtr retain] autorelease];
+				returnMe = nodePtr;
 				break;
 			}
 		}
@@ -362,10 +344,10 @@
 	//return [self findNodeForAddressArray:[[p trimFirstAndLastSlashes] pathComponents] createIfMissing:c];
 	NSString		*trimmedString = [p trimFirstAndLastSlashes];
 	if (trimmedString==nil || [trimmedString length]==0)
-		return [[self retain] autorelease];
+		return self;
 	NSArray			*components = [trimmedString pathComponents];
 	if (components==nil || [components count]<1)
-		return [[self retain] autorelease];
+		return self;
 	return [self findNodeForAddressArray:components createIfMissing:c];
 }
 - (OSCNode *) findNodeForAddressArray:(NSArray *)a	{
@@ -474,14 +456,14 @@
 	for (ObjectHolder *holder in [delegateArray array])	{
 		if (holder == d)	{
 			if (ixsToRemove==nil)
-				ixsToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+				ixsToRemove = [[NSMutableIndexSet alloc] init];
 			[ixsToRemove addIndex:tmpIndex];
 		}
 		else	{
 			id					holderObj = [holder object];
 			if (holderObj==d || holderObj==nil)	{
 				if (ixsToRemove==nil)
-					ixsToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+					ixsToRemove = [[NSMutableIndexSet alloc] init];
 				[ixsToRemove addIndex:tmpIndex];
 			}
 		}
@@ -497,16 +479,16 @@
 	//NSLog(@"%s ... %@",__func__,self);
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
 	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 		VVRELEASE(lastFullName);
-		lastFullName = (fullName==nil) ? nil : [fullName retain];
+		lastFullName = (fullName==nil) ? nil : fullName;
 		VVRELEASE(fullName);
 		//NSLog(@"\t\tparentNode is %p, addressSpace is %p",parentNode,addressSpace);
 		if (parentNode == addressSpace)
-			fullName = [[NSString stringWithFormat:@"/%@",nodeName] retain];
+			fullName = [NSString stringWithFormat:@"/%@",nodeName];
 		else if (parentNode != nil)
-			fullName = [[NSString stringWithFormat:@"%@/%@",parentFullName,nodeName] retain];
-	OSSpinLockUnlock(&nameLock);
+			fullName = [NSString stringWithFormat:@"%@/%@",parentFullName,nodeName];
+	os_unfair_lock_unlock(&nameLock);
 	
 	//	inform delegates of name change
 	NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
@@ -543,33 +525,22 @@
 	if ((m==nil)||(deleted))
 		return;
 	//	retain the message so it doesn't disappear during this callback
-	[m retain];
+	OSCMessage			*tmpMsg = m;
 	NSMutableArray		*tmpCopy = nil;
 	
-	OSSpinLockLock(&lastReceivedMessageLock);
-		if (lastReceivedMessage != nil)
-			[lastReceivedMessage release];
-		lastReceivedMessage = m;
-		if (lastReceivedMessage != nil)
-			[lastReceivedMessage retain];
-	OSSpinLockUnlock(&lastReceivedMessageLock);
+	os_unfair_lock_lock(&lastReceivedMessageLock);
+		VVRELEASE(lastReceivedMessage);
+		lastReceivedMessage = tmpMsg;
+	os_unfair_lock_unlock(&lastReceivedMessageLock);
 	
 	[delegateArray wrlock];
 	tmpCopy = [delegateArray createArrayCopyFromObjects];
 	[delegateArray unlock];
 	if (tmpCopy != nil)	{
 		for (id delegate in tmpCopy)	{
-			[delegate node:self receivedOSCMessage:m];
+			[delegate node:self receivedOSCMessage:tmpMsg];
 		}
 	}
-	
-	
-	
-	
-	
-	//	release the message!
-	[m release];
-	
 	
 }
 
@@ -591,24 +562,23 @@
 	//[addressSpace nodeRenamed:self];
 }
 - (NSString *) nodeName	{
-	OSSpinLockLock(&nameLock);
-		NSString		*returnMe = (nodeName==nil)?nil:[[nodeName retain] autorelease];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
+		NSString		*returnMe = (nodeName==nil)?nil:nodeName;
+	os_unfair_lock_unlock(&nameLock);
 	return returnMe;
 }
 - (void) _setNodeName:(NSString *)n	{
 	//	get a name-lock, as i'll be checking and potentially changing the name
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 		//	if the new name is the same as the old name, unlock and return immediately
 		if ((n!=nil) && (nodeName!=nil) && ([n isEqualToString:nodeName]))	{
-			OSSpinLockUnlock(&nameLock);
+			os_unfair_lock_unlock(&nameLock);
 			return;
 		}
 		//	if i'm here, the name's changing- release, set, retain...then unlock
 		VVRELEASE(nodeName);
-		if (n != nil)
-			nodeName = [n retain];
-	OSSpinLockUnlock(&nameLock);
+		nodeName = n;
+	os_unfair_lock_unlock(&nameLock);
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
 	if (parentNode != nil)	{
@@ -617,15 +587,15 @@
 	}
 }
 - (NSString *) fullName	{
-	OSSpinLockLock(&nameLock);
-		NSString		*returnMe = (fullName==nil)?nil:[[fullName retain] autorelease];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
+		NSString		*returnMe = (fullName==nil)?nil:fullName;
+	os_unfair_lock_unlock(&nameLock);
 	return returnMe;
 }
 - (NSString *) lastFullName	{
-	OSSpinLockLock(&nameLock);
-		NSString		*returnMe = (lastFullName==nil) ? nil : [[lastFullName retain] autorelease];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
+		NSString		*returnMe = (lastFullName==nil) ? nil : lastFullName;
+	os_unfair_lock_unlock(&nameLock);
 	return returnMe;
 }
 - (id) nodeContents	{
@@ -669,31 +639,30 @@
 - (void) setLastReceivedMessage:(OSCMessage *)n	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&lastReceivedMessageLock);
+	os_unfair_lock_lock(&lastReceivedMessageLock);
 	VVRELEASE(lastReceivedMessage);
-	lastReceivedMessage = (n==nil) ? nil : [n retain];
-	OSSpinLockUnlock(&lastReceivedMessageLock);
+	lastReceivedMessage = (n==nil) ? nil : n;
+	os_unfair_lock_unlock(&lastReceivedMessageLock);
 }
 - (OSCMessage *) lastReceivedMessage	{
 	if (deleted)
 		return nil;
 	OSCMessage		*returnMe = nil;
 	
-	OSSpinLockLock(&lastReceivedMessageLock);
+	os_unfair_lock_lock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)	{
-			returnMe = [[lastReceivedMessage copy] autorelease];
+			returnMe = [lastReceivedMessage copy];
 		}
-	OSSpinLockUnlock(&lastReceivedMessageLock);
+	os_unfair_lock_unlock(&lastReceivedMessageLock);
 	
 	return returnMe;
 }
 - (OSCValue *) lastReceivedValue	{
 	OSCValue		*returnMe = nil;
-	OSSpinLockLock(&lastReceivedMessageLock);
+	os_unfair_lock_lock(&lastReceivedMessageLock);
 		returnMe = (lastReceivedMessage==nil) ? nil : [lastReceivedMessage value];
-		returnMe = [returnMe retain];
-	OSSpinLockUnlock(&lastReceivedMessageLock);
-	return [returnMe autorelease];
+	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	return returnMe;
 }
 - (id) delegateArray	{
 	return delegateArray;

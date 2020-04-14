@@ -1,5 +1,6 @@
 
 #import "MutLockArray.h"
+#import "VVBasicMacros.h"
 
 
 
@@ -26,9 +27,7 @@
 }
 + (id) arrayWithCapacity:(NSInteger)c	{
 	MutLockArray		*returnMe = [[MutLockArray alloc] initWithCapacity:c];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithCapacity:(NSInteger)c	{
 	pthread_rwlockattr_t		attr;
@@ -39,8 +38,8 @@
 		else
 			array = [[NSMutableArray alloc] initWithCapacity:c];
 		if (array == nil)	{
-			[self release];
-			return nil;
+			VVRELEASE(self);
+			return self;;
 		}
 		pthread_rwlockattr_init(&attr);
 		//pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
@@ -51,8 +50,8 @@
 		return self;
 	}
 	
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) init	{
 	return [self initWithCapacity:0];
@@ -65,10 +64,7 @@
 - (void) dealloc	{
 	[self lockRemoveAllObjects];
 	pthread_rwlock_destroy(&arrayLock);
-	if (array != nil)
-		[array release];
-	array = nil;
-	[super dealloc];
+	VVRELEASE(array);
 }
 
 
@@ -93,9 +89,7 @@
 }
 - (NSMutableArray *) createArrayCopy	{
 	NSMutableArray		*returnMe = [array mutableCopy];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (NSMutableArray *) lockCreateArrayCopy	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
@@ -366,13 +360,15 @@
 	if ((a==nil) || ([a count]<1))
 		return;
 	//@try	{
-		NSMutableIndexSet		*indicesToRemove = [[[NSMutableIndexSet alloc] init] autorelease];
+		NSMutableIndexSet		*indicesToRemove = [[NSMutableIndexSet alloc] init];
 		for (id anObj in a)	{
 			long			identicalIndex = [self indexOfIdenticalPtr:anObj];
 			if (identicalIndex != NSNotFound)
 				[indicesToRemove addIndex:identicalIndex];
 		}
 		[array removeObjectsAtIndexes:indicesToRemove];
+		
+		VVRELEASE(indicesToRemove);
 	//}
 	//@catch (NSException *err)	{
 		//NSLog(@"\t\tERR: %s - %@",__func__,err);

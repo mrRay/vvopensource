@@ -6,22 +6,27 @@
 
 
 
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
+
+
+
+
 @implementation VVSprite
 
 
 /*===================================================================================*/
 #pragma mark --------------------- create/destroy
 /*------------------------------------*/
-+ (id) createWithRect:(VVRECT)r inManager:(id)m	{
++ (instancetype) createWithRect:(VVRECT)r inManager:(id)m	{
 	VVSprite		*returnMe = [[VVSprite alloc] initWithRect:r inManager:m];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
+	
 }
-- (id) initWithRect:(VVRECT)r inManager:(id)m	{
+- (instancetype) initWithRect:(VVRECT)r inManager:(id)m	{
 	if ((m==nil)||(r.size.width==0)||(r.size.height==0)||(r.origin.x==NSNotFound)||(r.origin.y==NSNotFound))	{
-		[self release];
-		return nil;
+		VVRELEASE(self);
+		return self;
 	}
 	if (self = [super init])	{
 		deleted = NO;
@@ -40,7 +45,7 @@
 		
 		rect = r;
 		bezierPath = nil;
-		pathLock = OS_SPINLOCK_INIT;
+		pathLock = OS_UNFAIR_LOCK_INIT;
 		lastActionType = VVSpriteEventNULL;
 		lastActionCoords = VVMAKEPOINT(NSNotFound,NSNotFound);
 		lastActionInBounds = NO;
@@ -55,8 +60,8 @@
 		safeString = nil;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
@@ -71,7 +76,6 @@
 	VVRELEASE(userInfo);
 	VVRELEASE(safeString);
 	VVRELEASE(bezierPath);
-	[super dealloc];
 }
 
 /*===================================================================================*/
@@ -83,27 +87,27 @@
 	//VVPointLog(@"\t\tchecking point",p);
 	//VVRectLog(@"\t\tagainst rect",rect);
 	BOOL		returnMe = NO;
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	if (bezierPath==nil)	{
-		OSSpinLockUnlock(&pathLock);
+		UNLOCK(&pathLock);
 		returnMe = VVPOINTINRECT(p,rect);
 	}
 	else	{
 		returnMe = [bezierPath containsPoint:p];
-		OSSpinLockUnlock(&pathLock);
+		UNLOCK(&pathLock);
 	}
 	return returnMe;
 }
 - (BOOL) checkRect:(VVRECT)r	{
 	BOOL		returnMe = NO;
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	if (bezierPath==nil)	{
-		OSSpinLockUnlock(&pathLock);
+		UNLOCK(&pathLock);
 		returnMe = VVINTERSECTSRECT(rect,r);
 	}
 	else	{
 		returnMe = VVINTERSECTSRECT([bezierPath bounds],r);
-		OSSpinLockUnlock(&pathLock);
+		UNLOCK(&pathLock);
 	}
 	return returnMe;
 }
@@ -202,14 +206,10 @@
 		return;
 	//	get a write-lock on the array, i'll be changing its order
 	[managerSpriteArray wrlock];
-		//	retain me so i don't get released during any of this silliness
-		[self retain];
 		//	remove me from my manager's sprite array
 		[managerSpriteArray removeIdenticalPtr:self];
 		//	add me to my manager's sprite array at the "top"
 		[managerSpriteArray insertObject:self atIndex:0];
-		//	autorelease me, so the impact on my retain count has been a net 0
-		[self autorelease];
 	//	unlock the array
 	[managerSpriteArray unlock];
 }
@@ -223,14 +223,10 @@
 		return;
 	//	get a write-lock on the array, i'll be changing its order
 	[managerSpriteArray wrlock];
-		//	retain me so i don't get released during any of this silliness
-		[self retain];
 		//	remove me from my manager's sprite array
 		[managerSpriteArray removeIdenticalPtr:self];
 		//	add me to my manager's sprite array at the "bottom"
 		[managerSpriteArray addObject:self];
-		//	autorelease me, so the impact on my retain count has been a net 0
-		[self autorelease];
 	//	unlock the array
 	[managerSpriteArray unlock];
 }
@@ -297,9 +293,9 @@
 	lastActionCoords = VVMAKEPOINT(lastActionCoords.x+delta.x, lastActionCoords.y+delta.y);
 	mouseDownCoords = VVMAKEPOINT(mouseDownCoords.x+delta.x, mouseDownCoords.y+delta.y);
 	
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	VVRELEASE(bezierPath);
-	OSSpinLockUnlock(&pathLock);
+	UNLOCK(&pathLock);
 }
 - (VVRECT) rect	{
 	return rect;
@@ -310,11 +306,10 @@
 - (void) setBezierPath:(NSBezierPath *)n
 #endif
 {
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	VVRELEASE(bezierPath);
-	if (n != nil)
-		bezierPath = [n retain];
-	OSSpinLockUnlock(&pathLock);
+	bezierPath = n;
+	UNLOCK(&pathLock);
 }
 #if TARGET_OS_IPHONE
 - (UIBezierPath *) copyBezierPath
@@ -327,20 +322,20 @@
 #else
 	NSBezierPath		*returnMe = nil;
 #endif
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	if (bezierPath != nil)
 		returnMe = [bezierPath copy];
-	OSSpinLockUnlock(&pathLock);
+	UNLOCK(&pathLock);
 	return returnMe;
 }
 - (VVRECT) spriteBounds	{
 	VVRECT		returnMe = VVZERORECT;
-	OSSpinLockLock(&pathLock);
+	LOCK(&pathLock);
 	if (bezierPath==nil)
 		returnMe = rect;
 	else
 		returnMe = [bezierPath bounds];
-	OSSpinLockUnlock(&pathLock);
+	UNLOCK(&pathLock);
 	return returnMe;
 }
 - (VVSpriteEventType) lastActionType	{
@@ -368,8 +363,7 @@
 - (void) setUserInfo:(id)n	{
 	//NSLog(@"%s ... %@",__func__,n);
 	VVRELEASE(userInfo);
-	if (n != nil)
-		userInfo = [n retain];
+	userInfo = n;
 }
 - (id) userInfo	{
 	return userInfo;
@@ -377,8 +371,7 @@
 @synthesize NRUserInfo;
 - (void) setSafeString:(id)n	{
 	VVRELEASE(safeString);
-	if (n != nil)
-		safeString = [n retain];
+	safeString = n;
 }
 - (id) safeString	{
 	return safeString;

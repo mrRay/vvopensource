@@ -61,7 +61,7 @@ extern long			_spriteGLViewSysVers;
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
 	double					localToBackingBoundsMultiplier;
 	MutLockArray			*vvSubviews;
-	id						dragNDropSubview;	//	NOT RETAINED
+	__weak id				dragNDropSubview;	//	NOT RETAINED
 	
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
@@ -74,7 +74,7 @@ extern long			_spriteGLViewSysVers;
 	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
-	VVView					*clickedSubview;	//	NOT RETAINED
+	__weak VVView			*clickedSubview;	//	NOT RETAINED
 	
 	VVFlushMode				flushMode;
 	
@@ -84,7 +84,7 @@ extern long			_spriteGLViewSysVers;
 	BOOL					waitingForFenceA;
 	BOOL					fenceADeployed;
 	BOOL					fenceBDeployed;
-	OSSpinLock				fenceLock;
+	os_unfair_lock				fenceLock;
 }
 
 - (void) generalInit;
@@ -101,10 +101,10 @@ extern long			_spriteGLViewSysVers;
 - (void) _lock;
 - (void) _unlock;
 //- (void) lockSetOpenGLContext:(NSOpenGLContext *)n;
-- (void) addVVSubview:(id)n;
-- (void) removeVVSubview:(id)n;
-- (BOOL) containsSubview:(id)n;
-- (id) vvSubviewHitTest:(VVPOINT)p;
+- (void) addVVSubview:(VVView *)n;
+- (void) removeVVSubview:(VVView *)n;
+- (BOOL) containsSubview:(VVView *)n;
+- (VVView *) vvSubviewHitTest:(VVPOINT)p;
 - (void) reconcileVVSubviewDragTypes;
 
 @property (readonly) BOOL deleted;
@@ -116,11 +116,11 @@ extern long			_spriteGLViewSysVers;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
-@property (retain,readwrite) NSColor *clearColor;
+@property (strong,readwrite) NSColor *clearColor;
 - (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
 - (void) getClearColors:(GLfloat *)n;
 @property (assign,readwrite) BOOL drawBorder;
-@property (retain,readwrite) NSColor *borderColor;
+@property (strong,readwrite) NSColor *borderColor;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (readonly) long mouseDownModifierFlags;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;

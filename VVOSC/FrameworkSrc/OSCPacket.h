@@ -24,8 +24,8 @@ An OSC packet is the basic unit of transmitting OSC data- the OSCPacket class is
 
 + (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
 ///	Creates & returns an auto-released packet from either an OSCBundle or an OSCMessage
-+ (id) createWithContent:(id)c;
-- (id) initWithContent:(id)c;
++ (instancetype) createWithContent:(id)c;
+- (instancetype) initWithContent:(id)c;
 
 - (long) bufferLength;
 - (unsigned char *) payload;

@@ -109,45 +109,45 @@
 }
 
 
-+ (id) createWithType:(Byte)t channel:(Byte)c {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:0] autorelease];
++ (instancetype) createWithType:(Byte)t channel:(Byte)c {
+	return [[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:0];
 }
-+ (id) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time; {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:time] autorelease];
++ (instancetype) createWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time; {
+	return [[VVMIDIMessage alloc] initFromVals:t:c:-1:-1:-1:time];
 }
-+ (id) createWithSysexArray:(NSMutableArray *)s {
-	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:0] autorelease];
++ (instancetype) createWithSysexArray:(NSMutableArray *)s {
+	return [[VVMIDIMessage alloc] initWithSysexArray:s timestamp:0];
 }
-+ (id) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;	{
-	return [[[VVMIDIMessage alloc] initWithSysexArray:s timestamp:time] autorelease];
++ (instancetype) createWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time;	{
+	return [[VVMIDIMessage alloc] initWithSysexArray:s timestamp:time];
 }
-+ (id) createWithSysexData:(NSData *)d	{
-	return [[[VVMIDIMessage alloc] initWithSysexData:d timestamp:0] autorelease];
++ (instancetype) createWithSysexData:(NSData *)d	{
+	return [[VVMIDIMessage alloc] initWithSysexData:d timestamp:0];
 }
-+ (id) createWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
-	return [[[VVMIDIMessage alloc] initWithSysexData:d timestamp:time] autorelease];
++ (instancetype) createWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
+	return [[VVMIDIMessage alloc] initWithSysexData:d timestamp:time];
 }
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:(uint64_t)0] autorelease];
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+	return [[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:-1:(uint64_t)0];
 }
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:(uint64_t)0] autorelease];
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+	return [[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:(uint64_t)0];
 }
-+ (id) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
-	return [[[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:time] autorelease];
++ (instancetype) createFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
+	return [[VVMIDIMessage alloc] initFromVals:t:c:d1:d2:d3:time];
 }
 
 
-- (id) initWithType:(Byte)t channel:(Byte)c {
+- (instancetype) initWithType:(Byte)t channel:(Byte)c {
 	return [self initFromVals:t :c :-1 :-1 :-1 :0];
 }
-- (id) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time	{
+- (instancetype) initWithType:(Byte)t channel:(Byte)c timestamp:(uint64_t)time	{
 	return [self initFromVals:t :c :-1 :-1 :-1 :time];
 }
-- (id) initWithSysexArray:(NSMutableArray *)s {
+- (instancetype) initWithSysexArray:(NSMutableArray *)s {
 	return [self initWithSysexArray:s timestamp:0];
 }
-- (id) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time; {
+- (instancetype) initWithSysexArray:(NSMutableArray *)s timestamp:(uint64_t)time; {
 	if ((s==nil)||([s count]<1))
 		goto BAIL;
 	//	if any vals in sysex array are improperly sized, release & return nil
@@ -170,13 +170,12 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
 	return nil;
 }
-- (id) initWithSysexData:(NSData *)d	{
+- (instancetype) initWithSysexData:(NSData *)d	{
 	return [self initWithSysexData:d timestamp:0];
 }
-- (id) initWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
+- (instancetype) initWithSysexData:(NSData *)d timestamp:(uint64_t)time	{
 	if (d==nil || [d length]<1)
 		goto BAIL;
 	
@@ -187,7 +186,7 @@
 		data1 = -1;
 		data2 = -1;
 		data3 = -1;
-		sysexArray = [[NSMutableArray arrayWithCapacity:0] retain];
+		sysexArray = [NSMutableArray arrayWithCapacity:0];
 		timestamp = time;
 		
 		uint8_t			*rPtr = (uint8_t *)[d bytes];
@@ -206,16 +205,15 @@
 	}
 	BAIL:
 	NSLog(@"\t\terr: %s - BAIL",__func__);
-	[self release];
 	return nil;
 }
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 {
 	return [self initFromVals:t :c :d1 :d2 :-1 :0];
 }
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 {
 	return [self initFromVals:t :c :d1 :d2 :d3 :0];
 }
-- (id) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
+- (instancetype) initFromVals:(Byte)t :(Byte)c :(Byte)d1 :(Byte)d2 :(Byte)d3 :(uint64_t)time	{
 	if (self = [super init])	{
 		type = t;
 		channel = c;
@@ -226,12 +224,11 @@
 		timestamp = time;
 		return self;
 	}
-	[self release];
 	return nil;
 }
 
 
-- (id) copyWithZone:(NSZone *)z	{
+- (instancetype) copyWithZone:(NSZone *)z	{
 	VVMIDIMessage		*copy = nil;
 	if (type == VVMIDIBeginSysexDumpVal)
 		copy = [[[self class] allocWithZone:z] initWithSysexArray:sysexArray timestamp:timestamp];
@@ -248,11 +245,8 @@
 
 
 - (void) dealloc	{
-	if (sysexArray != nil)	{
-		[sysexArray release];
-		sysexArray = nil;
-	}
-	[super dealloc];
+	VVRELEASE(sysexArray);
+	
 }
 
 
@@ -295,7 +289,7 @@
 		*wPtr = (tmpNum==nil) ? 0 : [tmpNum intValue];
 		++wPtr;
 	}
-	return (returnMe==nil) ? nil : [returnMe autorelease];
+	return (returnMe==nil) ? nil : returnMe;
 }
 - (void) setTimestamp:(uint64_t)newTimestamp {
 	timestamp = newTimestamp;

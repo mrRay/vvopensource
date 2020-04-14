@@ -51,9 +51,9 @@ pthread_mutex_t			_globalQCContextLock;
 	}
 	pthread_mutex_lock(&_globalQCContextLock);
 	VVRELEASE(_globalQCContextSharedContext);
-	_globalQCContextSharedContext = [c retain];
+	_globalQCContextSharedContext = c;
 	VVRELEASE(_globalQCContextPixelFormat);
-	_globalQCContextPixelFormat = [p retain];
+	_globalQCContextPixelFormat = p;
 	VVRELEASE(_globalQCContextGLContext);
 	_globalQCContextGLContext = [[NSOpenGLContext alloc] initWithFormat:p shareContext:c];
 	[_globalQCContextGLContext setCurrentVirtualScreen:[c currentVirtualScreen]];
@@ -81,16 +81,16 @@ pthread_mutex_t			_globalQCContextLock;
 	if (self!=nil)	{
 		size = n;
 		pthread_mutex_lock(&_globalQCContextLock);
-		context = (_globalQCContextGLContext==nil) ? nil : [_globalQCContextGLContext retain];
+		context = (_globalQCContextGLContext==nil) ? nil : _globalQCContextGLContext;
 		if (context!=nil)	{
-			sharedContext = (_globalQCContextSharedContext==nil) ? nil : [_globalQCContextSharedContext retain];
-			customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : [_globalQCContextPixelFormat retain];
+			sharedContext = (_globalQCContextSharedContext==nil) ? nil : _globalQCContextSharedContext;
+			customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : _globalQCContextPixelFormat;
 		}
 		pthread_mutex_unlock(&_globalQCContextLock);
 		if (context==nil)	{
 			NSLog(@"\t\terr: couldn't make context, call +[QCGLScene prepCommonQCBackendToRenderOnContext:pixelFormat:] before trying to init a QCGLScene");
-			[self release];
-			self = nil;
+			VVRELEASE(self);
+			return self;
 		}
 	}
 	return self;
@@ -121,7 +121,7 @@ pthread_mutex_t			_globalQCContextLock;
 		VVRELEASE(stopwatch);
 		//VVRELEASE(mouseEventDict);
 		VVRELEASE(mouseEventArray);
-		[super dealloc];
+		
 	//pthread_mutex_unlock(&renderLock);
 	pthread_mutex_destroy(&renderLock);
 	//NSLog(@"\t\t%s - FINISHED",__func__);
@@ -135,11 +135,10 @@ pthread_mutex_t			_globalQCContextLock;
 		pthread_mutex_lock(&renderLock);
 			if (renderer != nil)	{
 				//NSLog(@"\t\tdeleteArray is %p",renderThreadDeleteArray);
-				OSSpinLockLock(&renderThreadLock);
+				os_unfair_lock_lock(&renderThreadLock);
 				if (renderThreadDeleteArray != nil)
 					[renderThreadDeleteArray lockAddObject:renderer];
-				OSSpinLockUnlock(&renderThreadLock);
-				[renderer release];
+				os_unfair_lock_unlock(&renderThreadLock);
 				renderer = nil;
 			}
 		pthread_mutex_lock(&renderLock);
@@ -165,19 +164,18 @@ pthread_mutex_t			_globalQCContextLock;
 			//	the renderer must be created, rendered, and released all on the same thread!
 			if (renderer != nil)	{
 				BOOL			addedToRenderThread = NO;
-				OSSpinLockLock(&renderThreadLock);
+				os_unfair_lock_lock(&renderThreadLock);
 				if (renderThreadDeleteArray != nil)	{
 					addedToRenderThread = YES;
 					[renderThreadDeleteArray lockAddObject:renderer];
 				}
-				OSSpinLockUnlock(&renderThreadLock);
+				os_unfair_lock_unlock(&renderThreadLock);
 				if (!addedToRenderThread)	{
 					if (context!=nil)	{
 						CGLLockContext([context CGLContextObj]);
 						//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
 					}
 					
-					[renderer release];
 					renderer = nil;
 					
 					if (context!=nil)	{
@@ -186,13 +184,12 @@ pthread_mutex_t			_globalQCContextLock;
 					}
 				}
 				else	{
-					[renderer release];
 					renderer = nil;
 				}
 			}
 			//	retain the passed path
 			if (p != nil)
-				filePath = [p retain];
+				filePath = p;
 			//	if i was actually passed a path, try to make a comp for it
 			if (filePath != nil)	{
 				comp = [VVQCComposition compositionWithFile:filePath];
@@ -206,8 +203,6 @@ pthread_mutex_t			_globalQCContextLock;
 							waitUntilDone:NO];
 						comp = nil;
 					}
-					else
-						[comp retain];
 				}
 				else
 					NSLog(@"\t\terr: composition was nil");
@@ -232,12 +227,12 @@ pthread_mutex_t			_globalQCContextLock;
 	pthread_mutex_lock(&renderLock);
 		if (context == nil)	{
 			pthread_mutex_lock(&_globalQCContextLock);
-			context = (_globalQCContextGLContext==nil) ? nil : [_globalQCContextGLContext retain];
+			context = (_globalQCContextGLContext==nil) ? nil : _globalQCContextGLContext;
 			if (context!=nil)	{
 				VVRELEASE(sharedContext);
-				sharedContext = (_globalQCContextSharedContext==nil) ? nil : [_globalQCContextSharedContext retain];
+				sharedContext = (_globalQCContextSharedContext==nil) ? nil : _globalQCContextSharedContext;
 				VVRELEASE(customPixelFormat);
-				customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : [_globalQCContextPixelFormat retain];
+				customPixelFormat = (_globalQCContextPixelFormat==nil) ? nil : _globalQCContextPixelFormat;
 			}
 			pthread_mutex_unlock(&_globalQCContextLock);
 		}
@@ -259,11 +254,11 @@ pthread_mutex_t			_globalQCContextLock;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&renderThreadLock);
+	os_unfair_lock_lock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	OSSpinLockUnlock(&renderThreadLock);
+	os_unfair_lock_unlock(&renderThreadLock);
 	
 	BOOL		mouseEventsRequireAdditionalPass = NO;
 	
@@ -301,7 +296,7 @@ pthread_mutex_t			_globalQCContextLock;
 						if ([mouseEventArray count]>20)
 							[mouseEventArray removeAllObjects];
 						if ([mouseEventArray count]>0)	{
-							args = [[mouseEventArray objectAtIndex:0] retain];
+							args = [mouseEventArray objectAtIndex:0];
 							[mouseEventArray removeObjectAtIndex:0];
 						}
 						if ([mouseEventArray count]>0)
@@ -324,8 +319,7 @@ pthread_mutex_t			_globalQCContextLock;
 						double		timeSinceStart = [stopwatch timeSinceStart];
 						[renderer renderAtTime:(timeSinceStart<=0.0)?1.0/70.0:timeSinceStart arguments:args];
 					}
-					if (args != nil)
-						[args release];
+					VVRELEASE(args);
 					
 					//	do any cleanup/flush
 					[self _renderCleanup];
@@ -434,16 +428,16 @@ pthread_mutex_t			_globalQCContextLock;
 
 
 - (NSString *) filePath	{
-	return [[filePath retain] autorelease];
+	return filePath;
 }
 - (VVQCComposition *) comp	{
-	return [[comp retain] autorelease];
+	return comp;
 }
 - (QCRenderer *) renderer	{
-	return [[renderer retain] autorelease];
+	return renderer;
 }
 - (MutLockArray *) mouseEventArray	{
-	return [[mouseEventArray retain] autorelease];
+	return mouseEventArray;
 }
 
 

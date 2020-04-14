@@ -23,8 +23,8 @@
 		ctx = nil;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
 	if (!deleted)
@@ -35,7 +35,7 @@
 	VVRELEASE(ctx);
 	pthread_mutex_unlock(&contextLock);
 	pthread_mutex_destroy(&contextLock);
-	[super dealloc];
+	
 }
 - (void) prepareToBeDeleted	{
 	pthread_mutex_lock(&contextLock);

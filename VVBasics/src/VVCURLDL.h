@@ -61,9 +61,9 @@
 @property (assign,readwrite,setter=setDNSCacheTimeout:) long dnsCacheTimeout;
 @property (assign,readwrite) long connectTimeout;
 - (void) setLogin:(NSString *)user password:(NSString *)pass;
-@property (retain,readwrite) NSString *userAgent;
-@property (retain,readwrite) NSString *referer;
-@property (retain,readwrite) NSString *acceptedEncoding;
+@property (strong,readwrite) NSString *userAgent;
+@property (strong,readwrite) NSString *referer;
+@property (strong,readwrite) NSString *acceptedEncoding;
 
 - (void) writePtr:(void *)ptr size:(size_t)s;
 - (void) appendStringToHeader:(NSString *)s;

@@ -17,7 +17,7 @@ extern int					_spriteControlCount;
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	
-	OSSpinLock				propertyLock;
+	os_unfair_lock				propertyLock;
 	NSEvent					*lastMouseEvent;
 	NSColor					*clearColor;
 	BOOL					drawBorder;
@@ -27,7 +27,7 @@ extern int					_spriteControlCount;
 	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
-	NSView					*clickedSubview;	//	NOT RETAINED
+	__weak NSView					*clickedSubview;	//	NOT RETAINED
 }
 
 - (void) generalInit;
@@ -43,9 +43,9 @@ extern int					_spriteControlCount;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
 @property (readonly) NSEvent *lastMouseEvent;
-@property (retain,readwrite) NSColor *clearColor;
+@property (strong,strong) NSColor *clearColor;
 @property (assign,readwrite) BOOL drawBorder;
-@property (retain,readwrite) NSColor *borderColor;
+@property (strong,strong) NSColor *borderColor;
 @property (readonly) long mouseDownModifierFlags;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;

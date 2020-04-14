@@ -9,7 +9,7 @@
 \ingroup VVBufferPool
 */
 @interface VVBufferAggregate : NSObject	{
-	OSSpinLock		planeLock;
+	os_unfair_lock		planeLock;
 	VVBuffer		*planes[4];
 }
 

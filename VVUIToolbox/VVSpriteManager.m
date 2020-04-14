@@ -50,8 +50,8 @@ MutLockArray		*_spriteManagerArray;
 		spriteIndexCount = 1;
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
@@ -70,7 +70,6 @@ MutLockArray		*_spriteManagerArray;
 	spriteInUse = nil;
 	VVRELEASE(spritesInUse);
 #endif
-	[super dealloc];
 }
 
 
@@ -383,7 +382,7 @@ MutLockArray		*_spriteManagerArray;
 	
 	return returnMe;
 }
-- (id) makeNewSpriteAtBottomForRect:(VVRECT)r	{
+- (VVSprite *) makeNewSpriteAtBottomForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;
@@ -391,7 +390,7 @@ MutLockArray		*_spriteManagerArray;
 	[spriteArray lockAddObject:returnMe];
 	return returnMe;
 }
-- (id) makeNewSpriteAtTopForRect:(VVRECT)r	{
+- (VVSprite *) makeNewSpriteAtTopForRect:(VVRECT)r	{
 	if (deleted)
 		return nil;
 	id			returnMe = nil;
@@ -486,7 +485,7 @@ MutLockArray		*_spriteManagerArray;
 #endif
 	[spriteArray unlock];
 }
-- (void) removeSprite:(id)z	{
+- (void) removeSprite:(VVSprite *)z	{
 	if (deleted || z==nil)
 		return;
 	if ((spriteArray!=nil)&&([spriteArray count]>0))	{

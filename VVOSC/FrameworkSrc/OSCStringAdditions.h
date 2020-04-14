@@ -21,8 +21,8 @@ extern MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object 
 	regex_t		*regex;
 }
 
-+ (id) createWithString:(NSString *)n;
-- (id) initWithString:(NSString *)n;
++ (instancetype) createWithString:(NSString *)n;
+- (instancetype) initWithString:(NSString *)n;
 - (BOOL) evalAgainstString:(NSString *)n;
 - (NSString *) regexString;
 

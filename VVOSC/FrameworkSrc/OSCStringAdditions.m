@@ -15,42 +15,37 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 @implementation OSCPOSIXRegExpHolder
 
 
-+ (id) createWithString:(NSString *)n	{
-	id		returnMe = (id)[[OSCPOSIXRegExpHolder alloc] initWithString:n];
-	return (returnMe==nil) ? nil : [returnMe autorelease];
++ (instancetype) createWithString:(NSString *)n	{
+	OSCPOSIXRegExpHolder		*returnMe = [[OSCPOSIXRegExpHolder alloc] initWithString:n];
+	return returnMe;
 }
-- (id) initWithString:(NSString *)n	{
+- (instancetype) initWithString:(NSString *)n	{
 	self = [super init];
 	if (self != nil)	{
-		regexString = [n retain];
+		regexString = n;
 		regex = calloc(1,sizeof(regex_t));
 		const char		*cStr = (regexString==nil) ? nil : [regexString cStringUsingEncoding:NSASCIIStringEncoding];
 		if (cStr == nil)	{
-			[self release];
-			self = nil;
+			VVRELEASE(self);
 		}
 		else	{
 			int				err = regcomp(regex, cStr, REG_EXTENDED | REG_NOSUB);
 			if (err != 0)	{
 				NSLog(@"\t\terr %d while compiling regex in %s",err,__func__);
-				[self release];
-				self = nil;
+				VVRELEASE(self);
 			}
 		}
 	}
 	return self;
 }
 - (void) dealloc	{
-	if (regexString != nil)	{
-		[regexString release];
-		regexString = nil;
-	}
+	VVRELEASE(regexString);
 	if (regex != nil)	{
 		regfree(regex);
 		free(regex);
 		regex = nil;
 	}
-	[super dealloc];
+	
 }
 - (BOOL) evalAgainstString:(NSString *)n	{
 	if (n == nil)
@@ -89,7 +84,7 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 		initWithBytes:b
 		length:l
 		encoding:e];
-	return (returnMe==nil)?nil:[returnMe autorelease];
+	return (returnMe==nil)?nil:returnMe;
 }
 + (NSString *) stringFromRawIPAddress:(unsigned long)i	{
 	struct in_addr		tmpAddr;
@@ -208,10 +203,6 @@ MutLockDict			*_OSCStrPOSIXRegexDict;	//	key is the regex string, object is an O
 		@synchronized ([self class])	{
 			if (_OSCStrAdditionsWildcardCharSet == nil)	{
 				_OSCStrAdditionsWildcardCharSet = [NSCharacterSet characterSetWithCharactersInString:@"[\\^$.|?*+("];
-				if (_OSCStrAdditionsWildcardCharSet != nil)	{
-					//NSLog(@"\t\tmade OSC wildcard char set!");
-					[_OSCStrAdditionsWildcardCharSet retain];
-				}
 			}
 		}
 	}

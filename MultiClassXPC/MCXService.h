@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "MCXProtocols.h"
+#include <os/lock.h>
 
 
 
@@ -10,10 +11,10 @@
 
 
 @interface MCXService : NSObject <MCXService>	{
-	OSSpinLock			connLock;
+	os_unfair_lock			connLock;
 	NSXPCConnection		*conn;
 	
-	OSSpinLock				classDictLock;
+	os_unfair_lock				classDictLock;
 	NSMutableDictionary		*classDict;
 }
 

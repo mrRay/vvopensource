@@ -19,19 +19,19 @@
 #pragma mark -------------- instance methods
 
 
-- (id) initWithXPCServiceIdentifier:(NSString *)n	{
+- (instancetype) initWithXPCServiceIdentifier:(NSString *)n	{
 	NSLog(@"%s ... %@",__func__,n);
 	if (n==nil)	{
-		[self release];
-		return nil;
+		self = nil;
+		return self;
 	}
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_SPINLOCK_INIT;
-		connServiceIdentifier = [n retain];
+		connLock = OS_UNFAIR_LOCK_INIT;
+		connServiceIdentifier = n;
 		conn = nil;
 		classesAvailable = NO;
-		classDictLock = OS_SPINLOCK_INIT;
+		classDictLock = OS_UNFAIR_LOCK_INIT;
 		classDict = nil;
 		
 		[self establishConnection];
@@ -41,13 +41,10 @@
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
 	[self killConnection];
-	OSSpinLockLock(&classDictLock);
-	if (classDict!=nil)	{
-		[classDict release];
-		classDict = nil;
-	}
-	OSSpinLockUnlock(&classDictLock);
-	[super dealloc];
+	os_unfair_lock_lock(&classDictLock);
+	classDict = nil;
+	os_unfair_lock_unlock(&classDictLock);
+	
 }
 
 
@@ -57,7 +54,7 @@
 	[self killConnection];
 	
 	//	make the actual connection, configure it, then resume it
-	OSSpinLockLock(&connLock);
+	os_unfair_lock_lock(&connLock);
 	__block id		bss = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
 		NSLog(@"%@ err handler for %@",[bss className],connServiceIdentifier);
@@ -72,14 +69,14 @@
 	[conn setInterruptionHandler:errHandlerBlock];
 	
 	[conn resume];
-	OSSpinLockUnlock(&connLock);
+	os_unfair_lock_unlock(&connLock);
 	
 	//	fetch the listener endpoints from the remote object- this will launch the XPC service
 	[self fetchListenerEndpoints];
 }
 - (void) killConnection	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	os_unfair_lock_lock(&connLock);
 	if (conn != nil)	{
 		//NSLog(@"\t\tinvalidating the conn");
 		[conn setInvalidationHandler:nil];
@@ -88,54 +85,50 @@
 		[conn invalidate];
 		//	if i don't explicitly set the exported object to nil, the exported object (self) just fucking leaks.  i know, i can't believe it either.
 		[conn setExportedObject:nil];
-		[conn release];
 		conn = nil;
 	}
-	OSSpinLockUnlock(&connLock);
+	os_unfair_lock_unlock(&connLock);
 	
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	if (classDict!=nil)
 		[classDict removeAllObjects];
 	classesAvailable = NO;
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 }
 - (void) listenerErrHandlerTripped	{
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	if (classDict!=nil)
 		[classDict removeAllObjects];
 	classesAvailable = NO;
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 }
 - (void) fetchListenerEndpoints	{
 	//NSLog(@"%s",__func__);
 	//	lock, clear the class dict
-	OSSpinLockLock(&classDictLock);
-	if (classDict!=nil)	{
-		[classDict release];
-		classDict = nil;
-	}
+	os_unfair_lock_lock(&classDictLock);
+	classDict = nil;
 	classesAvailable = NO;
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 	
 	//	tell the ROP to fetch the classes
-	OSSpinLockLock(&connLock);
+	os_unfair_lock_lock(&connLock);
 	if (conn!=nil && [conn remoteObjectProxy]!=nil)	{
 		[(id<MCXService>)[conn remoteObjectProxy] fetchListenerEndpoints];
 	}
-	OSSpinLockUnlock(&connLock);
+	os_unfair_lock_unlock(&connLock);
 }
 - (BOOL) classesAvailable	{
 	BOOL		returnMe = NO;
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	returnMe = classesAvailable;
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 	return returnMe;
 }
 - (NSDictionary *) classDict	{
 	NSDictionary		*returnMe = nil;
-	OSSpinLockLock(&classDictLock);
-	returnMe = (classDict==nil) ? nil : [[classDict copy] autorelease];
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
+	returnMe = (classDict==nil) ? nil : [classDict copy];
+	os_unfair_lock_unlock(&classDictLock);
 	return returnMe;
 }
 - (NSXPCListenerEndpoint *) listenerEndpointForClassNamed:(NSString *)n	{
@@ -143,12 +136,11 @@
 	if (n==nil)
 		return nil;
 	NSXPCListenerEndpoint		*returnMe = nil;
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	if (classDict!=nil)	{
 		returnMe = [classDict objectForKey:n];
-		returnMe = (returnMe==nil) ? nil : [[returnMe retain] autorelease];
 	}
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 	return returnMe;
 }
 
@@ -160,17 +152,17 @@
 	//NSLog(@"%s ... %@, %@",__func__,n,e);
 	if (e==nil || n==nil)
 		return;
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	if (classDict==nil)
-		classDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+		classDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[classDict setObject:e forKey:n];
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 }
 - (void) finishedFetchingEndpoints	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&classDictLock);
+	os_unfair_lock_lock(&classDictLock);
 	classesAvailable = YES;
-	OSSpinLockUnlock(&classDictLock);
+	os_unfair_lock_unlock(&classDictLock);
 }
 
 

@@ -61,7 +61,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		_msaaMaxSamples = tmp;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &tmp);
 		_glMaxTextureDimension = tmp;
-		[tmpContext release];
+		VVRELEASE(tmpContext);
 	}
 #else	//	NOT !TARGET_OS_IPHONE
 	[VVBufferGLKView class];
@@ -81,8 +81,6 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	//NSLog(@"%s ... %p",__func__,n);
 	VVRELEASE(_globalVVBufferPool);
 	_globalVVBufferPool = n;
-	if (_globalVVBufferPool != nil)
-		[_globalVVBufferPool retain];
 	if (_globalVVBufferCopier == nil)	{
 #if !TARGET_OS_IPHONE
 		[VVBufferCopier createGlobalVVBufferCopierWithSharedContext:[n sharedContext]];
@@ -119,7 +117,6 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	//NSLog(@"\t\tmaking an  EAGLContext in %s for %@",__func__,self);
 	EAGLContext			*c = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:nil];
 	_globalVVBufferPool = [[VVBufferPool alloc] initWithContext:c sized:VVMAKESIZE(1,1)];
-	[c release];
 	if (_globalVVBufferCopier == nil)
 		[VVBufferCopier createGlobalVVBufferCopierWithSharegroup:[c sharegroup]];
 }
@@ -317,7 +314,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		for (VVBuffer *bufferPtr in [freeBuffers array])	{
 			if ([bufferPtr idleCount]>30)	{
 				if (indicesToDelete == nil)
-					indicesToDelete = [[[NSMutableIndexSet alloc] init] autorelease];
+					indicesToDelete = [[NSMutableIndexSet alloc] init];
 				[indicesToDelete addIndex:tmpIndex];
 			}
 			++tmpIndex;
@@ -371,7 +368,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	pthread_mutex_init(&contextLock, &attr);
 	pthread_mutexattr_destroy(&attr);
 	
-	freeBuffers = [[MutLockArray arrayWithCapacity:0] retain];
+	freeBuffers = [MutLockArray arrayWithCapacity:0];
 	
 	housekeepingThread = [[VVThreadLoop alloc] initWithTimeInterval:1.0 target:self selector:@selector(housekeeping)];
 	//[housekeepingThread start];
@@ -381,7 +378,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 - (void) dealloc	{
 	pthread_mutex_destroy(&contextLock);
 	VVRELEASE(freeBuffers);
-	[super dealloc];
+	
 }
 
 
@@ -752,7 +749,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 					if ((d->localSurfaceID!=0 && srf!=nil) || (d->localSurfaceID==0 && srf==nil))	{
 #endif	//	!TARGET_OS_IPHONE
 						//	retain the buffer (so it doesn't get freed)
-						returnMe = [bufferPtr retain];
+						returnMe = bufferPtr;
 						//	remove the buffer from the array
 						[freeBuffers removeObjectAtIndex:tmpIndex];
 						//	set the buffer's idleCount to 0, so it's "fresh" (so it gets returned to the pool when it's no longer needed)
@@ -821,7 +818,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 					if ((d->localSurfaceID!=0 && srf!=nil) || (d->localSurfaceID==0 && srf==nil))	{
 #endif	//	!TARGET_OS_IPHONE
 						//	retain the buffer (so it doesn't get freed)
-						returnMe = [bufferPtr retain];
+						returnMe = bufferPtr;
 						//	remove the buffer from the array
 						[freeBuffers removeObjectAtIndex:tmpIndex];
 						//	set the buffer's idleCount to 0, so it's "fresh" (so it gets returned to the pool when it's no longer needed)
@@ -1245,7 +1242,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	//	save the current NSGraphicsContext, make a new one based on the bitmap image rep i just created
 	NSGraphicsContext		*origContext = [NSGraphicsContext currentContext];
 	if (origContext != nil)
-		[origContext retain];
+		origContext;
 	NSGraphicsContext		*newContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
 	if (newContext != nil)	{
 		//	set up & start drawing in the new graphics context (draws into the bitmap image rep)
@@ -1265,7 +1262,6 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	}
 	[NSGraphicsContext setCurrentContext:origContext];
 	if (origContext != nil)	{
-		[origContext release];
 		origContext = nil;
 	}
 	
@@ -1275,7 +1271,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	VVBuffer		*returnMe = [self allocBufferForBitmapRep:rep prefer2DTexture:prefer2D];
 	[returnMe setSrcRect:VVMAKERECT(0,0,bitmapSize.width,bitmapSize.height)];
 	[returnMe setFlipped:YES];
-	[rep release];
+	VVRELEASE(rep);
 	/*	the static analyzer flags this as a leak, but it isn't.  the VVBuffer instance retains the NSBitmapRep underlying the GL texture, which is interpreted here as a leak.		*/
 	return returnMe;
 	/*	the static analyzer flags this as a leak, but it isn't.  the VVBuffer instance retains the NSBitmapRep underlying the GL texture, which is interpreted here as a leak.		*/
@@ -1569,7 +1565,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		VVBuffer		*tmpBuffer = [self allocTexRangeForPlane:i ofHapCVImageBuffer:img];
 		if (tmpBuffer != nil)	{
 			[returnMe addObject:tmpBuffer];
-			[tmpBuffer release];
+			tmpBuffer = nil;
 		}
 	}
 	//NSLog(@"\t\treturning %@",returnMe);
@@ -1791,8 +1787,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 					desc.pixelType,
 					clipboardData);
 				
-				[frameData release];
-				frameData = nil;
+				VVRELEASE(frameData);
 			}
 		}
 		
@@ -1956,7 +1951,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	if (directUploadOK)	{
 		//	this just copies the data right out of the image provider, let's give it a shot...
 		VVSIZE		imgSize = VVMAKESIZE(CGImageGetWidth(n), CGImageGetHeight(n));
-		NSData		*frameData = (NSData *)CGDataProviderCopyData(CGImageGetDataProvider(n));
+		NSData		*frameData = (NSData *)CFBridgingRelease(CGDataProviderCopyData(CGImageGetDataProvider(n)));
 		if (frameData!=nil)	{
 			VVBufferDescriptor		desc;
 #if !TARGET_OS_IPHONE
@@ -1999,9 +1994,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 			[returnMe setPreferDeletion:YES];
 			[returnMe setFlipped:YES];
 			
-			
-			[frameData release];
-			frameData = nil;
+			VVRELEASE(frameData);
 		}
 	}
 	//	else the direct upload isn't okay...
@@ -2964,7 +2957,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 	[freeBuffers lockAddObject:newBuffer];
 	//NSLog(@"\t\treplacement buffer is %@",newBuffer);
 	//NSLog(@"\t\tfreeBuffers is now %@",freeBuffers);
-	[newBuffer release];
+	newBuffer = nil;
 }
 //	this method is called by instances of VVBuffer if its idleCount is > 0 on dealloc
 - (void) _releaseBufferResource:(VVBuffer *)b	{

@@ -6,6 +6,8 @@
 
 
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
 
 
 
@@ -19,8 +21,8 @@
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) initWithCoder:(NSCoder *)c	{
 	//NSLog(@"%s",__func__);
@@ -28,8 +30,8 @@
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
@@ -52,7 +54,7 @@
 		borderColor[i] = (GLfloat)0.0;
 	}
 	perTouchClickedSubviews = [[MutNRLockDict alloc] init];
-	boundsProjectionEffectLock = OS_SPINLOCK_INIT;
+	boundsProjectionEffectLock = OS_UNFAIR_LOCK_INIT;
 	boundsProjectionEffect = nil;
 	boundsProjectionEffectNeedsUpdate = YES;
 	
@@ -73,12 +75,9 @@
 - (void) prepareToBeDeleted	{
 	NSMutableArray		*subCopy = [vvSubviews lockCreateArrayCopy];
 	if (subCopy != nil)	{
-		[subCopy retain];
 		for (id subview in subCopy)
 			[self removeVVSubview:subview];
 		[subCopy removeAllObjects];
-		[subCopy release];
-		subCopy = nil;
 	}
 	dragNDropSubview = nil;
 	
@@ -95,13 +94,12 @@
 	VVRELEASE(spriteManager);
 	//VVRELEASE(lastMouseEvent);
 	VVRELEASE(perTouchClickedSubviews);
-	OSSpinLockLock(&boundsProjectionEffectLock);
+	LOCK(&boundsProjectionEffectLock);
 	VVRELEASE(boundsProjectionEffect);
 	boundsProjectionEffectNeedsUpdate = NO;
-	OSSpinLockUnlock(&boundsProjectionEffectLock);
+	UNLOCK(&boundsProjectionEffectLock);
 	VVRELEASE(vvSubviews);
 	pthread_mutex_destroy(&glLock);
-	[super dealloc];
 }
 
 
@@ -262,7 +260,9 @@
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
-	[n retain];
+	
+	id			tmpSubview = n;
+	
 	[vvSubviews lockRemoveIdenticalPtr:n];
 	[n setContainerView:nil];
 	
@@ -277,7 +277,7 @@
 	if ([tmpArray count]>0)
 		[self reconcileVVSubviewDragTypes];
 	
-	[n release];
+	tmpSubview = nil;
 }
 - (BOOL) containsSubview:(id)n	{
 	if (deleted || n==nil || vvSubviews==nil)
@@ -293,7 +293,7 @@
 	[vvSubviews unlock];
 	return returnMe;
 }
-- (id) vvSubviewHitTest:(VVPOINT)p	{
+- (VVView *) vvSubviewHitTest:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || vvSubviews==nil)
 		return nil;
@@ -728,7 +728,7 @@
 	VVRECT				bounds = [self backingBounds];
 	GLKBaseEffect		*localEffect = nil;
 	//	if i need to create or update the projection effect...
-	OSSpinLockLock(&boundsProjectionEffectLock);
+	LOCK(&boundsProjectionEffectLock);
 	if (boundsProjectionEffect==nil || boundsProjectionEffectNeedsUpdate)	{
 		//NSRectLog(@"\t\tupdating effect  for bounds",bounds);
 		//	create a GLKMatrix4 that will do orthogonal display in the container view
@@ -747,8 +747,8 @@
 		boundsProjectionEffectNeedsUpdate = NO;
 	}
 	//	retain a local copy of the effect so i can unlock but still have access to it
-	localEffect = (boundsProjectionEffect==nil) ? nil : [boundsProjectionEffect retain];
-	OSSpinLockUnlock(&boundsProjectionEffectLock);
+	localEffect = (boundsProjectionEffect==nil) ? nil : boundsProjectionEffect;
+	UNLOCK(&boundsProjectionEffectLock);
 	
 	
 	

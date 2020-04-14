@@ -17,7 +17,6 @@ id _globalVVBufferCopier = nil;
 		return;
 	if (_globalVVBufferCopier != nil)	{
 		[_globalVVBufferCopier prepareToBeDeleted];
-		[_globalVVBufferCopier release];
 		_globalVVBufferCopier = nil;
 	}
 	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharedContext:c sized:VVMAKESIZE(4,3)];
@@ -30,7 +29,6 @@ id _globalVVBufferCopier = nil;
 		return;
 	if (_globalVVBufferCopier != nil)	{
 		[_globalVVBufferCopier prepareToBeDeleted];
-		[_globalVVBufferCopier release];
 		_globalVVBufferCopier = nil;
 	}
 	_globalVVBufferCopier = [[VVBufferCopier alloc] initWithSharegroup:s sized:VVMAKESIZE(4,3)];
@@ -83,7 +81,7 @@ id _globalVVBufferCopier = nil;
 	VVRELEASE(geoXYVBO);
 	VVRELEASE(geoSTVBO);
 	
-	[super dealloc];
+	
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) prepareToBeDeleted	{
@@ -146,7 +144,7 @@ id _globalVVBufferCopier = nil;
 	pthread_mutex_lock(&renderLock);
 	
 	VVBuffer				*tmpFBO = [_globalVVBufferPool allocFBO];
-	VVBuffer				*tmpTex = [n retain];
+	VVBuffer				*tmpTex = n;
 	VVBuffer				*returnMe = nil;
 	
 #if !TARGET_OS_IPHONE
@@ -268,8 +266,8 @@ id _globalVVBufferCopier = nil;
 	VVSIZE			bSize = [b size];
 	if ((!VVEQUALSIZES(aSize,bSize) && !copyAndResize) || (copyAndResize && !VVEQUALSIZES(bSize,copySize)))
 		return NO;
-	[a retain];
-	[b retain];
+	VVBuffer		*tmpA = a;
+	VVBuffer		*tmpB = b;
 	
 	BOOL			returnMe = NO;
 	[self setSize:(copyAndResize) ? copySize : bSize];
@@ -371,8 +369,8 @@ id _globalVVBufferCopier = nil;
 	
 	pthread_mutex_unlock(&renderLock);
 	
-	[a release];
-	[b release];
+	tmpA = nil;
+	tmpB = nil;
 	
 	return returnMe;
 }
@@ -382,8 +380,9 @@ id _globalVVBufferCopier = nil;
 		return;
 	//VVSIZE			aSize = [a size];
 	VVSIZE			bSize = [b size];
-	[a retain];
-	[b retain];
+	
+	VVBuffer		*tmpA = a;
+	VVBuffer		*tmpB = b;
 	
 	//BOOL			returnMe = NO;
 	[self setSize:bSize];
@@ -484,8 +483,8 @@ id _globalVVBufferCopier = nil;
 	
 	pthread_mutex_unlock(&renderLock);
 	
-	[a release];
-	[b release];
+	tmpA = nil;
+	tmpB = nil;
 }
 - (void) ignoreSizeCopyThisBuffer:(VVBuffer *)a toThisBuffer:(VVBuffer *)b	{
 	//NSLog(@"%s ... %@ -> %@",__func__,a,b);
@@ -493,8 +492,8 @@ id _globalVVBufferCopier = nil;
 		return;
 	//VVSIZE			aSize = [a size];
 	VVSIZE			bSize = [b size];
-	[a retain];
-	[b retain];
+	VVBuffer		*tmpA = a;
+	VVBuffer		*tmpB = b;
 	
 	//BOOL			returnMe = NO;
 	[self setSize:bSize];
@@ -600,8 +599,8 @@ id _globalVVBufferCopier = nil;
 	
 	pthread_mutex_unlock(&renderLock);
 	
-	[a release];
-	[b release];
+	tmpA = nil;
+	tmpB = nil;
 }
 - (void) copyBlackFrameToThisBuffer:(VVBuffer *)b	{
 	if (deleted || b==nil)
@@ -609,7 +608,7 @@ id _globalVVBufferCopier = nil;
 	VVBufferType	bType = [b descriptorPtr]->type;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
-	[b retain];
+	VVBuffer		*tmpB = b;
 	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
@@ -624,7 +623,7 @@ id _globalVVBufferCopier = nil;
 		VVRELEASE(tmpFBO);
 	pthread_mutex_unlock(&renderLock);
 	
-	[b release];
+	tmpB = nil;
 }
 - (void) copyOpaqueBlackFrameToThisBuffer:(VVBuffer *)b	{
 	if (deleted || b==nil)
@@ -632,7 +631,7 @@ id _globalVVBufferCopier = nil;
 	VVBufferType	bType = [b descriptorPtr]->type;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
-	[b retain];
+	VVBuffer		*tmpB = b;
 	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
@@ -647,7 +646,7 @@ id _globalVVBufferCopier = nil;
 		VVRELEASE(tmpFBO);
 	pthread_mutex_unlock(&renderLock);
 	
-	[b release];
+	tmpB = nil;
 }
 - (void) copyRedFrameToThisBuffer:(VVBuffer *)b	{
 	if (deleted || b==nil)
@@ -655,7 +654,7 @@ id _globalVVBufferCopier = nil;
 	VVBufferType	bType = [b descriptorPtr]->type;
 	if (bType!=VVBufferType_RB && bType!=VVBufferType_Tex)
 		return;
-	[b retain];
+	VVBuffer		*tmpB = b;
 	VVSIZE			bSize = [b size];
 	[self setSize:bSize];
 	
@@ -670,7 +669,7 @@ id _globalVVBufferCopier = nil;
 		VVRELEASE(tmpFBO);
 	pthread_mutex_unlock(&renderLock);
 	
-	[b release];
+	tmpB = nil;
 }
 
 

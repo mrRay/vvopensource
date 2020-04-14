@@ -8,16 +8,14 @@
 @implementation OSCZeroConfDomain
 
 
-+ (id) createWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t	{
++ (instancetype) createWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t	{
 	if ((d == nil) || (m == nil))
 		return nil;
 	OSCZeroConfDomain		*returnMe = nil;
 	returnMe = [[OSCZeroConfDomain alloc] initWithDomain:d andDomainManager:m serviceType:t];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-- (id) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t {
+- (instancetype) initWithDomain:(NSString *)d andDomainManager:(id)m serviceType:(NSString *)t {
 	self = [super init];
 	if (self != nil)	{
 		domainString = nil;
@@ -25,13 +23,12 @@
 		domainManager = nil;
 		
 		if (d==nil || m==nil)	{
-			[self release];
-			self = nil;
+			VVRELEASE(self);
 		}
 		else	{
 			
 			domainString = [d copy];
-			servicesArray = [[MutLockArray arrayWithCapacity:0] retain];
+			servicesArray = [MutLockArray arrayWithCapacity:0];
 			domainManager = m;
 			
 			serviceBrowser = [[NSNetServiceBrowser alloc] init];
@@ -48,11 +45,10 @@
 	VVRELEASE(domainString);
 	if (serviceBrowser != nil)	{
 		[serviceBrowser stop];
-		[serviceBrowser release];
-		serviceBrowser = nil;
+		VVRELEASE(serviceBrowser);
 	}
 	VVRELEASE(servicesArray);
-	[super dealloc];
+	
 }
 
 

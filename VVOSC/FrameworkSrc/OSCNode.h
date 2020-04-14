@@ -40,17 +40,17 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;
 	
-	OSSpinLock			nameLock;
+	os_unfair_lock			nameLock;
 	NSString			*nodeName;	//	"local" name: name of the node at /a/b/c is "c"
 	NSString			*fullName;	//	"full" name: name of the node at /a/b/c is "/a/b/c"
 	NSString			*lastFullName;	//	when changes are performed (to, for example, names) the "previous" full name is stored here so delegates can retrieve it
 	MutLockArray		*nodeContents;	//	Contains OSCNode instances- this OSCNode's sub-nodes.  type 'MutLockArray'- this should all be threadsafe...
-	OSCNode				*parentNode;	//	my "parent" node (or nil).  NOT retained!
+	__weak OSCNode		*parentNode;	//	my "parent" node (or nil).  NOT retained!
 	OSCNodeType			nodeType;	//	What 'type' of node i am
 	BOOL				hiddenInMenu;	//	NO by default. if YES, this node (and all its sub-nodes) will be omitted from menus!
 	
 	OSCMessage			*lastReceivedMessage;	//	retained
-	OSSpinLock			lastReceivedMessageLock;
+	os_unfair_lock			lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
 	
 	/*		these vals are only used by the OSC query protocol		*/
@@ -69,10 +69,10 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 }
 
 //	Creates and returns an auto-released instance of OSCNode with the passed name.  Returns nil if passed a nil name.
-+ (id) createWithName:(NSString *)n;
++ (instancetype) createWithName:(NSString *)n;
 //	Inits an instance of OSCNode with the passed name.  Returns nil if passed a nil name.
-- (id) initWithName:(NSString *)n;
-- (id) init;
+- (instancetype) initWithName:(NSString *)n;
+- (instancetype) init;
 
 - (void) prepareToBeDeleted;
 
@@ -122,16 +122,16 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 ///	Sends the passed message to all of the node's delegates- it does NOT parse the address at all (it's assumed that the passed message's address points to this instance of OSCNode).
 - (void) dispatchMessage:(OSCMessage *)m;
 
-@property (assign, readwrite) id addressSpace;
+@property (strong, readwrite) id addressSpace;
 ///	Sets or gets the node's local name.  The node "/A/B/C" would return "C".
-@property (assign, readwrite) NSString *nodeName;
+@property (strong, readwrite) NSString *nodeName;
 - (void) _setNodeName:(NSString *)n;
 ///	Sets or gets the node's full address.  The node "/A/B/C" would return "/A/B/C"
 @property (readonly) NSString *fullName;
 @property (readonly) NSString *lastFullName;
 ///	Read-only, returns nil or a threadsafe array of OSCNode instances "inside" me.
 @property (readonly) MutLockArray *nodeContents;
-@property (assign, readwrite) OSCNode *parentNode;
+@property (weak, readwrite) OSCNode *parentNode;
 ///	Nodes can have a basic "type", which is useful for sorting and organization
 @property (assign, readwrite) OSCNodeType nodeType;
 @property (assign, readwrite) BOOL hiddenInMenu;
@@ -141,17 +141,17 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (readonly) OSCValue *lastReceivedValue;
 @property (readonly) id delegateArray;
 
-@property (retain,setter=setOSCDescription:) NSString * oscDescription;
-@property (retain) NSString * typeTagString;
-@property (retain) NSArray * extendedType;
+@property (strong,setter=setOSCDescription:) NSString * oscDescription;
+@property (strong) NSString * typeTagString;
+@property (strong) NSArray * extendedType;
 @property (assign) BOOL critical;
 @property (assign) OSCNodeAccess access;
-@property (retain) NSArray * range;
-@property (retain) NSArray * tags;
-@property (retain) NSArray * clipmode;
-@property (retain) NSArray * units;
-@property (retain) NSArray * overloads;
+@property (strong) NSArray * range;
+@property (strong) NSArray * tags;
+@property (strong) NSArray * clipmode;
+@property (strong) NSArray * units;
+@property (strong) NSArray * overloads;
 
-@property (retain) id userInfo;
+@property (strong) id userInfo;
 
 @end

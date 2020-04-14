@@ -6,6 +6,12 @@
 
 
 
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
+
+
+
+
 int				_spriteViewCount;
 
 
@@ -28,8 +34,8 @@ int				_spriteViewCount;
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) initWithCoder:(NSCoder *)c	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
@@ -37,15 +43,15 @@ int				_spriteViewCount;
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
-	propertyLock = OS_SPINLOCK_INIT;
+	propertyLock = OS_UNFAIR_LOCK_INIT;
 	lastMouseEvent = nil;
 	clearColor = nil;
 	drawBorder = NO;
@@ -69,13 +75,11 @@ int				_spriteViewCount;
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	VVRELEASE(clearColor);
 	VVRELEASE(borderColor);
-	OSSpinLockUnlock(&propertyLock);
-	
-	[super dealloc];
+	UNLOCK(&propertyLock);
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -139,11 +143,11 @@ int				_spriteViewCount;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&propertyLock);
+		lastMouseEvent = e;
+	UNLOCK(&propertyLock);
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -181,11 +185,11 @@ int				_spriteViewCount;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&propertyLock);
+		lastMouseEvent = e;
+	UNLOCK(&propertyLock);
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -211,11 +215,11 @@ int				_spriteViewCount;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&propertyLock);
+		lastMouseEvent = e;
+	UNLOCK(&propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -237,11 +241,11 @@ int				_spriteViewCount;
 		return;
 	}
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&propertyLock);
+		lastMouseEvent = e;
+	UNLOCK(&propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -256,11 +260,11 @@ int				_spriteViewCount;
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&propertyLock);
+		lastMouseEvent = e;
+	UNLOCK(&propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -287,22 +291,22 @@ int				_spriteViewCount;
 	if (spritesNeedUpdate)
 		[self updateSprites];
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	if (clearColor != nil)	{
 		[clearColor set];
 		NSRectFill(f);
 	}
-	OSSpinLockUnlock(&propertyLock);
+	UNLOCK(&propertyLock);
 	
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	if (drawBorder && borderColor!=nil)	{
 		[borderColor set];
 		NSFrameRect([self bounds]);
 	}
-	OSSpinLockUnlock(&propertyLock);
+	UNLOCK(&propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
@@ -331,9 +335,9 @@ int				_spriteViewCount;
 		return nil;
 	NSEvent		*returnMe = nil;
 	
-	OSSpinLockLock(&propertyLock);
-	returnMe = (lastMouseEvent==nil) ? nil : [[lastMouseEvent copy] autorelease];
-	OSSpinLockUnlock(&propertyLock);
+	LOCK(&propertyLock);
+	returnMe = (lastMouseEvent==nil) ? nil : [lastMouseEvent copy];
+	UNLOCK(&propertyLock);
 	
 	return returnMe;
 }
@@ -342,58 +346,55 @@ int				_spriteViewCount;
 - (void) setClearColor:(NSColor *)n	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(clearColor);
-	if (n != nil)
-		clearColor = [n retain];
-	OSSpinLockUnlock(&propertyLock);
+	clearColor = n;
+	UNLOCK(&propertyLock);
 }
 - (NSColor *) clearColor	{
 	if (deleted)
 		return nil;
 	NSColor		*returnMe = nil;
 	
-	OSSpinLockLock(&propertyLock);
-		if (clearColor != nil)
-			returnMe = [[clearColor copy] autorelease];
-	OSSpinLockUnlock(&propertyLock);
+	LOCK(&propertyLock);
+	returnMe = [clearColor copy];
+	UNLOCK(&propertyLock);
 	
 	return returnMe;
 }
 - (void) setDrawBorder:(BOOL)n	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	drawBorder = n;
-	OSSpinLockUnlock(&propertyLock);
+	UNLOCK(&propertyLock);
 }
 - (BOOL) drawBorder	{
 	if (deleted)
 		return NO;
 	BOOL		returnMe = NO;
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	returnMe = drawBorder;
-	OSSpinLockUnlock(&propertyLock);
+	UNLOCK(&propertyLock);
 	return returnMe;
 }
 - (void) setBorderColor:(NSColor *)n	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 	VVRELEASE(borderColor);
-	if (n != nil)
-		borderColor = [n retain];
-	OSSpinLockUnlock(&propertyLock);
+	borderColor = n;
+	UNLOCK(&propertyLock);
 }
 - (NSColor *) borderColor	{
 	if (deleted)
 		return nil;
 	NSColor		*returnMe = nil;
 	
-	OSSpinLockLock(&propertyLock);
+	LOCK(&propertyLock);
 		if (borderColor != nil)
-			returnMe = [[borderColor copy] autorelease];
-	OSSpinLockUnlock(&propertyLock);
+			returnMe = [borderColor copy];
+	UNLOCK(&propertyLock);
 	
 	return returnMe;
 }

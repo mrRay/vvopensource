@@ -1,6 +1,7 @@
 #import "VVSysVersion.h"
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#import "VVBasicMacros.h"
 
 
 
@@ -13,7 +14,7 @@
 static NSString* const kVarSysInfoKeyOSVersion = @"kern.osrelease";
 //static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
 
-OSSpinLock		_majorSysVersionLock;
+os_unfair_lock	_majorSysVersionLock;
 VVOSVersion		_majorSysVersion = VVOSVersionError;
 int				_minorSysVersion = -1;
 
@@ -25,7 +26,7 @@ int				_minorSysVersion = -1;
 + (void) initialize	{
 	//NSLog(@"%s",__func__);
 	if (_majorSysVersion == VVOSVersionError)	{
-		_majorSysVersionLock = OS_SPINLOCK_INIT;
+		_majorSysVersionLock = OS_UNFAIR_LOCK_INIT;
 		[self majorSysVersion];
 	}
 }
@@ -48,9 +49,9 @@ int				_minorSysVersion = -1;
 	//NSLog(@"%s",__func__);
 	VVOSVersion		returnMe = VVOSVersionError;
 	//	try to get the major sys version, if it's a non-err val, i can return immediately
-	OSSpinLockLock(&_majorSysVersionLock);
+	os_unfair_lock_lock(&_majorSysVersionLock);
 	returnMe = _majorSysVersion;
-	OSSpinLockUnlock(&_majorSysVersionLock);
+	os_unfair_lock_unlock(&_majorSysVersionLock);
 	if (returnMe != VVOSVersionError)
 		return returnMe;
 	
@@ -65,27 +66,27 @@ int				_minorSysVersion = -1;
 		return VVOSVersionError;
 	}
 	
-	OSSpinLockLock(&_majorSysVersionLock);
+	os_unfair_lock_lock(&_majorSysVersionLock);
 	_majorSysVersion = (unsigned int)([[darwinChunks objectAtIndex:0] integerValue] - 4);
 	_minorSysVersion = [[darwinChunks objectAtIndex:1] integerValue];
 	returnMe = _majorSysVersion;
-	OSSpinLockUnlock(&_majorSysVersionLock);
+	os_unfair_lock_unlock(&_majorSysVersionLock);
 	
 	return returnMe;
 }
 + (int) minorSysVersion	{
 	int		returnMe = 0;
 	
-	OSSpinLockLock(&_majorSysVersionLock);
+	os_unfair_lock_lock(&_majorSysVersionLock);
 	returnMe = _minorSysVersion;
-	OSSpinLockUnlock(&_majorSysVersionLock);
+	os_unfair_lock_unlock(&_majorSysVersionLock);
 	if (_minorSysVersion < 0)	{
 		
 		[self majorSysVersion];
 		
-		OSSpinLockLock(&_majorSysVersionLock);
+		os_unfair_lock_lock(&_majorSysVersionLock);
 		returnMe = _minorSysVersion;
-		OSSpinLockUnlock(&_majorSysVersionLock);
+		os_unfair_lock_unlock(&_majorSysVersionLock);
 	}
 	return returnMe;
 }

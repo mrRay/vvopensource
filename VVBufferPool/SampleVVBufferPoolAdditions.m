@@ -23,8 +23,7 @@
 
 void VVBuffer_ReleaseSyphonImage(id b, void *c)	{
 	SyphonImage		*tmpImg = c;
-	if (tmpImg != nil)
-		[tmpImg release];
+	VVRELEASE(tmpImg);
 }
 #ifndef __LP64__
 void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
@@ -32,7 +31,7 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 	if (tmpImg != nil)	{
 		//	unlock the rect texture rep!
 		[tmpImg unlockTextureRectRepresentation];
-		[tmpImg release];
+		tmpImg = nil;
 	}
 }
 #endif
@@ -91,7 +90,7 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 	[returnMe setBackingReleaseCallbackContextObject:newImage];
 	
 	//	the 'newImage' we got from the syphon client was retained, so release it
-	[newImage release];
+	VVRELEASE(newImage);
 	return returnMe;
 }
 #ifndef __LP64__
@@ -266,7 +265,7 @@ void VVBuffer_ReleaseFFGLImage(id b, void *c)	{
 		VVBuffer		*tmpBuffer = [self allocBufferForPlane:i inHapDecoderFrame:n];
 		if (tmpBuffer != nil)	{
 			[returnMe addObject:tmpBuffer];
-			[tmpBuffer release];
+			tmpImg = nil;
 		}
 	}
 	//NSLog(@"\t\treturning %@",returnMe);

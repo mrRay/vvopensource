@@ -82,7 +82,9 @@
 
 - (void) receivedOSCMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
-	[self displayPackets];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self displayPackets];
+	});
 	
 	/*
 	OSCAddressSpace		*addressSpace = [manager addressSpace];

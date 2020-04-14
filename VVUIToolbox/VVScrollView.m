@@ -65,7 +65,6 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 	free(vScrollTrackVerts);
 	free(hScrollBarVerts);
 	free(vScrollBarVerts);
-	[super dealloc];
 }
 - (void) updateSprites	{
 	//NSLog(@"%s",__func__);

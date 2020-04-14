@@ -33,7 +33,7 @@ You can change the execution interval, and VVThreadLoop also examines how long i
 	NSTimer				*rlTimer;
 	NSRunLoop			*runLoop;	//	weak ref, nil on init, only valid while the thread is active and running
 	
-	OSSpinLock			valLock;	//	ONLY used for quickly accessing 'running', 'bail', 'paused', and 'executingCallback' in a threadsafe fashion
+	os_unfair_lock		valLock;	//	ONLY used for quickly accessing 'running', 'bail', 'paused', and 'executingCallback' in a threadsafe fashion
 	
 	id					targetObj;	//!<NOT retained!  If there's no valid target obj/sel pair, the instance sill simply call "threadProc" on itself, so you can just override that method
 	SEL					targetSel;

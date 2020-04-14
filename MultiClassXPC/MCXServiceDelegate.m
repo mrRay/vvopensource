@@ -15,11 +15,11 @@
 @implementation MCXServiceDelegate
 
 
-- (id) init	{
+- (instancetype) init	{
 	//NSLog(@"%s",__func__);
 	self = [super init];
 	if (self!=nil)	{
-		tmpServiceDelegates = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+		tmpServiceDelegates = [NSMutableDictionary dictionaryWithCapacity:0];
 	}
 	return self;
 }
@@ -30,7 +30,6 @@
 	__block MCXService		*exported = [[MCXService alloc] init];
 	[newConnection setExportedInterface:[NSXPCInterface interfaceWithProtocol:@protocol(MCXService)]];
 	[newConnection setExportedObject:exported];
-	[exported release];
 	
 	//	pass the service delegates i've retained to the service
 	@synchronized (self)	{

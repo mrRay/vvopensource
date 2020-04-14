@@ -45,7 +45,7 @@ typedef enum VVOSVersion	{
 
 
 
-extern OSSpinLock		_majorSysVersionLock;
+extern os_unfair_lock	_majorSysVersionLock;
 extern VVOSVersion		_majorSysVersion;
 extern int				_minorSysVersion;
 

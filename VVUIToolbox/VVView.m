@@ -19,6 +19,8 @@
 
 //	macro for performing a bitmask and returning a BOOL
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
 
 
 
@@ -31,7 +33,7 @@
 /*------------------------------------*/
 
 
-- (id) initWithFrame:(VVRECT)n	{
+- (instancetype) initWithFrame:(VVRECT)n	{
 	if (self = [super init])	{
 		[self generalInit];
 		_frame = n;
@@ -39,8 +41,8 @@
 		[self initComplete];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) generalInit	{
 	deleted = NO;
@@ -66,7 +68,7 @@
 	_boundsOrientation = VVViewBOBottom;
 	//_boundsRotation = 0.0;
 #if TARGET_OS_IPHONE
-	boundsProjectionEffectLock = OS_SPINLOCK_INIT;
+	boundsProjectionEffectLock = OS_UNFAIR_LOCK_INIT;
 	boundsProjectionEffect = nil;
 	boundsProjectionEffectNeedsUpdate = YES;
 #else
@@ -77,7 +79,7 @@
 	subviews = [[MutLockArray alloc] init];
 	autoresizesSubviews = YES;
 	autoresizingMask = VVViewResizeMaxXMargin | VVViewResizeMinYMargin;
-	_propertyLock = OS_SPINLOCK_INIT;
+	_propertyLock = OS_UNFAIR_LOCK_INIT;
 #if !TARGET_OS_IPHONE
 	lastMouseEvent = nil;
 #endif
@@ -100,12 +102,10 @@
 - (void) prepareToBeDeleted	{
 	NSMutableArray		*subCopy = [subviews lockCreateArrayCopy];
 	if (subCopy != nil)	{
-		[subCopy retain];
 		for (id subview in subCopy)
 			[self removeSubview:subview];
 		[subCopy removeAllObjects];
-		[subCopy release];
-		subCopy = nil;
+		VVRELEASE(subCopy);
 	}
 	
 	if (_superview != nil)
@@ -124,22 +124,21 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(subviews);
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 #if !TARGET_OS_IPHONE
 	VVRELEASE(lastMouseEvent);
 #endif
-	OSSpinLockUnlock(&_propertyLock);
+	UNLOCK(&_propertyLock);
 	VVRELEASE(dragTypes);
 #if TARGET_OS_IPHONE
-	OSSpinLockLock(&boundsProjectionEffectLock);
+	LOCK(&boundsProjectionEffectLock);
 	VVRELEASE(boundsProjectionEffect);
 	boundsProjectionEffectNeedsUpdate = NO;
-	OSSpinLockUnlock(&boundsProjectionEffectLock);
+	UNLOCK(&boundsProjectionEffectLock);
 #else
 	VVRELEASE(trackingAreas);
 #endif
 	VVRELEASE(spriteManager);
-	[super dealloc];
 }
 
 
@@ -216,11 +215,10 @@
 	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -250,11 +248,10 @@
 	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	mouseDownModifierFlags = [e modifierFlags];
 	mouseDownEventType = VVSpriteEventRightDown;
@@ -268,11 +265,10 @@
 - (void) mouseDragged:(NSEvent *)e	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPointFromWinCoords:[e locationInWindow]];
@@ -282,11 +278,10 @@
 - (void) rightMouseDragged:(NSEvent *)e	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPointFromWinCoords:[e locationInWindow]];
@@ -302,11 +297,10 @@
 		return;
 	}
 	
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -317,11 +311,10 @@
 - (void) rightMouseUp:(NSEvent *)e	{
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -334,31 +327,28 @@
 	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 }
 - (void) mouseExited:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 }
 - (void) mouseMoved:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
 	if (deleted)
 		return;
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = [e retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = e;
+	UNLOCK(&_propertyLock);
 }
 - (void) scrollWheel:(NSEvent *)e	{
 	if (deleted)
@@ -408,7 +398,7 @@
 
 
 //	the point it's passed is in coords local to the superview- i need to see if the coords are in my frame!
-- (id) vvSubviewHitTest:(VVPOINT)superviewPoint	{
+- (VVView *) vvSubviewHitTest:(VVPOINT)superviewPoint	{
 	//NSLog(@"%s ... %@- (%0.2f, %0.2f)",__func__,self,superviewPoint.x,superviewPoint.y);
 	if (deleted)
 		return nil;
@@ -800,14 +790,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -834,14 +822,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -918,14 +904,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -967,14 +951,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -996,14 +978,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:YES];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -1014,9 +994,9 @@
 #if TARGET_OS_IPHONE
 - (GLKBaseEffect *) safelyGetBoundsProjectionEffect	{
 	GLKBaseEffect		*returnMe = nil;
-	OSSpinLockLock(&boundsProjectionEffectLock);
-	returnMe = (boundsProjectionEffect==nil) ? nil : [boundsProjectionEffect retain];
-	OSSpinLockUnlock(&boundsProjectionEffectLock);
+	LOCK(&boundsProjectionEffectLock);
+	returnMe = (boundsProjectionEffect==nil) ? nil : boundsProjectionEffect;
+	UNLOCK(&boundsProjectionEffectLock);
 	return returnMe;
 }
 #else
@@ -1332,14 +1312,12 @@
 		[n _setSuperview:self];
 		[n setContainerView:_containerView];
 		if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:YES];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -1358,14 +1336,12 @@
 	[n _setSuperview:nil];
 	[n setContainerView:nil];
 	if (_containerView != nil)	{
-		__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+		ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 		void		(^tmpBlock)(void) = ^(void)	{
 			id			localContainerView = [_containerViewHolder object];
 			if (localContainerView != nil)	{
 				[localContainerView setNeedsDisplay:YES];
 			}
-			[_containerViewHolder release];
-			_containerViewHolder = nil;
 		};
 		APPKIT_TMPBLOCK_MAINTHREAD
 	}
@@ -1507,14 +1483,14 @@
 #if TARGET_OS_IPHONE
 	//	lock, check to see if i need a new projection effect (or it needs to be updated)
 	BOOL			needsNewProjectionEffect = NO;
-	OSSpinLockLock(&boundsProjectionEffectLock);
+	LOCK(&boundsProjectionEffectLock);
 	if (boundsProjectionEffect==nil || boundsProjectionEffectNeedsUpdate)	{
 		needsNewProjectionEffect = YES;
 	}
 	else	{
 		[boundsProjectionEffect prepareToDraw];
 	}
-	OSSpinLockUnlock(&boundsProjectionEffectLock);
+	UNLOCK(&boundsProjectionEffectLock);
 	//	if i need to update the projection effect...
 	if (needsNewProjectionEffect)	{
 		//	update my projection effect by getting my superview's projection effect- which must exist at this point, and has the cumulative transform matrices for all the views above it in the hierarchy- and modifying it by concatenating my local transform matrix.
@@ -1573,7 +1549,7 @@
 		
 		
 		
-		OSSpinLockLock(&boundsProjectionEffectLock);
+		LOCK(&boundsProjectionEffectLock);
 		//	if there's no effect, make one
 		if (boundsProjectionEffect == nil)
 			boundsProjectionEffect = [[GLKBaseEffect alloc] init];
@@ -1582,7 +1558,7 @@
 		[trans setModelviewMatrix:superEffectModelMatrix];
 		[trans setProjectionMatrix:superEffectProjectionMatrix];
 		[boundsProjectionEffect prepareToDraw];
-		OSSpinLockUnlock(&boundsProjectionEffectLock);
+		UNLOCK(&boundsProjectionEffectLock);
 		
 		
 		//	don't forget to release this!
@@ -1658,7 +1634,7 @@
 	VVRECT		localBounds = [self backingBounds];
 	//VVRectLog(@"\t\tlocalBounds is",localBounds);
 	//	if i'm opaque, fill my bounds
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	/*
 	if (isOpaque)	{
 		glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
@@ -1698,7 +1674,7 @@
 		GLDRAWRECT(VVMAKERECT(0,0,localBounds.size.width, localBounds.size.height));
 	}
 #endif
-	OSSpinLockUnlock(&_propertyLock);
+	UNLOCK(&_propertyLock);
 	
 	
 	//	tell the sprite manager to draw
@@ -1718,7 +1694,7 @@
 #endif
 	
 	//	if there's a border, draw it now
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	if (drawBorder)	{
 #if TARGET_OS_IPHONE
 		GLSTROKERECT_COLOR(localBounds,borderColor[0],borderColor[1],borderColor[2],borderColor[3]);
@@ -1727,7 +1703,7 @@
 		GLSTROKERECT(localBounds);
 #endif
 	}
-	OSSpinLockUnlock(&_propertyLock);
+	UNLOCK(&_propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
@@ -1881,14 +1857,12 @@
 		if (_superview != nil)
 			[_superview setNeedsDisplay:n];
 		else if (_containerView != nil)	{
-			__block ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
+			ObjectHolder		*_containerViewHolder = [[ObjectHolder alloc] initWithZWRObject:_containerView];
 			void		(^tmpBlock)(void) = ^(void)	{
 				id			localContainerView = [_containerViewHolder object];
 				if (localContainerView != nil)	{
 					[localContainerView setNeedsDisplay:n];
 				}
-				[_containerViewHolder release];
-				_containerViewHolder = nil;
 			};
 			APPKIT_TMPBLOCK_MAINTHREAD
 		}
@@ -1912,15 +1886,15 @@
 }
 #if !TARGET_OS_IPHONE
 - (void) setLastMouseEvent:(NSEvent *)n	{
-	OSSpinLockLock(&_propertyLock);
+	LOCK(&_propertyLock);
 	VVRELEASE(lastMouseEvent);
-	lastMouseEvent = [n retain];
-	OSSpinLockUnlock(&_propertyLock);
+	lastMouseEvent = n;
+	UNLOCK(&_propertyLock);
 }
 - (NSEvent *) lastMouseEvent	{
-	OSSpinLockLock(&_propertyLock);
-	NSEvent		*returnMe = [[lastMouseEvent retain] autorelease];
-	OSSpinLockUnlock(&_propertyLock);
+	LOCK(&_propertyLock);
+	NSEvent		*returnMe = lastMouseEvent;
+	UNLOCK(&_propertyLock);
 	return returnMe;
 }
 #endif

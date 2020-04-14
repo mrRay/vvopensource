@@ -27,59 +27,59 @@ When you send or receive values via OSC, you'll be working with OSCValue objects
 + (OSCValueType) typeForTypeTagString:(NSString *)t;
 + (OSCValueType) typeForTypeTagChar:(unichar)c;
 ///	Creates & returns an auto-released instance of OSCValue with an int
-+ (id) createWithInt:(int)n;
++ (instancetype) createWithInt:(int)n;
 ///	Creates & returns an auto-released instance of OSCValue with a float
-+ (id) createWithFloat:(float)n;
++ (instancetype) createWithFloat:(float)n;
 ///	Creates & returns an auto-released instance of OSCValue with an NSString
-+ (id) createWithString:(NSString *)n;
++ (instancetype) createWithString:(NSString *)n;
 ///	Creates & returns an auto-released instance of OSCValue with the timeval represented as two 32-bit unsigned ints- seconds and microseconds
-+ (id) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
-+ (id) createWithOSCTimetag:(uint64_t)n;
-+ (id) createTimeWithDate:(NSDate *)n;
++ (instancetype) createWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
++ (instancetype) createWithOSCTimetag:(uint64_t)n;
++ (instancetype) createTimeWithDate:(NSDate *)n;
 ///	Creates & returns an auto-released instance of OSCValue with a 64-bit signed integer
-+ (id) createWithLongLong:(long long)n;
++ (instancetype) createWithLongLong:(long long)n;
 ///	Creates & returns an auto-released instance of OSCValue with a 64-bit float (double)
-+ (id) createWithDouble:(double)n;
++ (instancetype) createWithDouble:(double)n;
 ///	Creates & returns an auto-released instance of OSCValue with a character
-+ (id) createWithChar:(char)n;
++ (instancetype) createWithChar:(char)n;
 ///	Creates & returns an auto-released instance of OSCValue with a color
-+ (id) createWithColor:(id)n;
++ (instancetype) createWithColor:(id)n;
 ///	Creates & returns an auto-released instance of OSCValue with the passed MIDI data
-+ (id) createWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2;
++ (instancetype) createWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2;
 ///	Creates & returns an auto-released instance of OSCValue with a BOOL
-+ (id) createWithBool:(BOOL)n;
++ (instancetype) createWithBool:(BOOL)n;
 ///	Creates & returns an auto-released instance of OSCValue representing nil
-+ (id) createWithNil;
++ (instancetype) createWithNil;
 ///	Creates & returns an auto-released instance of OSCValue representing infinity
-+ (id) createWithInfinity;
++ (instancetype) createWithInfinity;
 ///	Creates & returns an auto-released instance of OSCValue that contains a mutable array (of other OSCValue instances)
-+ (id) createArray;
++ (instancetype) createArray;
 ///	Creates & returns an auto-released instance of OSCValue with an NSData blob
-+ (id) createWithNSDataBlob:(NSData *)d;
++ (instancetype) createWithNSDataBlob:(NSData *)d;
 ///	Creates & returns an auto-released instance of OSCValue with an SMPTE timecode
-+ (id) createWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f;
-+ (id) createWithSMPTEChunk:(int)n;
++ (instancetype) createWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f;
++ (instancetype) createWithSMPTEChunk:(int)n;
 
 - (NSString *) lengthyDescription;
 
-- (id) initWithInt:(int)n;
-- (id) initWithFloat:(float)n;
-- (id) initWithString:(NSString *)n;
-- (id) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
-- (id) initWithOSCTimetag:(uint64_t)n;
-- (id) initTimeWithDate:(NSDate *)n;
-- (id) initWithLongLong:(long long)n;
-- (id) initWithDouble:(double)n;
-- (id) initWithChar:(char)n;
-- (id) initWithColor:(id)n;
-- (id) initWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2;
-- (id) initWithBool:(BOOL)n;
-- (id) initWithNil;
-- (id) initWithInfinity;
-- (id) initArray;
-- (id) initWithNSDataBlob:(NSData *)d;
-- (id) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f;
-- (id) initWithSMPTEChunk:(int)n;
+- (instancetype) initWithInt:(int)n;
+- (instancetype) initWithFloat:(float)n;
+- (instancetype) initWithString:(NSString *)n;
+- (instancetype) initWithTimeSeconds:(unsigned long)s microSeconds:(unsigned long)ms;
+- (instancetype) initWithOSCTimetag:(uint64_t)n;
+- (instancetype) initTimeWithDate:(NSDate *)n;
+- (instancetype) initWithLongLong:(long long)n;
+- (instancetype) initWithDouble:(double)n;
+- (instancetype) initWithChar:(char)n;
+- (instancetype) initWithColor:(id)n;
+- (instancetype) initWithMIDIChannel:(Byte)c status:(Byte)s data1:(Byte)d1 data2:(Byte)d2;
+- (instancetype) initWithBool:(BOOL)n;
+- (instancetype) initWithNil;
+- (instancetype) initWithInfinity;
+- (instancetype) initArray;
+- (instancetype) initWithNSDataBlob:(NSData *)d;
+- (instancetype) initWithSMPTEVals:(OSCSMPTEFPS)fps :(int)d :(int)h :(int)m :(int)s :(int)f;
+- (instancetype) initWithSMPTEChunk:(int)n;
 
 ///	Returns an int value corresponding to the instance's value
 - (int) intValue;

@@ -15,8 +15,7 @@
 		VVAssertionHandler		*__newAH = [[VVAssertionHandler alloc] init];									\
 		if (__newAH != nil)	{																					\
 			[__threadDict setValue:__newAH forKey:@"NSAssertionHandler"];										\
-			[__newAH release];																					\
-			__newAH = nil;																						\
+			VVRELEASE(__newAH);																					\
 		}																										\
 	}																											\
 }

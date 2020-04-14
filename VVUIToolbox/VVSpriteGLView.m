@@ -9,6 +9,8 @@
 
 
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
+#define LOCK os_unfair_lock_lock
+#define UNLOCK os_unfair_lock_unlock
 
 long			_spriteGLViewSysVers;
 
@@ -27,8 +29,8 @@ long			_spriteGLViewSysVers;
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) initWithCoder:(NSCoder *)c	{
 	//NSLog(@"%s",__func__);
@@ -36,8 +38,8 @@ long			_spriteGLViewSysVers;
 		[self generalInit];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
@@ -86,7 +88,7 @@ long			_spriteGLViewSysVers;
 	waitingForFenceA = YES;
 	fenceADeployed = NO;
 	fenceBDeployed = NO;
-	fenceLock = OS_SPINLOCK_INIT;
+	fenceLock = OS_UNFAIR_LOCK_INIT;
 	
 	[(id)self setWantsBestResolutionOpenGLSurface:(_spriteGLViewSysVers>=7)?YES:NO];
 	//NSLog(@"\t\t%s ... %@, %p - FINISHED",__func__,[self class],self);
@@ -98,12 +100,9 @@ long			_spriteGLViewSysVers;
 - (void) prepareToBeDeleted	{
 	NSMutableArray		*subCopy = [vvSubviews lockCreateArrayCopy];
 	if (subCopy != nil)	{
-		[subCopy retain];
 		for (id subview in subCopy)
 			[self removeVVSubview:subview];
 		[subCopy removeAllObjects];
-		[subCopy release];
-		subCopy = nil;
 	}
 	dragNDropSubview = nil;
 	
@@ -113,7 +112,7 @@ long			_spriteGLViewSysVers;
 	deleted = YES;
 	
 	pthread_mutex_lock(&glLock);
-	OSSpinLockLock(&fenceLock);
+	LOCK(&fenceLock);
 		//NSLog(@"\t\tdeleting fences %ld & %ld in context %p",fenceA,fenceB,[self openGLContext]);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 		glDeleteFencesAPPLE(1,&fenceA);
@@ -122,7 +121,7 @@ long			_spriteGLViewSysVers;
 		glDeleteFencesAPPLE(1,&fenceB);
 		fenceB = 0;
 		fenceBDeployed = NO;
-	OSSpinLockUnlock(&fenceLock);
+	UNLOCK(&fenceLock);
 	pthread_mutex_unlock(&glLock);
 	
 	[[NSNotificationCenter defaultCenter]
@@ -138,7 +137,6 @@ long			_spriteGLViewSysVers;
 	VVRELEASE(lastMouseEvent);
 	VVRELEASE(vvSubviews);
 	pthread_mutex_destroy(&glLock);
-	[super dealloc];
 }
 
 
@@ -150,7 +148,7 @@ long			_spriteGLViewSysVers;
 - (void) setOpenGLContext:(NSOpenGLContext *)c	{
 	//NSLog(@"%s",__func__);
 	pthread_mutex_lock(&glLock);
-		OSSpinLockLock(&fenceLock);
+		LOCK(&fenceLock);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 		if (fenceA > 0)
 			glDeleteFencesAPPLE(1,&fenceA);
@@ -160,7 +158,7 @@ long			_spriteGLViewSysVers;
 			glDeleteFencesAPPLE(1,&fenceB);
 		fenceB = 0;
 		fenceBDeployed = NO;
-		OSSpinLockUnlock(&fenceLock);
+		UNLOCK(&fenceLock);
 		
 		[super setOpenGLContext:c];
 		[c setView:self];
@@ -288,7 +286,7 @@ long			_spriteGLViewSysVers;
 /*------------------------------------*/
 
 
-- (void) addVVSubview:(id)n	{
+- (void) addVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
 	if (deleted || n==nil)
 		return;
@@ -311,15 +309,15 @@ long			_spriteGLViewSysVers;
 	
 	[self setNeedsDisplay:YES];
 }
-- (void) removeVVSubview:(id)n	{
+- (void) removeVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
 	if (deleted || n==nil)
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
-	[n retain];
-	[vvSubviews lockRemoveIdenticalPtr:n];
-	[n setContainerView:nil];
+	id			tmpSubview = n;
+	[vvSubviews lockRemoveIdenticalPtr:tmpSubview];
+	[tmpSubview setContainerView:nil];
 	
 	//	if there's a drag and drop subview (if i'm in the middle of a drag and drop action), i have to check if it's in the subview i'm removing!
 	if (dragNDropSubview!=nil && [n containsSubview:dragNDropSubview])	{
@@ -328,13 +326,11 @@ long			_spriteGLViewSysVers;
 	}
 	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
 	NSMutableArray		*tmpArray = MUTARRAY;
-	[n _collectDragTypesInArray:tmpArray];
+	[tmpSubview _collectDragTypesInArray:tmpArray];
 	if ([tmpArray count]>0)
 		[self reconcileVVSubviewDragTypes];
-	
-	[n release];
 }
-- (BOOL) containsSubview:(id)n	{
+- (BOOL) containsSubview:(VVView *)n	{
 	if (deleted || n==nil || vvSubviews==nil)
 		return NO;
 	BOOL		returnMe = NO;
@@ -348,7 +344,7 @@ long			_spriteGLViewSysVers;
 	[vvSubviews unlock];
 	return returnMe;
 }
-- (id) vvSubviewHitTest:(VVPOINT)p	{
+- (VVView *) vvSubviewHitTest:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (deleted || vvSubviews==nil)
 		return nil;
@@ -695,7 +691,7 @@ long			_spriteGLViewSysVers;
 		return;
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
 	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
@@ -745,7 +741,7 @@ long			_spriteGLViewSysVers;
 	
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -766,7 +762,7 @@ long			_spriteGLViewSysVers;
 		return;
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
 	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
@@ -798,7 +794,7 @@ long			_spriteGLViewSysVers;
 		return;
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	mouseIsDown = NO;
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
 	//localPoint = VVMAKEPOINT(localPoint.x*localToBackingBoundsMultiplier, localPoint.y*localToBackingBoundsMultiplier);
@@ -816,7 +812,7 @@ long			_spriteGLViewSysVers;
 		return;
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -835,7 +831,7 @@ long			_spriteGLViewSysVers;
 		return;
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = [e retain];
+		lastMouseEvent = e;
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -964,7 +960,7 @@ long			_spriteGLViewSysVers;
 	}
 	
 	//	lock around the fence, determine whether i should proceed with the render or not
-	OSSpinLockLock(&fenceLock);
+	LOCK(&fenceLock);
 	BOOL		proceedWithRender = NO;
 	//	if the fences are broken, i'm going to proceed with rendering and ignore fencing
 	if ((fenceA < 1) || (fenceB < 1))
@@ -1017,7 +1013,7 @@ long			_spriteGLViewSysVers;
 			}
 		}
 	}
-	OSSpinLockUnlock(&fenceLock);
+	UNLOCK(&fenceLock);
 	
 	
 	
@@ -1146,7 +1142,7 @@ long			_spriteGLViewSysVers;
 		}
 		
 		//	lock around the fence, insert a fence in the command stream, and swap fences
-		OSSpinLockLock(&fenceLock);
+		LOCK(&fenceLock);
 		if ((fenceMode!=VVFenceModeEveryRefresh) && (fenceMode!=VVFenceModeFinish) && (fenceA > 0) && (fenceB > 0))	{
 			if (waitingForFenceA)	{
 				glSetFenceAPPLE(fenceA);
@@ -1162,7 +1158,7 @@ long			_spriteGLViewSysVers;
 				waitingForFenceA = YES;
 			}
 		}
-		OSSpinLockUnlock(&fenceLock);
+		UNLOCK(&fenceLock);
 		
 		//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 		[self finishedDrawing];
@@ -1184,7 +1180,7 @@ long			_spriteGLViewSysVers;
 	//long				cpSwapInterval = 1;
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
 	
-	OSSpinLockLock(&fenceLock);
+	LOCK(&fenceLock);
 	if (fenceA < 1)	{
 		glGenFencesAPPLE(1,&fenceA);
 		fenceADeployed = NO;
@@ -1193,7 +1189,7 @@ long			_spriteGLViewSysVers;
 		glGenFencesAPPLE(1,&fenceB);
 		fenceBDeployed = NO;
 	}
-	OSSpinLockUnlock(&fenceLock);
+	UNLOCK(&fenceLock);
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	
@@ -1277,7 +1273,7 @@ long			_spriteGLViewSysVers;
 	if ((deleted)||(c==nil))
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
-	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	NSColor			*calibratedColor = ((__bridge void *)[c colorSpace]==(__bridge void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 	CGFloat			tmpVals[4];
 	[calibratedColor getComponents:(CGFloat *)tmpVals];
 	
@@ -1312,7 +1308,7 @@ long			_spriteGLViewSysVers;
 	if ((deleted)||(c==nil))
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
-	NSColor			*calibratedColor = ((void *)[c colorSpace]==(void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	NSColor			*calibratedColor = ((__bridge void *)[c colorSpace]==(__bridge void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 	CGFloat			tmpColor[4];
 	[calibratedColor getComponents:tmpColor];
 	

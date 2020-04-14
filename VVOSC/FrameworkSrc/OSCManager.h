@@ -50,9 +50,9 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 //	used to generate the IP addresses for this host
 + (NSArray *) hostIPv4Addresses;
 
-- (id) initWithServiceType:(NSString *)t;
-- (id) initWithInPortClass:(Class)i outPortClass:(Class)o;
-- (id) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t;
+- (instancetype) initWithServiceType:(NSString *)t;
+- (instancetype) initWithInPortClass:(Class)i outPortClass:(Class)o;
+- (instancetype) initWithInPortClass:(Class)i outPortClass:(Class)o serviceType:(NSString *)t;
 - (void) _generalInit;
 
 ///	Deletes all input ports
@@ -117,7 +117,7 @@ Incoming OSC data is initially received by an OSCInPort; fundamentally, in ports
 ///	By default, returns [OSCInPort class]- subclass around to use different subclasses of OSCInPort
 - (id) inPortClass;
 //	By default, returns @"VVOSC"- subclass around this to use a different base string when generating in port labels
-@property (retain) NSString * inPortLabelBase;
+@property (strong) NSString * inPortLabelBase;
 ///	By default, returns [OSCOutPort class]- subclass around to use different subclasses of OSCOutPort
 - (id) outPortClass;
 

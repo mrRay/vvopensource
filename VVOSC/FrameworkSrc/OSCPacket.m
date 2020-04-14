@@ -74,13 +74,11 @@
 	}
 	*/
 }
-+ (id) createWithContent:(id)c	{
++ (instancetype) createWithContent:(id)c	{
 	OSCPacket		*returnMe = [[OSCPacket alloc] initWithContent:c];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
-- (id) initWithContent:(id)c	{
+- (instancetype) initWithContent:(id)c	{
 	//NSLog(@"%s ... %@",__func__,c);
 	self = [super init];
 	if (self != nil)	{
@@ -88,8 +86,7 @@
 		payload = NULL;
 		
 		if (bufferLength < 1)	{
-			[self release];
-			self = nil;
+			VVRELEASE(self);
 		}
 		else	{
 			payload = malloc(bufferLength * sizeof(unsigned char));
@@ -116,7 +113,7 @@
 	if (payload != NULL)
 		free(payload);
 	payload = NULL;
-	[super dealloc];
+	
 }
 
 - (long) bufferLength	{

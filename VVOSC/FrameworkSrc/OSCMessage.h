@@ -33,10 +33,10 @@ According to the OSC spec, a message consists of an address path (where the mess
 
 + (OSCMessage *) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
 ///	Creates & returns an auto-released instance of OSCMessage which will be sent to the passed path
-+ (id) createWithAddress:(NSString *)a;
++ (instancetype) createWithAddress:(NSString *)a;
 
-- (id) initWithAddress:(NSString *)a;
-- (id) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(unsigned int)qTxAddr :(unsigned short)qTxPort;
+- (instancetype) initWithAddress:(NSString *)a;
+- (instancetype) initFast:(NSString *)addr :(BOOL)addrHasWildcards :(unsigned int)qTxAddr :(unsigned short)qTxPort;
 
 ///	Add the passed int to the message
 - (void) addInt:(int)n;

@@ -99,7 +99,7 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 	
 	//	get rid of the clear window...
 	[clearWin orderOut:nil];
-	[clearWin release];
+	//[clearWin release];
 	clearWin = nil;
 	
 	if (showsSuppressionButton && returnSuppressValue!=NULL)	{

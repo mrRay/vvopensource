@@ -30,7 +30,7 @@
 	if (returnMe == nil)	{
 		return nil;
 	}
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithFile:(NSString *)p	{
 	if (self = [super init])	{
@@ -60,10 +60,10 @@
 		NSMutableDictionary		*newPublishedPortDict = nil;
 		
 		self = [super init];
-		compositionPath = [p retain];
-		publishedInputsDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
-		inputKeys = [[NSMutableArray arrayWithCapacity:0] retain];
-		publishedOutputsDict = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
+		compositionPath = p;
+		publishedInputsDict = [NSMutableDictionary dictionaryWithCapacity:0];
+		inputKeys = [NSMutableArray arrayWithCapacity:0];
+		publishedOutputsDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	
 		category = nil;
 		description = nil;
@@ -72,17 +72,14 @@
 		fileDict = [NSDictionary dictionaryWithContentsOfFile:compositionPath];
 		if (fileDict == nil)
 			goto BAIL;
-		[fileDict retain];
 		//	get the category and description strings
 		category = [fileDict objectForKey:QCCompositionAttributeCategoryKey];
 		if (category != nil)	{
 			//NSLog(@"\t\tcategory is %@",category);
-			[category retain];
 		}
 		description = [fileDict objectForKey:QCCompositionAttributeDescriptionKey];
 		if (description != nil)	{
 			//NSLog(@"\t\tdescription is %@",description);
-			[description retain];
 		}
 		//	get the root patch dict
 		rootPatchDict = [fileDict objectForKey:@"rootPatch"];
@@ -90,7 +87,6 @@
 			VVRELEASE(fileDict);
 			goto BAIL;
 		}
-		[rootPatchDict retain];
 		//	get the state dict
 		stateDict = [rootPatchDict objectForKey:@"state"];
 		if (stateDict == nil)	{
@@ -98,11 +94,9 @@
 			VVRELEASE(rootPatchDict);
 			goto BAIL;
 		}
-		[stateDict retain];
 		
 		protocols = [fileDict objectForKey:@"protocols"];
 		if (protocols != nil)	{
-			[protocols retain];
 		}
 		
 		//	get the array of dicts which represent published inputs
@@ -201,9 +195,8 @@
 	}
 	
 	BAIL:
-	if (self != nil)
-		[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
 	//NSLog(@"VVQCComposition:dealloc:");
@@ -214,7 +207,7 @@
 	VVRELEASE(category);
 	VVRELEASE(description);
 	VVRELEASE(protocols);
-	[super dealloc];
+	
 }
 
 - (NSDictionary *) findSplitterForPublishedInputNamed:(NSString *)n inStateDict:(NSDictionary *)d	{
@@ -398,7 +391,7 @@
 				NSMutableDictionary		*mutCopy = [nodeDict mutableCopy];
 				[mutCopy removeObjectForKey:@"nodes"];
 				[a addObject:mutCopy];
-				[mutCopy release];
+				VVRELEASE(mutCopy);
 			}
 			
 			//	call this method recursively on the 'state' dict of this node
@@ -507,10 +500,10 @@
 
 
 - (NSDictionary *) publishedInputsDict	{
-	return [[publishedInputsDict retain] autorelease];
+	return publishedInputsDict;
 }
 - (NSDictionary *) publishedOutputsDict	{
-	return [[publishedOutputsDict retain] autorelease];
+	return publishedOutputsDict;
 }
 - (NSString *) compositionName	{
 	if (compositionPath == nil)
@@ -523,10 +516,10 @@
 
 
 - (NSString *) compositionPath	{
-	return [[compositionPath retain] autorelease];
+	return compositionPath;
 }
 - (NSArray *) inputKeys	{
-	return [[inputKeys retain] autorelease];
+	return inputKeys;
 	/*
 	if (publishedInputsDict == nil)
 		return nil;

@@ -78,7 +78,7 @@ typedef enum VVViewBoundsOrientation	{
 	BOOL				needsDisplay;
 	
 	
-	OSSpinLock			geometryLock;
+	os_unfair_lock			geometryLock;
 	VVRECT				_frame;	//	the area i occupy in my superview's coordinate space
 	VVSIZE				minFrameSize;	//	frame's size cannot be set less than this
 	double				localToBackingBoundsMultiplier;
@@ -87,7 +87,7 @@ typedef enum VVViewBoundsOrientation	{
 	
 	
 #if TARGET_OS_IPHONE
-	OSSpinLock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
+	os_unfair_lock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
 	GLKBaseEffect		*boundsProjectionEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
 	BOOL				boundsProjectionEffectNeedsUpdate;	//	if YES, the effect needs update.
 #else
@@ -95,15 +95,15 @@ typedef enum VVViewBoundsOrientation	{
 #endif
 	
 	
-	OSSpinLock			hierarchyLock;
-	id					_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
-	id					_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
+	os_unfair_lock			hierarchyLock;
+	__weak id			_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
+	__weak id			_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
 	
 	
-	OSSpinLock			_propertyLock;	//	locks the items below it (mouse event, clear color stuff)
+	os_unfair_lock			_propertyLock;	//	locks the items below it (mouse event, clear color stuff)
 #if !TARGET_OS_IPHONE
 	NSEvent				*lastMouseEvent;
 #endif
@@ -113,17 +113,17 @@ typedef enum VVViewBoundsOrientation	{
 	GLfloat				borderColor[4];
 	
 	
-	OSSpinLock			mouseLock;
+	os_unfair_lock			mouseLock;
 	long				mouseDownModifierFlags;
 	VVSpriteEventType	mouseDownEventType;
 	long				modifierFlags;
 	BOOL				mouseIsDown;
-	id					clickedSubview;	//	NOT RETAINED
+	__weak id			clickedSubview;	//	NOT RETAINED
 	
 	MutLockArray		*dragTypes;	//	always non-nil, holds the strings of the regsitered drag types. empty by default.
 }
 
-- (id) initWithFrame:(VVRECT)n;
+- (instancetype) initWithFrame:(VVRECT)n;
 - (void) generalInit;
 - (void) initComplete;
 - (void) prepareToBeDeleted;
@@ -150,7 +150,7 @@ typedef enum VVViewBoundsOrientation	{
 #endif
 
 //- (id) hitTest:(VVPOINT)n;	//	the point it's passed is in coords local to self!
-- (id) vvSubviewHitTest:(VVPOINT)p;	//	the point it's passed is in coords local to self!
+- (VVView *) vvSubviewHitTest:(VVPOINT)p;	//	the point it's passed is in coords local to self!
 - (BOOL) checkRect:(VVRECT)n;
 
 - (VVPOINT) convertPoint:(VVPOINT)viewCoords fromView:(id)view;

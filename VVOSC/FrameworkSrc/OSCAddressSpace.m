@@ -25,9 +25,9 @@ id				_mainVVOSCAddressSpace;
 		[s appendString:@"\t"];
 	
 	//	write the description
-	OSSpinLockLock(&nameLock);
+	os_unfair_lock_lock(&nameLock);
 		[s appendFormat:@"<%@>",nodeName];
-	OSSpinLockUnlock(&nameLock);
+	os_unfair_lock_unlock(&nameLock);
 	
 	//	if there are contents
 	if ((nodeContents!=nil)&&([nodeContents count]>0))	{
@@ -66,7 +66,7 @@ id				_mainVVOSCAddressSpace;
 @implementation OSCAddressSpace
 
 
-+ (id) mainAddressSpace	{
++ (instancetype) mainAddressSpace	{
 	return _mainVVOSCAddressSpace;
 }
 + (void) refreshMenu	{
@@ -145,7 +145,6 @@ id				_mainVVOSCAddressSpace;
 						}
 						//	now add the item to returnMe!
 						[returnMe addItem:newItem];
-						[newItem autorelease];
 					}
 				}
 			}
@@ -153,7 +152,7 @@ id				_mainVVOSCAddressSpace;
 		[nodeArray unlock];
 	}
 	//	autorelease the menu and return it
-	return (returnMe == nil) ? nil : [returnMe autorelease];
+	return returnMe;
 }
 #endif
 + (void) load	{
@@ -198,7 +197,7 @@ id				_mainVVOSCAddressSpace;
 	if (self != nil)	{
 		addressSpace = self;
 		delegate = nil;
-		fullName = [@"/" retain];
+		fullName = @"/";
 #if TARGET_OS_IPHONE
 #else
 		//	register to receive notifications that the app's about to terminate so i can stop running
@@ -217,7 +216,7 @@ id				_mainVVOSCAddressSpace;
 	if (self != nil)	{
 		addressSpace = self;
 		delegate = nil;
-		fullName = [@"/" retain];
+		fullName = @"/";
 #if TARGET_OS_IPHONE
 #else
 		//	register to receive notifications that the app's about to terminate so i can stop running
@@ -241,7 +240,7 @@ id				_mainVVOSCAddressSpace;
 #else
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
 #endif
-	[super dealloc];
+	
 }
 
 
@@ -320,24 +319,23 @@ id				_mainVVOSCAddressSpace;
 	OSCNode			*beforeParent = nil;
 	OSCNode			*afterParent = nil;
 	//	retain the node i'm about to insert so it doesn't get released while this is happening
-	if (n != nil)
-		[n retain];
+	OSCNode			*tmpNode = n;
 	//	make sure the node i'm moving has been removed from its parent.  that's removed, NOT RELEASED!
-	if (n != nil)
-		beforeParent = [n parentNode];
+	if (tmpNode != nil)
+		beforeParent = [tmpNode parentNode];
 	if (beforeParent != nil)	{
-		MutNRLockArray		*delegates = [n delegateArray];
+		MutNRLockArray		*delegates = [tmpNode delegateArray];
 		//	removing the local node will clear out its delegates (setting a node's parent to nil clears its delegates), so we store its delegates before doing so
 		NSMutableArray	*delegatesBeforeRemoval = [delegates lockCreateArrayCopyFromObjects];
-		[beforeParent removeLocalNode:n];
+		[beforeParent removeLocalNode:tmpNode];
 		//	re-apply any delegates that existed before removal
 		[delegates lockAddObjectsFromArray:delegatesBeforeRemoval];
 	}
 	//	make sure the node's got the proper name (it could be different from the passed array's last object)
-	if (n != nil)
-		[n _setNodeName:[a lastObject]];
+	if (tmpNode != nil)
+		[tmpNode _setNodeName:[a lastObject]];
 	//	find the new parent node for the destination
-	NSMutableArray		*parentAddressArray = [[a mutableCopy] autorelease];
+	NSMutableArray		*parentAddressArray = [a mutableCopy];
 	[parentAddressArray removeLastObject];
 	//	if the parent's address array is empty, the root level node is the parent
 	if ([parentAddressArray count] == 0)
@@ -348,10 +346,10 @@ id				_mainVVOSCAddressSpace;
 	//	if there isn't a parent node (if i have to make one)
 	if (afterParent == nil)	{
 		//	if i passed a non-nil node (if i'm actually moving a node), i'll have to make the parent
-		if (n != nil)	{
+		if (tmpNode != nil)	{
 			//	make the node, and simply add the passed node to it (don't have to merge delegates)
 			afterParent = [self findNodeForAddressArray:parentAddressArray createIfMissing:c];
-			[afterParent addLocalNode:n];
+			[afterParent addLocalNode:tmpNode];
 		}
 		//	else if i passed a nil node (if i'm deleting a node), i'm done- the parent doesn't even exist
 	}
@@ -362,8 +360,8 @@ id				_mainVVOSCAddressSpace;
 		//	if there is a pre-existing node
 		if (preExistingNode != nil)	{
 			//	if i'm passing a node (if i'm actually moving a node), add the delegates
-			if (n != nil)
-				[preExistingNode addDelegatesFromNode:n];
+			if (tmpNode != nil)
+				[preExistingNode addDelegatesFromNode:tmpNode];
 			//	else if i'm passing a nil node (deleting a node), delete the pre-existing node
 			else	{
 				[afterParent deleteLocalNode:preExistingNode];
@@ -372,20 +370,17 @@ id				_mainVVOSCAddressSpace;
 		//	else if there isn't a pre-existing node
 		else	{
 			//	if i'm passing a node, add the node to the parent
-			if (n != nil)
-				[afterParent addLocalNode:n];
+			if (tmpNode != nil)
+				[afterParent addLocalNode:tmpNode];
 			//	if i was passing a nil node (deleting a node), i'd be deleting the pre-existing (so i'm done)
 		}
 	}
 	/*
 	//	if i was passed a node (if i'm actually moving something), 
 	//	make sure my newNodeCreated method gets called
-	if (n != nil)
-		[self newNodeCreated:n];
+	if (tmpNode != nil)
+		[self newNodeCreated:tmpNode];
 	*/
-	//	i retained the ndoe i'm about to insert earlier- release it now
-	if (n != nil)
-		[n release];
 }
 - (OSCNode *) findNodeForAddress:(NSString *)p createIfMissing:(BOOL)c	{
 	return [super findNodeForAddress:p createIfMissing:c];

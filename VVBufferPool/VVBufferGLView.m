@@ -21,16 +21,15 @@
 		initialized = NO;
 		sizingMode = VVSizingModeFit;
 		retainDraw = NO;
-		retainDrawLock = OS_SPINLOCK_INIT;
+		retainDrawLock = OS_UNFAIR_LOCK_INIT;
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
-		onlyDrawNewStuffLock = OS_SPINLOCK_INIT;
+		onlyDrawNewStuffLock = OS_UNFAIR_LOCK_INIT;
 		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
-	if (self != nil)
-		[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (id) initWithCoder:(NSCoder *)c	{
 	if (self = [super initWithCoder:c])	{
@@ -42,26 +41,25 @@
 		initialized = NO;
 		sizingMode = VVSizingModeFit;
 		retainDraw = NO;
-		retainDrawLock = OS_SPINLOCK_INIT;
+		retainDrawLock = OS_UNFAIR_LOCK_INIT;
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
-		onlyDrawNewStuffLock = OS_SPINLOCK_INIT;
+		onlyDrawNewStuffLock = OS_UNFAIR_LOCK_INIT;
 		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
-	if (self != nil)
-		[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) awakeFromNib	{
 	initialized = NO;
 }
 - (void) dealloc	{
 	pthread_mutex_destroy(&renderLock);
-	OSSpinLockLock(&retainDrawLock);
+	os_unfair_lock_lock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
-	OSSpinLockUnlock(&retainDrawLock);
-	[super dealloc];
+	os_unfair_lock_unlock(&retainDrawLock);
+	
 }
 - (void) drawRect:(VVRECT)r	{
 	pthread_mutex_lock(&renderLock);
@@ -80,44 +78,43 @@
 }
 - (void) redraw	{
 	VVBuffer		*lastBuffer = nil;
-	OSSpinLockLock(&retainDrawLock);
-	lastBuffer = (!retainDraw || retainDrawBuffer==nil) ? nil : [retainDrawBuffer retain];
-	OSSpinLockUnlock(&retainDrawLock);
+	os_unfair_lock_lock(&retainDrawLock);
+	lastBuffer = (!retainDraw || retainDrawBuffer==nil) ? nil : retainDrawBuffer;
+	os_unfair_lock_unlock(&retainDrawLock);
 	
 	[self drawBuffer:lastBuffer];
 	
-	[lastBuffer release];
-	lastBuffer = nil;
+	VVRELEASE(lastBuffer);
 }
 - (void) drawBuffer:(VVBuffer *)b	{
 	//NSLog(@"%s",__func__);
 	BOOL			bail = NO;
 	
-	[b retain];
+	VVBuffer		*tmpBuffer = b;
 	
-	OSSpinLockLock(&retainDrawLock);
+	os_unfair_lock_lock(&retainDrawLock);
 	if (retainDraw)	{
-		if (retainDrawBuffer != b)	{
+		if (retainDrawBuffer != tmpBuffer)	{
 			VVRELEASE(retainDrawBuffer);
-			retainDrawBuffer = [b retain];
+			retainDrawBuffer = tmpBuffer;
 		}
 	}
-	OSSpinLockUnlock(&retainDrawLock);
+	os_unfair_lock_unlock(&retainDrawLock);
 	
-	OSSpinLockLock(&onlyDrawNewStuffLock);
+	os_unfair_lock_lock(&onlyDrawNewStuffLock);
 	if (onlyDrawNewStuff)	{
 		uint64_t		bufferTimestamp;
-		[b getContentTimestamp:&bufferTimestamp];
+		[tmpBuffer getContentTimestamp:&bufferTimestamp];
 		if (onlyDrawNewStuffTimestamp==bufferTimestamp)
 			bail = YES;
 	}
-	OSSpinLockUnlock(&onlyDrawNewStuffLock);
+	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
 	if (bail)	{
-		VVRELEASE(b);
+		VVRELEASE(tmpBuffer);
 		return;
 	}
 	
-	GLuint			target = (b==nil) ? GL_TEXTURE_RECTANGLE_EXT : [b target];
+	GLuint			target = (tmpBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [tmpBuffer target];
 	pthread_mutex_lock(&renderLock);
 		if (initialized)	{
 			CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
@@ -163,17 +160,17 @@
 				glClear(GL_COLOR_BUFFER_BIT);
 				
 				
-				if (b != nil)	{
-					//VVSIZE			bufferSize = [b size];
-					//BOOL			bufferFlipped = [b flipped];
+				if (tmpBuffer != nil)	{
+					//VVSIZE			bufferSize = [tmpBuffer size];
+					//BOOL			bufferFlipped = [tmpBuffer flipped];
 					VVRECT			destRect = [VVSizingTool
 						//rectThatFitsRect:VVMAKERECT(0,0,bufferSize.width,bufferSize.height)
-						rectThatFitsRect:[b srcRect]
+						rectThatFitsRect:[tmpBuffer srcRect]
 						inRect:[self bounds]
 						sizingMode:sizingMode];
 					
 					
-					GLDRAWTEXQUADMACRO([b name],[b target],[b flipped],[b glReadySrcRect],destRect);
+					GLDRAWTEXQUADMACRO([tmpBuffer name],[tmpBuffer target],[tmpBuffer flipped],[tmpBuffer glReadySrcRect],destRect);
 				}
 				//	flush!
 				glFlush();
@@ -183,7 +180,7 @@
 		}
 	pthread_mutex_unlock(&renderLock);
 	
-	VVRELEASE(b);
+	VVRELEASE(tmpBuffer);
 }
 - (void) setSharedGLContext:(NSOpenGLContext *)c	{
 	if (c == nil)
@@ -192,7 +189,6 @@
 		NSOpenGLContext		*newContext = [[NSOpenGLContext alloc] initWithFormat:[_globalVVBufferPool customPixelFormat] shareContext:c];
 		[self setOpenGLContext:newContext];
 		[newContext setView:self];
-		[newContext release];
 		long				swap = 1;
 		[[self openGLContext] setValues:(GLint *)&swap forParameter:NSOpenGLCPSwapInterval];
 		initialized = YES;
@@ -203,27 +199,27 @@
 @synthesize initialized;
 @synthesize sizingMode;
 - (void) setOnlyDrawNewStuff:(BOOL)n	{
-	OSSpinLockLock(&onlyDrawNewStuffLock);
+	os_unfair_lock_lock(&onlyDrawNewStuffLock);
 	onlyDrawNewStuff = n;
 	onlyDrawNewStuffTimestamp = 0;
-	OSSpinLockUnlock(&onlyDrawNewStuffLock);
+	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
 }
 - (void) setRetainDraw:(BOOL)n	{
-	OSSpinLockLock(&retainDrawLock);
+	os_unfair_lock_lock(&retainDrawLock);
 	retainDraw = n;
-	OSSpinLockUnlock(&retainDrawLock);
+	os_unfair_lock_unlock(&retainDrawLock);
 }
 - (void) setRetainDrawBuffer:(VVBuffer *)n	{
-	OSSpinLockLock(&retainDrawLock);
+	os_unfair_lock_lock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
-	retainDrawBuffer = (n==nil) ? nil : [n retain];
-	OSSpinLockUnlock(&retainDrawLock);
+	retainDrawBuffer = (n==nil) ? nil : n;
+	os_unfair_lock_unlock(&retainDrawLock);
 }
 - (BOOL) onlyDrawNewStuff	{
 	BOOL		returnMe = NO;
-	OSSpinLockLock(&onlyDrawNewStuffLock);
+	os_unfair_lock_lock(&onlyDrawNewStuffLock);
 	returnMe = onlyDrawNewStuff;
-	OSSpinLockUnlock(&onlyDrawNewStuffLock);
+	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
 	return returnMe;
 }
 

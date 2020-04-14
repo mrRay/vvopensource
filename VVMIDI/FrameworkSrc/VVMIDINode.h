@@ -43,12 +43,12 @@ extern double		_machTimeToNsFactor;
 	Byte					scratchStruct[4];
 }
 
-- (id) initReceiverWithEndpoint:(MIDIEndpointRef)e;
-- (id) initReceiverWithName:(NSString *)n;
-- (id) initSenderWithEndpoint:(MIDIEndpointRef)e;
-- (id) initSenderWithName:(NSString *)n;
+- (instancetype) initReceiverWithEndpoint:(MIDIEndpointRef)e;
+- (instancetype) initReceiverWithName:(NSString *)n;
+- (instancetype) initSenderWithEndpoint:(MIDIEndpointRef)e;
+- (instancetype) initSenderWithName:(NSString *)n;
 
-- (id) commonInit;
+- (instancetype) commonInit;
 
 - (void) loadProperties;
 - (void) receivedMIDI:(NSArray *)a;

@@ -14,7 +14,7 @@
 */
 @interface VVMStopwatch : NSObject	{
 	uint64_t			startTime;
-	OSSpinLock			timeLock;
+	os_unfair_lock		timeLock;
 	BOOL				paused;
 	double				prePauseTimeSinceStart;
 }

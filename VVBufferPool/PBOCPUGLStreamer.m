@@ -14,14 +14,14 @@
 		ctxArray = [[MutLockArray alloc] init];
 		return self;
 	}
-	[self release];
-	return nil;
+	VVRELEASE(self);
+	return self;
 }
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(ctxArray);
-	[super dealloc];
+	
 }
 
 
@@ -50,7 +50,6 @@
 		[ctxArray wrlock];
 			ctx = [ctxArray objectAtIndex:0];
 			if (ctx != nil)	{
-				[ctx retain];
 				[ctxArray removeObjectAtIndex:0];
 			}
 		[ctxArray unlock];
@@ -63,7 +62,6 @@
 	if (ctx==nil)
 		return;
 	[d setObject:ctx forKey:@"ctx"];
-	[ctx release];
 	
 	
 	NSSize				bufferSize = [newPBO size];
@@ -87,7 +85,6 @@
 	}
 	if (newTex != nil)	{
 		[d setObject:newTex forKey:@"destTex"];
-		[newTex release];
 		
 		[newTex setFlipped:[newPBO flipped]];
 		
@@ -134,8 +131,6 @@
 		return nil;
 	//	i store the tex in "extraObj", return it
 	id			returnMe = [d objectForKey:@"destTex"];
-	if (returnMe != nil)
-		[returnMe retain];
 	//	don't forget to timestamp it!
 	[VVBufferPool timestampThisBuffer:returnMe];
 	

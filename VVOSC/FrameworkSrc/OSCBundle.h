@@ -28,11 +28,11 @@ OSC bundles also have a time stamp- by default, this will be set to immediate ex
 
 + (void) parseRawBuffer:(unsigned char *)b ofMaxLength:(int)l toInPort:(id)p inheritedTimeTag:(NSDate *)d fromAddr:(unsigned int)txAddr port:(unsigned short)txPort;
 ///	Creates and returns an auto-released bundle
-+ (id) create;
++ (instancetype) create;
 ///	Creates and returns an auto-released bundle with the single passed element
-+ (id) createWithElement:(id)n;
++ (instancetype) createWithElement:(id)n;
 ///	Creates and returns an auto-released bundle with the array of passed elements
-+ (id) createWithElementArray:(id)a;
++ (instancetype) createWithElementArray:(id)a;
 
 ///	Adds the passed element to the bundle
 - (void) addElement:(id)n;
@@ -42,6 +42,6 @@ OSC bundles also have a time stamp- by default, this will be set to immediate ex
 - (long) bufferLength;
 - (void) writeToBuffer:(unsigned char *)b;
 
-@property (retain,readwrite) NSDate *timeTag;
+@property (strong,readwrite) NSDate *timeTag;
 
 @end

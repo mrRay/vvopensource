@@ -1,5 +1,6 @@
 
 #import "MutNRLockArray.h"
+#import "VVBasicMacros.h"
 
 
 
@@ -12,9 +13,7 @@
 }
 + (id) arrayWithCapacity:(NSInteger)c	{
 	MutNRLockArray	*returnMe = [[MutNRLockArray alloc] initWithCapacity:0];
-	if (returnMe == nil)
-		return nil;
-	return [returnMe autorelease];
+	return returnMe;
 }
 - (id) initWithCapacity:(NSInteger)c	{
 	if (self = [super initWithCapacity:c])	{
@@ -322,8 +321,7 @@
 		}
 		if (indicesToRemove != nil)	{
 			[array removeObjectsAtIndexes:indicesToRemove];
-			[indicesToRemove release];
-			indicesToRemove = nil;
+			VVRELEASE(indicesToRemove);
 		}
 	}
 }

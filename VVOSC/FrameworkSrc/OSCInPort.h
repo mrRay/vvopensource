@@ -31,19 +31,19 @@ the documentation here only covers the basics, the header file for this class is
 @interface OSCInPort : NSObject {
 	BOOL					deleted;	//	whether or not i'm deleted- ensures that socket gets closed
 	BOOL					bound;		//	whether or not the socket is bound
-	OSSpinLock				socketLock;
+	os_unfair_lock				socketLock;
 	int						sock;		//	socket file descriptor.  remember, everything in unix is files!
 	struct sockaddr_in		addr;		//	struct that describes *my* address (this is an in port)
 	unsigned short			port;		//	the port number i'm receiving from
 	unsigned char			*buf;	//	the socket gets data and dumps it here immediately
 	double					interval;	//	how many times/sec you want the thread to run
 	
-	OSSpinLock				scratchLock;
+	os_unfair_lock				scratchLock;
 	NSThread				*thread;
 	
 	NSString				*portLabel;		//!<the "name" of the port (added to distinguish multiple osc input ports for bonjour)
 	BOOL					zeroConfEnabled;	//	YES by default
-	OSSpinLock				zeroConfLock;
+	os_unfair_lock				zeroConfLock;
 	VVStopwatch				*zeroConfSwatch;	//	bonjour services need ~5 seconds between destroy/creation or the changes get ignored- this is how we track this time
 	NSNetService			*zeroConfDest;	//	bonjour service for publishing this input's address...only active if there's a portLabel!
 	
@@ -52,11 +52,11 @@ the documentation here only covers the basics, the header file for this class is
 }
 
 //	Creates and returns an auto-released OSCInPort for the given port (or nil if the port's busy)
-+ (id) createWithPort:(unsigned short)p;
++ (instancetype) createWithPort:(unsigned short)p;
 //	Creates and returns an auto-released OSCInPort for the given port and label (or nil if the port's busy)
-+ (id) createWithPort:(unsigned short)p labelled:(NSString *)n;
-- (id) initWithPort:(unsigned short)p;
-- (id) initWithPort:(unsigned short)p labelled:(NSString *)n;
++ (instancetype) createWithPort:(unsigned short)p labelled:(NSString *)n;
+- (instancetype) initWithPort:(unsigned short)p;
+- (instancetype) initWithPort:(unsigned short)p labelled:(NSString *)n;
 
 - (void) prepareToBeDeleted;
 
