@@ -157,9 +157,12 @@
 	else
 		lastActionInBounds = NO;
 	
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 	//	if there's a delegate and it has an action callback, call it
 	if ((delegate!=nil)&&(actionCallback!=nil)&&([delegate respondsToSelector:actionCallback]))
 		[delegate performSelector:actionCallback withObject:self];
+	#pragma clang diagnostic pop
 }
 - (void) mouseDown:(VVPOINT)p modifierFlag:(long)m	{
 	[self receivedEvent:VVSpriteEventDown atPoint:p withModifierFlag:m];
@@ -185,14 +188,20 @@
 #if !TARGET_OS_IPHONE
 	glDrawContext = NULL;
 #endif
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 	[delegate performSelector:drawCallback withObject:self];
+	#pragma clang diagnostic pop
 }
 #if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{
 	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
 		return;
 	glDrawContext = cgl_ctx;
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 	[delegate performSelector:drawCallback withObject:self];
+	#pragma clang diagnostic pop
 	glDrawContext = NULL;
 }
 #endif

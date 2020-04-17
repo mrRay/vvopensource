@@ -67,8 +67,11 @@
 		NSLog(@"\t\terr: bailing, listener nil, %s",__func__);
 		return;
 	}
-	__block id		bss = self;
+	__weak ClassAMCXRemote		*bssOuter = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
+		ClassAMCXRemote		*bss = bssOuter;
+		if (bss == nil)
+			return;
 		NSLog(@"%@ err handler",[bss className]);
 		
 		//	immediately inform the remote mgr that a listener error handler has been tripped- this clears its cache of classes and will re-launch the XPC service

@@ -624,7 +624,7 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 	backingReleaseCallbackContext = n;
 }
 - (void) setBackingReleaseCallbackContextObject:(id)n	{
-	backingReleaseCallbackContext = (n==nil) ? nil : CFBridgingRetain(n);
+	backingReleaseCallbackContext = (n==nil) ? nil : (void*)CFBridgingRetain(n);
 }
 - (void *) backingReleaseCallbackContext	{
 	return backingReleaseCallbackContext;

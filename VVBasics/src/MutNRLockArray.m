@@ -272,8 +272,12 @@
 		return;
 	for (id anObj in array)	{
 		id		actualObj = [anObj object];
-		if (actualObj != nil)
+		if (actualObj != nil)	{
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 			[actualObj performSelector:s];
+			#pragma clang diagnostic pop
+		}
 	}
 }
 - (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s	{
@@ -288,8 +292,12 @@
 		return;
 	for (id anObj in array)	{
 		id		actualObj = [anObj object];
-		if (actualObj != nil)
+		if (actualObj != nil)	{
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 			[actualObj performSelector:s withObject:o];
+			#pragma clang diagnostic pop
+		}
 	}
 }
 - (void) lockBruteForceMakeObjectsPerformSelector:(SEL)s withObject:(id)o	{

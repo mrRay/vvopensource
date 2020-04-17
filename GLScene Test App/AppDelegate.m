@@ -61,7 +61,17 @@
 //	this method is called from the displaylink callback
 - (void) renderCallback	{
 	//	tell the GL scene to allocate and render itself to a buffer
-	VVBuffer	*newTex = [glScene allocAndRenderABuffer];
+	//VVBuffer	*newTex = [glScene allocAndRenderABuffer];
+	
+	VVBuffer		*shitTex = [_globalVVBufferPool allocBGRTexSized:[glScene size]];
+	[_globalVVBufferCopier copyRedFrameToThisBuffer:shitTex];
+	
+	//VVBuffer		*newTex = [_globalVVBufferPool allocBGRACPUBackedTexRangeSized:[glScene size]];
+	VVBuffer		*newTex = [_globalVVBufferPool allocRGBACPUBackedTexRangeSized:[glScene size]];
+	//VVBuffer		*newTex = [_globalVVBufferPool allocBGRTexSized:[glScene size]];
+	[_globalVVBufferCopier copyThisBuffer:shitTex toThisBuffer:newTex];
+	
+	VVRELEASE(shitTex);
 	
 	//	draw the GL texture i just rendered in the buffer view
 	[bufferView drawBuffer:newTex];

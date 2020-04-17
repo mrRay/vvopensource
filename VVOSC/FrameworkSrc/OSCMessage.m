@@ -485,9 +485,10 @@
 		return value;
 	__block int			flatIndex = 0;
 	__block OSCValue	*foundValue = nil;
-	__block void		(^flatIndexValFinder)(OSCValue *);
+	__weak __block void		(^flatIndexValFinder)(OSCValue *);
+	void				(^flatIndexValFinder_retained)(OSCValue *);
 	
-	flatIndexValFinder = ^(OSCValue *inVal)	{
+	flatIndexValFinder = flatIndexValFinder_retained = ^(OSCValue *inVal)	{
 		switch ([inVal type])	{
 		case OSCValUnknown:
 			break;

@@ -68,7 +68,7 @@ int				_minorSysVersion = -1;
 	
 	os_unfair_lock_lock(&_majorSysVersionLock);
 	_majorSysVersion = (unsigned int)([[darwinChunks objectAtIndex:0] integerValue] - 4);
-	_minorSysVersion = [[darwinChunks objectAtIndex:1] integerValue];
+	_minorSysVersion = (int)[[darwinChunks objectAtIndex:1] integerValue];
 	returnMe = _majorSysVersion;
 	os_unfair_lock_unlock(&_majorSysVersionLock);
 	

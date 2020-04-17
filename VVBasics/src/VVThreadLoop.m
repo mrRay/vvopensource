@@ -113,8 +113,12 @@
 						os_unfair_lock_unlock(&valLock);
 						//@try	{
 							//	if there's a target object, ping it (delegate-style)
-							if (targetObj != nil)
+							if (targetObj != nil)	{
+								#pragma clang diagnostic push
+								#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 								[targetObj performSelector:targetSel];
+								#pragma clang diagnostic pop
+							}
 							//	else just call threadProc (subclass-style)
 							else
 								[self threadProc];

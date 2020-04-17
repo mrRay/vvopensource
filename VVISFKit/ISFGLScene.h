@@ -35,7 +35,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 @interface ISFGLScene : GLShaderScene	{
 	BOOL				throwExceptions;	//	NO by default
 	
-	OSSpinLock			propertyLock;	//	locks the file* vars and categoryNames (everything before the empty line)
+	os_unfair_lock			propertyLock;	//	locks the file* vars and categoryNames (everything before the empty line)
 	BOOL				loadingInProgress;
 	NSString			*filePath;	//	full path to the loaded file
 	NSString			*fileName;	//	just the file name (including its extension)
@@ -61,7 +61,7 @@ extern NSString			*_ISFMacro2DRectBiasString;	//	same as above, slightly differe
 	
 	int					passIndex;	//	only has a valid value while rendering
 	
-	OSSpinLock			srcLock;
+	os_unfair_lock			srcLock;
 	NSString			*jsonSource;	//	the JSON string from the source *including the comments and any linebreaks before/after it*
 	NSString			*jsonString;	//	the JSON string copied from the source- doesn't include any comments before/after it
 	NSString			*vertShaderSource;	//	the raw vert shader source before being find-and-replaced

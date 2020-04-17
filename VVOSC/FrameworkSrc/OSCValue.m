@@ -271,7 +271,7 @@
 	if (n == nil)
 		goto BAIL;
 	if (self = [super init])	{
-		value = CFBridgingRetain(n);
+		value = (void*)CFBridgingRetain(n);
 		type = OSCValString;
 		return self;
 	}
@@ -350,7 +350,7 @@
 		NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 		NSColor			*calibratedColor = ((__bridge void *)[n colorSpace]==(__bridge void *)devRGBColorSpace) ? n :[n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
 #endif
-		value = CFBridgingRetain(calibratedColor);
+		value = (void*)CFBridgingRetain(calibratedColor);
 		type = OSCValColor;
 		return self;
 	}
@@ -399,7 +399,7 @@
 - (instancetype) initArray	{
 	self = [super init];
 	if (self != nil)	{
-		value = CFBridgingRetain([[NSMutableArray alloc] initWithCapacity:0]);
+		value = (void*)CFBridgingRetain([[NSMutableArray alloc] initWithCapacity:0]);
 		type = OSCValArray;
 	}
 	return self;
@@ -410,7 +410,7 @@
 		return self;
 	}
 	if (self = [super init])	{
-		value = CFBridgingRetain(d);
+		value = (void*)CFBridgingRetain(d);
 		type = OSCValBlob;
 		return self;
 	}

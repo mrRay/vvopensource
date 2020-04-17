@@ -1241,8 +1241,6 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		return nil;
 	//	save the current NSGraphicsContext, make a new one based on the bitmap image rep i just created
 	NSGraphicsContext		*origContext = [NSGraphicsContext currentContext];
-	if (origContext != nil)
-		origContext;
 	NSGraphicsContext		*newContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
 	if (newContext != nil)	{
 		//	set up & start drawing in the new graphics context (draws into the bitmap image rep)

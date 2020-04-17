@@ -4,7 +4,7 @@
 
 
 
-MIDIClientRef		_VVMIDIProcessClientRef = NULL;
+MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 
 
 
@@ -165,7 +165,7 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 	else
 		sourceArray = [[MutLockArray alloc] init];
 	
-	sourceCount = MIDIGetNumberOfSources();
+	sourceCount = (int)MIDIGetNumberOfSources();
 	for (i=0; i<sourceCount; ++i)	{
 		endpointRef = MIDIGetSource(i);
 		newSource = [[[self receivingNodeClass] alloc] initReceiverWithEndpoint:endpointRef];
@@ -232,7 +232,7 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 	else
 		destArray = [[MutLockArray alloc] init];
 	
-	destCount = MIDIGetNumberOfDestinations();
+	destCount = (int)MIDIGetNumberOfDestinations();
 	for (i=0; i<destCount; ++i)	{
 		endpointRef = MIDIGetDestination(i);
 		newDest = [[[self sendingNodeClass] alloc] initSenderWithEndpoint:endpointRef];
@@ -310,8 +310,8 @@ MIDIClientRef		_VVMIDIProcessClientRef = NULL;
 	if ((a==nil) || ([a count] < 1))
 		return;
 	
-	NSEnumerator		*msgIt = nil;
-	VVMIDIMessage		*msgPtr = nil;
+	//NSEnumerator		*msgIt = nil;
+	//VVMIDIMessage		*msgPtr = nil;
 	
 	//	first send the message to all the items in the dest array (each node has its own enable flag)
 	//msgIt = [a objectEnumerator];

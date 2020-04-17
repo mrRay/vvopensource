@@ -306,14 +306,14 @@ double			_machTimeToNsFactor;
 		}
 	}
 	//	get the entity.  an entity has multiple endpoints...
-	MIDIEntityRef		tmpEntity = NULL;
+	MIDIEntityRef		tmpEntity = 0x0;
 	err = MIDIEndpointGetEntity(endpointRef, &tmpEntity);
 	if (err != noErr)	{
 		//NSLog(@"\t\terr: %ld at MIDIEndpointGetEntity() in %s for %@",err,__func__,name);
 	}
 	else	{
 		//	get the device.  a device has entities...
-		MIDIDeviceRef	tmpDevice = NULL;
+		MIDIDeviceRef	tmpDevice = 0x0;
 		err = MIDIEntityGetDevice(tmpEntity, &tmpDevice);
 		if (err != noErr)	{
 			//NSLog(@"\t\terr: %ld at MIDIEntityGetDevice() in %s",err,__func__);

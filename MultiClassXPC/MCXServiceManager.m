@@ -55,9 +55,12 @@
 	
 	//	make the actual connection, configure it, then resume it
 	os_unfair_lock_lock(&connLock);
-	__block id		bss = self;
+	__weak MCXServiceManager		*bssOuter = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
-		NSLog(@"%@ err handler for %@",[bss className],connServiceIdentifier);
+		MCXServiceManager		*bss = bssOuter;
+		if (bss == nil)
+			return;
+		NSLog(@"%@ err handler for %@",[bss className],bss->connServiceIdentifier);
 		//	just try to establish a connection again- this automatically kills any remnants of the old conn and fetches new listener endpoints
 		[bss establishConnection];
 	};

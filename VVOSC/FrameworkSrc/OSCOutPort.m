@@ -130,8 +130,8 @@
 	OSCPacket		*tmpPacket = p;
 	
 	int				numBytesSent = -1;
-	long			bufferSize = [p bufferLength];
-	unsigned char	*buff = [p payload];
+	long			bufferSize = [tmpPacket bufferLength];
+	unsigned char	*buff = [tmpPacket payload];
 	
 	if (buff == NULL)	{
 		NSLog(@"\t\terr: packet's buffer was null");

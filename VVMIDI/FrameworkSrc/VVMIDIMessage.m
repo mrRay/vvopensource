@@ -16,31 +16,31 @@
 		//	status byte
 		case VVMIDINoteOffVal:
 			//return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
-			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd",channel+1,data1,data2];
+			return [NSString stringWithFormat:@"NoteOff, ch.%hhd, note.%hhd, val.%hhd",(char)(channel+1),data1,data2];
 			break;
 		case VVMIDINoteOnVal:
 			//return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
-			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd",channel+1,data1,data2];
+			return [NSString stringWithFormat:@"NoteOn, ch.%hhd, note.%hhd, val.%hhd",(char)(channel+1),data1,data2];
 			break;
 		case VVMIDIAfterTouchVal:
 			//return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
-			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd",channel+1,data1,data2];
+			return [NSString stringWithFormat:@"AfterTouch, ch.%hhd, note.%hhd, val.%hhd",(char)(channel+1),data1,data2];
 			break;
 		case VVMIDIControlChangeVal:
 			//return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd, time.%qd",channel,data1,data2,timestamp];
-			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd",channel+1,data1,data2];
+			return [NSString stringWithFormat:@"Ctrl, ch.%hhd, ctrl.%hhd, val.%hhd",(char)(channel+1),data1,data2];
 			break;
 		case VVMIDIProgramChangeVal:
 			//return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd, time.%qd",channel,data1,timestamp];
-			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd",channel+1,data1];
+			return [NSString stringWithFormat:@"PgmChange, ch.%hhd, pgm.%hhd",(char)(channel+1),data1];
 			break;
 		case VVMIDIChannelPressureVal:
 			//return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd, time.%qd",channel,data1,timestamp];
-			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd",channel+1,data1];
+			return [NSString stringWithFormat:@"ChannelPressure, ch.%hhd, val.%hhd",(char)(channel+1),data1];
 			break;
 		case VVMIDIPitchWheelVal:
 			//return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d, time.%qd",channel,(data2<<7)|data1,timestamp];
-			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d",channel+1,(data2<<7)|data1];
+			return [NSString stringWithFormat:@"PitchWheel, ch.%hhd, val.%d",(char)(channel+1),(data2<<7)|data1];
 			break;
 		//	common messages
 		case VVMIDIMTCQuarterFrameVal:

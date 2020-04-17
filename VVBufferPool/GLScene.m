@@ -654,8 +654,12 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 			//Block_release(localRenderBlock);
 		}
 		//	if there's a render target/selector, call them
-		if ((renderTarget!=nil) && (renderSelector!=nil) && ([renderTarget respondsToSelector:renderSelector]))
+		if ((renderTarget!=nil) && (renderSelector!=nil) && ([renderTarget respondsToSelector:renderSelector]))	{
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 			[renderTarget performSelector:renderSelector withObject:self];
+			#pragma clang diagnostic pop
+		}
 		
 		//	do any cleanup/flush my context
 		[self _renderCleanup];

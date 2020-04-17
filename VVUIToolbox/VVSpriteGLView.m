@@ -942,10 +942,10 @@ long			_spriteGLViewSysVers;
 		pthread_mutex_unlock(&glLock);
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
-			pthread_mutex_lock(&glLock);
+			pthread_mutex_lock(&self->glLock);
 			[self initializeGL];
-			waitingForMainThread = NO;
-			pthread_mutex_unlock(&glLock);
+			self->waitingForMainThread = NO;
+			pthread_mutex_unlock(&self->glLock);
 		});
 		return;
 	}
