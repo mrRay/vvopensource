@@ -454,3 +454,10 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 		tmpBlock();	\
 }
 
+
+
+
+#define AntiARCRetain(...) if (__VA_ARGS__ != nil) CFRetain((__bridge CFTypeRef)__VA_ARGS__)
+#define AntiARCRelease(...) if (__VA_ARGS__ != nil) CFRelease((__bridge CFTypeRef)__VA_ARGS__)
+
+
