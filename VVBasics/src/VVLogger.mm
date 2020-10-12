@@ -247,7 +247,7 @@ NSString * VVLoggerRealHomeDirectory(void);
 	VVRELEASE(fmt);
 }
 - (NSString *) _formatterString	{
-	return [NSString stringWithFormat:@"yyyy.MM.dd-HH.mm.ss'-%@.txt'",logFolderName];
+	return [NSString stringWithFormat:@"yyyy.MM.dd-HH.mm.ss'-%@.log'",logFolderName];
 }
 - (NSString *) logDir	{
 	//return [[NSString stringWithFormat:@"~/Library/Logs/%@",logFolderName] stringByExpandingTildeInPath];
