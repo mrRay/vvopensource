@@ -9,6 +9,7 @@
 
 
 
+
 //	uncomment the following and manually specify the following vals if you pull this class out of this framework...
 /*
 #define USING_MRC 0
