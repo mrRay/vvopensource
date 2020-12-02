@@ -336,6 +336,25 @@ NSString * VVLoggerRealHomeDirectory(void);
 	return currentLogPath;
 #endif
 }
+- (NSArray<NSURL*> *) sortedLogURLs	{
+	NSMutableArray		*returnMe = nil;
+#if USING_MRC
+	returnMe = [NSMutableArray arrayWithCapacity:0];
+#elif USING_ARC
+	returnMe = [[NSMutableArray alloc] init];
+#endif
+	
+	NSArray			*sortedLogFiles = [self sortedLogFiles];
+	for (VVLogFile * file in sortedLogFiles)	{
+		NSURL			*url = (file.path==nil) ? nil : [NSURL fileURLWithPath:file.path];
+		if (url != nil)
+			[returnMe addObject:url];
+	}
+	
+	if (returnMe.count < 1)
+		return nil;
+	return [NSArray arrayWithArray:returnMe];
+}
 
 @end
 

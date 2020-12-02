@@ -21,4 +21,6 @@
 - (NSString *) pathForLogRightBeforeDate:(NSDate *)n;
 - (NSString *) pathForCurrentLogFile;
 
+- (NSArray<NSURL*> *) sortedLogURLs;
+
 @end
