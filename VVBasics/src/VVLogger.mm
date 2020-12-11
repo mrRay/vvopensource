@@ -65,7 +65,7 @@ NSString * VVLoggerRealHomeDirectory(void);
 
 
 
-@interface VVLogFile : NSObject
+@interface VVLogFile ()
 + (id) createWithPath:(NSString *)p openDate:(NSDate *)od closeDate:(NSDate *)cd;
 - (id) initWithPath:(NSString *)p openDate:(NSDate *)od closeDate:(NSDate *)cd;
 @property (retain,readwrite) NSString *path;
@@ -132,7 +132,7 @@ NSString * VVLoggerRealHomeDirectory(void);
 - (void) _cleanUpExistingLogs;
 - (NSString *) _formatterString;
 - (NSString *) logDir;
-- (NSArray *) sortedLogFiles;	//	return array of VVLogFile instances, not safe outside this class
+- (NSArray<VVLogFile*> *) sortedLogFiles;	//	return array of VVLogFile instances, not safe outside this class
 @end
 
 
@@ -254,7 +254,7 @@ NSString * VVLoggerRealHomeDirectory(void);
 	//return [[NSString stringWithFormat:@"~/Library/Logs/%@",logFolderName] stringByExpandingTildeInPath];
 	return [VVLoggerRealHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Library/Logs/%@",logFolderName]];
 }
-- (NSArray *) sortedLogFiles	{
+- (NSArray<VVLogFile*> *) sortedLogFiles	{
 	//NSLog(@"%s",__func__);
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	NSString			*logDir = [self logDir];

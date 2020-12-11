@@ -3,6 +3,16 @@
 
 
 
+@interface VVLogFile : NSObject
+@property (readonly) NSString *path;
+@property (readonly) NSDate *openDate;
+@property (readonly) NSDate *closeDate;
+- (BOOL) encompassesDate:(NSDate *)n;
+@end
+
+
+
+
 @interface VVLogger : NSObject	{
 	NSString		*logFolderName;
 	NSString		*currentLogPath;	//	path to the current log file
@@ -22,5 +32,6 @@
 - (NSString *) pathForCurrentLogFile;
 
 - (NSArray<NSURL*> *) sortedLogURLs;
+- (NSArray<VVLogFile*> *) sortedLogFiles;
 
 @end
