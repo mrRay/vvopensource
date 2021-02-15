@@ -11,9 +11,9 @@
 
 
 - (NSString *) description	{
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		NSString		*returnMe = [NSString stringWithFormat:@"<OSCNode %@>",nodeName];
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	return returnMe;
 }
 + (instancetype) createWithName:(NSString *)n	{
@@ -35,7 +35,7 @@
 		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
-		nameLock = OS_UNFAIR_LOCK_INIT;
+		nameLock = VV_LOCK_INIT;
 		nodeName = [n trimFirstAndLastSlashes];
 		fullName = nil;
 		lastFullName = nil;
@@ -45,7 +45,7 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
-		lastReceivedMessageLock = OS_UNFAIR_LOCK_INIT;
+		lastReceivedMessageLock = VV_LOCK_INIT;
 		delegateArray = nil;
 		
 		oscDescription = nil;
@@ -72,7 +72,7 @@
 		addressSpace = _mainVVOSCAddressSpace;
 		deleted = NO;
 		
-		nameLock = OS_UNFAIR_LOCK_INIT;
+		nameLock = VV_LOCK_INIT;
 		nodeName = nil;
 		fullName = nil;
 		lastFullName = nil;
@@ -82,7 +82,7 @@
 		hiddenInMenu = NO;
 		
 		lastReceivedMessage = nil;
-		lastReceivedMessageLock = OS_UNFAIR_LOCK_INIT;
+		lastReceivedMessageLock = VV_LOCK_INIT;
 		delegateArray = nil;
 		
 		oscDescription = nil;
@@ -126,18 +126,18 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		VVRELEASE(nodeName);
 		VVRELEASE(fullName);
 		VVRELEASE(lastFullName);
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	VVRELEASE(nodeContents);
 	parentNode = nil;
 	
-	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVLockLock(&lastReceivedMessageLock);
 	VVRELEASE(lastReceivedMessage);
-	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	VVLockUnlock(&lastReceivedMessageLock);
 	
 	VVRELEASE(oscDescription);
 	VVRELEASE(typeTagString);
@@ -168,9 +168,9 @@
 	NSComparisonResult		returnMe = NSOrderedSame;
 	NSString				*compNodeName = [comp nodeName];
 	
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		returnMe = (compNodeName==nil) ? NSOrderedSame : [nodeName caseInsensitiveCompare:compNodeName];
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	return returnMe;
 }
@@ -184,9 +184,9 @@
 	if (self == o)
 		return YES;
 	
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 	NSString		*tmpNodeName = nodeName;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	//	if it's the same class and the nodeName matches, return YES
 	if (([o isKindOfClass:[OSCNode class]]) && ([tmpNodeName isEqualToString:[o nodeName]]))
@@ -261,10 +261,10 @@
 - (void) removeFromAddressSpace	{
 	if (deleted || _mainVVOSCAddressSpace==nil || fullName==nil)
 		return;
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 	VVRELEASE(lastFullName);
 	lastFullName = (fullName==nil) ? nil : fullName;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	[_mainVVOSCAddressSpace setNode:nil forAddress:fullName];
 }
 
@@ -479,7 +479,7 @@
 	//NSLog(@"%s ... %@",__func__,self);
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
 	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		VVRELEASE(lastFullName);
 		lastFullName = (fullName==nil) ? nil : fullName;
 		VVRELEASE(fullName);
@@ -488,7 +488,7 @@
 			fullName = [NSString stringWithFormat:@"/%@",nodeName];
 		else if (parentNode != nil)
 			fullName = [NSString stringWithFormat:@"%@/%@",parentFullName,nodeName];
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	//	inform delegates of name change
 	NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
@@ -528,10 +528,10 @@
 	OSCMessage			*tmpMsg = m;
 	NSMutableArray		*tmpCopy = nil;
 	
-	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVLockLock(&lastReceivedMessageLock);
 		VVRELEASE(lastReceivedMessage);
 		lastReceivedMessage = tmpMsg;
-	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	VVLockUnlock(&lastReceivedMessageLock);
 	
 	[delegateArray wrlock];
 	tmpCopy = [delegateArray createArrayCopyFromObjects];
@@ -562,23 +562,23 @@
 	//[addressSpace nodeRenamed:self];
 }
 - (NSString *) nodeName	{
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		NSString		*returnMe = (nodeName==nil)?nil:nodeName;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	return returnMe;
 }
 - (void) _setNodeName:(NSString *)n	{
 	//	get a name-lock, as i'll be checking and potentially changing the name
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		//	if the new name is the same as the old name, unlock and return immediately
 		if ((n!=nil) && (nodeName!=nil) && ([n isEqualToString:nodeName]))	{
-			os_unfair_lock_unlock(&nameLock);
+			VVLockUnlock(&nameLock);
 			return;
 		}
 		//	if i'm here, the name's changing- release, set, retain...then unlock
 		VVRELEASE(nodeName);
 		nodeName = n;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
 	if (parentNode != nil)	{
@@ -587,15 +587,15 @@
 	}
 }
 - (NSString *) fullName	{
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		NSString		*returnMe = (fullName==nil)?nil:fullName;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	return returnMe;
 }
 - (NSString *) lastFullName	{
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		NSString		*returnMe = (lastFullName==nil) ? nil : lastFullName;
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	return returnMe;
 }
 - (id) nodeContents	{
@@ -639,29 +639,29 @@
 - (void) setLastReceivedMessage:(OSCMessage *)n	{
 	if (deleted)
 		return;
-	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVLockLock(&lastReceivedMessageLock);
 	VVRELEASE(lastReceivedMessage);
 	lastReceivedMessage = (n==nil) ? nil : n;
-	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	VVLockUnlock(&lastReceivedMessageLock);
 }
 - (OSCMessage *) lastReceivedMessage	{
 	if (deleted)
 		return nil;
 	OSCMessage		*returnMe = nil;
 	
-	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVLockLock(&lastReceivedMessageLock);
 		if (lastReceivedMessage != nil)	{
 			returnMe = [lastReceivedMessage copy];
 		}
-	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	VVLockUnlock(&lastReceivedMessageLock);
 	
 	return returnMe;
 }
 - (OSCValue *) lastReceivedValue	{
 	OSCValue		*returnMe = nil;
-	os_unfair_lock_lock(&lastReceivedMessageLock);
+	VVLockLock(&lastReceivedMessageLock);
 		returnMe = (lastReceivedMessage==nil) ? nil : [lastReceivedMessage value];
-	os_unfair_lock_unlock(&lastReceivedMessageLock);
+	VVLockUnlock(&lastReceivedMessageLock);
 	return returnMe;
 }
 - (id) delegateArray	{

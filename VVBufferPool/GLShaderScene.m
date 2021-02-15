@@ -66,7 +66,7 @@
 	fragmentShaderString = nil;
 	//samplerTarget = nil;
 	//samplerSelector = nil;
-	errDictLock = OS_UNFAIR_LOCK_INIT;
+	errDictLock = VV_LOCK_INIT;
 	errDict = nil;
 }
 - (void) prepareToBeDeleted	{
@@ -95,9 +95,9 @@
 		[self prepareToBeDeleted];
 	pthread_mutex_destroy(&renderLock);
 	if (errDict != nil)	{
-		os_unfair_lock_lock(&errDictLock);
+		VVLockLock(&errDictLock);
 		VVRELEASE(errDict);
-		os_unfair_lock_unlock(&errDictLock);
+		VVLockUnlock(&errDictLock);
 	}
 	VVRELEASE(vertexShaderString);
 	VVRELEASE(fragmentShaderString);
@@ -204,9 +204,9 @@
 		}
 		programReady = NO;
 		
-		os_unfair_lock_lock(&errDictLock);
+		VVLockLock(&errDictLock);
 		VVRELEASE(errDict);
-		os_unfair_lock_unlock(&errDictLock);
+		VVLockUnlock(&errDictLock);
 		
 		BOOL			encounteredError = NO;
 		if (vertexShaderString != nil)	{
@@ -227,12 +227,12 @@
 				//NSLog(@"\t\tshader was %s",shaderSrc);
 				encounteredError = YES;
 				
-				os_unfair_lock_lock(&errDictLock);
+				VVLockLock(&errDictLock);
 				if (errDict == nil)
 					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"vertErrLog"];
 				[errDict setObject:vertexShaderString forKey:@"vertSrc"];
-				os_unfair_lock_unlock(&errDictLock);
+				VVLockUnlock(&errDictLock);
 				
 				free(log);
 				glDeleteShader(vertexShader);
@@ -257,12 +257,12 @@
 				//NSLog(@"\t\tshader was %s",shaderSrc);
 				encounteredError = YES;
 				
-				os_unfair_lock_lock(&errDictLock);
+				VVLockLock(&errDictLock);
 				if (errDict == nil)
 					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"fragErrLog"];
 				[errDict setObject:fragmentShaderString forKey:@"fragSrc"];
-				os_unfair_lock_unlock(&errDictLock);
+				VVLockUnlock(&errDictLock);
 				
 				free(log);
 				glDeleteShader(fragmentShader);
@@ -292,11 +292,11 @@
 				//NSLog(@"\t\tfrag shader is:");
 				//NSLog(@"%@",fragmentShaderString);
 				
-				os_unfair_lock_lock(&errDictLock);
+				VVLockLock(&errDictLock);
 				if (errDict == nil)
 					errDict = MUTDICT;
 				[errDict setObject:[NSString stringWithUTF8String:log] forKey:@"linkErrLog"];
-				os_unfair_lock_unlock(&errDictLock);
+				VVLockUnlock(&errDictLock);
 				
 				free(log);
 				glDeleteProgram(program);

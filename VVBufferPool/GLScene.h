@@ -14,7 +14,7 @@
 
 
 
-extern os_unfair_lock		_glSceneStatLock;
+extern VVLock		_glSceneStatLock;
 extern NSMutableArray	*_glGPUVendorArray;
 extern NSMutableArray	*_hwGPUVendorArray;
 extern BOOL				_integratedGPUFlag;	//	whether or not the scene is rendering on an integrated GPU
@@ -46,7 +46,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	BOOL					deleted;
 	BOOL					initialized;
 	BOOL					needsReshape;
-	os_unfair_lock			renderThreadLock;	//	used to serialize access to "renderThreadDeleteArray", making it thread-safe
+	VVLock			renderThreadLock;	//	used to serialize access to "renderThreadDeleteArray", making it thread-safe
 	__weak MutLockArray		*renderThreadDeleteArray;	//	NOT RETAINED!  weak ref to an array you can add items to such that the items will be released on the thread that renders the scene.  useful if you need to ensure that rendering resources are released on the same thread that did the rendering.  only non-nil if this scene is being rendered on a thread created by a RenderThread class
 	
 #if !TARGET_OS_IPHONE
@@ -61,7 +61,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	
 	__weak id				renderTarget;	//	NOT RETAINED- the target of my render method
 	SEL						renderSelector;	//	this method gets called when i render; ONLY does the actual drawing- does NOT do setup/cleanup (use _renderPrep and _renderCleanup)!
-	os_unfair_lock			renderBlockLock;
+	VVLock			renderBlockLock;
 	void					(^renderBlock)(void);	//	RETAINED.  if you don't want to use a delegate/callback method for specifying drawing commands, you can use this block instead- it will get called when this scene is told to render
 	
 	GLuint					fbo;	//	the framebuffer my context renders into- only valid when the render method is called!
@@ -76,7 +76,7 @@ while this class is part of the VVBufferPool framework, the low-level methods fo
 	VVSIZE					size;	//	the size of the this scene/the texture/framebuffer/viewport/etc
 	BOOL					flipped;	//	whether or not the context renders upside-down.  NO by default, but some subclasses just render upside-down...
 
-	os_unfair_lock			projectionMatrixLock;	//	used to lock projectionMatrix-related vars
+	VVLock			projectionMatrixLock;	//	used to lock projectionMatrix-related vars
 	float					projectionMatrix[16];	//	if you're in "modern" GL, the modelview/projection matrices have to be expressed as a single matrix that gets passed to the vertx shader.  this is that matrix- it configures orthogonal projection.  stored here in column-major format.
 #if TARGET_OS_IPHONE
 	GLKBaseEffect			*projectionMatrixEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).

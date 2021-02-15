@@ -84,7 +84,7 @@ extern long			_spriteGLViewSysVers;
 	BOOL					waitingForFenceA;
 	BOOL					fenceADeployed;
 	BOOL					fenceBDeployed;
-	os_unfair_lock				fenceLock;
+	VVLock				fenceLock;
 }
 
 - (void) generalInit;

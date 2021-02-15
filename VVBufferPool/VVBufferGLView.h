@@ -19,11 +19,11 @@
 	VVSizingMode	sizingMode;
 	
 	BOOL			retainDraw;
-	os_unfair_lock		retainDrawLock;
+	VVLock		retainDrawLock;
 	VVBuffer		*retainDrawBuffer;
 	
 	BOOL			onlyDrawNewStuff;	//	NO by default. if YES, only draws buffers with content timestamps different from the timestamp of the last buffer displayed
-	os_unfair_lock		onlyDrawNewStuffLock;
+	VVLock		onlyDrawNewStuffLock;
 	uint64_t		onlyDrawNewStuffTimestamp;
 }
 

@@ -16,7 +16,7 @@
 	//NSLog(@"%s",__func__);
 	self = [super init];
 	if (self != nil)	{
-		timeLock = OS_UNFAIR_LOCK_INIT;
+		timeLock = VV_LOCK_INIT;
 		[self start];
 	}
 	return self;
@@ -24,14 +24,14 @@
 
 
 - (void) start	{
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	gettimeofday(&startTime,NULL);
 	paused = NO;
 	prePauseTimeSinceStart = 0.0;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (void) pause	{
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	//	only proceed if i'm not already paused
 	if (!paused)	{
 		//	this is basically a 'timeSinceStart' embedded here to avoid locking twice
@@ -54,19 +54,19 @@
 		paused = YES;
 		prePauseTimeSinceStart = timeSinceStart;
 	}
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (BOOL) paused	{
 	BOOL		returnMe = NO;
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	returnMe = paused;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 	return returnMe;
 }
 - (void) resume	{
 	struct timeval		tmpStartTime;
 	
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	//	only proceed if i'm actually paused
 	if (paused){
 		//	this is basically a 'startInTimeInterval' using a negative 'prePauseTimeSinceStart'
@@ -83,13 +83,13 @@
 			timeradd(&tmpStartTime,&intervalStruct,&startTime);
 		paused = NO;
 	}
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (BOOL) running	{
 	BOOL		returnMe = NO;
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	returnMe = !paused;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 	return returnMe;
 }
 
@@ -97,7 +97,7 @@
 - (double) timeSinceStart	{
 	double				returnMe = 0.0;
 	struct timeval		stopTime;
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 		if (paused)	{
 			returnMe = prePauseTimeSinceStart;
 		}
@@ -115,14 +115,14 @@
 			//	add the time difference in microseconds
 			returnMe += (((double)(stopTime.tv_usec - startTime.tv_usec)) / 1000000.0);
 		}
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 	return returnMe;
 }
 - (void) getFullTimeSinceStart:(struct timeval *)dst	{
 	if (dst == nil)
 		return;
 	struct timeval		stopTime;
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 		//	get the current time of day
 		gettimeofday(&stopTime,NULL);
 		/*	make sure that the start time's microseconds component is less than
@@ -134,12 +134,12 @@
 		
 		(*(dst)).tv_sec = stopTime.tv_sec - startTime.tv_sec;
 		(*(dst)).tv_usec = stopTime.tv_usec - startTime.tv_usec;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (void) startInTimeInterval:(NSTimeInterval)t	{
 	//NSLog(@"%s ... %f",__func__,t);
 	struct timeval		tmpStartTime;
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 	if (paused)	{
 		prePauseTimeSinceStart = -1.0 * t;
 	}
@@ -155,19 +155,19 @@
 		else
 			timeradd(&tmpStartTime,&intervalStruct,&startTime);
 	}
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (void) copyStartTimeToTimevalStruct:(struct timeval *)dst	{
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 		(*(dst)).tv_sec = startTime.tv_sec;
 		(*(dst)).tv_usec = startTime.tv_usec;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 - (void) setStartTimeStruct:(struct timeval *)src	{
-	os_unfair_lock_lock(&timeLock);
+	VVLockLock(&timeLock);
 		startTime.tv_sec = (*(src)).tv_sec;
 		startTime.tv_usec = (*(src)).tv_usec;
-	os_unfair_lock_unlock(&timeLock);
+	VVLockUnlock(&timeLock);
 }
 
 

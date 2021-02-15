@@ -83,7 +83,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 #endif
 - (void) generalInit	{
 	[super generalInit];
-	propertyLock = OS_UNFAIR_LOCK_INIT;
+	propertyLock = VV_LOCK_INIT;
 	//performClear = NO;
 	throwExceptions = NO;
 	loadingInProgress = NO;
@@ -122,12 +122,12 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	VVRELEASE(filePath);
 	VVRELEASE(fileName);
 	VVRELEASE(fileDescription);
 	VVRELEASE(fileCredits);
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	VVRELEASE(categoryNames);
 	VVRELEASE(inputs);
 	VVRELEASE(imageInputs);
@@ -138,13 +138,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(persistentBufferArray);
 	VVRELEASE(tempBufferArray);
 	VVRELEASE(passes);
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	VVRELEASE(jsonSource);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	VVRELEASE(geoXYVBO);
 	[super dealloc];
 }
@@ -155,15 +155,15 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 - (void) useFile:(NSString *)p resetTimer:(BOOL)r	{
 	//NSLog(@"%s ... %@",__func__,p);
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	BOOL			bail = (loadingInProgress) ? YES : NO;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	if (bail)	{
 		NSLog(@"\t\terr: can't use file, already loading a file, %s",__func__);
 		return;
 	}
 	
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	loadingInProgress = YES;
 	VVRELEASE(filePath);
 	VVRELEASE(fileName);
@@ -173,7 +173,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	VVRELEASE(categoryNames);
 	renderTime = 0.;
 	renderTimeDelta = 0.;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	[inputs lockRemoveAllObjects];
 	[imageInputs lockRemoveAllObjects];
 	[audioInputs lockRemoveAllObjects];
@@ -183,13 +183,13 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[tempBufferArray lockRemoveAllObjects];
 	[passes lockRemoveAllObjects];
 	
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	VVRELEASE(jsonSource);
 	VVRELEASE(jsonString);
 	VVRELEASE(vertShaderSource);
 	VVRELEASE(fragShaderSource);
 	VVRELEASE(compiledInputTypeString);
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	
 	pthread_mutex_lock(&renderLock);
 	VVRELEASE(vertexShaderString);
@@ -205,9 +205,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	_ISFMacro2DRectString==nil ||
 	_ISFMacro2DRectBiasString==nil)	{
 		NSLog(@"ERR: missing resources that should be located with ISF's parent framework, %s",__func__);
-		os_unfair_lock_lock(&propertyLock);
+		VVLockLock(&propertyLock);
 		loadingInProgress = NO;
-		os_unfair_lock_unlock(&propertyLock);
+		VVLockUnlock(&propertyLock);
 		if (throwExceptions)
 			[NSException raise:@"Missing Resources" format:@"Unable to load file, missing text resources that should be with ISF's framework."];
 		return;
@@ -215,20 +215,20 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	NSString		*rawFile = (p==nil) ? nil : [NSString stringWithContentsOfFile:p encoding:NSUTF8StringEncoding error:nil];
 	if (rawFile == nil)	{
-		os_unfair_lock_lock(&propertyLock);
+		VVLockLock(&propertyLock);
 		loadingInProgress = NO;
-		os_unfair_lock_unlock(&propertyLock);
+		VVLockUnlock(&propertyLock);
 		if (throwExceptions && p!=nil)
 			[NSException raise:@"Invalid File" format:@"file %@ couldn't be loaded, encoding unrecognized",p];
 		return;
 	}
 	
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	NSString		*localFilePath = p;
 	NSString		*localFileName = [p lastPathComponent];
 	filePath = [p retain];
 	fileName = [localFileName retain];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	
 	//	there should be a JSON blob at the very beginning of the file describing the script's attributes and parameters- this is inside comments...
 	NSRange			openCommentRange;
@@ -245,16 +245,16 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	openCommentRange = [rawFile rangeOfString:@"/*"];
 	closeCommentRange = [rawFile rangeOfString:@"*/"];
 	if (openCommentRange.length<=0 || closeCommentRange.length<=0)	{
-		os_unfair_lock_lock(&propertyLock);
+		VVLockLock(&propertyLock);
 		loadingInProgress = NO;
-		os_unfair_lock_unlock(&propertyLock);
+		VVLockUnlock(&propertyLock);
 		if (throwExceptions)
 			[NSException raise:@"Missing JSON Blob" format:@"file %@ was missing the initial JSON blob describing it",p];
 		return;
 	}
 	else	{
 		//	remove the JSON blob, save it as one string- save everything else as the raw shader source string
-		os_unfair_lock_lock(&srcLock);
+		VVLockLock(&srcLock);
 		VVRELEASE(fragShaderSource);
 		VVRELEASE(jsonSource);
 		VVRELEASE(jsonString);
@@ -276,14 +276,14 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		if (jsonObject==nil)	{
 			NSLog(@"\t\terror parsing json object in %s, string was \"%@\"",__func__,jsonString);
 		}
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 		
 		//	run through the dictionaries and values parsed from JSON, creating the appropriate attributes
 		if (![jsonObject isKindOfClass:dictClass])	{
 			NSLog(@"\t\terr: jsonObject was wrong class, %@",localFilePath);
-			os_unfair_lock_lock(&propertyLock);
+			VVLockLock(&propertyLock);
 			loadingInProgress = NO;
-			os_unfair_lock_unlock(&propertyLock);
+			VVLockUnlock(&propertyLock);
 			if (throwExceptions)
 				[NSException raise:@"Malformed JSON Blob" format:@"JSON blob in file %@ was malformed in some way",p];
 			return;
@@ -293,7 +293,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			NSString		*localFileCredits = [jsonObject objectForKey:@"CREDIT"];
 			NSArray			*catsArray = [jsonObject objectForKey:@"CATEGORIES"];
 			
-			os_unfair_lock_lock(&propertyLock);
+			VVLockLock(&propertyLock);
 			if (localFileDescription!=nil && [localFileDescription isKindOfClass:stringClass])	{
 				VVRELEASE(fileDescription);
 				fileDescription = [localFileDescription retain];
@@ -306,7 +306,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				VVRELEASE(categoryNames);
 				categoryNames = [catsArray mutableCopy];
 			}
-			os_unfair_lock_unlock(&propertyLock);
+			VVLockUnlock(&propertyLock);
 			
 			
 			//	parse the persistent buffers from the JSON dict
@@ -415,9 +415,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								for (NSString *fullPath in fullPaths)	{
 									//	if any of the files from the array of paths don't exist, throw an error
 									if (![fm fileExistsAtPath:fullPath])	{
-										os_unfair_lock_lock(&propertyLock);
+										VVLockLock(&propertyLock);
 										loadingInProgress = NO;
-										os_unfair_lock_unlock(&propertyLock);
+										VVLockUnlock(&propertyLock);
 										if (throwExceptions)
 											[NSException raise:@"Missing filter resource" format:@"can't load cube map, file %@ is missing",fullPath];
 										return;
@@ -429,9 +429,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 									UIImage		*tmpImage = [[UIImage alloc] initWithContentsOfFile:fullPath];
 #endif
 									if (tmpImage==nil)	{
-										os_unfair_lock_lock(&propertyLock);
+										VVLockLock(&propertyLock);
 										loadingInProgress = NO;
-										os_unfair_lock_unlock(&propertyLock);
+										VVLockUnlock(&propertyLock);
 										if (throwExceptions)
 											[NSException raise:@"Can't load image" format:@"can't load image for file %@",fullPath];
 										return;
@@ -446,9 +446,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								importedBuffer = [_globalVVBufferPool allocCubeMapTextureInCurrentContextForImages:images];
 #endif
 								if (importedBuffer==nil)	{
-									os_unfair_lock_lock(&propertyLock);
+									VVLockLock(&propertyLock);
 									loadingInProgress = NO;
-									os_unfair_lock_unlock(&propertyLock);
+									VVLockUnlock(&propertyLock);
 									if (throwExceptions)
 										[NSException raise:@"filter resource can't be loaded" format:@"can't make a cubemap from files %@",fullPaths];
 									return;
@@ -487,9 +487,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							//	if the PATH object isn't a string, throw an error
 							NSString		*partialPath = [importDict objectForKey:@"PATH"];
 							if (![partialPath isKindOfClass:[NSString class]])	{
-								os_unfair_lock_lock(&propertyLock);
+								VVLockLock(&propertyLock);
 								loadingInProgress = NO;
-								os_unfair_lock_unlock(&propertyLock);
+								VVLockUnlock(&propertyLock);
 								if (throwExceptions)
 									[NSException raise:@"Conflicting filter definition" format:@"supplied PATH for an imported image wasn't a string, %@",partialPath];
 								return;
@@ -511,9 +511,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 							if (importedBuffer==nil)	{
 								//	if the path doesn't describe a valid file, throw an error
 								if (![fm fileExistsAtPath:fullPath])	{
-									os_unfair_lock_lock(&propertyLock);
+									VVLockLock(&propertyLock);
 									loadingInProgress = NO;
-									os_unfair_lock_unlock(&propertyLock);
+									VVLockUnlock(&propertyLock);
 									if (throwExceptions)
 										[NSException raise:@"Missing filter resource" format:@"can't load, file %@ is missing",partialPath];
 									return;
@@ -534,9 +534,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 								VVRELEASE(tmpImg);
 								//	throw an error if i can't load the image
 								if (importedBuffer==nil)	{
-									os_unfair_lock_lock(&propertyLock);
+									VVLockLock(&propertyLock);
 									loadingInProgress = NO;
-									os_unfair_lock_unlock(&propertyLock);
+									VVLockUnlock(&propertyLock);
 									if (throwExceptions)
 										[NSException raise:@"filter resource can't be loaded" format:@"file %@ was found, but can't be loaded",partialPath];
 									return;
@@ -1007,29 +1007,29 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSFileManager	*fm = [NSFileManager defaultManager];
 	tmpPath = VVFMTSTRING(@"%@.vs",noExtPath);
 	if ([fm fileExistsAtPath:tmpPath])	{
-		os_unfair_lock_lock(&srcLock);
+		VVLockLock(&srcLock);
 		vertShaderSource = [[NSString stringWithContentsOfFile:tmpPath encoding:NSUTF8StringEncoding error:nil] retain];
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 	}
 	else	{
 		tmpPath = VVFMTSTRING(@"%@.vert",noExtPath);
 		if ([fm fileExistsAtPath:tmpPath])	{
-			os_unfair_lock_lock(&srcLock);
+			VVLockLock(&srcLock);
 			vertShaderSource = [[NSString stringWithContentsOfFile:tmpPath encoding:NSUTF8StringEncoding error:nil] retain];
-			os_unfair_lock_unlock(&srcLock);
+			VVLockUnlock(&srcLock);
 		}
 		else	{
-			os_unfair_lock_lock(&srcLock);
+			VVLockLock(&srcLock);
 			//tmpPath = [[NSBundle mainBundle] pathForResource:@"ISFGLScenePassthru" ofType:@"vs"];
 			//if (tmpPath != nil)
 				vertShaderSource = [_ISFVertPassthru retain];
-			os_unfair_lock_unlock(&srcLock);
+			VVLockUnlock(&srcLock);
 		}
 	}
 	
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	loadingInProgress = NO;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	
 	[swatch start];
 	renderFrameIndex = 0;
@@ -1071,9 +1071,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 - (VVBuffer *) allocAndRenderToBufferSized:(VVSIZE)s prefer2DTex:(BOOL)wants2D renderTime:(double)t passDict:(NSMutableDictionary *)d	{
 	//NSLog(@"%s ... %0.2f x %0.2f",__func__,s.width,s.height);
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	BOOL		bailBecauseLoading = (loadingInProgress==YES) ? YES : NO;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	if (bailBecauseLoading)	{
 		NSLog(@"\t\terr: bailing, can't render because loading, %s",__func__);
 		return nil;
@@ -1113,9 +1113,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 }
 - (void) renderToBuffer:(VVBuffer *)b sized:(VVSIZE)s renderTime:(double)t passDict:(NSMutableDictionary *)d	{
 	//NSLog(@"%s ... %@",__func__,b);
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	BOOL		bailBecauseLoading = (loadingInProgress==YES) ? YES : NO;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	if (bailBecauseLoading)	{
 		NSLog(@"\t\terr: bailing, can't render beause loading, %s",__func__);
 		return;
@@ -1314,10 +1314,10 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	
 	if (throwExceptions)	{
 		NSDictionary		*errDictCopy = nil;
-		os_unfair_lock_lock(&errDictLock);
+		VVLockLock(&errDictLock);
 		errDictCopy = errDict;
 		errDict = nil;
-		os_unfair_lock_unlock(&errDictLock);
+		VVLockUnlock(&errDictLock);
 		if (errDictCopy != nil)	{
 			NSException		*ex = [NSException
 				exceptionWithName:@"Shader Problem"
@@ -1384,9 +1384,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
-		os_unfair_lock_lock(&srcLock);
+		VVLockLock(&srcLock);
 		[modSrcString appendString:fragShaderSource];
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 		
 		
 		//	find-and-replace vv_FragNormCoord (v1 of the ISF spec) with isf_FragNormCoord (v2 of the ISF spec)
@@ -1685,9 +1685,9 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
-		os_unfair_lock_lock(&srcLock);
+		VVLockLock(&srcLock);
 		[modSrcString appendString:vertShaderSource];
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 		
 		
 		//	find-and-replace vv_FragNormCoord (v1 of the ISF spec) with isf_FragNormCoord (v2 of the ISF spec)
@@ -2241,18 +2241,18 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	[tempBufferArray unlock];
 	
 	
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	//	if the string i just assembled doesn't match the current compiledInputTypeString
 	if (compiledInputTypeString==nil || ![compiledInputTypeString isEqualToString:tmpMutString])	{
 		//NSLog(@"\t\tlast input type string doesn't match current, re-assembling shader src");
 		VVRELEASE(compiledInputTypeString);
 		compiledInputTypeString = [tmpMutString copy];
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 		
 		[self _assembleShaderSource];
 	}
 	else
-		os_unfair_lock_unlock(&srcLock);
+		VVLockUnlock(&srcLock);
 	//	release the temp mut string here
 	VVRELEASE(tmpMutString);
 	
@@ -2627,7 +2627,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	free(tmpCString);
 	
 	
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	if (findNewUniforms)	{
 		renderSizeUniformLoc = (!programReady) ? -1 : glGetUniformLocation(program, "RENDERSIZE");
 		passIndexUniformLoc = (!programReady) ? -1 : glGetUniformLocation(program, "PASSINDEX");
@@ -2661,7 +2661,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (renderFrameIndexUniformLoc >= 0)	{
 		glUniform1i((int)renderFrameIndexUniformLoc, renderFrameIndex);
 	}
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 }
 - (void) renderCallback:(GLScene *)s	{
 	//NSLog(@"%s",__func__);
@@ -3009,43 +3009,43 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 @synthesize throwExceptions;
 - (NSString *) filePath	{
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	returnMe = (filePath==nil) ? nil : [[filePath retain] autorelease];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 - (NSString *) fileName	{
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	returnMe = (fileName==nil) ? nil : [[fileName retain] autorelease];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 - (NSString *) fileDescription	{
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	returnMe = (fileDescription==nil) ? nil : [[fileDescription retain] autorelease];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 - (NSString *) fileCredits	{
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	returnMe = (fileCredits==nil) ? nil : [[fileCredits retain] autorelease];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 - (ISFFunctionality) fileFunctionality	{
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	ISFFunctionality		returnMe = fileFunctionality;
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 - (NSArray *) categoryNames	{
 	NSArray		*returnMe = nil;
-	os_unfair_lock_lock(&propertyLock);
+	VVLockLock(&propertyLock);
 	returnMe = (categoryNames==nil) ? nil : [[categoryNames retain] autorelease];
-	os_unfair_lock_unlock(&propertyLock);
+	VVLockUnlock(&propertyLock);
 	return returnMe;
 }
 @synthesize inputs;
@@ -3086,36 +3086,36 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	if (deleted)
 		return nil;
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	returnMe = (jsonSource==nil) ? nil : [[jsonSource retain] autorelease];
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	return returnMe;
 }
 - (NSString *) jsonString	{
 	if (deleted)
 		return nil;
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	returnMe = (jsonString==nil) ? nil : [[jsonString retain] autorelease];
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	return returnMe;
 }
 - (NSString *) vertShaderSource	{
 	if (deleted)
 		return nil;
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	returnMe = (vertShaderSource==nil) ? nil : [[vertShaderSource retain] autorelease];
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	return returnMe;
 }
 - (NSString *) fragShaderSource	{
 	if (deleted)
 		return nil;
 	NSString		*returnMe = nil;
-	os_unfair_lock_lock(&srcLock);
+	VVLockLock(&srcLock);
 	returnMe = (fragShaderSource==nil) ? nil : [[fragShaderSource retain] autorelease];
-	os_unfair_lock_unlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	return returnMe;
 }
 

@@ -166,12 +166,12 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	
 	if (ciContext != nil)	{
 		BOOL			addedToRenderThread = NO;
-		os_unfair_lock_lock(&renderThreadLock);
+		VVLockLock(&renderThreadLock);
 		if (renderThreadDeleteArray != nil)	{
 			addedToRenderThread = YES;
 			[renderThreadDeleteArray lockAddObject:ciContext];
 		}
-		os_unfair_lock_unlock(&renderThreadLock);
+		VVLockUnlock(&renderThreadLock);
 		if (!addedToRenderThread)	{
 #if !TARGET_OS_IPHONE
 			if (context!=nil)	{
@@ -308,11 +308,11 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	//	if i'm here and the context is nil, then i'm not sharing a single GL context for everything- i'm expected to create the GL context, which will be used exclusively by this CIContext
 	if (context==nil)
@@ -372,11 +372,11 @@ EAGLContext			*_globalCIContextGLContext = nil;
 	texTarget = tt;
 	depth = 0;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	//	if i'm here and the context is nil, then i'm not sharing a single GL context for everything- i'm expected to create the GL context, which will be used exclusively by this CIContext
 	if (context==nil)

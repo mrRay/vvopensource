@@ -35,7 +35,7 @@
 	
 		BOOL					tmpRunning = YES;
 		BOOL					tmpBail = NO;
-		os_unfair_lock_lock(&valLock);
+		VVLockLock(&valLock);
 		running = YES;
 		bail = NO;
 		thread = [NSThread currentThread];
@@ -47,7 +47,7 @@
 			selector:@selector(timerCallback:)
 			userInfo:nil
 			repeats:NO];
-		os_unfair_lock_unlock(&valLock);
+		VVLockUnlock(&valLock);
 	
 		STARTLOOP:
 		@try	{
@@ -62,10 +62,10 @@
 					double				sleepDuration;	//	in microseconds!
 			
 					gettimeofday(&startTime,NULL);
-					os_unfair_lock_lock(&valLock);
+					VVLockLock(&valLock);
 					if (!paused)	{
 						executingCallback = YES;
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 						//@try	{
 							//	if there's a target object, ping it (delegate-style)
 							if (targetObj != nil)	{
@@ -89,12 +89,12 @@
 							[deleteArray removeObjectAtIndex:0];
 						[deleteArray unlock];
 				
-						os_unfair_lock_lock(&valLock);
+						VVLockLock(&valLock);
 						executingCallback = NO;
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 					}
 					else
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 			
 					//++runLoopCount;
 					//if (runLoopCount > 128)	{
@@ -128,10 +128,10 @@
 							CFRunLoopRunInMode(kCFRunLoopDefaultMode, interval, false);
 					}
 			
-					os_unfair_lock_lock(&valLock);
+					VVLockLock(&valLock);
 					tmpRunning = running;
 					tmpBail = bail;
-					os_unfair_lock_unlock(&valLock);
+					VVLockUnlock(&valLock);
 					
 				}
 				
@@ -179,7 +179,7 @@
 	}
 	
 	
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	if (rlTimer != nil)	{
 		[rlTimer invalidate];
 		rlTimer = nil;
@@ -187,7 +187,7 @@
 	thread = nil;
 	runLoop = nil;
 	running = NO;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	
 	
 	//NSLog(@"\t\t%s - %@ - FINSHED",__func__,self);

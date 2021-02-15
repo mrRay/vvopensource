@@ -6,8 +6,8 @@
 
 
 
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -33,13 +33,13 @@
 	if (self = [super init])	{
 		deleted = NO;
 		bound = NO;
-		socketLock = OS_UNFAIR_LOCK_INIT;
+		socketLock = VV_LOCK_INIT;
 		sock = -1;
 		port = p;
 		buf = malloc(65506);
 		interval = 1.0/100.0;
 		
-		scratchLock = OS_UNFAIR_LOCK_INIT;
+		scratchLock = VV_LOCK_INIT;
 		/*
 		threadLooper = [[VVThreadLoop alloc]
 			initWithTimeInterval:1.0/30.0
@@ -53,7 +53,7 @@
 			portLabel = [l copy];
 		zeroConfEnabled = YES;
 		zeroConfSwatch = [[VVStopwatch alloc] init];
-		zeroConfLock = OS_UNFAIR_LOCK_INIT;
+		zeroConfLock = VV_LOCK_INIT;
 		
 		scratchArray = [NSMutableArray arrayWithCapacity:0];
 		

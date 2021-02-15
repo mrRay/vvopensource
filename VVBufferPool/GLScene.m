@@ -11,7 +11,7 @@
 
 
 
-os_unfair_lock		_glSceneStatLock;
+VVLock		_glSceneStatLock;
 NSMutableArray	*_glGPUVendorArray = nil;
 NSMutableArray	*_hwGPUVendorArray = NULL;
 BOOL			_integratedGPUFlag = NO;
@@ -24,7 +24,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 
 
 + (void) load	{
-	_glSceneStatLock = OS_UNFAIR_LOCK_INIT;
+	_glSceneStatLock = VV_LOCK_INIT;
 	_glGPUVendorArray = nil;
 	_hwGPUVendorArray = nil;
 	_integratedGPUFlag = NO;
@@ -40,7 +40,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 + (NSMutableArray *) gpuVendorArray	{
 	NSMutableArray		*returnMe = MUTARRAY;
 	
-	os_unfair_lock_lock(&_glSceneStatLock);
+	VVLockLock(&_glSceneStatLock);
 	//	if there's no global GPU vendor array, create it
 	if (_glGPUVendorArray == nil)	{
 		_glGPUVendorArray = [NSMutableArray arrayWithCapacity:0];
@@ -164,38 +164,38 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	
 	BAIL:
 	
-	os_unfair_lock_unlock(&_glSceneStatLock);
+	VVLockUnlock(&_glSceneStatLock);
 	
 	return returnMe;
 }
 + (BOOL) integratedGPUFlag	{
 	BOOL		returnMe = NO;
 	
-	os_unfair_lock_lock(&_glSceneStatLock);
+	VVLockLock(&_glSceneStatLock);
 	if (_glGPUVendorArray == nil)	{
-		os_unfair_lock_unlock(&_glSceneStatLock);
+		VVLockUnlock(&_glSceneStatLock);
 		
 		[GLScene gpuVendorArray];
 		
-		os_unfair_lock_lock(&_glSceneStatLock);
+		VVLockLock(&_glSceneStatLock);
 	}
 	returnMe = _integratedGPUFlag;
-	os_unfair_lock_unlock(&_glSceneStatLock);
+	VVLockUnlock(&_glSceneStatLock);
 	return returnMe;
 }
 + (BOOL) nvidiaGPUFlag	{
 	BOOL		returnMe = NO;
 	
-	os_unfair_lock_lock(&_glSceneStatLock);
+	VVLockLock(&_glSceneStatLock);
 	if (_glGPUVendorArray == nil)	{
-		os_unfair_lock_unlock(&_glSceneStatLock);
+		VVLockUnlock(&_glSceneStatLock);
 		
 		[GLScene gpuVendorArray];
 		
-		os_unfair_lock_lock(&_glSceneStatLock);
+		VVLockLock(&_glSceneStatLock);
 	}
 	returnMe = _nvidiaGPUFlag;
-	os_unfair_lock_unlock(&_glSceneStatLock);
+	VVLockUnlock(&_glSceneStatLock);
 	return returnMe;
 }
 + (GLuint) glDisplayMaskForAllScreens	{
@@ -481,7 +481,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 	renderTarget = nil;
 	renderSelector = nil;
-	renderBlockLock = OS_UNFAIR_LOCK_INIT;
+	renderBlockLock = VV_LOCK_INIT;
 	renderBlock = nil;
 	fbo = 0;
 	tex = 0;
@@ -492,7 +492,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	depthMSAA = 0;
 	
 	flipped = NO;
-	projectionMatrixLock = OS_UNFAIR_LOCK_INIT;
+	projectionMatrixLock = VV_LOCK_INIT;
 	//projectionMatrix = GLKMatrix4Identity;
 	//projectionMatrixNeedsUpdate = YES;
 #if TARGET_OS_IPHONE
@@ -501,7 +501,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	initialized = NO;
 	needsReshape = YES;
 	deleted = NO;
-	renderThreadLock = OS_UNFAIR_LOCK_INIT;
+	renderThreadLock = VV_LOCK_INIT;
 	renderThreadDeleteArray = nil;
 	performClear = YES;
 	for (int i=0;i<4;++i)
@@ -526,19 +526,19 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 		CGColorSpaceRelease(colorSpace);
 		colorSpace = NULL;
 	}
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	renderThreadDeleteArray = nil;
-	os_unfair_lock_unlock(&renderThreadLock);
-	os_unfair_lock_lock(&renderBlockLock);
+	VVLockUnlock(&renderThreadLock);
+	VVLockLock(&renderBlockLock);
 	if (renderBlock != nil)	{
 		//Block_release(renderBlock);
 		renderBlock = nil;
 	}
-	os_unfair_lock_unlock(&renderBlockLock);
+	VVLockUnlock(&renderBlockLock);
 #if TARGET_OS_IPHONE
-	os_unfair_lock_lock(&projectionMatrixLock);
+	VVLockLock(&projectionMatrixLock);
 	VVRELEASE(projectionMatrixEffect);
-	os_unfair_lock_unlock(&projectionMatrixLock);
+	VVLockUnlock(&projectionMatrixLock);
 #endif
 	
 	//NSLog(@"\t\t%s - FINISHED",__func__);
@@ -549,23 +549,23 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	deleted = YES;
 	
 	if (context != nil)	{
-		os_unfair_lock_lock(&renderThreadLock);
+		VVLockLock(&renderThreadLock);
 		if (renderThreadDeleteArray != nil)	{
 			[renderThreadDeleteArray lockAddObject:context];
 		}
-		os_unfair_lock_unlock(&renderThreadLock);
+		VVLockUnlock(&renderThreadLock);
 		context = nil;
 	}
 }
 - (void) RTDeleteArrayNotification:(NSNotification *)note	{
 	//NSLog(@"%s ... %p",__func__,self);
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 		if (renderThreadDeleteArray != nil)	{
 			id			noteObj = [note object];
 			if (noteObj!=nil && noteObj==renderThreadDeleteArray)
 				renderThreadDeleteArray = nil;
 		}
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 }
 
 
@@ -627,10 +627,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	fbo = f;
 	tex = t;
@@ -646,9 +646,9 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	//	make sure there's a context!
 	if (context != nil)	{
 		//	if there's a render block, safely retain it, execute it, then release it
-		os_unfair_lock_lock(&renderBlockLock);
+		VVLockLock(&renderBlockLock);
 		void			(^localRenderBlock)(void) = (renderBlock==nil) ? nil : renderBlock;
-		os_unfair_lock_unlock(&renderBlockLock);
+		VVLockUnlock(&renderBlockLock);
 		if (localRenderBlock != nil)	{
 			localRenderBlock();
 			//Block_release(localRenderBlock);
@@ -677,10 +677,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	fbo = f;
 	tex = t;
@@ -727,10 +727,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	fbo = f;
 	tex = t;
@@ -779,10 +779,10 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	fbo = f;
 	tex = t;
@@ -947,7 +947,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 }
 - (void) _reshape	{
 	//	lock and update a matrix we keep handy for doing projection transforms to an orthogonal view
-	os_unfair_lock_lock(&projectionMatrixLock);
+	VVLockLock(&projectionMatrixLock);
 	
 	double			left = 0.0;
 	double			right = size.width;
@@ -997,7 +997,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	}
 #endif
 	//projectionMatrixNeedsUpdate = NO;
-	os_unfair_lock_unlock(&projectionMatrixLock);
+	VVLockUnlock(&projectionMatrixLock);
 	
 	
 #if !TARGET_OS_IPHONE
@@ -1160,7 +1160,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 @synthesize renderTarget;
 @synthesize renderSelector;
 - (void) setRenderBlock:(void (^)(void))n	{
-	os_unfair_lock_lock(&renderBlockLock);
+	VVLockLock(&renderBlockLock);
 	if (renderBlock != nil)	{
 		//Block_release(renderBlock);
 		renderBlock = nil;
@@ -1168,7 +1168,7 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	if (n != nil)	{
 		renderBlock = n;
 	}
-	os_unfair_lock_unlock(&renderBlockLock);
+	VVLockUnlock(&renderBlockLock);
 }
 @synthesize flushMode;
 @synthesize swapInterval;

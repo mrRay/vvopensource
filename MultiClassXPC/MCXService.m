@@ -10,23 +10,23 @@
 	//NSLog(@"%s",__func__);
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_UNFAIR_LOCK_INIT;
+		connLock = VV_LOCK_INIT;
 		conn = nil;
-		classDictLock = OS_UNFAIR_LOCK_INIT;
+		classDictLock = VV_LOCK_INIT;
 		classDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	}
 	return self;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	classDict = nil;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	
 }
 - (void) setConn:(NSXPCConnection *)n	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&connLock);
+	VVLockLock(&connLock);
 	conn = n;
 	[n setInvalidationHandler:^()	{
 		NSLog(@"MCXService invalidation handler");
@@ -35,7 +35,7 @@
 		NSLog(@"MCXService interruption handler");
 		exit(EXIT_FAILURE);
 	}];
-	os_unfair_lock_unlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 
 
@@ -59,9 +59,9 @@
 	[tmpDict setObject:d forKey:@"serviceDelegate"];
 	[tmpDict setObject:listener forKey:@"listener"];
 	//	add the dict storing everything to the class dict
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	[classDict setObject:tmpDict forKey:c];
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 }
 
 
@@ -72,7 +72,7 @@
 	//NSLog(@"%s",__func__);
 	//	assemble a dict- key is class name, object is listener endpoint
 	__block NSMutableDictionary		*thingToReturn = nil;
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	thingToReturn = [NSMutableDictionary dictionaryWithCapacity:0];
 	if (classDict!=nil)	{
 		[classDict enumerateKeysAndObjectsUsingBlock:^(NSString *tmpClassName, NSDictionary *tmpClassDict, BOOL *stop)	{
@@ -83,9 +83,9 @@
 			}
 		}];
 	}
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	//	pass the dict of endpoints to the ROP
-	os_unfair_lock_lock(&connLock);
+	VVLockLock(&connLock);
 	if (conn!=nil)	{
 		id<MCXServiceManager>	rop = [conn remoteObjectProxy];
 		[thingToReturn enumerateKeysAndObjectsUsingBlock:^(NSString *tmpClassName, NSXPCListenerEndpoint *tmpEndpoint, BOOL *stop)	{
@@ -93,7 +93,7 @@
 		}];
 		[rop finishedFetchingEndpoints];
 	}
-	os_unfair_lock_unlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 
 

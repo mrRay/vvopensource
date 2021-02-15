@@ -9,8 +9,8 @@
 
 
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 long			_spriteGLViewSysVers;
 
@@ -88,7 +88,7 @@ long			_spriteGLViewSysVers;
 	waitingForFenceA = YES;
 	fenceADeployed = NO;
 	fenceBDeployed = NO;
-	fenceLock = OS_UNFAIR_LOCK_INIT;
+	fenceLock = VV_LOCK_INIT;
 	
 	[(id)self setWantsBestResolutionOpenGLSurface:(_spriteGLViewSysVers>=7)?YES:NO];
 	//NSLog(@"\t\t%s ... %@, %p - FINISHED",__func__,[self class],self);

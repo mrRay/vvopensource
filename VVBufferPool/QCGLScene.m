@@ -135,10 +135,10 @@ pthread_mutex_t			_globalQCContextLock;
 		pthread_mutex_lock(&renderLock);
 			if (renderer != nil)	{
 				//NSLog(@"\t\tdeleteArray is %p",renderThreadDeleteArray);
-				os_unfair_lock_lock(&renderThreadLock);
+				VVLockLock(&renderThreadLock);
 				if (renderThreadDeleteArray != nil)
 					[renderThreadDeleteArray lockAddObject:renderer];
-				os_unfair_lock_unlock(&renderThreadLock);
+				VVLockUnlock(&renderThreadLock);
 				renderer = nil;
 			}
 		pthread_mutex_lock(&renderLock);
@@ -164,12 +164,12 @@ pthread_mutex_t			_globalQCContextLock;
 			//	the renderer must be created, rendered, and released all on the same thread!
 			if (renderer != nil)	{
 				BOOL			addedToRenderThread = NO;
-				os_unfair_lock_lock(&renderThreadLock);
+				VVLockLock(&renderThreadLock);
 				if (renderThreadDeleteArray != nil)	{
 					addedToRenderThread = YES;
 					[renderThreadDeleteArray lockAddObject:renderer];
 				}
-				os_unfair_lock_unlock(&renderThreadLock);
+				VVLockUnlock(&renderThreadLock);
 				if (!addedToRenderThread)	{
 					if (context!=nil)	{
 						CGLLockContext([context CGLContextObj]);
@@ -254,11 +254,11 @@ pthread_mutex_t			_globalQCContextLock;
 	if (deleted)
 		return;
 	
-	os_unfair_lock_lock(&renderThreadLock);
+	VVLockLock(&renderThreadLock);
 	if (renderThreadDeleteArray == nil)	{
 		renderThreadDeleteArray = [[[NSThread currentThread] threadDictionary] objectForKey:@"deleteArray"];
 	}
-	os_unfair_lock_unlock(&renderThreadLock);
+	VVLockUnlock(&renderThreadLock);
 	
 	BOOL		mouseEventsRequireAdditionalPass = NO;
 	

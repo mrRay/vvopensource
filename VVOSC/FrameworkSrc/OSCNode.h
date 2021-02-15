@@ -40,7 +40,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
 	BOOL				deleted;
 	
-	os_unfair_lock			nameLock;
+	VVLock			nameLock;
 	NSString			*nodeName;	//	"local" name: name of the node at /a/b/c is "c"
 	NSString			*fullName;	//	"full" name: name of the node at /a/b/c is "/a/b/c"
 	NSString			*lastFullName;	//	when changes are performed (to, for example, names) the "previous" full name is stored here so delegates can retrieve it
@@ -50,7 +50,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	BOOL				hiddenInMenu;	//	NO by default. if YES, this node (and all its sub-nodes) will be omitted from menus!
 	
 	OSCMessage			*lastReceivedMessage;	//	retained
-	os_unfair_lock			lastReceivedMessageLock;
+	VVLock			lastReceivedMessageLock;
 	MutNRLockArray		*delegateArray;	//	type 'MutNRLockArray'. contents are NOT retained! could be anything!
 	
 	/*		these vals are only used by the OSC query protocol		*/

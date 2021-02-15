@@ -28,7 +28,7 @@
 	
 	MutNRLockDict			*perTouchClickedSubviews;	//	key/val dict, key is UITouch val is ObjectHolder (ZWR) pointing to the subview that touch should be delivered to
 	
-	os_unfair_lock				boundsProjectionEffectLock;	//	locks the GLKBaseEffect
+	VVLock				boundsProjectionEffectLock;	//	locks the GLKBaseEffect
 	GLKBaseEffect			*boundsProjectionEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
 	BOOL					boundsProjectionEffectNeedsUpdate;	//	if YES, the effect needs update.
 }

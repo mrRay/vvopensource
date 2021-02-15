@@ -21,10 +21,10 @@
 		initialized = NO;
 		sizingMode = VVSizingModeFit;
 		retainDraw = NO;
-		retainDrawLock = OS_UNFAIR_LOCK_INIT;
+		retainDrawLock = VV_LOCK_INIT;
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
-		onlyDrawNewStuffLock = OS_UNFAIR_LOCK_INIT;
+		onlyDrawNewStuffLock = VV_LOCK_INIT;
 		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
@@ -41,10 +41,10 @@
 		initialized = NO;
 		sizingMode = VVSizingModeFit;
 		retainDraw = NO;
-		retainDrawLock = OS_UNFAIR_LOCK_INIT;
+		retainDrawLock = VV_LOCK_INIT;
 		retainDrawBuffer = nil;
 		onlyDrawNewStuff = NO;
-		onlyDrawNewStuffLock = OS_UNFAIR_LOCK_INIT;
+		onlyDrawNewStuffLock = VV_LOCK_INIT;
 		onlyDrawNewStuffTimestamp = 0;
 		return self;
 	}
@@ -56,9 +56,9 @@
 }
 - (void) dealloc	{
 	pthread_mutex_destroy(&renderLock);
-	os_unfair_lock_lock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
-	os_unfair_lock_unlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
 }
 - (void) drawRect:(VVRECT)r	{
@@ -78,9 +78,9 @@
 }
 - (void) redraw	{
 	VVBuffer		*lastBuffer = nil;
-	os_unfair_lock_lock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	lastBuffer = (!retainDraw || retainDrawBuffer==nil) ? nil : retainDrawBuffer;
-	os_unfair_lock_unlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
 	[self drawBuffer:lastBuffer];
 	
@@ -92,23 +92,23 @@
 	
 	VVBuffer		*tmpBuffer = b;
 	
-	os_unfair_lock_lock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	if (retainDraw)	{
 		if (retainDrawBuffer != tmpBuffer)	{
 			VVRELEASE(retainDrawBuffer);
 			retainDrawBuffer = tmpBuffer;
 		}
 	}
-	os_unfair_lock_unlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
-	os_unfair_lock_lock(&onlyDrawNewStuffLock);
+	VVLockLock(&onlyDrawNewStuffLock);
 	if (onlyDrawNewStuff)	{
 		uint64_t		bufferTimestamp;
 		[tmpBuffer getContentTimestamp:&bufferTimestamp];
 		if (onlyDrawNewStuffTimestamp==bufferTimestamp)
 			bail = YES;
 	}
-	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
+	VVLockUnlock(&onlyDrawNewStuffLock);
 	if (bail)	{
 		VVRELEASE(tmpBuffer);
 		return;
@@ -199,27 +199,27 @@
 @synthesize initialized;
 @synthesize sizingMode;
 - (void) setOnlyDrawNewStuff:(BOOL)n	{
-	os_unfair_lock_lock(&onlyDrawNewStuffLock);
+	VVLockLock(&onlyDrawNewStuffLock);
 	onlyDrawNewStuff = n;
 	onlyDrawNewStuffTimestamp = 0;
-	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
+	VVLockUnlock(&onlyDrawNewStuffLock);
 }
 - (void) setRetainDraw:(BOOL)n	{
-	os_unfair_lock_lock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	retainDraw = n;
-	os_unfair_lock_unlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 }
 - (void) setRetainDrawBuffer:(VVBuffer *)n	{
-	os_unfair_lock_lock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
 	retainDrawBuffer = (n==nil) ? nil : n;
-	os_unfair_lock_unlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 }
 - (BOOL) onlyDrawNewStuff	{
 	BOOL		returnMe = NO;
-	os_unfair_lock_lock(&onlyDrawNewStuffLock);
+	VVLockLock(&onlyDrawNewStuffLock);
 	returnMe = onlyDrawNewStuff;
-	os_unfair_lock_unlock(&onlyDrawNewStuffLock);
+	VVLockUnlock(&onlyDrawNewStuffLock);
 	return returnMe;
 }
 

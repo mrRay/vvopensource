@@ -3,8 +3,8 @@
 
 
 
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -14,7 +14,7 @@
 
 - (instancetype) initWithRect:(VVRECT)r options:(NSTrackingAreaOptions)opt owner:(id)own userInfo:(NSDictionary *)ui	{
 	if (self = [super init])	{
-		attribLock = OS_UNFAIR_LOCK_INIT;
+		attribLock = VV_LOCK_INIT;
 		rect = r;
 		options = opt;
 		owner = own;

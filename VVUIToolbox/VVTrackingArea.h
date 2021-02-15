@@ -11,7 +11,7 @@
 
 
 @interface VVTrackingArea : NSObject	{
-	os_unfair_lock				attribLock;	//	locks everything
+	VVLock				attribLock;	//	locks everything
 	
 	VVRECT					rect;	//	the rect in local coords for the VVView
 	NSTrackingAreaOptions	options;

@@ -6,8 +6,8 @@
 
 
 
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -57,7 +57,7 @@ int					_spriteControlCount;
 	deleted = NO;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
-	propertyLock = OS_UNFAIR_LOCK_INIT;
+	propertyLock = VV_LOCK_INIT;
 	lastMouseEvent = nil;
 	clearColor = nil;
 	drawBorder = NO;

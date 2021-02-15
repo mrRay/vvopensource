@@ -29,7 +29,7 @@
 	
 	pthread_mutex_t			renderLock;
 	
-	os_unfair_lock				errDictLock;
+	VVLock				errDictLock;
 	NSMutableDictionary		*errDict;
 }
 

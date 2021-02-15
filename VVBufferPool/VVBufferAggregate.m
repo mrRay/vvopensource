@@ -8,10 +8,10 @@
 
 /*
 - (NSString *) description	{
-	os_unfair_lock_lock(&planeLock);
+	VVLockLock(&planeLock);
 	NSString		*returnMe = [NSString stringWithFormat:@"<VVBufferAggregate %p: %@, %@, %@, %@>",self,planes[0],planes[1],planes[2],planes[3]];
 	//NSString		*returnMe = [NSString stringWithFormat:@"<VVBufferAggregate %@, %@, %@, %@>",nil,nil,nil,nil];
-	os_unfair_lock_unlock(&planeLock);
+	VVLockUnlock(&planeLock);
 	return returnMe;
 }
 */
@@ -44,13 +44,13 @@
 	return self;
 }
 - (void) generalInit	{
-	planeLock = OS_UNFAIR_LOCK_INIT;
+	planeLock = VV_LOCK_INIT;
 	for (int i=0; i<4; ++i)
 		planes[i] = nil;
 }
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&planeLock);
+	VVLockLock(&planeLock);
 	if (planes[0] != nil)	{
 		planes[0] = nil;
 	}
@@ -63,7 +63,7 @@
 	if (planes[3] != nil)	{
 		planes[3] = nil;
 	}
-	os_unfair_lock_unlock(&planeLock);
+	VVLockUnlock(&planeLock);
 	
 }
 
@@ -87,9 +87,9 @@
 		return nil;
 	}
 	VVBuffer		*returnMe = nil;
-	os_unfair_lock_lock(&planeLock);
+	VVLockLock(&planeLock);
 	returnMe = planes[i];
-	os_unfair_lock_unlock(&planeLock);
+	VVLockUnlock(&planeLock);
 	return returnMe;
 }
 - (void) insertBuffer:(VVBuffer *)n atIndex:(int)i	{
@@ -99,11 +99,11 @@
 		NSLog(@"\t\tERR: bailing, passed buffer was nil, %s",__func__);
 		return;
 	}
-	os_unfair_lock_lock(&planeLock);
+	VVLockLock(&planeLock);
 	if (planes[i]!=nil)
 		planes[i] = nil;
 	planes[i] = n;
-	os_unfair_lock_unlock(&planeLock);
+	VVLockUnlock(&planeLock);
 	//NSLog(@"\t\tafter, was %@",[self description]);
 }
 

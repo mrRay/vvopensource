@@ -14,7 +14,7 @@
 static NSString* const kVarSysInfoKeyOSVersion = @"kern.osrelease";
 //static NSString* const kVarSysInfoKeyOSBuild   = @"kern.osversion";
 
-os_unfair_lock	_majorSysVersionLock;
+VVLock	_majorSysVersionLock;
 VVOSVersion		_majorSysVersion = VVOSVersionError;
 int				_minorSysVersion = -1;
 
@@ -26,7 +26,7 @@ int				_minorSysVersion = -1;
 + (void) initialize	{
 	//NSLog(@"%s",__func__);
 	if (_majorSysVersion == VVOSVersionError)	{
-		_majorSysVersionLock = OS_UNFAIR_LOCK_INIT;
+		_majorSysVersionLock = VV_LOCK_INIT;
 		[self majorSysVersion];
 	}
 }
@@ -49,9 +49,9 @@ int				_minorSysVersion = -1;
 	//NSLog(@"%s",__func__);
 	VVOSVersion		returnMe = VVOSVersionError;
 	//	try to get the major sys version, if it's a non-err val, i can return immediately
-	os_unfair_lock_lock(&_majorSysVersionLock);
+	VVLockLock(&_majorSysVersionLock);
 	returnMe = _majorSysVersion;
-	os_unfair_lock_unlock(&_majorSysVersionLock);
+	VVLockUnlock(&_majorSysVersionLock);
 	if (returnMe != VVOSVersionError)
 		return returnMe;
 	
@@ -66,27 +66,27 @@ int				_minorSysVersion = -1;
 		return VVOSVersionError;
 	}
 	
-	os_unfair_lock_lock(&_majorSysVersionLock);
+	VVLockLock(&_majorSysVersionLock);
 	_majorSysVersion = (unsigned int)([[darwinChunks objectAtIndex:0] integerValue] - 4);
 	_minorSysVersion = (int)[[darwinChunks objectAtIndex:1] integerValue];
 	returnMe = _majorSysVersion;
-	os_unfair_lock_unlock(&_majorSysVersionLock);
+	VVLockUnlock(&_majorSysVersionLock);
 	
 	return returnMe;
 }
 + (int) minorSysVersion	{
 	int		returnMe = 0;
 	
-	os_unfair_lock_lock(&_majorSysVersionLock);
+	VVLockLock(&_majorSysVersionLock);
 	returnMe = _minorSysVersion;
-	os_unfair_lock_unlock(&_majorSysVersionLock);
+	VVLockUnlock(&_majorSysVersionLock);
 	if (_minorSysVersion < 0)	{
 		
 		[self majorSysVersion];
 		
-		os_unfair_lock_lock(&_majorSysVersionLock);
+		VVLockLock(&_majorSysVersionLock);
 		returnMe = _minorSysVersion;
-		os_unfair_lock_unlock(&_majorSysVersionLock);
+		VVLockUnlock(&_majorSysVersionLock);
 	}
 	return returnMe;
 }

@@ -6,8 +6,8 @@
 
 
 
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -45,7 +45,7 @@
 		
 		rect = r;
 		bezierPath = nil;
-		pathLock = OS_UNFAIR_LOCK_INIT;
+		pathLock = VV_LOCK_INIT;
 		lastActionType = VVSpriteEventNULL;
 		lastActionCoords = VVMAKEPOINT(NSNotFound,NSNotFound);
 		lastActionInBounds = NO;

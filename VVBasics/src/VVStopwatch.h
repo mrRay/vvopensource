@@ -6,6 +6,7 @@
 #endif
 #include <sys/time.h>
 #import <libkern/OSAtomic.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -15,7 +16,7 @@
 */
 @interface VVStopwatch : NSObject {
 	struct timeval		startTime;
-	os_unfair_lock		timeLock;
+	VVLock		timeLock;
 	BOOL				paused;
 	double				prePauseTimeSinceStart;
 }

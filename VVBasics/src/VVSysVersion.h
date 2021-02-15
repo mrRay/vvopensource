@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <libkern/OSAtomic.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -45,7 +46,7 @@ typedef enum VVOSVersion	{
 
 
 
-extern os_unfair_lock	_majorSysVersionLock;
+extern VVLock	_majorSysVersionLock;
 extern VVOSVersion		_majorSysVersion;
 extern int				_minorSysVersion;
 

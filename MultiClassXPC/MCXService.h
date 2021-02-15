@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "MCXProtocols.h"
 #include <os/lock.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -11,10 +12,10 @@
 
 
 @interface MCXService : NSObject <MCXService>	{
-	os_unfair_lock			connLock;
+	VVLock			connLock;
 	NSXPCConnection		*conn;
 	
-	os_unfair_lock				classDictLock;
+	VVLock				classDictLock;
 	NSMutableDictionary		*classDict;
 }
 

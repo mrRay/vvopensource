@@ -41,7 +41,7 @@
 	rlTimer = nil;
 	runLoop = nil;
 	
-	valLock = OS_UNFAIR_LOCK_INIT;
+	valLock = VV_LOCK_INIT;
 	
 	targetObj = nil;
 	targetSel = nil;
@@ -54,13 +54,13 @@
 }
 - (void) start	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	if (running)	{
-		os_unfair_lock_unlock(&valLock);
+		VVLockUnlock(&valLock);
 		return;
 	}
 	paused = NO;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	
 	[NSThread
 		detachNewThreadSelector:@selector(threadCallback)
@@ -80,7 +80,7 @@
 
 	BOOL					tmpRunning = YES;
 	BOOL					tmpBail = NO;
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	running = YES;
 	bail = NO;
 	thread = [NSThread currentThread];
@@ -92,7 +92,7 @@
 		selector:@selector(timerCallback:)
 		userInfo:nil
 		repeats:NO];
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	
 		STARTLOOP:
 		@try	{
@@ -107,10 +107,10 @@
 					double				sleepDuration;	//	in microseconds!
 			
 					gettimeofday(&startTime,NULL);
-					os_unfair_lock_lock(&valLock);
+					VVLockLock(&valLock);
 					if (!paused)	{
 						executingCallback = YES;
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 						//@try	{
 							//	if there's a target object, ping it (delegate-style)
 							if (targetObj != nil)	{
@@ -127,12 +127,12 @@
 						//	NSLog(@"%s caught exception, %@",__func__,err);
 						//}
 				
-						os_unfair_lock_lock(&valLock);
+						VVLockLock(&valLock);
 						executingCallback = NO;
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 					}
 					else
-						os_unfair_lock_unlock(&valLock);
+						VVLockUnlock(&valLock);
 			
 					//++runLoopCount;
 					//if (runLoopCount > 4)	{
@@ -166,10 +166,10 @@
 							CFRunLoopRunInMode(kCFRunLoopDefaultMode, interval, false);
 					}
 			
-					os_unfair_lock_lock(&valLock);
+					VVLockLock(&valLock);
 					tmpRunning = running;
 					tmpBail = bail;
-					os_unfair_lock_unlock(&valLock);
+					VVLockUnlock(&valLock);
 				
 				}	//	autoreleasepool
 				
@@ -200,7 +200,7 @@
 	}
 	
 	//[pool release];
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	if (rlTimer != nil)	{
 		[rlTimer invalidate];
 		rlTimer = nil;
@@ -208,7 +208,7 @@
 	thread = nil;
 	runLoop = nil;
 	running = NO;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	//NSLog(@"\t\t%s - FINSHED",__func__);
 }
 - (void) threadProc	{
@@ -218,41 +218,41 @@
 	
 }
 - (void) pause	{
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	paused = YES;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 }
 - (void) resume	{
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	paused = NO;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 }
 - (void) stop	{
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	if (!running)	{
-		os_unfair_lock_unlock(&valLock);
+		VVLockUnlock(&valLock);
 		return;
 	}
 	bail = YES;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 }
 - (void) stopAndWaitUntilDone	{
 	//NSLog(@"%s",__func__);
 	[self stop];
 	BOOL			tmpRunning = NO;
 	
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	tmpRunning = running;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	
 	while (tmpRunning)	{
 		//NSLog(@"\twaiting");
 		//pthread_yield_np();
 		usleep(100);
 		
-		os_unfair_lock_lock(&valLock);
+		VVLockLock(&valLock);
 		tmpRunning = running;
-		os_unfair_lock_unlock(&valLock);
+		VVLockUnlock(&valLock);
 	}
 	
 }
@@ -265,21 +265,21 @@
 }
 - (BOOL) running	{
 	BOOL		returnMe = NO;
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	returnMe = running;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	return returnMe;
 }
 - (NSThread *) thread	{
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	NSThread		*returnMe = thread;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	return returnMe;
 }
 - (NSRunLoop *) runLoop	{
-	os_unfair_lock_lock(&valLock);
+	VVLockLock(&valLock);
 	NSRunLoop		*returnMe = runLoop;
-	os_unfair_lock_unlock(&valLock);
+	VVLockUnlock(&valLock);
 	return returnMe;
 }
 

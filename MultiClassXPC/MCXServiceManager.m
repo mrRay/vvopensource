@@ -27,11 +27,11 @@
 	}
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_UNFAIR_LOCK_INIT;
+		connLock = VV_LOCK_INIT;
 		connServiceIdentifier = n;
 		conn = nil;
 		classesAvailable = NO;
-		classDictLock = OS_UNFAIR_LOCK_INIT;
+		classDictLock = VV_LOCK_INIT;
 		classDict = nil;
 		
 		[self establishConnection];
@@ -41,9 +41,9 @@
 - (void) dealloc	{
 	//NSLog(@"%s",__func__);
 	[self killConnection];
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	classDict = nil;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	
 }
 
@@ -54,7 +54,7 @@
 	[self killConnection];
 	
 	//	make the actual connection, configure it, then resume it
-	os_unfair_lock_lock(&connLock);
+	VVLockLock(&connLock);
 	__weak MCXServiceManager		*bssOuter = self;
 	void			(^errHandlerBlock)(void) = ^(void)	{
 		MCXServiceManager		*bss = bssOuter;
@@ -72,14 +72,14 @@
 	[conn setInterruptionHandler:errHandlerBlock];
 	
 	[conn resume];
-	os_unfair_lock_unlock(&connLock);
+	VVLockUnlock(&connLock);
 	
 	//	fetch the listener endpoints from the remote object- this will launch the XPC service
 	[self fetchListenerEndpoints];
 }
 - (void) killConnection	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&connLock);
+	VVLockLock(&connLock);
 	if (conn != nil)	{
 		//NSLog(@"\t\tinvalidating the conn");
 		[conn setInvalidationHandler:nil];
@@ -90,48 +90,48 @@
 		[conn setExportedObject:nil];
 		conn = nil;
 	}
-	os_unfair_lock_unlock(&connLock);
+	VVLockUnlock(&connLock);
 	
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	if (classDict!=nil)
 		[classDict removeAllObjects];
 	classesAvailable = NO;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 }
 - (void) listenerErrHandlerTripped	{
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	if (classDict!=nil)
 		[classDict removeAllObjects];
 	classesAvailable = NO;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 }
 - (void) fetchListenerEndpoints	{
 	//NSLog(@"%s",__func__);
 	//	lock, clear the class dict
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	classDict = nil;
 	classesAvailable = NO;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	
 	//	tell the ROP to fetch the classes
-	os_unfair_lock_lock(&connLock);
+	VVLockLock(&connLock);
 	if (conn!=nil && [conn remoteObjectProxy]!=nil)	{
 		[(id<MCXService>)[conn remoteObjectProxy] fetchListenerEndpoints];
 	}
-	os_unfair_lock_unlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 - (BOOL) classesAvailable	{
 	BOOL		returnMe = NO;
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	returnMe = classesAvailable;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	return returnMe;
 }
 - (NSDictionary *) classDict	{
 	NSDictionary		*returnMe = nil;
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	returnMe = (classDict==nil) ? nil : [classDict copy];
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	return returnMe;
 }
 - (NSXPCListenerEndpoint *) listenerEndpointForClassNamed:(NSString *)n	{
@@ -139,11 +139,11 @@
 	if (n==nil)
 		return nil;
 	NSXPCListenerEndpoint		*returnMe = nil;
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	if (classDict!=nil)	{
 		returnMe = [classDict objectForKey:n];
 	}
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 	return returnMe;
 }
 
@@ -155,17 +155,17 @@
 	//NSLog(@"%s ... %@, %@",__func__,n,e);
 	if (e==nil || n==nil)
 		return;
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	if (classDict==nil)
 		classDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[classDict setObject:e forKey:n];
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 }
 - (void) finishedFetchingEndpoints	{
 	//NSLog(@"%s",__func__);
-	os_unfair_lock_lock(&classDictLock);
+	VVLockLock(&classDictLock);
 	classesAvailable = YES;
-	os_unfair_lock_unlock(&classDictLock);
+	VVLockUnlock(&classDictLock);
 }
 
 

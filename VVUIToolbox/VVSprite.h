@@ -65,7 +65,7 @@ typedef enum VVSpriteEventType	{
 #else
 	NSBezierPath	*bezierPath;		//	retained.  nil by default, set to nil if you call setRect: on this instance.  if non-nil, this path is used instead of "rect" for determining mouse action and drawing intersection!
 #endif
-	os_unfair_lock		pathLock;
+	VVLock		pathLock;
 	
 	int				lastActionType;		//	updated whenever an action is received
 	VVPOINT			lastActionCoords;	//	coords at which last action took place

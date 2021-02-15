@@ -25,9 +25,9 @@ id				_mainVVOSCAddressSpace;
 		[s appendString:@"\t"];
 	
 	//	write the description
-	os_unfair_lock_lock(&nameLock);
+	VVLockLock(&nameLock);
 		[s appendFormat:@"<%@>",nodeName];
-	os_unfair_lock_unlock(&nameLock);
+	VVLockUnlock(&nameLock);
 	
 	//	if there are contents
 	if ((nodeContents!=nil)&&([nodeContents count]>0))	{

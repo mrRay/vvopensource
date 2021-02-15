@@ -78,7 +78,7 @@ typedef enum VVViewBoundsOrientation	{
 	BOOL				needsDisplay;
 	
 	
-	os_unfair_lock			geometryLock;
+	VVLock			geometryLock;
 	VVRECT				_frame;	//	the area i occupy in my superview's coordinate space
 	VVSIZE				minFrameSize;	//	frame's size cannot be set less than this
 	double				localToBackingBoundsMultiplier;
@@ -87,7 +87,7 @@ typedef enum VVViewBoundsOrientation	{
 	
 	
 #if TARGET_OS_IPHONE
-	os_unfair_lock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
+	VVLock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
 	GLKBaseEffect		*boundsProjectionEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
 	BOOL				boundsProjectionEffectNeedsUpdate;	//	if YES, the effect needs update.
 #else
@@ -95,7 +95,7 @@ typedef enum VVViewBoundsOrientation	{
 #endif
 	
 	
-	os_unfair_lock			hierarchyLock;
+	VVLock			hierarchyLock;
 	__weak id			_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
 	__weak id			_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
@@ -103,7 +103,7 @@ typedef enum VVViewBoundsOrientation	{
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
 	
 	
-	os_unfair_lock			_propertyLock;	//	locks the items below it (mouse event, clear color stuff)
+	VVLock			_propertyLock;	//	locks the items below it (mouse event, clear color stuff)
 #if !TARGET_OS_IPHONE
 	NSEvent				*lastMouseEvent;
 #endif
@@ -113,7 +113,7 @@ typedef enum VVViewBoundsOrientation	{
 	GLfloat				borderColor[4];
 	
 	
-	os_unfair_lock			mouseLock;
+	VVLock			mouseLock;
 	long				mouseDownModifierFlags;
 	VVSpriteEventType	mouseDownEventType;
 	long				modifierFlags;

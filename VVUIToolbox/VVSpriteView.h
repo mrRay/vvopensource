@@ -16,7 +16,7 @@ extern int				_spriteViewCount;
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	
-	os_unfair_lock				propertyLock;
+	VVLock				propertyLock;
 	NSEvent					*lastMouseEvent;
 	NSColor					*clearColor;
 	BOOL					drawBorder;

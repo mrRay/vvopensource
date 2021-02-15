@@ -4,8 +4,8 @@
 
 
 
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -20,7 +20,7 @@
 - (id) init	{
 	self = [super init];
 	if (self != nil)	{
-		timeLock = OS_UNFAIR_LOCK_INIT;
+		timeLock = VV_LOCK_INIT;
 		paused = NO;
 		prePauseTimeSinceStart = 0.;
 		[self start];

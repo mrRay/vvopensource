@@ -6,8 +6,8 @@
 
 
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -54,7 +54,7 @@
 		borderColor[i] = (GLfloat)0.0;
 	}
 	perTouchClickedSubviews = [[MutNRLockDict alloc] init];
-	boundsProjectionEffectLock = OS_UNFAIR_LOCK_INIT;
+	boundsProjectionEffectLock = VV_LOCK_INIT;
 	boundsProjectionEffect = nil;
 	boundsProjectionEffectNeedsUpdate = YES;
 	

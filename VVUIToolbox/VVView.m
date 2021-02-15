@@ -19,8 +19,8 @@
 
 //	macro for performing a bitmask and returning a BOOL
 #define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
-#define LOCK os_unfair_lock_lock
-#define UNLOCK os_unfair_lock_unlock
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
 
 
 
@@ -68,7 +68,7 @@
 	_boundsOrientation = VVViewBOBottom;
 	//_boundsRotation = 0.0;
 #if TARGET_OS_IPHONE
-	boundsProjectionEffectLock = OS_UNFAIR_LOCK_INIT;
+	boundsProjectionEffectLock = VV_LOCK_INIT;
 	boundsProjectionEffect = nil;
 	boundsProjectionEffectNeedsUpdate = YES;
 #else
@@ -79,7 +79,7 @@
 	subviews = [[MutLockArray alloc] init];
 	autoresizesSubviews = YES;
 	autoresizingMask = VVViewResizeMaxXMargin | VVViewResizeMinYMargin;
-	_propertyLock = OS_UNFAIR_LOCK_INIT;
+	_propertyLock = VV_LOCK_INIT;
 #if !TARGET_OS_IPHONE
 	lastMouseEvent = nil;
 #endif

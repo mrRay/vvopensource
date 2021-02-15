@@ -13,14 +13,14 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 
 
 + (void) initialize	{
-	static os_unfair_lock		initLock = OS_UNFAIR_LOCK_INIT;
-	if (os_unfair_lock_trylock(&initLock))	{
+	static VVLock		initLock = VV_LOCK_INIT;
+	if (VVLockTryLock(&initLock))	{
 		OSStatus			err;
 		//	create a midi client which will receive incoming midi data
 		err = MIDIClientCreate((CFStringRef)@"clientName",myMIDINotificationProc,(__bridge void * _Nullable)(self),&_VVMIDIProcessClientRef);
 		if (err != noErr)	{
 			NSLog(@"\t\terror %ld at MIDIClientCreate",(long)err);
-			os_unfair_lock_unlock(&initLock);
+			VVLockUnlock(&initLock);
 		}
 	}
 }

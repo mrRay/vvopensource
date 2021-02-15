@@ -461,3 +461,23 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 #define AntiARCRelease(...) if (__VA_ARGS__ != nil) CFRelease((__bridge CFTypeRef)__VA_ARGS__)
 
 
+
+
+//	if the min deployment target is >= 10.12, we can use unfair lock
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+	#import "os/lock.h"
+	#define VVLock os_unfair_lock
+	#define VV_LOCK_INIT OS_UNFAIR_LOCK_INIT
+	#define VVLockLock(n) os_unfair_lock_lock(n)
+	#define VVLockUnlock(n) os_unfair_lock_unlock(n)
+	#define VVLockTryLock(n) os_unfair_lock_trylock(n)
+//	else the min deployment target is < 10.12, we have to use spinlock
+#else
+	#define VVLock OSSpinLock
+	#define VV_LOCK_INIT OS_SPINLOCK_INIT
+	#define VVLockLock(n) OSSpinLockLock(n)
+	#define VVLockUnlock(n) OSSpinLockUnlock(n)
+	#define VVLockTryLock(n) OSSpinLockTry(n)
+#endif
+
+
