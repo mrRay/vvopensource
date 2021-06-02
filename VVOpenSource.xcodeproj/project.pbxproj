@@ -9915,8 +9915,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVMIDI;
 				SKIP_INSTALL = YES;
 			};
@@ -9940,8 +9939,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vidvox.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVMIDI;
 				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
@@ -9966,7 +9964,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "VVBasics-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVBasics;
@@ -9992,7 +9989,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "VVBasics-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-lcurl";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVBasics;
@@ -10019,7 +10015,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVOSC;
 				SKIP_INSTALL = YES;
@@ -10044,7 +10039,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVOSC/FrameworkSrc/VVOSC-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVOSC;
 				SKIP_INSTALL = YES;
@@ -10134,7 +10128,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVISFKit/VVISFKit-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVISFKit;
 				SKIP_INSTALL = YES;
@@ -10170,7 +10163,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVISFKit/VVISFKit-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVISFKit;
 				SKIP_INSTALL = YES;
@@ -10623,7 +10615,6 @@
 				);
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
 				SKIP_INSTALL = YES;
@@ -10648,7 +10639,6 @@
 				GCC_PREFIX_HEADER = "VVUIToolbox/VVUIToolbox-Prefix.pch";
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
 				SKIP_INSTALL = YES;
@@ -10739,7 +10729,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "DDMathParser/DDMathParser-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = DDMathParser;
 				SKIP_INSTALL = YES;
@@ -10776,7 +10765,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "DDMathParser/DDMathParser-Info.plist";
 				INSTALL_PATH = "@rpath";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = DDMathParser;
 				SKIP_INSTALL = YES;
@@ -10818,7 +10806,6 @@
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
 					"-framework",
@@ -10862,7 +10849,6 @@
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
 					"-framework",
