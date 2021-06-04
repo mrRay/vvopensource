@@ -84,7 +84,8 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 	
 	//	so, -[NSAlert runModal] should be handling all this- but we can't do that, because sometimes NSAlert will display the modal dialog on the non-main screen.  to work around this, we have to create an invisible window on the main screen, and attach the alert to it as a sheet that uses a modal session to restrict user interaction.
 	NSRect			mainScreenRect = [[[NSScreen screens] objectAtIndex:0] frame];
-	NSRect			clearWinRect = NSMakeRect(VVMIDX(mainScreenRect)-250, (mainScreenRect.size.height*0.66) + mainScreenRect.origin.y - 100, 500, 200);
+	NSRect			clearWinRect = NSMakeRect(0, 0, 100, 100);
+	clearWinRect.origin = NSMakePoint(VVMIDX(mainScreenRect) - clearWinRect.size.width/2., (mainScreenRect.size.height*0.66) + mainScreenRect.origin.y - clearWinRect.size.height/2.);
 	NSWindow		*clearWin = [[NSWindow alloc] initWithContentRect:clearWinRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
 	[clearWin setHasShadow:NO];
 	[clearWin setOpaque:NO];
