@@ -104,7 +104,6 @@
 		1A00B8D41C430B3600BC2BEB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A00B8D31C430B3600BC2BEB /* Assets.xcassets */; };
 		1A00B8D71C430B3600BC2BEB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A00B8D51C430B3600BC2BEB /* LaunchScreen.storyboard */; };
 		1A066E3F1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */; };
-		1A09FBED1C42FB0B008736D6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBEE1C42FB0B008736D6 /* OSCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C2F2131017815F004E19B0 /* OSCConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBEF1C42FB0B008736D6 /* OSCStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D103100E8A6700C3944E /* OSCStringAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A09FBF01C42FB0B008736D6 /* OSCStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D108100E8A6700C3944E /* OSCStringAdditions.m */; };
@@ -239,8 +238,6 @@
 		1A09FC8B1C4301A3008736D6 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; };
 		1A09FC8C1C4301A3008736D6 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EA01C42F43000B4291E /* VVBasics.framework */; };
 		1A09FC8D1C4301A3008736D6 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EAD1C42F44300B4291E /* VVBufferPool.framework */; };
-		1A0BE8CA24476B78006AE164 /* VVLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A0BE8C824476B77006AE164 /* VVLogger.mm */; };
-		1A0BE8CB24476B78006AE164 /* VVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0BE8C924476B77006AE164 /* VVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A0BE8CE24476B95006AE164 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1A0BE8CF24476B9F006AE164 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1A0BE8D224476BA9006AE164 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
@@ -353,25 +350,6 @@
 		1A39E6321D65B6F40065F271 /* VVUIToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */; };
 		1A39E6331D65B6FD0065F271 /* VVUIToolbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96B06C1C18BE0ECF000A921C /* VVUIToolbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A3ECD6B1CF8AD27008460E8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9684E8AC1983488F00524F3C /* QuartzCore.framework */; };
-		1A486EA31C42F43000B4291E /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A486EA21C42F43000B4291E /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EF61C42F50300B4291E /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EF71C42F50300B4291E /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
-		1A486EF81C42F50300B4291E /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94B100E8834007E6C25 /* VVThreadLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EF91C42F50300B4291E /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94A100E8834007E6C25 /* VVThreadLoop.m */; };
-		1A486EFA1C42F50300B4291E /* VVAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9621356714C7086C00E76C81 /* VVAssertionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EFB1C42F50300B4291E /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9621356814C7086C00E76C81 /* VVAssertionHandler.m */; };
-		1A486EFC1C42F50300B4291E /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA949100E8834007E6C25 /* MutLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EFD1C42F50300B4291E /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
-		1A486EFE1C42F50300B4291E /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA947100E8834007E6C25 /* MutLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486EFF1C42F50300B4291E /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94C100E8834007E6C25 /* MutLockArray.m */; };
-		1A486F001C42F50300B4291E /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486F011C42F50300B4291E /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
-		1A486F021C42F50300B4291E /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486F031C42F50300B4291E /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
-		1A486F041C42F50300B4291E /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486F051C42F50300B4291E /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
-		1A486F061C42F50300B4291E /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A486F071C42F50300B4291E /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
 		1A5E3B291CDBE32E00F3EDF7 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A5E3B2A1CDBE32E00F3EDF7 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A6377ED1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6377EC1CF0C9FD0053EE26 /* NSStringAdditionsSMPTE.m */; };
@@ -459,7 +437,6 @@
 		1A86C92C1B6111A100506AD4 /* MultiClassXPCTestService.xpc in Embed XPC Service */ = {isa = PBXBuildFile; fileRef = 1A7128F81B610B6F00528CDB /* MultiClassXPCTestService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1A8A19971C15E09F0096BCB8 /* ISF_ES_Compatibility.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A19961C15E09F0096BCB8 /* ISF_ES_Compatibility.txt */; };
 		1A9BF64D1C430F2A009544C1 /* blueelectricspiral.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A9BF64C1C430F2A009544C1 /* blueelectricspiral.fs */; };
-		1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA491C31940E36D0079B0FB /* VVBasicMacros.m */; };
 		1AB6E8E51E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E31E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs */; };
 		1AB6E8E61E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E41E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs */; };
 		1AB6E8EA1E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6E8E91E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.m */; };
@@ -495,13 +472,11 @@
 		1AC5E4591C4315E20068087D /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5E45A1C4315E20068087D /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A486EC71C42F45B00B4291E /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5E45B1C431AA00068087D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A854FD91C1A601400540729 /* GLKit.framework */; };
+		1AC79A0F282C222F003F859C /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC79A0E282C222F003F859C /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AC79A10282C222F003F859C /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC79A0E282C222F003F859C /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AD54C071D65C8AD008063FD /* ISF QuickLook Plugin.pkg in Resources */ = {isa = PBXBuildFile; fileRef = 1AD54C051D65C8AD008063FD /* ISF QuickLook Plugin.pkg */; };
 		1AD54C081D65C8AD008063FD /* Vidvox ISF resources.pkg in Resources */ = {isa = PBXBuildFile; fileRef = 1AD54C061D65C8AD008063FD /* Vidvox ISF resources.pkg */; };
 		1AD65DBE1D00B80E004427DC /* SwizzleISF-RGBAtoBGRA.fs in Resources */ = {isa = PBXBuildFile; fileRef = 1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */; };
-		1AD9E8E71E70899200497CB5 /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1AD9E8E81E70899200497CB5 /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1AD9E8E91E70899200497CB5 /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */; };
-		1AD9E8EA1E70899200497CB5 /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */; };
 		1AE0C96A1BAEBD1F00941BEF /* ISFObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE0C96B1BAEBD1F00941BEF /* ISFObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */; };
 		1AE102A91CDBDF8B0034EA89 /* QCQLRendererRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */; };
@@ -569,6 +544,56 @@
 		1AEE1ED81C136914005259C0 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1AEE1EDB1C136C68005259C0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
 		1AEE1EDC1C136C6C005259C0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
+		1AF2013A282C1F6B00865A3B /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20139282C1F6B00865A3B /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2013B282C1F6B00865A3B /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20139282C1F6B00865A3B /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20158282C1F7C00865A3B /* VVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF2013C282C1F7A00865A3B /* VVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2015A282C1F7C00865A3B /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2013D282C1F7A00865A3B /* ObjectHolder.m */; };
+		1AF2015B282C1F7C00865A3B /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2013D282C1F7A00865A3B /* ObjectHolder.m */; };
+		1AF2015C282C1F7C00865A3B /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2013E282C1F7B00865A3B /* MutNRLockArray.m */; };
+		1AF2015D282C1F7C00865A3B /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2013E282C1F7B00865A3B /* MutNRLockArray.m */; };
+		1AF2015E282C1F7C00865A3B /* VVLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2013F282C1F7B00865A3B /* VVLogger.mm */; };
+		1AF20160282C1F7C00865A3B /* VVAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20140282C1F7B00865A3B /* VVAssertionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20161282C1F7C00865A3B /* VVAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20140282C1F7B00865A3B /* VVAssertionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20162282C1F7C00865A3B /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20141282C1F7B00865A3B /* MutLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20163282C1F7C00865A3B /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20141282C1F7B00865A3B /* MutLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20164282C1F7C00865A3B /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20142282C1F7B00865A3B /* MutLockArray.m */; };
+		1AF20165282C1F7C00865A3B /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20142282C1F7B00865A3B /* MutLockArray.m */; };
+		1AF20166282C1F7C00865A3B /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20143282C1F7B00865A3B /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20167282C1F7C00865A3B /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20143282C1F7B00865A3B /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20168282C1F7C00865A3B /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20144282C1F7B00865A3B /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2016A282C1F7C00865A3B /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20145282C1F7B00865A3B /* VVThreadLoop.m */; };
+		1AF2016B282C1F7C00865A3B /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20145282C1F7B00865A3B /* VVThreadLoop.m */; };
+		1AF2016C282C1F7C00865A3B /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20146282C1F7B00865A3B /* VVAssertionHandler.m */; };
+		1AF2016D282C1F7C00865A3B /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20146282C1F7B00865A3B /* VVAssertionHandler.m */; };
+		1AF2016E282C1F7C00865A3B /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20147282C1F7B00865A3B /* ObjectHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2016F282C1F7C00865A3B /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20147282C1F7B00865A3B /* ObjectHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20170282C1F7C00865A3B /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20148282C1F7B00865A3B /* MutNRLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20171282C1F7C00865A3B /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20148282C1F7B00865A3B /* MutNRLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20172282C1F7C00865A3B /* VVSysVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20149282C1F7B00865A3B /* VVSysVersion.m */; };
+		1AF20174282C1F7C00865A3B /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014A282C1F7B00865A3B /* MutLockDict.m */; };
+		1AF20175282C1F7C00865A3B /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014A282C1F7B00865A3B /* MutLockDict.m */; };
+		1AF20176282C1F7C00865A3B /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF2014B282C1F7B00865A3B /* VVThreadLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20177282C1F7C00865A3B /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF2014B282C1F7B00865A3B /* VVThreadLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20178282C1F7C00865A3B /* VVSysVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF2014C282C1F7B00865A3B /* VVSysVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2017A282C1F7C00865A3B /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014D282C1F7B00865A3B /* VVStopwatch.m */; };
+		1AF2017B282C1F7C00865A3B /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014D282C1F7B00865A3B /* VVStopwatch.m */; };
+		1AF2017C282C1F7C00865A3B /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014E282C1F7B00865A3B /* VVCURLDL.m */; };
+		1AF2017E282C1F7C00865A3B /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014F282C1F7B00865A3B /* VVMStopwatch.m */; };
+		1AF2017F282C1F7C00865A3B /* VVMStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF2014F282C1F7B00865A3B /* VVMStopwatch.m */; };
+		1AF20180282C1F7C00865A3B /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20150282C1F7B00865A3B /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20181282C1F7C00865A3B /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20150282C1F7B00865A3B /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20182282C1F7C00865A3B /* VVNSViewAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20151282C1F7B00865A3B /* VVNSViewAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20184282C1F7C00865A3B /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20152282C1F7C00865A3B /* MutLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20185282C1F7C00865A3B /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20152282C1F7C00865A3B /* MutLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20186282C1F7C00865A3B /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20153282C1F7C00865A3B /* VVStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20187282C1F7C00865A3B /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20153282C1F7C00865A3B /* VVStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20188282C1F7C00865A3B /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20154282C1F7C00865A3B /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF20189282C1F7C00865A3B /* VVMStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF20154282C1F7C00865A3B /* VVMStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AF2018A282C1F7C00865A3B /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20155282C1F7C00865A3B /* MutNRLockDict.m */; };
+		1AF2018B282C1F7C00865A3B /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20155282C1F7C00865A3B /* MutNRLockDict.m */; };
+		1AF2018C282C1F7C00865A3B /* VVNSViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20156282C1F7C00865A3B /* VVNSViewAdditions.m */; };
+		1AF2018E282C1F7C00865A3B /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20157282C1F7C00865A3B /* VVBasicMacros.m */; };
+		1AF2018F282C1F7C00865A3B /* VVBasicMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF20157282C1F7C00865A3B /* VVBasicMacros.m */; };
 		1AF93E851C10ABBB00BA0537 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		1AFB60C81F1F7544003BD1E3 /* 0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFB608F1F1F7544003BD1E3 /* 0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png */; };
 		1AFB60C91F1F7544003BD1E3 /* 0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFB60901F1F7544003BD1E3 /* 0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png */; };
@@ -640,8 +665,6 @@
 		1AFE774A1D65B039003D8E7C /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AFE774B1D65B039003D8E7C /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AFF3B401D65B8BD000F5E94 /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
-		5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107014010E14BF200A67653 /* MutNRLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 5107014110E14BF200A67653 /* MutNRLockDict.m */; };
 		96128609100F830600C9C833 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9614010A198AD46D00335292 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96140110198AD46D00335292 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9614010E198AD46D00335292 /* InfoPlist.strings */; };
@@ -668,21 +691,6 @@
 		96174627100F888C00FB60E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		96174644100F88EF00FB60E6 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9617463E100F88EC00FB60E6 /* CoreMIDI.framework */; };
 		961EA925100E876F007E6C25 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
-		961EA957100E8834007E6C25 /* MutLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA947100E8834007E6C25 /* MutLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA958100E8834007E6C25 /* MutLockDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA948100E8834007E6C25 /* MutLockDict.m */; };
-		961EA959100E8834007E6C25 /* MutLockDict.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA949100E8834007E6C25 /* MutLockDict.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA95A100E8834007E6C25 /* VVThreadLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94A100E8834007E6C25 /* VVThreadLoop.m */; };
-		961EA95B100E8834007E6C25 /* VVThreadLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94B100E8834007E6C25 /* VVThreadLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA95C100E8834007E6C25 /* MutLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94C100E8834007E6C25 /* MutLockArray.m */; };
-		961EA95D100E8834007E6C25 /* VVStopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA94D100E8834007E6C25 /* VVStopwatch.m */; };
-		961EA95E100E8834007E6C25 /* VVStopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA94E100E8834007E6C25 /* VVStopwatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA960100E8834007E6C25 /* VVBasicMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA950100E8834007E6C25 /* VVBasicMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA961100E8834007E6C25 /* ObjectHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA951100E8834007E6C25 /* ObjectHolder.m */; };
-		961EA962100E8834007E6C25 /* ObjectHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA952100E8834007E6C25 /* ObjectHolder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 961EA955100E8834007E6C25 /* MutNRLockArray.m */; };
-		961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 961EA956100E8834007E6C25 /* MutNRLockArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9621356714C7086C00E76C81 /* VVAssertionHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9621356814C7086C00E76C81 /* VVAssertionHandler.m */; };
 		9628D0F0100E8A5200C3944E /* OSCAddressSpace.m in Sources */ = {isa = PBXBuildFile; fileRef = 9628D0EE100E8A5200C3944E /* OSCAddressSpace.m */; };
 		9628D0F1100E8A5200C3944E /* OSCAddressSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D0EF100E8A5200C3944E /* OSCAddressSpace.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9628D113100E8A6700C3944E /* OSCZeroConfManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9628D0FC100E8A6700C3944E /* OSCZeroConfManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -769,8 +777,6 @@
 		9656D91B100F8A0E0064EEA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9656D918100F8A0E0064EEA6 /* AppController.m */; };
 		9656D928100F8A630064EEA6 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9656D92D100F8A780064EEA6 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9658C25F18F86BCF004A6BCF /* VVSysVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9658C26018F86BCF004A6BCF /* VVSysVersion.m */; };
 		965C1CAD1983BE7D00111741 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		965C1CB31983BE7E00111741 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 965C1CB11983BE7E00111741 /* InfoPlist.strings */; };
 		965C1CB51983BE7E00111741 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 965C1CB41983BE7E00111741 /* main.m */; };
@@ -849,8 +855,6 @@
 		96B49325106AEC32008FB26E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96B49323106AEC32008FB26E /* MainMenu.xib */; };
 		96BD8CBA1987148000555A7E /* SampleVVBufferPoolAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BD8CB81987148000555A7E /* SampleVVBufferPoolAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BD8CBF1987CEBA00555A7E /* SampleVVBufferPoolAdditions.m in Headers */ = {isa = PBXBuildFile; fileRef = 96BD8CB91987148000555A7E /* SampleVVBufferPoolAdditions.m */; settings = {ATTRIBUTES = (Public, ); }; };
-		96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10A8100E95200079A2E6 /* VVBasics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF10AD100E95330079A2E6 /* VVOSC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF19C118C4ED7000B76FA3 /* VVScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96BF19C218C4ED7000B76FA3 /* VVScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF19C018C4ED7000B76FA3 /* VVScrollView.m */; };
 		96C24B061981A7F600C53395 /* VVBufferCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C24B041981A7F500C53395 /* VVBufferCopier.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -914,8 +918,6 @@
 		96E7ECF1106B163900B90822 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96E7ECF2106B163900B90822 /* VVOSC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9628D0C5100E89F700C3944E /* VVOSC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96E7ECF3106B163900B90822 /* VVMIDI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		96ED419910628A5500D8373F /* VVCURLDL.h in Headers */ = {isa = PBXBuildFile; fileRef = 96ED419710628A5500D8373F /* VVCURLDL.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ED419810628A5500D8373F /* VVCURLDL.m */; };
 		96EE5D3B1984072700231124 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96EE5D3C1984072700231124 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D431984073D00231124 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
@@ -1887,8 +1889,6 @@
 		1A00B8D61C430B3600BC2BEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1A00B8D81C430B3600BC2BEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A066E3E1CB9987C0045C78D /* ScaledCoCgYplusAtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ScaledCoCgYplusAtoRGBA.fs; sourceTree = "<group>"; };
-		1A0BE8C824476B77006AE164 /* VVLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VVLogger.mm; path = VVBasics/src/VVLogger.mm; sourceTree = "<group>"; };
-		1A0BE8C924476B77006AE164 /* VVLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVLogger.h; path = VVBasics/src/VVLogger.h; sourceTree = "<group>"; };
 		1A1A01E21CDBF91000E49E5A /* SwizzleISF-RGBAtoBGRA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-RGBAtoBGRA.fs"; sourceTree = "<group>"; };
 		1A1A01E91CDBFE3D00E49E5A /* ISFQL.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ISFQL.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A1A01EB1CDBFE3D00E49E5A /* GenerateThumbnailForURL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenerateThumbnailForURL.m; sourceTree = "<group>"; };
@@ -2152,7 +2152,6 @@
 		1A9BF64C1C430F2A009544C1 /* blueelectricspiral.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blueelectricspiral.fs; sourceTree = "<group>"; };
 		1A9ECF611C0F9BF800CCEB70 /* VVBufferGLKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferGLKView.h; sourceTree = "<group>"; };
 		1A9ECF621C0F9BF800CCEB70 /* VVBufferGLKView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVBufferGLKView.m; sourceTree = "<group>"; };
-		1AA491C31940E36D0079B0FB /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/src/VVBasicMacros.m; sourceTree = "<group>"; };
 		1AB6E8E31E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYplusAtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-ScaledCoCgYplusAtoRGBA.fs"; sourceTree = "<group>"; };
 		1AB6E8E41E3F914700DA5DD4 /* SwizzleISF-ScaledCoCgYtoRGBA.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = "SwizzleISF-ScaledCoCgYtoRGBA.fs"; sourceTree = "<group>"; };
 		1AB6E8E81E3F969E00DA5DD4 /* SampleVVBufferPoolAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleVVBufferPoolAdditions.h; sourceTree = "<group>"; };
@@ -2174,10 +2173,9 @@
 		1AC5A4D91CEE4138004DF358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AC5A4E81CEE851B004DF358 /* MTCMIDIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTCMIDIManager.h; sourceTree = "<group>"; };
 		1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTCMIDIManager.m; sourceTree = "<group>"; };
+		1AC79A0E282C222F003F859C /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/FrameworkSrc/VVOSC.h; sourceTree = "<group>"; };
 		1AD54C051D65C8AD008063FD /* ISF QuickLook Plugin.pkg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ISF QuickLook Plugin.pkg"; sourceTree = "<group>"; };
 		1AD54C061D65C8AD008063FD /* Vidvox ISF resources.pkg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Vidvox ISF resources.pkg"; sourceTree = "<group>"; };
-		1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVMStopwatch.h; path = VVBasics/src/VVMStopwatch.h; sourceTree = "<group>"; };
-		1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVMStopwatch.m; path = VVBasics/src/VVMStopwatch.m; sourceTree = "<group>"; };
 		1AE0C9681BAEBD1F00941BEF /* ISFObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISFObjectAdditions.h; sourceTree = "<group>"; };
 		1AE0C9691BAEBD1F00941BEF /* ISFObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISFObjectAdditions.m; sourceTree = "<group>"; };
 		1AE102A71CDBDF8B0034EA89 /* QCQLRendererRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QCQLRendererRemote.h; sourceTree = "<group>"; };
@@ -2227,6 +2225,35 @@
 		1AEE1EC91C136883005259C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1AEE1ECC1C136883005259C0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1AEE1ECE1C136883005259C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AF20139282C1F6B00865A3B /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
+		1AF2013C282C1F7A00865A3B /* VVLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVLogger.h; path = VVBasics/VVLogger.h; sourceTree = "<group>"; };
+		1AF2013D282C1F7A00865A3B /* ObjectHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectHolder.m; path = VVBasics/ObjectHolder.m; sourceTree = "<group>"; };
+		1AF2013E282C1F7B00865A3B /* MutNRLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockArray.m; path = VVBasics/MutNRLockArray.m; sourceTree = "<group>"; };
+		1AF2013F282C1F7B00865A3B /* VVLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VVLogger.mm; path = VVBasics/VVLogger.mm; sourceTree = "<group>"; };
+		1AF20140282C1F7B00865A3B /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVAssertionHandler.h; path = VVBasics/VVAssertionHandler.h; sourceTree = "<group>"; };
+		1AF20141282C1F7B00865A3B /* MutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockArray.h; path = VVBasics/MutLockArray.h; sourceTree = "<group>"; };
+		1AF20142282C1F7B00865A3B /* MutLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutLockArray.m; path = VVBasics/MutLockArray.m; sourceTree = "<group>"; };
+		1AF20143282C1F7B00865A3B /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/MutNRLockDict.h; sourceTree = "<group>"; };
+		1AF20144282C1F7B00865A3B /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/VVCURLDL.h; sourceTree = "<group>"; };
+		1AF20145282C1F7B00865A3B /* VVThreadLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVThreadLoop.m; path = VVBasics/VVThreadLoop.m; sourceTree = "<group>"; };
+		1AF20146282C1F7B00865A3B /* VVAssertionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVAssertionHandler.m; path = VVBasics/VVAssertionHandler.m; sourceTree = "<group>"; };
+		1AF20147282C1F7B00865A3B /* ObjectHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectHolder.h; path = VVBasics/ObjectHolder.h; sourceTree = "<group>"; };
+		1AF20148282C1F7B00865A3B /* MutNRLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockArray.h; path = VVBasics/MutNRLockArray.h; sourceTree = "<group>"; };
+		1AF20149282C1F7B00865A3B /* VVSysVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSysVersion.m; path = VVBasics/VVSysVersion.m; sourceTree = "<group>"; };
+		1AF2014A282C1F7B00865A3B /* MutLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutLockDict.m; path = VVBasics/MutLockDict.m; sourceTree = "<group>"; };
+		1AF2014B282C1F7B00865A3B /* VVThreadLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVThreadLoop.h; path = VVBasics/VVThreadLoop.h; sourceTree = "<group>"; };
+		1AF2014C282C1F7B00865A3B /* VVSysVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSysVersion.h; path = VVBasics/VVSysVersion.h; sourceTree = "<group>"; };
+		1AF2014D282C1F7B00865A3B /* VVStopwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVStopwatch.m; path = VVBasics/VVStopwatch.m; sourceTree = "<group>"; };
+		1AF2014E282C1F7B00865A3B /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/VVCURLDL.m; sourceTree = "<group>"; };
+		1AF2014F282C1F7B00865A3B /* VVMStopwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVMStopwatch.m; path = VVBasics/VVMStopwatch.m; sourceTree = "<group>"; };
+		1AF20150282C1F7B00865A3B /* VVBasicMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasicMacros.h; path = VVBasics/VVBasicMacros.h; sourceTree = "<group>"; };
+		1AF20151282C1F7B00865A3B /* VVNSViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVNSViewAdditions.h; path = VVBasics/VVNSViewAdditions.h; sourceTree = "<group>"; };
+		1AF20152282C1F7C00865A3B /* MutLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockDict.h; path = VVBasics/MutLockDict.h; sourceTree = "<group>"; };
+		1AF20153282C1F7C00865A3B /* VVStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVStopwatch.h; path = VVBasics/VVStopwatch.h; sourceTree = "<group>"; };
+		1AF20154282C1F7C00865A3B /* VVMStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVMStopwatch.h; path = VVBasics/VVMStopwatch.h; sourceTree = "<group>"; };
+		1AF20155282C1F7C00865A3B /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/MutNRLockDict.m; sourceTree = "<group>"; };
+		1AF20156282C1F7C00865A3B /* VVNSViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVNSViewAdditions.m; path = VVBasics/VVNSViewAdditions.m; sourceTree = "<group>"; };
+		1AF20157282C1F7C00865A3B /* VVBasicMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVBasicMacros.m; path = VVBasics/VVBasicMacros.m; sourceTree = "<group>"; };
 		1AFB608F1F1F7544003BD1E3 /* 0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png; sourceTree = "<group>"; };
 		1AFB60901F1F7544003BD1E3 /* 0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png; sourceTree = "<group>"; };
 		1AFB60911F1F7544003BD1E3 /* 1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg; sourceTree = "<group>"; };
@@ -2290,8 +2317,6 @@
 		1AFE77331D65AC9B003D8E7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1AFE77451D65B01D003D8E7C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		32DBCF5E0370ADEE00C91783 /* VVOpenSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVOpenSource_Prefix.pch; sourceTree = "<group>"; };
-		5107014010E14BF200A67653 /* MutNRLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockDict.h; path = VVBasics/src/MutNRLockDict.h; sourceTree = "<group>"; };
-		5107014110E14BF200A67653 /* MutNRLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockDict.m; path = VVBasics/src/MutNRLockDict.m; sourceTree = "<group>"; };
 		96140109198AD46D00335292 /* QT and Hap Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "QT and Hap Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9614010D198AD46D00335292 /* QT and Hap Test App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "QT and Hap Test App-Info.plist"; sourceTree = "<group>"; };
 		9614010F198AD46D00335292 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -2313,21 +2338,6 @@
 		9617463E100F88EC00FB60E6 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		961EA8ED100E8565007E6C25 /* VVBasics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVBasics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		961EA8EE100E8565007E6C25 /* VVBasics-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VVBasics-Info.plist"; sourceTree = "<group>"; };
-		961EA947100E8834007E6C25 /* MutLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockArray.h; path = VVBasics/src/MutLockArray.h; sourceTree = "<group>"; };
-		961EA948100E8834007E6C25 /* MutLockDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutLockDict.m; path = VVBasics/src/MutLockDict.m; sourceTree = "<group>"; };
-		961EA949100E8834007E6C25 /* MutLockDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutLockDict.h; path = VVBasics/src/MutLockDict.h; sourceTree = "<group>"; };
-		961EA94A100E8834007E6C25 /* VVThreadLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVThreadLoop.m; path = VVBasics/src/VVThreadLoop.m; sourceTree = "<group>"; };
-		961EA94B100E8834007E6C25 /* VVThreadLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVThreadLoop.h; path = VVBasics/src/VVThreadLoop.h; sourceTree = "<group>"; };
-		961EA94C100E8834007E6C25 /* MutLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutLockArray.m; path = VVBasics/src/MutLockArray.m; sourceTree = "<group>"; };
-		961EA94D100E8834007E6C25 /* VVStopwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVStopwatch.m; path = VVBasics/src/VVStopwatch.m; sourceTree = "<group>"; };
-		961EA94E100E8834007E6C25 /* VVStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVStopwatch.h; path = VVBasics/src/VVStopwatch.h; sourceTree = "<group>"; };
-		961EA950100E8834007E6C25 /* VVBasicMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasicMacros.h; path = VVBasics/src/VVBasicMacros.h; sourceTree = "<group>"; };
-		961EA951100E8834007E6C25 /* ObjectHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectHolder.m; path = VVBasics/src/ObjectHolder.m; sourceTree = "<group>"; };
-		961EA952100E8834007E6C25 /* ObjectHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectHolder.h; path = VVBasics/src/ObjectHolder.h; sourceTree = "<group>"; };
-		961EA955100E8834007E6C25 /* MutNRLockArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MutNRLockArray.m; path = VVBasics/src/MutNRLockArray.m; sourceTree = "<group>"; };
-		961EA956100E8834007E6C25 /* MutNRLockArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutNRLockArray.h; path = VVBasics/src/MutNRLockArray.h; sourceTree = "<group>"; };
-		9621356714C7086C00E76C81 /* VVAssertionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVAssertionHandler.h; path = VVBasics/src/VVAssertionHandler.h; sourceTree = "<group>"; };
-		9621356814C7086C00E76C81 /* VVAssertionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVAssertionHandler.m; path = VVBasics/src/VVAssertionHandler.m; sourceTree = "<group>"; };
 		9628D0C5100E89F700C3944E /* VVOSC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VVOSC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9628D0C6100E89F700C3944E /* VVOSC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "VVOSC-Info.plist"; path = "VVOSC/FrameworkSrc/VVOSC-Info.plist"; sourceTree = "<group>"; };
 		9628D0EE100E8A5200C3944E /* OSCAddressSpace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OSCAddressSpace.m; path = VVOSC/FrameworkSrc/OSCAddressSpace.m; sourceTree = "<group>"; };
@@ -2418,8 +2428,6 @@
 		9656D916100F8A0E0064EEA6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = VVMIDI/AppSrc/AppController.h; sourceTree = "<group>"; };
 		9656D917100F8A0E0064EEA6 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = VVMIDI/AppSrc/MainMenu.xib; sourceTree = "<group>"; };
 		9656D918100F8A0E0064EEA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = VVMIDI/AppSrc/AppController.m; sourceTree = "<group>"; };
-		9658C25F18F86BCF004A6BCF /* VVSysVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVSysVersion.h; path = VVBasics/src/VVSysVersion.h; sourceTree = "<group>"; };
-		9658C26018F86BCF004A6BCF /* VVSysVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVSysVersion.m; path = VVBasics/src/VVSysVersion.m; sourceTree = "<group>"; };
 		965C1CAC1983BE7D00111741 /* GLScene Test App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GLScene Test App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		965C1CB01983BE7E00111741 /* GLScene Test App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GLScene Test App-Info.plist"; sourceTree = "<group>"; };
 		965C1CB21983BE7E00111741 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -2507,8 +2515,6 @@
 		96B49323106AEC32008FB26E /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = MIDIviaOSC/MainMenu.xib; sourceTree = "<group>"; };
 		96BD8CB81987148000555A7E /* SampleVVBufferPoolAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleVVBufferPoolAdditions.h; sourceTree = "<group>"; };
 		96BD8CB91987148000555A7E /* SampleVVBufferPoolAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleVVBufferPoolAdditions.m; sourceTree = "<group>"; };
-		96BF10A8100E95200079A2E6 /* VVBasics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVBasics.h; path = VVBasics/VVBasics.h; sourceTree = "<group>"; };
-		96BF10AD100E95330079A2E6 /* VVOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVOSC.h; path = VVOSC/VVOSC.h; sourceTree = "<group>"; };
 		96BF19BF18C4ED7000B76FA3 /* VVScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVScrollView.h; sourceTree = "<group>"; };
 		96BF19C018C4ED7000B76FA3 /* VVScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVScrollView.m; sourceTree = "<group>"; };
 		96C24B041981A7F500C53395 /* VVBufferCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVBufferCopier.h; sourceTree = "<group>"; };
@@ -2572,8 +2578,6 @@
 		96C9DAF5106B0335006DD331 /* MVOOSCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVOOSCManager.h; path = MIDIviaOSC/MVOOSCManager.h; sourceTree = "<group>"; };
 		96C9DAF6106B0335006DD331 /* MVOOSCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MVOOSCManager.m; path = MIDIviaOSC/MVOOSCManager.m; sourceTree = "<group>"; };
 		96E26B34106C319700C5B418 /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Credits.rtf; path = MIDIviaOSC/Credits.rtf; sourceTree = "<group>"; };
-		96ED419710628A5500D8373F /* VVCURLDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVCURLDL.h; path = VVBasics/src/VVCURLDL.h; sourceTree = "<group>"; };
-		96ED419810628A5500D8373F /* VVCURLDL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVCURLDL.m; path = VVBasics/src/VVCURLDL.m; sourceTree = "<group>"; };
 		96EE5D6219840D5C00231124 /* Blue.qtz */ = {isa = PBXFileReference; lastKnownFileType = "video.quartz-composer"; path = Blue.qtz; sourceTree = "<group>"; };
 		96EE5D66198410BC00231124 /* ISFSupportTest.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ISFSupportTest.fs; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3918,20 +3922,35 @@
 			isa = PBXGroup;
 			children = (
 				961EA8EE100E8565007E6C25 /* VVBasics-Info.plist */,
-				96BF10A8100E95200079A2E6 /* VVBasics.h */,
-				961EA950100E8834007E6C25 /* VVBasicMacros.h */,
-				1AA491C31940E36D0079B0FB /* VVBasicMacros.m */,
-				968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */,
-				961EA94E100E8834007E6C25 /* VVStopwatch.h */,
-				961EA94D100E8834007E6C25 /* VVStopwatch.m */,
-				96ED419710628A5500D8373F /* VVCURLDL.h */,
-				96ED419810628A5500D8373F /* VVCURLDL.m */,
-				9658C25F18F86BCF004A6BCF /* VVSysVersion.h */,
-				9658C26018F86BCF004A6BCF /* VVSysVersion.m */,
-				1AD9E8E51E70899200497CB5 /* VVMStopwatch.h */,
-				1AD9E8E61E70899200497CB5 /* VVMStopwatch.m */,
-				1A0BE8C924476B77006AE164 /* VVLogger.h */,
-				1A0BE8C824476B77006AE164 /* VVLogger.mm */,
+				1AF20139282C1F6B00865A3B /* VVBasics.h */,
+				1AF20141282C1F7B00865A3B /* MutLockArray.h */,
+				1AF20142282C1F7B00865A3B /* MutLockArray.m */,
+				1AF20152282C1F7C00865A3B /* MutLockDict.h */,
+				1AF2014A282C1F7B00865A3B /* MutLockDict.m */,
+				1AF20148282C1F7B00865A3B /* MutNRLockArray.h */,
+				1AF2013E282C1F7B00865A3B /* MutNRLockArray.m */,
+				1AF20143282C1F7B00865A3B /* MutNRLockDict.h */,
+				1AF20155282C1F7C00865A3B /* MutNRLockDict.m */,
+				1AF20147282C1F7B00865A3B /* ObjectHolder.h */,
+				1AF2013D282C1F7A00865A3B /* ObjectHolder.m */,
+				1AF20140282C1F7B00865A3B /* VVAssertionHandler.h */,
+				1AF20146282C1F7B00865A3B /* VVAssertionHandler.m */,
+				1AF20150282C1F7B00865A3B /* VVBasicMacros.h */,
+				1AF20157282C1F7C00865A3B /* VVBasicMacros.m */,
+				1AF20144282C1F7B00865A3B /* VVCURLDL.h */,
+				1AF2014E282C1F7B00865A3B /* VVCURLDL.m */,
+				1AF2013C282C1F7A00865A3B /* VVLogger.h */,
+				1AF2013F282C1F7B00865A3B /* VVLogger.mm */,
+				1AF20154282C1F7C00865A3B /* VVMStopwatch.h */,
+				1AF2014F282C1F7B00865A3B /* VVMStopwatch.m */,
+				1AF20151282C1F7B00865A3B /* VVNSViewAdditions.h */,
+				1AF20156282C1F7C00865A3B /* VVNSViewAdditions.m */,
+				1AF20153282C1F7C00865A3B /* VVStopwatch.h */,
+				1AF2014D282C1F7B00865A3B /* VVStopwatch.m */,
+				1AF2014C282C1F7B00865A3B /* VVSysVersion.h */,
+				1AF20149282C1F7B00865A3B /* VVSysVersion.m */,
+				1AF2014B282C1F7B00865A3B /* VVThreadLoop.h */,
+				1AF20145282C1F7B00865A3B /* VVThreadLoop.m */,
 			);
 			name = "VVBasics framework";
 			sourceTree = "<group>";
@@ -3940,7 +3959,7 @@
 			isa = PBXGroup;
 			children = (
 				9628D0C6100E89F700C3944E /* VVOSC-Info.plist */,
-				96BF10AD100E95330079A2E6 /* VVOSC.h */,
+				1AC79A0E282C222F003F859C /* VVOSC.h */,
 				9628D16F100E8A9000C3944E /* basic data types */,
 				9628D112100E8A6700C3944E /* OSCManager.h */,
 				9628D10D100E8A6700C3944E /* OSCManager.m */,
@@ -4198,27 +4217,6 @@
 				1A7128B01B61065000528CDB /* MultiClassXPC framework */,
 			);
 			name = "Mac Frameworks";
-			sourceTree = "<group>";
-		};
-		968D939A1072A4AE00FE7527 /* Threads & Thread-safe classes */ = {
-			isa = PBXGroup;
-			children = (
-				961EA94B100E8834007E6C25 /* VVThreadLoop.h */,
-				961EA94A100E8834007E6C25 /* VVThreadLoop.m */,
-				9621356714C7086C00E76C81 /* VVAssertionHandler.h */,
-				9621356814C7086C00E76C81 /* VVAssertionHandler.m */,
-				961EA949100E8834007E6C25 /* MutLockDict.h */,
-				961EA948100E8834007E6C25 /* MutLockDict.m */,
-				961EA947100E8834007E6C25 /* MutLockArray.h */,
-				961EA94C100E8834007E6C25 /* MutLockArray.m */,
-				961EA952100E8834007E6C25 /* ObjectHolder.h */,
-				961EA951100E8834007E6C25 /* ObjectHolder.m */,
-				961EA956100E8834007E6C25 /* MutNRLockArray.h */,
-				961EA955100E8834007E6C25 /* MutNRLockArray.m */,
-				5107014010E14BF200A67653 /* MutNRLockDict.h */,
-				5107014110E14BF200A67653 /* MutNRLockDict.m */,
-			);
-			name = "Threads & Thread-safe classes";
 			sourceTree = "<group>";
 		};
 		96ACD7221706416300138AE6 /* Frameworks */ = {
@@ -4482,17 +4480,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A486EA31C42F43000B4291E /* VVBasics.h in Headers */,
-				1A486EF61C42F50300B4291E /* VVBasicMacros.h in Headers */,
-				1A486F021C42F50300B4291E /* MutNRLockArray.h in Headers */,
-				1A486EFC1C42F50300B4291E /* MutLockDict.h in Headers */,
-				1A486F041C42F50300B4291E /* MutNRLockDict.h in Headers */,
-				1A486F001C42F50300B4291E /* ObjectHolder.h in Headers */,
-				1A486EFA1C42F50300B4291E /* VVAssertionHandler.h in Headers */,
-				1A486F061C42F50300B4291E /* VVStopwatch.h in Headers */,
-				1A486EF81C42F50300B4291E /* VVThreadLoop.h in Headers */,
-				1AD9E8E81E70899200497CB5 /* VVMStopwatch.h in Headers */,
-				1A486EFE1C42F50300B4291E /* MutLockArray.h in Headers */,
+				1AF20171282C1F7C00865A3B /* MutNRLockArray.h in Headers */,
+				1AF2016F282C1F7C00865A3B /* ObjectHolder.h in Headers */,
+				1AF20185282C1F7C00865A3B /* MutLockDict.h in Headers */,
+				1AF20181282C1F7C00865A3B /* VVBasicMacros.h in Headers */,
+				1AF20161282C1F7C00865A3B /* VVAssertionHandler.h in Headers */,
+				1AF20167282C1F7C00865A3B /* MutNRLockDict.h in Headers */,
+				1AF20187282C1F7C00865A3B /* VVStopwatch.h in Headers */,
+				1AF20189282C1F7C00865A3B /* VVMStopwatch.h in Headers */,
+				1AF20163282C1F7C00865A3B /* MutLockArray.h in Headers */,
+				1AF20177282C1F7C00865A3B /* VVThreadLoop.h in Headers */,
+				1AF2013B282C1F6B00865A3B /* VVBasics.h in Headers */,
+				1AF2013B282C1F6B00865A3B /* VVBasics.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4577,6 +4576,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AC79A10282C222F003F859C /* VVOSC.h in Headers */,
 				1A09FBF71C42FB0B008736D6 /* OSCPacket.h in Headers */,
 				1A09FBFF1C42FB0B008736D6 /* OSCOutPort.h in Headers */,
 				1A09FC051C42FB0B008736D6 /* OSCZeroConfManager.h in Headers */,
@@ -4585,7 +4585,6 @@
 				1A09FBF51C42FB0B008736D6 /* OSCBundle.h in Headers */,
 				1A09FC031C42FB0B008736D6 /* OSCAddressSpace.h in Headers */,
 				1A09FC011C42FB0B008736D6 /* OSCNode.h in Headers */,
-				1A09FBED1C42FB0B008736D6 /* VVOSC.h in Headers */,
 				1A09FBFD1C42FB0B008736D6 /* OSCInPort.h in Headers */,
 				1A09FBF11C42FB0B008736D6 /* OSCValue.h in Headers */,
 				1A09FC071C42FB0B008736D6 /* OSCZeroConfDomain.h in Headers */,
@@ -4630,21 +4629,22 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AF20178282C1F7C00865A3B /* VVSysVersion.h in Headers */,
+				1AF20168282C1F7C00865A3B /* VVCURLDL.h in Headers */,
+				1AF20170282C1F7C00865A3B /* MutNRLockArray.h in Headers */,
+				1AF2016E282C1F7C00865A3B /* ObjectHolder.h in Headers */,
+				1AF20184282C1F7C00865A3B /* MutLockDict.h in Headers */,
+				1AF20180282C1F7C00865A3B /* VVBasicMacros.h in Headers */,
+				1AF20160282C1F7C00865A3B /* VVAssertionHandler.h in Headers */,
+				1AF20158282C1F7C00865A3B /* VVLogger.h in Headers */,
+				1AF20166282C1F7C00865A3B /* MutNRLockDict.h in Headers */,
+				1AF20186282C1F7C00865A3B /* VVStopwatch.h in Headers */,
+				1AF20188282C1F7C00865A3B /* VVMStopwatch.h in Headers */,
 				969FCE9E120DB9DA0067E617 /* lgpl-3.0.txt in Headers */,
-				961EA957100E8834007E6C25 /* MutLockArray.h in Headers */,
-				961EA959100E8834007E6C25 /* MutLockDict.h in Headers */,
-				961EA95B100E8834007E6C25 /* VVThreadLoop.h in Headers */,
-				961EA95E100E8834007E6C25 /* VVStopwatch.h in Headers */,
-				961EA960100E8834007E6C25 /* VVBasicMacros.h in Headers */,
-				961EA962100E8834007E6C25 /* ObjectHolder.h in Headers */,
-				961EA966100E8834007E6C25 /* MutNRLockArray.h in Headers */,
-				96BF10A9100E95200079A2E6 /* VVBasics.h in Headers */,
-				96ED419910628A5500D8373F /* VVCURLDL.h in Headers */,
-				5107014210E14BF200A67653 /* MutNRLockDict.h in Headers */,
-				9621356914C7086C00E76C81 /* VVAssertionHandler.h in Headers */,
-				1AD9E8E71E70899200497CB5 /* VVMStopwatch.h in Headers */,
-				1A0BE8CB24476B78006AE164 /* VVLogger.h in Headers */,
-				9658C26118F86BCF004A6BCF /* VVSysVersion.h in Headers */,
+				1AF20162282C1F7C00865A3B /* MutLockArray.h in Headers */,
+				1AF20182282C1F7C00865A3B /* VVNSViewAdditions.h in Headers */,
+				1AF20176282C1F7C00865A3B /* VVThreadLoop.h in Headers */,
+				1AF2013A282C1F6B00865A3B /* VVBasics.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4653,6 +4653,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				969FCEA0120DB9EF0067E617 /* lgpl-3.0.txt in Headers */,
+				1AC79A0F282C222F003F859C /* VVOSC.h in Headers */,
 				9628D0F1100E8A5200C3944E /* OSCAddressSpace.h in Headers */,
 				9628D113100E8A6700C3944E /* OSCZeroConfManager.h in Headers */,
 				9628D117100E8A6700C3944E /* OSCOutPort.h in Headers */,
@@ -4665,7 +4666,6 @@
 				9628D126100E8A6700C3944E /* OSCNode.h in Headers */,
 				9628D127100E8A6700C3944E /* OSCValue.h in Headers */,
 				9628D129100E8A6700C3944E /* OSCManager.h in Headers */,
-				96BF10AE100E95330079A2E6 /* VVOSC.h in Headers */,
 				96C2F2141017815F004E19B0 /* OSCConstants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6216,16 +6216,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A486F031C42F50300B4291E /* MutNRLockArray.m in Sources */,
-				1A486F011C42F50300B4291E /* ObjectHolder.m in Sources */,
-				1A486EFB1C42F50300B4291E /* VVAssertionHandler.m in Sources */,
-				1AD9E8EA1E70899200497CB5 /* VVMStopwatch.m in Sources */,
-				1A486EF71C42F50300B4291E /* VVBasicMacros.m in Sources */,
-				1A486EF91C42F50300B4291E /* VVThreadLoop.m in Sources */,
-				1A486F051C42F50300B4291E /* MutNRLockDict.m in Sources */,
-				1A486F071C42F50300B4291E /* VVStopwatch.m in Sources */,
-				1A486EFF1C42F50300B4291E /* MutLockArray.m in Sources */,
-				1A486EFD1C42F50300B4291E /* MutLockDict.m in Sources */,
+				1AF2015B282C1F7C00865A3B /* ObjectHolder.m in Sources */,
+				1AF2017F282C1F7C00865A3B /* VVMStopwatch.m in Sources */,
+				1AF20175282C1F7C00865A3B /* MutLockDict.m in Sources */,
+				1AF2018B282C1F7C00865A3B /* MutNRLockDict.m in Sources */,
+				1AF2015D282C1F7C00865A3B /* MutNRLockArray.m in Sources */,
+				1AF2016D282C1F7C00865A3B /* VVAssertionHandler.m in Sources */,
+				1AF2017B282C1F7C00865A3B /* VVStopwatch.m in Sources */,
+				1AF2016B282C1F7C00865A3B /* VVThreadLoop.m in Sources */,
+				1AF20165282C1F7C00865A3B /* MutLockArray.m in Sources */,
+				1AF2018F282C1F7C00865A3B /* VVBasicMacros.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6549,19 +6549,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				961EA958100E8834007E6C25 /* MutLockDict.m in Sources */,
-				961EA95A100E8834007E6C25 /* VVThreadLoop.m in Sources */,
-				961EA95C100E8834007E6C25 /* MutLockArray.m in Sources */,
-				961EA95D100E8834007E6C25 /* VVStopwatch.m in Sources */,
-				961EA961100E8834007E6C25 /* ObjectHolder.m in Sources */,
-				961EA965100E8834007E6C25 /* MutNRLockArray.m in Sources */,
-				96ED419A10628A5500D8373F /* VVCURLDL.m in Sources */,
-				1A0BE8CA24476B78006AE164 /* VVLogger.mm in Sources */,
-				1AA491C41940E36D0079B0FB /* VVBasicMacros.m in Sources */,
-				5107014310E14BF200A67653 /* MutNRLockDict.m in Sources */,
-				9621356A14C7086C00E76C81 /* VVAssertionHandler.m in Sources */,
-				9658C26218F86BCF004A6BCF /* VVSysVersion.m in Sources */,
-				1AD9E8E91E70899200497CB5 /* VVMStopwatch.m in Sources */,
+				1AF20172282C1F7C00865A3B /* VVSysVersion.m in Sources */,
+				1AF2015A282C1F7C00865A3B /* ObjectHolder.m in Sources */,
+				1AF2015E282C1F7C00865A3B /* VVLogger.mm in Sources */,
+				1AF2017E282C1F7C00865A3B /* VVMStopwatch.m in Sources */,
+				1AF20174282C1F7C00865A3B /* MutLockDict.m in Sources */,
+				1AF2018C282C1F7C00865A3B /* VVNSViewAdditions.m in Sources */,
+				1AF2018A282C1F7C00865A3B /* MutNRLockDict.m in Sources */,
+				1AF2015C282C1F7C00865A3B /* MutNRLockArray.m in Sources */,
+				1AF2017C282C1F7C00865A3B /* VVCURLDL.m in Sources */,
+				1AF2016C282C1F7C00865A3B /* VVAssertionHandler.m in Sources */,
+				1AF2017A282C1F7C00865A3B /* VVStopwatch.m in Sources */,
+				1AF2016A282C1F7C00865A3B /* VVThreadLoop.m in Sources */,
+				1AF20164282C1F7C00865A3B /* MutLockArray.m in Sources */,
+				1AF2018E282C1F7C00865A3B /* VVBasicMacros.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8666,7 +8667,6 @@
 				INFOPLIST_FILE = MultiClassXPC/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -8712,7 +8712,6 @@
 				INFOPLIST_FILE = MultiClassXPC/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -9742,6 +9741,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = NO;
@@ -9780,7 +9780,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -9789,6 +9789,7 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = NO;
@@ -9825,7 +9826,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
 				INSTALL_PATH = /;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -9910,7 +9911,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
@@ -9934,7 +9935,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/FrameworkSrc/VVMIDI-Info.plist";
@@ -10179,7 +10180,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/AppSrc/MIDITestApp-Info.plist";
@@ -10204,7 +10205,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "./VVMIDI/AppSrc/MIDITestApp-Info.plist";
@@ -10805,7 +10806,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
 					"-framework",
@@ -10848,7 +10848,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "VVBufferPool/VVBufferPool-Info.plist";
 				INSTALL_PATH = "@rpath";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=i386]" = (
 					"-framework",
