@@ -126,6 +126,8 @@ double			_machTimeToNsFactor;
 	
 	//	set up the packet list related resources
 	packetList = (MIDIPacketList *) malloc(1024*sizeof(char));
+	//packetList = aligned_alloc(4, sizeof(char)*1024);
+	//packetList = &fakePacketList;
 	currentPacket = MIDIPacketListInit(packetList);
 	
 	return self;
@@ -166,6 +168,8 @@ double			_machTimeToNsFactor;
 	
 	//	set up the packet list related resources
 	packetList = (MIDIPacketList *) malloc(1024*sizeof(char));
+	//packetList = aligned_alloc(4, sizeof(char)*1024);
+	//packetList = &fakePacketList;
 	currentPacket = MIDIPacketListInit(packetList);
 	
 	return self;
@@ -482,8 +486,10 @@ double			_machTimeToNsFactor;
 	
 	uint64_t		timestamp = [m timestamp];
 	
-	if (timestamp == 0)
-		timestamp = mach_absolute_time() * _machTimeToNsFactor;
+	if (timestamp == 0)	{
+		//timestamp = mach_absolute_time() * _machTimeToNsFactor;
+		timestamp = mach_absolute_time();
+	}
 	
 	//	lock so threads sending midi data don't collide
 	pthread_mutex_lock(&sendingLock);
@@ -558,6 +564,10 @@ double			_machTimeToNsFactor;
 			NSLog(@"\t\terror adding new packet %s",__func__);
 			goto BAIL;
 		}
+		//if (newPacket == currentPacket)	{
+		//	NSLog(@"\t\terror B adding new packet %s",__func__);
+		//	goto BAIL;
+		//}
 	}
 	
 	currentPacket = newPacket;
@@ -602,8 +612,10 @@ double			_machTimeToNsFactor;
 		
 		uint64_t	timestamp = [msgPtr timestamp];
 		
-		if (timestamp == 0)
-			timestamp = mach_absolute_time() * _machTimeToNsFactor;
+		if (timestamp == 0)	{
+			//timestamp = mach_absolute_time() * _machTimeToNsFactor;
+			timestamp = mach_absolute_time();
+		}
 		
 		newPacket = MIDIPacketListAdd(packetList,1024,currentPacket,timestamp,3,scratchStruct);
 		if (newPacket == NULL)	{
