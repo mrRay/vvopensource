@@ -2264,6 +2264,11 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	//	tell the super to do its _renderPrep, which will compile the shader and get it all set up if necessary
 	[super _renderPrep];
 	
+	if (context == nil)	{
+		NSLog(@"ERR: context nil, %s",__func__);
+		return;
+	}
+	
 	//	if i don't have a VBO containing geometry for a quad, make one now
 	if (geoXYVBO == nil)	{
 		GLfloat				geo[] = {
