@@ -24,9 +24,11 @@ typedef NS_ENUM(NSInteger, VVOSVersion)	{
 	VVElCapitan = 11,	//!<	10.11
 	VVSierra = 12,	//!<	10.12
 	VVHighSierra = 13, //!<	10.13
-	VVMojave = 14,
-	VVCatalina = 15,
-	VVBigSur = 16
+	VVMojave = 14,	//!<	10.14
+	VVCatalina = 15,	//!<	10.15
+	VVBigSur = 16,	//!<	macOS 11
+	VVMonterey = 17,	//!<	macOS 12
+	VVVentura = 18,	//!<	macOS 13
 };
 #else
 typedef enum VVOSVersion	{
@@ -43,9 +45,11 @@ typedef enum VVOSVersion	{
 	VVElCapitan = 11,	//!<	10.11
 	VVSierra = 12,	//!<	10.12
 	VVHighSierra = 13, //!<	10.13
-	VVMojave = 14,
-	VVCatalina = 15,
-	VVBigSur = 16
+	VVMojave = 14,	//!<	10.14
+	VVCatalina = 15,	//!<	10.15
+	VVBigSur = 16,	//!<	macOS 11
+	VVMonterey = 17,	//!<	macOS 12
+	VVVentura = 18,	//!<	macOS 13
 } VVOSVersion;
 #endif
 
