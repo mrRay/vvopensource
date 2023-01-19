@@ -115,10 +115,12 @@ long			_spriteGLViewSysVers;
 	LOCK(&fenceLock);
 		//NSLog(@"\t\tdeleting fences %ld & %ld in context %p",fenceA,fenceB,[self openGLContext]);
 		CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-		glDeleteFencesAPPLE(1,&fenceA);
+		if (fenceA > 0)
+			glDeleteFencesAPPLE(1,&fenceA);
 		fenceA = 0;
 		fenceADeployed = NO;
-		glDeleteFencesAPPLE(1,&fenceB);
+		if (fenceB > 0)
+			glDeleteFencesAPPLE(1,&fenceB);
 		fenceB = 0;
 		fenceBDeployed = NO;
 	UNLOCK(&fenceLock);
