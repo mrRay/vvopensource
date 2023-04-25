@@ -5,8 +5,8 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#import "MutLockArray.h"
-#import "ObjectHolder.h"
+#import <VVBasics/MutLockArray.h>
+#import <VVBasics/ObjectHolder.h>
 
 
 

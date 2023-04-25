@@ -5,8 +5,8 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#import "MutLockDict.h"
-#import "ObjectHolder.h"
+#import <VVBasics/MutLockDict.h>
+#import <VVBasics/ObjectHolder.h>
 
 
 

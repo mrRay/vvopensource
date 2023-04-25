@@ -1,6 +1,6 @@
 #import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
-#import "VVBufferPool.h"
+#import <VVBufferPool/VVBufferPool.h>
 #import <pthread.h>
 
 

@@ -1,5 +1,5 @@
 #import <Cocoa/Cocoa.h>
-#import "StreamProcessor.h"
+#import <VVBufferPool/StreamProcessor.h>
 @class VVBufferCopier;
 @class VVBuffer;
 

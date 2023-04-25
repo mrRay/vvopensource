@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <OpenGL/CGLMacro.h>
-#import "VVBuffer.h"
+#import <VVBufferPool/VVBuffer.h>
 #import <pthread.h>
-#import "VVSizingTool.h"
+#import <VVBufferPool/VVSizingTool.h>
 #import <libkern/OSAtomic.h>
 
 

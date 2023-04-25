@@ -1,5 +1,5 @@
 #import <VVBasics/VVBasics.h>
-#import "VVBuffer.h"
+#import <VVBufferPool/VVBuffer.h>
 
 
 

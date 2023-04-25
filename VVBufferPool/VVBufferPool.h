@@ -7,41 +7,41 @@
 
 #import <pthread.h>
 #import <VVBasics/VVBasics.h>
-#import "VVBufferPoolStringAdditions.h"
+#import <VVBufferPool/VVBufferPoolStringAdditions.h>
 
 #if !TARGET_OS_IPHONE
-#import "VVBufferPoolNSBitmapImageRepAdditions.h"
+#import <VVBufferPool/VVBufferPoolNSBitmapImageRepAdditions.h>
 #endif	//	!TARGET_OS_IPHONE
 
-#import "VVBuffer.h"
-#import "VVBufferAggregate.h"
+#import <VVBufferPool/VVBuffer.h>
+#import <VVBufferPool/VVBufferAggregate.h>
 
 #if !TARGET_OS_IPHONE
-#import "VVBufferGLView.h"
+#import <VVBufferPool/VVBufferGLView.h>
 #else	//	NOT !TARGET_OS_IPHONE
-#import "VVBufferGLKView.h"
+#import <VVBufferPool/VVBufferGLKView.h>
 #endif	//	!TARGET_OS_IPHONE
 
-#import "RenderThread.h"
-#import "VVSizingTool.h"
-#import "GLScene.h"
-#import "GLShaderScene.h"
+#import <VVBufferPool/RenderThread.h>
+#import <VVBufferPool/VVSizingTool.h>
+#import <VVBufferPool/GLScene.h>
+#import <VVBufferPool/GLShaderScene.h>
 //#import "CIGLScene.h"
-#import "VVBufferCopier.h"
+#import <VVBufferPool/VVBufferCopier.h>
 
 #if !TARGET_OS_IPHONE
-#import "VVQCComposition.h"
-#import "QCGLScene.h"
-#import "HapSupport.h"
+#import <VVBufferPool/VVQCComposition.h>
+#import <VVBufferPool/QCGLScene.h>
+#import <VVBufferPool/HapSupport.h>
 #import <CoreMedia/CoreMedia.h>
 #endif	//	!TARGET_OS_IPHONE
 
 #if !TARGET_OS_IPHONE
-#import "StreamProcessor.h"
-#import "PBOCPUGLStreamer.h"
-#import "PBOGLCPUStreamer.h"
-#import "TexRangeCPUGLStreamer.h"
-#import "TexRangeGLCPUStreamer.h"
+#import <VVBufferPool/StreamProcessor.h>
+#import <VVBufferPool/PBOCPUGLStreamer.h>
+#import <VVBufferPool/PBOGLCPUStreamer.h>
+#import <VVBufferPool/TexRangeCPUGLStreamer.h>
+#import <VVBufferPool/TexRangeGLCPUStreamer.h>
 #endif
 
 /**

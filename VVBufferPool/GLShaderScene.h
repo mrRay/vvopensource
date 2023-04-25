@@ -1,6 +1,6 @@
 #import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
-#import "GLScene.h"
+#import <VVBufferPool/GLScene.h>
 #if !TARGET_OS_IPHONE
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>

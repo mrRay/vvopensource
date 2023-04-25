@@ -1,5 +1,5 @@
 #import <Cocoa/Cocoa.h>
-#import "StreamProcessor.h"
+#import <VVBufferPool/StreamProcessor.h>
 #import <OpenGL/CGLMacro.h>
 #import <pthread.h>
 #import <VVBasics/VVBasics.h>

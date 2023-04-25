@@ -2,7 +2,7 @@
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
 //#import <Quartz/Quartz.h>
-#import "VVBufferPool.h"
+#import <VVBufferPool/VVBufferPool.h>
 @class VVQCComposition;
 @class QCRenderer;
 #import <pthread.h>

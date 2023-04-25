@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 //#import <Quartz/Quartz.h>
-#import "VVBufferPool.h"
+#import <VVBufferPool/VVBufferPool.h>
 
 
 

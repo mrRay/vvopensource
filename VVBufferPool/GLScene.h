@@ -9,7 +9,7 @@
 #import <GLKit/GLKit.h>
 #endif
 #import <VVBasics/VVBasics.h>
-#import "VVBuffer.h"
+#import <VVBufferPool/VVBuffer.h>
 
 
 

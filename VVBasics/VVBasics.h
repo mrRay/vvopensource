@@ -1,22 +1,22 @@
 #import <TargetConditionals.h>
-#import "VVBasicMacros.h"
+#import <VVBasics/VVBasicMacros.h>
 
-#import "VVThreadLoop.h"
-#import "VVAssertionHandler.h"
-#import "VVStopwatch.h"
-#import "VVMStopwatch.h"
-#import "ObjectHolder.h"
-#import "MutLockArray.h"
-#import "MutLockDict.h"
-#import "MutNRLockArray.h"
-#import "MutNRLockDict.h"
-#import "VVLogger.h"
+#import <VVBasics/VVThreadLoop.h>
+#import <VVBasics/VVAssertionHandler.h>
+#import <VVBasics/VVStopwatch.h>
+#import <VVBasics/VVMStopwatch.h>
+#import <VVBasics/ObjectHolder.h>
+#import <VVBasics/MutLockArray.h>
+#import <VVBasics/MutLockDict.h>
+#import <VVBasics/MutNRLockArray.h>
+#import <VVBasics/MutNRLockDict.h>
+#import <VVBasics/VVLogger.h>
 
 #if !TARGET_OS_IPHONE
-	#import "VVCURLDL.h"
+	#import <VVBasics/VVCURLDL.h>
 	//#import "VVCrashReporter.h"
 	//#import "NSHostAdditions.h"
-	#import "VVSysVersion.h"
+	#import <VVBasics/VVSysVersion.h>
 #endif
 
 /*
