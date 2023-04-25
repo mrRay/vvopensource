@@ -2359,6 +2359,180 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 }
 
 
+- (VVBuffer *) allocBufferForIOSurfaceRef:(IOSurfaceRef)n	{
+	if (n==NULL)
+		return nil;
+	
+	//	figure out how big the IOSurface is and what its pixel format is
+	VVSIZE					newAssetSize = VVMAKESIZE(IOSurfaceGetWidth(n),IOSurfaceGetHeight(n));
+	OSType					pixelFormat = IOSurfaceGetPixelFormat(n);
+	//NSLog(@"\t\tpixel format from server is %08lX (%c%c%c%c)",pixelFormat,(char)((pixelFormat>>24) & 0xFF),(char)((pixelFormat>>16) & 0xFF),(char)((pixelFormat>>8) & 0xFF),(char)((pixelFormat>>0) & 0xFF));
+	//	make the buffer i'll be returning, set up as much of it as i can
+	VVBuffer				*returnMe = [[VVBuffer alloc] initWithPool:self];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	[returnMe setPreferDeletion:YES];
+	[returnMe setSize:newAssetSize];
+	[returnMe setSrcRect:VVMAKERECT(0,0,newAssetSize.width,newAssetSize.height)];
+	[returnMe setBackingSize:VVMAKESIZE(newAssetSize.width,newAssetSize.height)];
+	[returnMe setBackingID:VVBufferBackID_RemoteIOSrf];
+	[returnMe setRemoteSurfaceRef:n];
+	//	get a ptr to the buffer descriptor, set it up
+	VVBufferDescriptor		*desc = [returnMe descriptorPtr];
+	if (desc == nil)	{
+		VVRELEASE(returnMe);
+		return nil;
+	}
+	desc->type = VVBufferType_Tex;
+	desc->target = GL_TEXTURE_RECTANGLE_EXT;
+	switch (pixelFormat)	{
+		case kCVPixelFormatType_32BGRA:	//	'BGRA'
+		case VVBufferPF_BGRA:
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_BGRA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+		case kCVPixelFormatType_32RGBA:	//	'RGBA'
+		case VVBufferPF_RGBA:
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_RGBA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+		case kCVPixelFormatType_422YpCbCr8:	//	'2vuy'
+		case VVBufferPF_YCBCR_422:
+			desc->internalFormat = VVBufferIF_RGB;
+			desc->pixelFormat = VVBufferPF_YCBCR_422;
+			desc->pixelType = VVBufferPT_U_Short_88;
+			break;
+		default:
+			NSLog(@"\t\tERR: unknown pixel format- %u- in %s",(unsigned int)pixelFormat,__func__);
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_BGRA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+	}
+	desc->cpuBackingType = VVBufferCPUBack_None;
+	desc->gpuBackingType = VVBufferGPUBack_Internal;
+	desc->name = 0;
+	desc->texRangeFlag = NO;
+	desc->texClientStorageFlag = NO;
+	desc->msAmount = 0;
+	desc->localSurfaceID = IOSurfaceGetID(n);
+	
+	//	now that i've created and set up the buffer, i just need to take care of the GL resource setup
+	pthread_mutex_lock(&contextLock);
+		CGLContextObj		cgl_ctx = [context CGLContextObj];
+		if (cgl_ctx != NULL)	{
+			glEnable(desc->target);
+			glGenTextures(1,&(desc->name));
+			glBindTexture(desc->target,desc->name);
+			CGLError err = CGLTexImageIOSurface2D(cgl_ctx,
+				desc->target,
+				(GLenum)desc->internalFormat,
+				newAssetSize.width,
+				newAssetSize.height,
+				(GLenum)desc->pixelFormat,
+				(GLenum)desc->pixelType,
+				n,
+				0);
+			if (err != noErr)
+				NSLog(@"\t\terror %d at CGLTexImageIOSurface2D() in %s",err,__func__);
+			glTexParameteri(desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(desc->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(desc->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(desc->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFlush();
+		}
+	pthread_mutex_unlock(&contextLock);
+	return returnMe;
+}
+- (VVBuffer *) allocBufferForIOSurfaceRef:(IOSurfaceRef)n usingContext:(NSOpenGLContext *)c	{
+	if (n==NULL || c==nil)
+		return nil;
+	
+	//	figure out how big the IOSurface is and what its pixel format is
+	VVSIZE					newAssetSize = VVMAKESIZE(IOSurfaceGetWidth(n),IOSurfaceGetHeight(n));
+	OSType					pixelFormat = IOSurfaceGetPixelFormat(n);
+	//NSLog(@"\t\tpixel format from server is %08lX (%c%c%c%c)",pixelFormat,(char)((pixelFormat>>24) & 0xFF),(char)((pixelFormat>>16) & 0xFF),(char)((pixelFormat>>8) & 0xFF),(char)((pixelFormat>>0) & 0xFF));
+	//	make the buffer i'll be returning, set up as much of it as i can
+	VVBuffer				*returnMe = [[VVBuffer alloc] initWithPool:self];
+	[VVBufferPool timestampThisBuffer:returnMe];
+	[returnMe setPreferDeletion:YES];
+	[returnMe setSize:newAssetSize];
+	[returnMe setSrcRect:VVMAKERECT(0,0,newAssetSize.width,newAssetSize.height)];
+	[returnMe setBackingSize:VVMAKESIZE(newAssetSize.width,newAssetSize.height)];
+	[returnMe setBackingID:VVBufferBackID_RemoteIOSrf];
+	[returnMe setRemoteSurfaceRef:n];
+	//	get a ptr to the buffer descriptor, set it up
+	VVBufferDescriptor		*desc = [returnMe descriptorPtr];
+	if (desc == nil)	{
+		VVRELEASE(returnMe);
+		return nil;
+	}
+	desc->type = VVBufferType_Tex;
+	desc->target = GL_TEXTURE_RECTANGLE_EXT;
+	switch (pixelFormat)	{
+		case kCVPixelFormatType_32BGRA:	//	'BGRA'
+		case VVBufferPF_BGRA:
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_BGRA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+		case kCVPixelFormatType_32RGBA:	//	'RGBA'
+		case VVBufferPF_RGBA:
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_RGBA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+		case kCVPixelFormatType_422YpCbCr8:	//	'2vuy'
+		case VVBufferPF_YCBCR_422:
+			desc->internalFormat = VVBufferIF_RGB;
+			desc->pixelFormat = VVBufferPF_YCBCR_422;
+			desc->pixelType = VVBufferPT_U_Short_88;
+			break;
+		default:
+			NSLog(@"\t\tERR: unknown pixel format- %u- in %s",(unsigned int)pixelFormat,__func__);
+			desc->internalFormat = VVBufferIF_RGBA8;
+			desc->pixelFormat = VVBufferPF_BGRA;
+			desc->pixelType = VVBufferPT_U_Int_8888_Rev;
+			break;
+	}
+	desc->cpuBackingType = VVBufferCPUBack_None;
+	desc->gpuBackingType = VVBufferGPUBack_Internal;
+	desc->name = 0;
+	desc->texRangeFlag = NO;
+	desc->texClientStorageFlag = NO;
+	desc->msAmount = 0;
+	desc->localSurfaceID = IOSurfaceGetID(n);
+	
+	//	now that i've created and set up the buffer, i just need to take care of the GL resource setup
+	pthread_mutex_lock(&contextLock);
+		CGLContextObj		cgl_ctx = [c CGLContextObj];
+		if (cgl_ctx != NULL)	{
+			glEnable(desc->target);
+			glGenTextures(1,&(desc->name));
+			glBindTexture(desc->target,desc->name);
+			CGLError err = CGLTexImageIOSurface2D(cgl_ctx,
+				desc->target,
+				(GLenum)desc->internalFormat,
+				newAssetSize.width,
+				newAssetSize.height,
+				(GLenum)desc->pixelFormat,
+				(GLenum)desc->pixelType,
+				n,
+				0);
+			if (err != noErr)
+				NSLog(@"\t\terror %d at CGLTexImageIOSurface2D() in %s",err,__func__);
+			glTexParameteri(desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(desc->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(desc->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(desc->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFlush();
+		}
+	pthread_mutex_unlock(&contextLock);
+	return returnMe;
+}
+
+
 
 /*===================================================================================*/
 #pragma mark --------------------- texture ranges- DMA GL textures

@@ -301,6 +301,9 @@ Returns the max number of MSAA samples that can be taken with the GL renderer cu
 */
 - (VVBuffer *) allocBufferFromStringForXPCComm:(NSString *)n;
 
+- (VVBuffer *) allocBufferForIOSurfaceRef:(IOSurfaceRef)n;
+- (VVBuffer *) allocBufferForIOSurfaceRef:(IOSurfaceRef)n usingContext:(NSOpenGLContext *)c;
+
 //	these methods make VVBuffers using DMA GL textures (texture ranges)
 - (VVBuffer *) allocRedByteCPUBackedTexRangeSized:(NSSize)s;
 - (VVBuffer *) allocRedFloatCPUBackedTexRangeSized:(NSSize)s;
