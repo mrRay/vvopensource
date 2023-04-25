@@ -242,7 +242,7 @@
 		1A0BE8CA24476B78006AE164 /* VVLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A0BE8C824476B77006AE164 /* VVLogger.mm */; };
 		1A0BE8CB24476B78006AE164 /* VVLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0BE8C924476B77006AE164 /* VVLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A0BE8CE24476B95006AE164 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		1A0BE8CF24476B9F006AE164 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A0BE8CF24476B9F006AE164 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A0BE8D224476BA9006AE164 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1A1A01DC1CDBF85D00E49E5A /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
 		1A1A01DD1CDBF85D00E49E5A /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
@@ -267,11 +267,11 @@
 		1A2DFB781CDA6B2B0073424C /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
 		1A2DFB791CDA6B2C0073424C /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
 		1A2DFB7A1CDA6B8F0073424C /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		1A2DFB7B1CDA6B970073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A2DFB7B1CDA6B970073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A2DFB7C1CDA6BBE0073424C /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
 		1A2DFB7D1CDA6BBE0073424C /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		1A2DFB7E1CDA6BC90073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A2DFB7F1CDA6BC90073424C /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A2DFB7E1CDA6BC90073424C /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A2DFB7F1CDA6BC90073424C /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A2E34111CDBE17100EFF2A8 /* ColorBars.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E340C1CDBE17100EFF2A8 /* ColorBars.png */; };
 		1A2E34121CDBE17100EFF2A8 /* QCQL_Renderer.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E340D1CDBE17100EFF2A8 /* QCQL_Renderer.entitlements */; };
 		1A2E34131CDBE17100EFF2A8 /* QCQLRendererAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E34101CDBE17100EFF2A8 /* QCQLRendererAgent.m */; };
@@ -387,7 +387,7 @@
 		1A6CF32220E59DAB00CF4502 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6CF32020E59DA000CF4502 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A6E9AB21B610ECE00F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
 		1A6E9AB31B610ED300F8C8A6 /* MultiClassXPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; };
-		1A6E9AB51B610EE600F8C8A6 /* MultiClassXPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A6E9AB51B610EE600F8C8A6 /* MultiClassXPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7128AF1B61065000528CDB /* MultiClassXPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A7128B41B61065000528CDB /* MultiClassXPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7128B31B61065000528CDB /* MultiClassXPC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A7128DA1B610B4700528CDB /* MCXTestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7128D91B610B4700528CDB /* MCXTestAppDelegate.m */; };
 		1A7128DC1B610B4700528CDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7128DB1B610B4700528CDB /* main.m */; };
@@ -416,12 +416,12 @@
 		1A76E32A1E3F56BA00512B03 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1A76E32B1E3F56BA00512B03 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		1A76E32C1E3F56BA00512B03 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		1A76E32E1E3F56D100512B03 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A76E32F1E3F56D100512B03 /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A76E3301E3F56D100512B03 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A76E3311E3F56D100512B03 /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E32E1E3F56D100512B03 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A76E32F1E3F56D100512B03 /* DDMathParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A76E3301E3F56D100512B03 /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A76E3311E3F56D100512B03 /* VVISFKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A76E3331E3F570200512B03 /* HapInAVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */; };
-		1A76E3341E3F570700512B03 /* HapInAVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A76E3341E3F570700512B03 /* HapInAVFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A76E3321E3F570200512B03 /* HapInAVFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A7AB8CB1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CA1BED159100B2B129 /* SyphonToAndFromVVBufferAppDelegate.m */; };
 		1A7AB8CE1BED159100B2B129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CD1BED159100B2B129 /* main.m */; };
 		1A7AB8D01BED159100B2B129 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A7AB8CF1BED159100B2B129 /* Assets.xcassets */; };
@@ -434,20 +434,20 @@
 		1A7AB8EE1BED265F00B2B129 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1A7AB8EF1BED265F00B2B129 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		1A7AB8F01BED265F00B2B129 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		1A7AB8F21BED267A00B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8F31BED267A00B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8F41BED267A00B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8F51BED267A00B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8F21BED267A00B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8F31BED267A00B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8F41BED267A00B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8F51BED267A00B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A7AB8F61BED268700B2B129 /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
 		1A7AB8F71BED268700B2B129 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1A7AB8F81BED268700B2B129 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		1A7AB8F91BED268700B2B129 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		1A7AB8FB1BED269600B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8FC1BED269600B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8FD1BED269600B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1A7AB8FE1BED269600B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB8FB1BED269600B2B129 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8FC1BED269600B2B129 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8FD1BED269600B2B129 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A7AB8FE1BED269600B2B129 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A7AB9001BED279300B2B129 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB8FF1BED279300B2B129 /* Syphon.framework */; };
-		1A7AB9011BED279A00B2B129 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A7AB8FF1BED279300B2B129 /* Syphon.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1A7AB9011BED279A00B2B129 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A7AB8FF1BED279300B2B129 /* Syphon.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A7AB9021BED291E00B2B129 /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
 		1A7AB9081BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB9051BED2AA800B2B129 /* VVBufferPoolSyphonAdditions.m */; };
 		1A7AB9091BED2AA800B2B129 /* VVBufferSyphonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7AB9071BED2AA800B2B129 /* VVBufferSyphonAdditions.m */; };
@@ -483,8 +483,8 @@
 		1AC5A4D81CEE4138004DF358 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AC5A4D61CEE4138004DF358 /* MainMenu.xib */; };
 		1AC5A4DF1CEE4174004DF358 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1AC5A4E01CEE4174004DF358 /* VVMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; };
-		1AC5A4E61CEE4188004DF358 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AC5A4E71CEE4188004DF358 /* VVMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AC5A4E61CEE4188004DF358 /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AC5A4E71CEE4188004DF358 /* VVMIDI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961745F4100F86B400FB60E6 /* VVMIDI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AC5A4EA1CEE851B004DF358 /* MTCMIDIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC5A4E91CEE851B004DF358 /* MTCMIDIManager.m */; };
 		1AC5E4521C4315D20068087D /* DDMathParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EBA1C42F45200B4291E /* DDMathParser.framework */; };
 		1AC5E4531C4315D20068087D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A486EA01C42F43000B4291E /* VVBasics.framework */; };
@@ -526,14 +526,14 @@
 		1AE1A8121CDA68A3005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		1AE1A8131CDA68AC005F924D /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1AE1A8141CDA68AC005F924D /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		1AE1A8191CDA68FA005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81A1CDA68FA005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81B1CDA6909005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81C1CDA6909005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81D1CDA6914005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81E1CDA6914005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A81F1CDA691F005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AE1A8201CDA691F005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AE1A8191CDA68FA005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81A1CDA68FA005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81B1CDA6909005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81C1CDA6909005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81D1CDA6914005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81E1CDA6914005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A81F1CDA691F005F924D /* VVBasics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AE1A8201CDA691F005F924D /* VVBufferPool.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AE3C7FE1B3B858000D37189 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE3C7FD1B3B858000D37189 /* IOKit.framework */; };
 		1AE4D15220E6AF5A00699A35 /* ISFEditorAppIcon.iconset in Resources */ = {isa = PBXBuildFile; fileRef = 1AE4D15120E6AF5A00699A35 /* ISFEditorAppIcon.iconset */; };
 		1AE4FE1C20AF6A4C00A7AC72 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE4FE1B20AF6A4C00A7AC72 /* QuickTime.framework */; };
@@ -565,8 +565,8 @@
 		1AEE1ECD1C136883005259C0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AEE1ECB1C136883005259C0 /* MainMenu.xib */; };
 		1AEE1ED41C136902005259C0 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		1AEE1ED51C136902005259C0 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		1AEE1ED71C136914005259C0 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1AEE1ED81C136914005259C0 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1AEE1ED71C136914005259C0 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AEE1ED81C136914005259C0 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AEE1EDB1C136C68005259C0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90A1BED311200B2B129 /* CoreVideo.framework */; };
 		1AEE1EDC1C136C6C005259C0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
 		1AF93E851C10ABBB00BA0537 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7AB90C1BED311A00B2B129 /* AppKit.framework */; };
@@ -653,10 +653,10 @@
 		96140124198AD49F00335292 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96140125198AD49F00335292 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96140126198AD49F00335292 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		96140128198AD4B400335292 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96140129198AD4B400335292 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		9614012B198AD4B400335292 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		9614012C198AD4B400335292 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		96140128198AD4B400335292 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96140129198AD4B400335292 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9614012B198AD4B400335292 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9614012C198AD4B400335292 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		961745FF100F879000FB60E6 /* VVMIDI.h in Headers */ = {isa = PBXBuildFile; fileRef = 961745FE100F879000FB60E6 /* VVMIDI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9617460A100F87B300FB60E6 /* VVMIDIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 96174604100F87B300FB60E6 /* VVMIDIManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9617460B100F87B300FB60E6 /* VVMIDINode.h in Headers */ = {isa = PBXBuildFile; fileRef = 96174605100F87B300FB60E6 /* VVMIDINode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -926,16 +926,16 @@
 		96EE5D491984074C00231124 /* VVBasics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
 		96EE5D4A1984074C00231124 /* VVBufferPool.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
 		96EE5D4B1984074C00231124 /* VVISFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
-		96EE5D501984077400231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96EE5D511984077400231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		96EE5D521984077E00231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96EE5D531984077E00231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		96EE5D541984078800231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96EE5D551984078800231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		96EE5D561984079700231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; };
-		96EE5D571984079700231124 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; };
-		96EE5D591984079700231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; };
-		96EE5D5A1984079700231124 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; };
+		96EE5D501984077400231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D511984077400231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D521984077E00231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D531984077E00231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D541984078800231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D551984078800231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D561984079700231124 /* VVBasics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 961EA8ED100E8565007E6C25 /* VVBasics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D571984079700231124 /* DDMathParser.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8071219817BFE00FA7825 /* DDMathParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D591984079700231124 /* VVBufferPool.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 96C8073A19817C1600FA7825 /* VVBufferPool.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		96EE5D5A1984079700231124 /* VVISFKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 964FF27D1981B5AF00CCC808 /* VVISFKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		96EE5D6319840D5C00231124 /* Blue.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D6219840D5C00231124 /* Blue.qtz */; };
 		96EE5D67198410BC00231124 /* ISFSupportTest.fs in Resources */ = {isa = PBXBuildFile; fileRef = 96EE5D66198410BC00231124 /* ISFSupportTest.fs */; };
 		96EE5D701984171300231124 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9684E8AE198348A000524F3C /* Quartz.framework */; };
@@ -5547,7 +5547,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					1A00B8C41C430B3600BC2BEB = {
 						CreatedOnToolsVersion = 7.2;
@@ -5604,6 +5604,7 @@
 					};
 					1A7AB8C61BED159000B2B129 = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = KH97KZU7A7;
 					};
 					1A7AB8DB1BED17A200B2B129 = {
 						CreatedOnToolsVersion = 7.1;
@@ -5636,15 +5637,14 @@
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "VVOpenSource" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
 				en,
 				Base,
+				ja,
+				fr,
+				de,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* VVOpenSource */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -8643,6 +8643,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -8692,6 +8693,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -8738,6 +8740,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -8779,8 +8782,9 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -8815,6 +8819,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -8856,8 +8861,9 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -8895,6 +8901,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -8944,6 +8951,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -8973,6 +8981,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -8985,9 +8994,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = KH97KZU7A7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -9017,6 +9028,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -9029,9 +9041,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KH97KZU7A7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -9067,6 +9081,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9107,6 +9122,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9159,6 +9175,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9202,6 +9219,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9240,6 +9258,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9283,6 +9302,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9321,6 +9341,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9364,6 +9385,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9402,6 +9424,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9445,6 +9468,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9483,6 +9507,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9526,6 +9551,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9563,6 +9589,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -9605,6 +9632,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9629,6 +9657,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -9684,6 +9713,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -9834,6 +9864,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -9870,8 +9901,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -9895,6 +9927,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -9919,6 +9952,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9944,6 +9978,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -9969,6 +10004,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -9995,6 +10031,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -10019,6 +10056,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -10043,6 +10081,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -10068,8 +10107,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 1;
@@ -10101,6 +10141,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -10139,6 +10180,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -10167,6 +10209,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -10192,8 +10235,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 1;
@@ -10241,6 +10285,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -10275,8 +10320,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -10304,6 +10350,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -10338,8 +10385,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -10367,6 +10415,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -10401,8 +10450,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -10430,6 +10480,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -10464,8 +10515,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -10535,6 +10587,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -10569,8 +10622,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -10592,6 +10646,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -10620,6 +10675,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -10643,6 +10699,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -10668,8 +10725,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 1;
@@ -10702,6 +10760,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -10741,6 +10800,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -10778,6 +10838,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -10823,6 +10884,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
