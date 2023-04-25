@@ -68,7 +68,7 @@ extern id			_mainVVKQueueCenter;
 @interface VVKQueueEntry : NSObject	{
 	NSString		*path;
 	NSNumber		*fd;
-	OSSpinLock		delegateLock;
+	VVLock			delegateLock;
 	ObjectHolder	*delegate;
 	
 	BOOL			addFlag;	//	used to indicate if we want to add or remove this entry- ignored once the entry is stored in the 'entries' array in the center

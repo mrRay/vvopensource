@@ -14,9 +14,9 @@
 - (id) init	{
 	if (self = [super init])	{
 		deleted = NO;
-		srcLock = OS_SPINLOCK_INIT;
+		srcLock = VV_LOCK_INIT;
 		srcMode = SrcMode_None;
-		lastBufferLock = OS_SPINLOCK_INIT;
+		lastBufferLock = VV_LOCK_INIT;
 		lastBuffer = nil;
 		
 		vidInSrc = [[AVCaptureVideoSource alloc] init];
@@ -144,7 +144,7 @@
 	VVBuffer		*returnMe = nil;
 	VVBuffer		*newBuffer = nil;
 	VideoSource		*src = nil;
-	OSSpinLockLock(&srcLock);
+	VVLockLock(&srcLock);
 	switch (srcMode)	{
 		case SrcMode_None:
 			break;
@@ -168,9 +168,9 @@
 		//[src _render];
 		newBuffer = [src allocBuffer];
 	}
-	OSSpinLockUnlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	
-	OSSpinLockLock(&lastBufferLock);
+	VVLockLock(&lastBufferLock);
 	if (newBuffer != nil)	{
 		VVRELEASE(lastBuffer);
 		lastBuffer = newBuffer;
@@ -179,7 +179,7 @@
 	else	{
 		returnMe = (lastBuffer==nil) ? nil : [lastBuffer retain];
 	}
-	OSSpinLockUnlock(&lastBufferLock);
+	VVLockUnlock(&lastBufferLock);
 	
 	return returnMe;
 }
@@ -193,7 +193,7 @@
 - (void) _useMode:(SrcMode)n	{
 	//NSLog(@"%s ... %d",__func__,n);
 	SrcMode		oldMode;
-	OSSpinLockLock(&srcLock);
+	VVLockLock(&srcLock);
 	oldMode = srcMode;
 	if (oldMode != n)	{
 		switch (oldMode)	{
@@ -236,22 +236,22 @@
 		}
 		srcMode = n;
 	}
-	OSSpinLockUnlock(&srcLock);
+	VVLockUnlock(&srcLock);
 }
 
 - (SrcMode) srcMode	{
 	SrcMode		returnMe;
-	OSSpinLockLock(&srcLock);
+	VVLockLock(&srcLock);
 	returnMe = srcMode;
-	OSSpinLockUnlock(&srcLock);
+	VVLockUnlock(&srcLock);
 	return returnMe;
 }
 
 
 - (void) setDelegate:(id<DynamicVideoSourceDelegate>)n	{
-	OSSpinLockLock(&delegateLock);
+	VVLockLock(&delegateLock);
 	delegate = n;
-	OSSpinLockUnlock(&delegateLock);
+	VVLockUnlock(&delegateLock);
 }
 
 
@@ -269,9 +269,9 @@
 - (void) listOfStaticSourcesUpdated:(id)ds	{
 	//NSLog(@"%s",__func__);
 	id			localDelegate = nil;
-	OSSpinLockLock(&delegateLock);
+	VVLockLock(&delegateLock);
 	localDelegate = (delegate==nil) ? nil : [delegate retain];
-	OSSpinLockUnlock(&delegateLock);
+	VVLockUnlock(&delegateLock);
 	
 	if (localDelegate != nil)	{
 		[localDelegate listOfStaticSourcesUpdated:self];

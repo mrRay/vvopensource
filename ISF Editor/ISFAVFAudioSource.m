@@ -21,7 +21,7 @@
 	//NSLog(@"%s",__func__);
 	if (self = [super init])	{
 		deleted = NO;
-		propLock = OS_SPINLOCK_INIT;
+		propLock = VV_LOCK_INIT;
 		propRunning = NO;
 		propDelegate = nil;
 		propDeviceInput = nil;
@@ -50,9 +50,9 @@
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	propDelegate = nil;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	[super dealloc];
 }
@@ -78,11 +78,11 @@
 	if (deleted)
 		return nil;
 	NSString		*returnMe = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (propDeviceInput != nil)	{
 		returnMe = [[propDeviceInput device] localizedName];
 	}
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 - (void) loadDeviceWithUniqueID:(NSString *)n	{
@@ -93,7 +93,7 @@
 	//NSLog(@"%s - %@",__func__,n);
 	BOOL				bail = NO;
 	NSError				*err = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	AVCaptureDevice		*propDevice = [AVCaptureDevice deviceWithUniqueID:n];
 	propDeviceInput = (propDevice==nil) ? nil : [[AVCaptureDeviceInput alloc] initWithDevice:propDevice error:&err];
 	if (propDeviceInput != nil)	{
@@ -120,7 +120,7 @@
 	}
 	else
 		bail = YES;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	if (bail)
 		[self stop];
@@ -129,28 +129,28 @@
 }
 - (void) start	{
 	//NSLog(@"%s ... %@",__func__,self);
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (!propRunning)	{
 		[self _start];
 		propRunning = YES;
 	}
 	else
 		NSLog(@"\t\tERR: starting something that wasn't stopped, %s",__func__);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 - (void) _start	{
 	//NSLog(@"%s ... %@",__func__,self);
 }
 - (void) stop	{
 	//NSLog(@"%s ... %@",__func__,self);
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (propRunning)	{
 		[self _stop];
 		propRunning = NO;
 	}
 	else
 		NSLog(@"\t\tERR: stopping something that wasn't running, %s",__func__);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 - (void) _stop	{
 	//NSLog(@"%s",__func__);
@@ -174,9 +174,9 @@
 }
 - (BOOL) propRunning	{
 	BOOL		returnMe;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	returnMe = propRunning;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection	{
@@ -193,9 +193,9 @@
 		return;
 	//	if there is no delegate, return here
 	id		_delegate = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 		_delegate = propDelegate;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	if (_delegate == nil)
 		return;
 	
@@ -279,9 +279,9 @@
 	}
 }
 - (void) setPropDelegate:(id<ISFAVFAudioSourceDelegate>)n	{
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	propDelegate = n;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 
 @end

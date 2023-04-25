@@ -14,14 +14,14 @@ extern NSString			*kAudioControllerInputNameChangedNotification;
 
 @interface AudioController : NSObject <ISFAVFAudioSourceDelegate>	{
 	BOOL					deleted;
-	OSSpinLock				audioLock;
+	VVLock					audioLock;
 	ISFAVFAudioSource		*audioSource;
 	MutLockArray			*audioBufferArray;
 	ISFAudioBufferList		*rawABL;
 	ISFAudioFFT				*audioFFT;
 	NSArray					*fftResults;
 	
-	OSSpinLock				bufferLock;
+	VVLock					bufferLock;
 	VVBuffer				*audioBuffer;
 	VVBuffer				*fftBuffer;
 }

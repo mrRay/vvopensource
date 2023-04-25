@@ -717,7 +717,7 @@ long			_spriteGLViewSysVers;
 	//VVPointLog(@"\t\tmodified localPoint is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
-	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
+	if ((mouseDownModifierFlags&NSEventModifierFlagControl)==NSEventModifierFlagControl)	{
 		mouseDownEventType = VVSpriteEventRightDown;
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	}

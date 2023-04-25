@@ -38,10 +38,10 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	CVOpenGLTextureCacheRelease(propTextureCache);
 	VVRELEASE(propLastBuffer);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	[super dealloc];
 }
@@ -89,9 +89,9 @@
 }
 - (VVBuffer *) allocBuffer	{
 	VVBuffer		*returnMe = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	returnMe = (propLastBuffer==nil) ? nil : [propLastBuffer retain];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 
@@ -108,7 +108,7 @@
 		return;
 	BOOL				bail = NO;
 	NSError				*err = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	AVCaptureDevice		*propDevice = [AVCaptureDevice deviceWithUniqueID:n];
 	propDeviceInput = (propDevice==nil) ? nil : [[AVCaptureDeviceInput alloc] initWithDevice:propDevice error:&err];
 	if (propDeviceInput != nil)	{
@@ -135,7 +135,7 @@
 	}
 	else
 		bail = YES;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	if (bail)
 		[self stop];
@@ -162,7 +162,7 @@
 	NSLog(@"\t\t\tport size is %d x %d",vidDims.width,vidDims.height);
 	*/
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	//	if this came from a connection belonging to the data output
 	VVBuffer				*newBuffer = nil;
 	//CMBlockBufferRef		blockBufferRef = CMSampleBufferGetDataBuffer(b)
@@ -191,7 +191,7 @@
 		}
 	}
 	CVOpenGLTextureCacheFlush(propTextureCache,0);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 }
 

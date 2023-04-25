@@ -166,7 +166,7 @@ int				_spriteViewCount;
 	*/
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
-	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
+	if ((mouseDownModifierFlags&NSEventModifierFlagControl)==NSEventModifierFlagControl)	{
 		mouseDownEventType = VVSpriteEventRightDown;
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	}

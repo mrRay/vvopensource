@@ -4,12 +4,6 @@
 
 
 
-#define LOCK OSSpinLockLock
-#define UNLOCK OSSpinLockUnlock
-
-
-
-
 id				_globalAudioController = nil;
 NSString			*kAudioControllerInputNameChangedNotification = @"kAudioControllerInputNameChangedNotification";
 //	set this to 256, 512, 1024, 2048, 4096
@@ -27,7 +21,7 @@ int		fftQuality = 512;
 		_globalAudioController = self;
 		
 		deleted = NO;
-		audioLock = OS_SPINLOCK_INIT;
+		audioLock = VV_LOCK_INIT;
 		audioBufferArray = [[MutLockArray arrayWithCapacity:0] retain];
 		//	create the FFT object
 		audioSource = [[ISFAVFAudioSource alloc] init];
@@ -53,17 +47,17 @@ int		fftQuality = 512;
 - (void) prepareToBeDeleted	{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	LOCK(&audioLock);
+	VVLockLock(&audioLock);
 	[audioSource prepareToBeDeleted];
 	VVRELEASE(audioSource);
 	VVRELEASE(audioFFT);
-	UNLOCK(&audioLock);
+	VVLockUnlock(&audioLock);
 	
 	VVRELEASE(audioBufferArray);
 	
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	deleted = YES;
 }
@@ -81,9 +75,9 @@ int		fftQuality = 512;
 - (void) loadDeviceWithUniqueID:(NSString *)n	{
 	if (deleted)
 		return;
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	[audioSource loadDeviceWithUniqueID:n];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 
 	//	if the input name changed, post a notification
 	[[NSNotificationCenter defaultCenter]
@@ -92,17 +86,17 @@ int		fftQuality = 512;
 }
 - (NSString *) inputName	{
 	NSString		*returnMe = nil;
-	LOCK(&audioLock);
+	VVLockLock(&audioLock);
 	returnMe = [audioSource inputName];
-	UNLOCK(&audioLock);
+	VVLockUnlock(&audioLock);
 	return returnMe;
 }
 
 
 - (void) audioInputsChangedNotification:(NSNotification *)note	{
-	LOCK(&audioLock);
+	VVLockLock(&audioLock);
 	
-	UNLOCK(&audioLock);
+	VVLockUnlock(&audioLock);
 }
 
 - (void) audioSource:(id)as receivedAudioBufferList:(id)b	{
@@ -173,18 +167,18 @@ int		fftQuality = 512;
 	}
 
 	//	do the FFT
-	LOCK(&audioLock);
+	VVLockLock(&audioLock);
 	NSArray					*channelResults = [audioFFT processAudioBufferWithFFT:newBuffer];
-	UNLOCK(&audioLock);
+	VVLockUnlock(&audioLock);
 	
 	//	update the buffers
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	VVRELEASE(rawABL);
 	rawABL = [newBuffer retain];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	NSSize				tmpSize = [audioBuffer size];
 	//NSSize			newBufferSize = NSMakeSize([abl numberOfSamplesPerChannel], [abl numberOfChannels]);
 	//	always twice the size of the fft buffer, discarding any extra samples we read to avoid latency
@@ -226,7 +220,7 @@ int		fftQuality = 512;
 		//NSLog(@"\t\taudioBuffer is %@",audioBuffer);
 	}
 	
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	//	figure out how big the FFT buffer needs to be- width is based on the # of results, height is based on the # of channels
 	newBufferSize = NSMakeSize(1, [channelResults count]);
@@ -235,7 +229,7 @@ int		fftQuality = 512;
 	}
 	//	now that i know how big the buffer has to be, make sure that our FFT buffer has the appropriate size
 	
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	
 	VVRELEASE(fftResults);
 	if (channelResults != nil)
@@ -270,7 +264,7 @@ int		fftQuality = 512;
 	}
 		
 	
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	//	retain newBuffer in case we need to create an image with a different width
 }
@@ -278,17 +272,17 @@ int		fftQuality = 512;
 - (VVBuffer *) allocAudioImageBuffer	{
 	//[self updateAudioResults];
 	VVBuffer		*returnMe = nil;
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	returnMe = [audioBuffer retain];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	return returnMe;
 }
 - (VVBuffer *) allocAudioImageBufferWithWidth:(long)w	{
 	//NSLog(@"%s ... %d",__func__,w);
 	VVBuffer		*returnMe = nil;
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	ISFAudioBufferList	*myABL = (rawABL==nil) ? nil : [[rawABL retain] autorelease];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	if (myABL == nil)
 		return nil;
 	
@@ -353,18 +347,18 @@ int		fftQuality = 512;
 - (VVBuffer *) allocAudioFFTImageBuffer	{
 	//[self updateAudioResults];
 	VVBuffer		*returnMe = nil;
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	returnMe = [fftBuffer retain];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	return returnMe;
 }
 - (VVBuffer *) allocAudioFFTImageBufferWithWidth:(long)w	{
 	//NSLog(@"%s ... %ld",__func__,w);
 	
 	VVBuffer		*returnMe = nil;
-	LOCK(&bufferLock);
+	VVLockLock(&bufferLock);
 	NSArray			*myFFTResults = (fftResults==nil) ? nil : [[fftResults retain] autorelease];
-	UNLOCK(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	if (myFFTResults == nil || [myFFTResults count]<1)
 		return nil;
 	

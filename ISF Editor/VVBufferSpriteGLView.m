@@ -11,7 +11,7 @@
 	
 	sizingMode = VVSizingModeFit;
 	bgSprite = nil;
-	retainDrawLock = OS_SPINLOCK_INIT;
+	retainDrawLock = VV_LOCK_INIT;
 	retainDrawBuffer = nil;
 	
 	bgSprite = [spriteManager makeNewSpriteAtBottomForRect:NSMakeRect(0,0,1,1)];
@@ -25,9 +25,9 @@
 	if (!deleted)
 		[self prepareToBeDeleted];
 	
-	OSSpinLockLock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
-	OSSpinLockUnlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
 	[super dealloc];
 }
@@ -46,9 +46,9 @@
 - (void) drawBgSprite:(VVSprite *)s	{
 	//NSLog(@"%s",__func__);
 	
-	OSSpinLockLock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	VVBuffer		*drawBuffer = (retainDrawBuffer==nil) ? nil : [retainDrawBuffer retain];
-	OSSpinLockUnlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
 	GLuint			target = (drawBuffer==nil) ? GL_TEXTURE_RECTANGLE_EXT : [drawBuffer target];
 	if (initialized)	{
@@ -121,10 +121,10 @@
 }
 - (void) drawBuffer:(VVBuffer *)b	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&retainDrawLock);
+	VVLockLock(&retainDrawLock);
 	VVRELEASE(retainDrawBuffer);
 	retainDrawBuffer = (b==nil) ? nil : [b retain];
-	OSSpinLockUnlock(&retainDrawLock);
+	VVLockUnlock(&retainDrawLock);
 	
 	[self redraw];
 }

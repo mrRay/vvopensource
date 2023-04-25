@@ -335,7 +335,7 @@ id			_mainVVKQueueCenter = nil;
 	if (self != nil)	{
 		path = nil;
 		fd = nil;
-		delegateLock = OS_SPINLOCK_INIT;
+		delegateLock = VV_LOCK_INIT;
 		delegate = nil;
 		[self setDelegate:d];
 		[self setPath:p];
@@ -351,16 +351,16 @@ id			_mainVVKQueueCenter = nil;
 @synthesize path;
 @synthesize fd;
 - (void) setDelegate:(id<VVKQueueCenterDelegate>)n	{
-	OSSpinLockLock(&delegateLock);
+	VVLockLock(&delegateLock);
 	VVRELEASE(delegate);
 	if (n!=nil && [(id)n respondsToSelector:@selector(file:changed:)])
 		delegate = [[ObjectHolder alloc] initWithZWRObject:n];
-	OSSpinLockUnlock(&delegateLock);
+	VVLockUnlock(&delegateLock);
 }
 - (id<VVKQueueCenterDelegate>) delegate	{
-	OSSpinLockLock(&delegateLock);
+	VVLockLock(&delegateLock);
 	id<VVKQueueCenterDelegate>		returnMe = [delegate object];
-	OSSpinLockUnlock(&delegateLock);
+	VVLockUnlock(&delegateLock);
 	return returnMe;
 }
 @synthesize addFlag;

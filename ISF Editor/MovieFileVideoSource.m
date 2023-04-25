@@ -29,11 +29,11 @@
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	VVRELEASE(propPlayer);
 	VVRELEASE(propItem);
 	VVRELEASE(propOutput);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	[super dealloc];
 }
 
@@ -58,7 +58,7 @@
 	}
 	
 	//	now lock and load the AVPlayerItem
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	//	make sure that an output exists (create one if it doesn't)
 	if (propOutput == nil)	{
 		NSDictionary				*pba = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -82,11 +82,11 @@
 	else	{
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			NSLog(@"\t\treplacing the item in the player");
-			OSSpinLockLock(&propLock);
+			VVLockLock(&propLock);
 			[propPlayer replaceCurrentItemWithPlayerItem:propItem];
 			//	begin playback
 			[propPlayer setRate:1.0];
-			OSSpinLockUnlock(&propLock);
+			VVLockUnlock(&propLock);
 		});
 	}
 	//CMTime		durationCMTime = [item duration];
@@ -94,34 +94,34 @@
 	//	register to receive "played to end" notifications on the new item
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidPlayToEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:propItem];
 	
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	[self start];
 }
 - (void) stop	{
 	//	remove myself for "played to end" notifications
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	id			localPropItem = (propItem==nil) ? nil : [propItem retain];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	if (localPropItem != nil)	{
 		[[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:localPropItem];
 		if ([NSThread isMainThread])	{
-			OSSpinLockLock(&propLock);
+			VVLockLock(&propLock);
 			[propPlayer replaceCurrentItemWithPlayerItem:nil];
-			OSSpinLockUnlock(&propLock);
+			VVLockUnlock(&propLock);
 		}
 		else	{
 			dispatch_sync(dispatch_get_main_queue(), ^{
-				OSSpinLockLock(&propLock);
+				VVLockLock(&propLock);
 				[propPlayer replaceCurrentItemWithPlayerItem:nil];
-				OSSpinLockUnlock(&propLock);
+				VVLockUnlock(&propLock);
 			});
 		}
 		
-		OSSpinLockLock(&propLock);
+		VVLockLock(&propLock);
 		if (propOutput != nil)
 			[propItem removeOutput:propOutput];
-		OSSpinLockUnlock(&propLock);
+		VVLockUnlock(&propLock);
 		
 		[localPropItem release];
 		localPropItem = nil;
@@ -131,7 +131,7 @@
 }
 - (VVBuffer *) allocBuffer	{
 	VVBuffer		*returnMe = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	
 	
 	CMTime				frameMachTime = [propOutput itemTimeForMachAbsoluteTime:mach_absolute_time()];
@@ -156,15 +156,15 @@
 	}
 	
 	
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 - (void) itemDidPlayToEnd:(NSNotification *)note	{
 	NSLog(@"%s",__func__);
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	[propPlayer seekToTime:kCMTimeZero];
 	[propPlayer play];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 
 

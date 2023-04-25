@@ -1364,12 +1364,12 @@
 /*------------------------------------*/
 
 
-- (unsigned int) tableView:(NSTableView *)tv validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)op {
+- (NSDragOperation) tableView:(NSTableView *)tv validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)op {
 	//NSLog(@"%s",__func__);
 	if (op == NSTableViewDropOn)
 		[tv setDropRow:row dropOperation:NSTableViewDropAbove];
 	
-	return op;
+	return (NSDragOperation)op;
 }
 - (BOOL) tableView:(NSTableView *)tv acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)op	{
 	//NSLog(@"%s",__func__);

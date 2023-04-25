@@ -1,11 +1,12 @@
 #import <Cocoa/Cocoa.h>
 #import "ClassBMCXProtocols.h"
+#import <VVBasics/VVBasicMacros.h>
 
 
 
 
 @interface ClassBMCXLocal : NSObject <ClassBXPCService>	{
-	OSSpinLock			connLock;
+	VVLock			connLock;
 	NSXPCConnection		*conn;
 }
 

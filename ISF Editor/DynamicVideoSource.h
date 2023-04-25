@@ -28,10 +28,10 @@ typedef enum	{
 @interface DynamicVideoSource : NSObject <VideoSourceDelegate>	{
 	BOOL			deleted;
 	
-	OSSpinLock		srcLock;	//	used to lock the various src vars
+	VVLock			srcLock;	//	used to lock the various src vars
 	SrcMode			srcMode;	//	which source i'm currently using
 	
-	OSSpinLock		delegateLock;
+	VVLock			delegateLock;
 	id				delegate;
 	
 	AVCaptureVideoSource	*vidInSrc;
@@ -40,7 +40,7 @@ typedef enum	{
 	IMGVideoSource			*imgSrc;
 	SyphonVideoSource		*syphonSrc;
 	
-	OSSpinLock		lastBufferLock;
+	VVLock			lastBufferLock;
 	VVBuffer		*lastBuffer;
 }
 

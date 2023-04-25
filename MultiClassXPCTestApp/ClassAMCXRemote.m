@@ -19,7 +19,7 @@
 	NSLog(@"%s",__func__);
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_SPINLOCK_INIT;
+		connLock = VV_LOCK_INIT;
 		conn = nil;
 		connEstablished = NO;
 		
@@ -38,10 +38,10 @@
 
 - (void) processAThing	{
 	NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	if (conn!=nil)
 		[(id<ClassAXPCService>)[conn remoteObjectProxy] startProcessingA];
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 
 
@@ -82,7 +82,7 @@
 		});
 		
 	};
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	connEstablished = NO;
 	conn = [[NSXPCConnection alloc] initWithListenerEndpoint:listener];
 	[conn setRemoteObjectInterface:[NSXPCInterface interfaceWithProtocol:@protocol(ClassAXPCService)]];
@@ -91,13 +91,13 @@
 	[conn setInvalidationHandler:errHandlerBlock];
 	[conn setInterruptionHandler:errHandlerBlock];
 	[conn resume];
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 	//	send the 'establish connetion' message to the ROP- this actually establishes the connection with the remote process
 	[(id<ClassAXPCService>)[conn remoteObjectProxy] establishConnection];
 }
 - (void) killConnection	{
 	//NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	connEstablished = NO;
 	if (conn != nil)	{
 		[conn setInvalidationHandler:nil];
@@ -108,7 +108,7 @@
 		[conn release];
 		conn = nil;
 	}
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 
 
@@ -117,9 +117,9 @@
 
 - (void) connectionEstablished	{
 	NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	connEstablished = YES;
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 - (void) finishedProcessingA	{
 	NSLog(@"%s",__func__);

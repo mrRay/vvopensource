@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <VVBufferPool/VVBufferPool.h>
 #import <VVISFKit/VVISFKit.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -18,7 +19,7 @@
 	//OSSpinLock		lastBufferLock;
 	//VVBuffer		*lastBuffer;
 	
-	OSSpinLock		propLock;
+	VVLock			propLock;
 	BOOL			propRunning;
 	id <VideoSourceDelegate>	propDelegate;
 }

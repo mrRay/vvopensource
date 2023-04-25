@@ -1,11 +1,12 @@
 #import <Cocoa/Cocoa.h>
 #import "ClassAMCXProtocols.h"
+#import <VVBasics/VVBasicMacros.h>
 
 
 
 
 @interface ClassAMCXLocal : NSObject <ClassAXPCService>	{
-	OSSpinLock			connLock;
+	VVLock			connLock;
 	NSXPCConnection		*conn;
 }
 

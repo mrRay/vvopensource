@@ -21,9 +21,9 @@
 	//NSPointLog(@"\t\tactionPoint is",actionPoint);
 	NSRect		bounds = [s rect];
 	//NSRectLog(@"\t\tbounds are",bounds);
-	OSSpinLockLock(&bufferLock);
+	VVLockLock(&bufferLock);
 	VVBuffer		*clickBuffer = (buffer==nil) ? nil : [buffer retain];
-	OSSpinLockUnlock(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	NSRect			clickBufferSrcRect = [clickBuffer srcRect];
 	//NSRectLog(@"\t\tclickBufferSrcRect is",clickBufferSrcRect);
 	

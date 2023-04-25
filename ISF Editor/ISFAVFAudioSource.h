@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import "ISFAudioBufferList.h"
+#import <VVBasics/VVBasicMacros.h>
 
 
 @protocol ISFAVFAudioSourceDelegate
@@ -12,7 +13,7 @@
 @interface ISFAVFAudioSource : NSObject <AVCaptureAudioDataOutputSampleBufferDelegate>	{
 
 	BOOL								deleted;
-	OSSpinLock							propLock;
+	VVLock								propLock;
 	BOOL								propRunning;
 	id <ISFAVFAudioSourceDelegate>		propDelegate;
 	AVCaptureDeviceInput				*propDeviceInput;

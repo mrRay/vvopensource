@@ -140,13 +140,13 @@
 	[outputDestinationButton addItemsWithTitles:portLabelArray];
 }
 - (IBAction) outputDestinationButtonUsed:(id)sender	{
-	int				selectedIndex = [outputDestinationButton indexOfSelectedItem];
+	NSInteger		selectedIndex = [outputDestinationButton indexOfSelectedItem];
 	OSCOutPort		*selectedPort = nil;
 	//	figure out the index of the selected item
 	if (selectedIndex == -1)
 		return;
 	//	find the output port corresponding to the index of the selected item
-	selectedPort = [manager findOutputForIndex:selectedIndex];
+	selectedPort = [manager findOutputForIndex:(int)selectedIndex];
 	if (selectedPort == nil)
 		return;
 	//	push the data of the selected output to the fields

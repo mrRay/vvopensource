@@ -66,11 +66,11 @@
 - (VVBuffer *) allocBuffer	{
 	VVBuffer		*newBuffer = nil;
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (propClient!=nil && [propClient hasNewFrame])	{
 		newBuffer = [_globalVVBufferPool allocBufferForSyphonClient:propClient];
 	}
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	return newBuffer;
 }
@@ -87,21 +87,21 @@
 	if (n==nil)
 		return;
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	propClient = [[SyphonClient alloc]
 		initWithServerDescription:n
 		options:nil
 		newFrameHandler:nil];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	[self start];
 }
 - (void) syphonServerChangeNotification:(NSNotification *)note	{
 	//NSLog(@"%s",__func__);
 	id			localDelegate = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	localDelegate = (propDelegate==nil) ? nil : [(id)propDelegate retain];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	if (localDelegate != nil)	{
 		[localDelegate listOfStaticSourcesUpdated:self];

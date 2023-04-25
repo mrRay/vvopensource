@@ -30,7 +30,7 @@ extern id			_globalJSONGUIController;
 	IBOutlet NSOutlineView		*outlineView;
 	IBOutlet NSTableView		*tableView;
 	
-	OSSpinLock				dictLock;
+	VVLock					dictLock;
 	NSDictionary			*isfDict;
 	JSONGUITop				*top;
 }

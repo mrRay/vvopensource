@@ -9,7 +9,7 @@
 - (id) init	{
 	self = [super init];
 	if (self!=nil)	{
-		connLock = OS_SPINLOCK_INIT;
+		connLock = VV_LOCK_INIT;
 		conn = nil;
 	}
 	return self;
@@ -18,7 +18,7 @@
 	[super dealloc];
 }
 - (void) setConn:(NSXPCConnection *)n	{
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	conn = n;
 	[n setInvalidationHandler:^()	{
 		NSLog(@"LOCAL B invalidation handler");
@@ -27,7 +27,7 @@
 		NSLog(@"LOCAL B interruption handler");
 		exit(EXIT_FAILURE);
 	}];
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 }
 
 
@@ -36,16 +36,16 @@
 
 - (void) establishConnection	{
 	NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	id<ClassBAppService>		rop = [[[conn remoteObjectProxy] retain] autorelease];
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 	[rop connectionEstablished];
 }
 - (void) startProcessingB	{
 	NSLog(@"%s",__func__);
-	OSSpinLockLock(&connLock);
+	VVLockLock(&connLock);
 	id<ClassBAppService>		rop = [[[conn remoteObjectProxy] retain] autorelease];
-	OSSpinLockUnlock(&connLock);
+	VVLockUnlock(&connLock);
 	[rop finishedProcessingB];
 }
 

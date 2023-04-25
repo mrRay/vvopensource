@@ -385,7 +385,7 @@
 	[origImg
 		drawInRect:drawRect
 		fromRect:imgRect
-		operation:NSCompositeCopy
+	 operation:NSCompositingOperationCopy
 		fraction:1.0];
 	[newCtx flushGraphics];
 	

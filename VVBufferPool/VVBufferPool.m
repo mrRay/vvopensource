@@ -580,11 +580,11 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 			if (newSurfaceRef != nil)	{
 				err = CGLTexImageIOSurface2D(cgl_ctx,
 					newBufferDesc.target,
-					newBufferDesc.internalFormat,
+					(GLenum)newBufferDesc.internalFormat,
 					s.width,
 					s.height,
-					newBufferDesc.pixelFormat,
-					newBufferDesc.pixelType,
+					(GLenum)newBufferDesc.pixelFormat,
+					(GLenum)newBufferDesc.pixelType,
 					newSurfaceRef,
 					0);
 				if (b != nil)	{
@@ -1252,7 +1252,8 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		[img
 			drawInRect:bitmapRect
 			fromRect:origImageRect
-			operation:NSCompositeCopy
+			//operation:NSCompositeCopy
+			operation:NSCompositingOperationCopy
 			fraction:1.0];
 		
 		//	flush the graphics
@@ -2320,11 +2321,11 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 		glBindTexture(desc->target,desc->name);
 		CGLError err = CGLTexImageIOSurface2D(cgl_ctx,
 			desc->target,
-			desc->internalFormat,
+			(GLenum)desc->internalFormat,
 			newAssetSize.width,
 			newAssetSize.height,
-			desc->pixelFormat,
-			desc->pixelType,
+			(GLenum)desc->pixelFormat,
+			(GLenum)desc->pixelType,
 			newSurface,
 			0);
 		if (err != noErr)

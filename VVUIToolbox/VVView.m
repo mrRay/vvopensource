@@ -229,7 +229,7 @@
 	//VVPointLog(@"\t\tlocalPoint B is",localPoint);
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
-	if ((mouseDownModifierFlags&NSControlKeyMask)==NSControlKeyMask)	{
+	if ((mouseDownModifierFlags&NSEventModifierFlagControl)==NSEventModifierFlagControl)	{
 		mouseDownEventType = VVSpriteEventRightDown;
 		[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 	}
@@ -355,7 +355,7 @@
 		return;
 	//	don't bother doing anything with "lastMouseEvent", this is a scroll action
 	//	find the first superview which is an instance of the "VVScrollView" class, tell it to scroll
-	if ([e type] != NSScrollWheel)
+	if ([e type] != NSEventTypeScrollWheel)
 		NSLog(@"\t\terr: event wasn't of type NSScrollWheel in %s",__func__);
 	else	{
 		if ([self isKindOfClass:[VVScrollView class]])

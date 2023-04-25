@@ -25,9 +25,9 @@
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	VVRELEASE(propScene);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	[super dealloc];
 }
 
@@ -43,10 +43,10 @@
 		return;
 	[self stop];
 	
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	VVRELEASE(propPath);
 	propPath = [p retain];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	
 	[self start];
 }
@@ -55,7 +55,7 @@
 }
 - (VVBuffer *) allocBuffer	{
 	VVBuffer		*returnMe = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (propPath != nil)	{
 		VVRELEASE(propScene);
 		//propScene = [[QCGLScene alloc] initWithSharedContext:[_globalVVBufferPool sharedContext] sized:NSMakeSize(1920,1080)];
@@ -64,7 +64,7 @@
 		VVRELEASE(propPath);
 	}
 	returnMe = (propScene==nil) ? nil : [propScene allocAndRenderABuffer];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 - (NSArray *) arrayOfSourceMenuItems	{

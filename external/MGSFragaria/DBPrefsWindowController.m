@@ -65,7 +65,7 @@ static id _sharedPrefsWindowController = nil;
 	}
 	return self;
 
-	(void)window;  // To prevent compiler warnings.
+	//(void)window;  // To prevent compiler warnings.
 }
 
 
@@ -77,9 +77,9 @@ static id _sharedPrefsWindowController = nil;
 		// If the developer attached a window to this controller
 		// in Interface Builder, it gets replaced with this one.
 	NSWindow *window = [[[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,1000,1000)
-												    styleMask:(NSTitledWindowMask |
-															   NSClosableWindowMask |
-															   NSMiniaturizableWindowMask)
+													styleMask:(NSWindowStyleMaskTitled |
+															   NSWindowStyleMaskClosable |
+															   NSWindowStyleMaskMiniaturizable)
 													  backing:NSBackingStoreBuffered
 													    defer:YES] autorelease];
 	[self setWindow:window];
@@ -233,7 +233,7 @@ static id _sharedPrefsWindowController = nil;
 {
 	return toolbarIdentifiers;
 
-	(void)toolbar;
+	//(void)toolbar;
 }
 
 
@@ -243,7 +243,7 @@ static id _sharedPrefsWindowController = nil;
 {
 	return toolbarIdentifiers;
 
-	(void)toolbar;
+	//(void)toolbar;
 }
 
 
@@ -252,7 +252,7 @@ static id _sharedPrefsWindowController = nil;
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar
 {
 	return toolbarIdentifiers;
-	(void)toolbar;
+	//(void)toolbar;
 }
 
 
@@ -261,8 +261,8 @@ static id _sharedPrefsWindowController = nil;
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInserted 
 {
 	return [toolbarItems objectForKey:identifier];
-	(void)toolbar;
-	(void)willBeInserted;
+	//(void)toolbar;
+	//(void)willBeInserted;
 }
 
 
@@ -329,7 +329,7 @@ static id _sharedPrefsWindowController = nil;
 {
 	[viewAnimation stopAnimation];
 	
-    if ([self shiftSlowsAnimation] && [[[self window] currentEvent] modifierFlags] & NSShiftKeyMask)
+	if ([self shiftSlowsAnimation] && [[[self window] currentEvent] modifierFlags] & NSEventModifierFlagShift)
 		[viewAnimation setDuration:1.25];
     else
 		[viewAnimation setDuration:0.25];

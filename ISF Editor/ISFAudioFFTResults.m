@@ -5,7 +5,7 @@
 
 CMMemoryPoolRef		_ISFAudioFFTResultsPool = NULL;
 CFAllocatorRef		_ISFAudioFFTResultsPoolAllocator = NULL;
-OSSpinLock			_ISFAudioFFTResultsPoolLock = OS_SPINLOCK_INIT;
+VVLock				_ISFAudioFFTResultsPoolLock = VV_LOCK_INIT;
 
 
 

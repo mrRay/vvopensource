@@ -13,7 +13,7 @@
 		lastBufferLock = OS_SPINLOCK_INIT;
 		lastBuffer = nil;
 		*/
-		propLock = OS_SPINLOCK_INIT;
+		propLock = VV_LOCK_INIT;
 		propRunning = NO;
 		propDelegate = nil;
 		return self;
@@ -45,28 +45,28 @@
 
 - (void) start	{
 	//NSLog(@"%s ... %@",__func__,self);
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (!propRunning)	{
 		[self _start];
 		propRunning = YES;
 	}
 	else
 		NSLog(@"\t\tERR: starting something that wasn't stopped, %s",__func__);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 - (void) _start	{
 	//NSLog(@"%s ... %@",__func__,self);
 }
 - (void) stop	{
 	//NSLog(@"%s ... %@",__func__,self);
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	if (propRunning)	{
 		[self _stop];
 		propRunning = NO;
 	}
 	else
 		NSLog(@"\t\tERR: stopping something that wasn't running, %s",__func__);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 - (void) _stop	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -75,15 +75,15 @@
 
 - (BOOL) propRunning	{
 	BOOL		returnMe;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	returnMe = propRunning;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 - (void) setPropDelegate:(id<VideoSourceDelegate>)n	{
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	propDelegate = n;
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 }
 
 

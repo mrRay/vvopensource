@@ -27,9 +27,9 @@
 - (void) dealloc	{
 	if (!deleted)
 		[self prepareToBeDeleted];
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	VVRELEASE(propLastBuffer);
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	[super dealloc];
 }
 
@@ -56,10 +56,10 @@
 	else	{
 		[newBuffer setFlipped:YES];
 		
-		OSSpinLockLock(&propLock);
+		VVLockLock(&propLock);
 		VVRELEASE(propLastBuffer);
 		propLastBuffer = newBuffer;
-		OSSpinLockUnlock(&propLock);
+		VVLockUnlock(&propLock);
 	}
 	
 	[img release];
@@ -70,9 +70,9 @@
 }
 - (VVBuffer *) allocBuffer	{
 	VVBuffer		*returnMe = nil;
-	OSSpinLockLock(&propLock);
+	VVLockLock(&propLock);
 	returnMe = (propLastBuffer==nil) ? nil : [propLastBuffer retain];
-	OSSpinLockUnlock(&propLock);
+	VVLockUnlock(&propLock);
 	return returnMe;
 }
 

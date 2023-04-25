@@ -2,6 +2,7 @@
 #import <VVBasics/VVBasics.h>
 #import <VVBufferPool/VVBufferPool.h>
 #import <VVUIToolbox/VVUIToolbox.h>
+#import <VVBasics/VVBasicMacros.h>
 
 
 
@@ -11,7 +12,7 @@
 	
 	VVSprite		*bgSprite;
 	
-	OSSpinLock		retainDrawLock;
+	VVLock			retainDrawLock;
 	VVBuffer		*retainDrawBuffer;
 }
 

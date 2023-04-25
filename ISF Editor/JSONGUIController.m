@@ -14,12 +14,6 @@
 
 
 
-#define LOCK OSSpinLockLock
-#define UNLOCK OSSpinLockUnlock
-
-
-
-
 id			_globalJSONGUIController = nil;
 
 
@@ -33,7 +27,7 @@ id			_globalJSONGUIController = nil;
 	if (self != nil)	{
 		alreadyAwake = NO;
 		_globalJSONGUIController = self;
-		dictLock = OS_SPINLOCK_INIT;
+		dictLock = VV_LOCK_INIT;
 		isfDict = nil;
 		top = nil;
 	}
@@ -79,7 +73,7 @@ id			_globalJSONGUIController = nil;
 	*/
 	
 	//	parse it, turning it into objects- safely replace my local cache of objects
-	LOCK(&dictLock);
+	VVLockLock(&dictLock);
 	VVRELEASE(isfDict);
 	isfDict = [[jsonString mutableObjectFromJSONString] retain];
 	
@@ -89,7 +83,7 @@ id			_globalJSONGUIController = nil;
 	//NSLog(@"\t\tinputs are %@",[top inputsGroup]);
 	//NSLog(@"\t\tpasses are %@",[top passesGroup]);
 	
-	UNLOCK(&dictLock);
+	VVLockUnlock(&dictLock);
 	
 	//	update the outline view
 	[outlineView reloadData];
@@ -354,9 +348,9 @@ id			_globalJSONGUIController = nil;
 	return returnMe;
 }
 - (NSDictionary *) isfDict	{
-	LOCK(&dictLock);
+	VVLockLock(&dictLock);
 	NSDictionary		*returnMe = (isfDict==nil) ? nil : [[isfDict retain] autorelease];
-	UNLOCK(&dictLock);
+	VVLockUnlock(&dictLock);
 	return returnMe;
 }
 - (NSMutableDictionary *) createNewISFDict	{
@@ -445,9 +439,9 @@ id			_globalJSONGUIController = nil;
 	//	get the scene & inputs & top, bail if we can't
 	ISFGLScene		*scene = [isfController scene];
 	MutLockArray	*inputs = [scene inputs];
-	LOCK(&dictLock);
+	VVLockLock(&dictLock);
 	JSONGUITop		*_top = (top==nil) ? nil : [[top retain] autorelease];
-	UNLOCK(&dictLock);
+	VVLockUnlock(&dictLock);
 	if (inputs==nil || _top==nil)
 		return;
 	//	run through the inputs- we want to get the current val of applicable inputs, and apply it to the relevation JSONGUI* object

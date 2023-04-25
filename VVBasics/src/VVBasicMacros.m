@@ -61,7 +61,7 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 			title, NSLocalizedDescriptionKey,
 			msg, NSLocalizedRecoverySuggestionErrorKey,
 			nil]]];
-	[macroLocalAlert setAlertStyle:NSWarningAlertStyle];
+	[macroLocalAlert setAlertStyle:NSAlertStyleWarning];
 	if (btnA!=nil && [btnA length]>0)
 		[macroLocalAlert addButtonWithTitle:btnA];
 	if (btnB!=nil && [btnB length]>0)
@@ -86,7 +86,7 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 	NSRect			mainScreenRect = [[[NSScreen screens] objectAtIndex:0] frame];
 	NSRect			clearWinRect = NSMakeRect(0, 0, 100, 100);
 	clearWinRect.origin = NSMakePoint(VVMIDX(mainScreenRect) - clearWinRect.size.width/2., (mainScreenRect.size.height*0.66) + mainScreenRect.origin.y - clearWinRect.size.height/2.);
-	NSWindow		*clearWin = [[NSWindow alloc] initWithContentRect:clearWinRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+	NSWindow		*clearWin = [[NSWindow alloc] initWithContentRect:clearWinRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
 	[clearWin setHasShadow:NO];
 	[clearWin setOpaque:NO];
 	[clearWin setBackgroundColor:[NSColor clearColor]];

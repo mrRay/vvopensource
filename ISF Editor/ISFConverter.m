@@ -197,7 +197,7 @@
 		NSLog(@"\t\tERR: can't proceed, renderpass array in received JSON blob empty, bailing, %s",__func__);
 		//NSLog(@"\t\tpostDataString is %@",postDataString);
 		NSLog(@"\t\thttpResponseCode was %ld",[sourceBlobDownloader httpResponseCode]);
-		NSLog(@"\t\tcurl err was %u",[sourceBlobDownloader err]);
+		NSLog(@"\t\tcurl err was %ld",[sourceBlobDownloader err]);
 		NSLog(@"\t\tresponseData is %@",[sourceBlobDownloader responseData]);
 		NSLog(@"\t\tresponseString is %@",[sourceBlobDownloader responseString]);
 		NSLog(@"\t\tparsedDownload was %@",parsedDownload);

@@ -2,13 +2,14 @@
 #import <Accelerate/Accelerate.h>
 #import <CoreAudio/CoreAudio.h>
 #import <CoreMedia/CoreMedia.h>
+#import <VVBasics/VVBasics.h>
 
 
 
 
 extern CMMemoryPoolRef		_ISFAudioFFTResultsPool;
 extern CFAllocatorRef		_ISFAudioFFTResultsPoolAllocator;
-extern OSSpinLock			_ISFAudioFFTResultsPoolLock;
+extern VVLock				_ISFAudioFFTResultsPoolLock;
 
 
 

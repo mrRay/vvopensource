@@ -14,14 +14,14 @@
 - (void) generalInit	{
 	//NSLog(@"%s",__func__);
 	[super generalInit];
-	localISFSceneLock = OS_SPINLOCK_INIT;
+	localISFSceneLock = VV_LOCK_INIT;
 	localISFScene = nil;
 	bgSprite = [spriteManager makeNewSpriteAtBottomForRect:NSMakeRect(0,0,1,1)];
 	[bgSprite setDelegate:self];
 	[bgSprite setActionCallback:@selector(actionBgSprite:)];
 	[bgSprite setDrawCallback:@selector(drawBGSprite:)];
 	spritesNeedUpdate = YES;
-	bufferLock = OS_SPINLOCK_INIT;
+	bufferLock = VV_LOCK_INIT;
 	buffer = nil;
 	bufferArray = [MUTARRAY retain];
 }
@@ -32,14 +32,14 @@
 	//NSLog(@"%s",__func__);
 	if (!deleted)
 		[self prepareToBeDeleted];
-	OSSpinLockLock(&localISFSceneLock);
+	VVLockLock(&localISFSceneLock);
 	VVRELEASE(localISFScene);
-	OSSpinLockUnlock(&localISFSceneLock);
+	VVLockUnlock(&localISFSceneLock);
 	
-	OSSpinLockLock(&bufferLock);
+	VVLockLock(&bufferLock);
 	VVRELEASE(buffer);
 	VVRELEASE(bufferArray);
-	OSSpinLockUnlock(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	[super dealloc];
 }
@@ -56,10 +56,10 @@
 	//	return;
 	
 	//	i have to retain the buffer locally (a sprite needs to draw this in a delegate method)
-	OSSpinLockLock(&bufferLock);
+	VVLockLock(&bufferLock);
 	VVRELEASE(buffer);
 	buffer = (n==nil) ? nil : [n retain];
-	OSSpinLockUnlock(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	//	this causes my super to draw immediately
 	[self performDrawing:[self bounds]];
@@ -77,13 +77,13 @@
 	newCtx = nil;
 }
 - (void) useFile:(NSString *)n	{
-	OSSpinLockLock(&localISFSceneLock);
+	VVLockLock(&localISFSceneLock);
 	if (localISFScene==nil)
 		NSLog(@"\t\terr: trying to load file %@, but ISF scene is nil!  %s",n,__func__);
 	else	{
 		[localISFScene useFile:n];
 	}
-	OSSpinLockUnlock(&localISFSceneLock);
+	VVLockUnlock(&localISFSceneLock);
 }
 
 
@@ -96,7 +96,7 @@
 	//NSLog(@"%s",__func__);
 	//[self setPixelFormat:[GLScene defaultQTPixelFormat]];
 	
-	OSSpinLockLock(&localISFSceneLock);
+	VVLockLock(&localISFSceneLock);
 	if (localISFScene==nil)	{
 		NSOpenGLContext		*currentCtx = [self openGLContext];
 		if (currentCtx!=nil)	{
@@ -104,7 +104,7 @@
 			[localISFScene useFile:[[NSBundle mainBundle] pathForResource:@"AlphaOverCheckerboard" ofType:@"fs"]];
 		}
 	}
-	OSSpinLockUnlock(&localISFSceneLock);
+	VVLockUnlock(&localISFSceneLock);
 	
 	//[self setOpenGLContext:[localISFScene context]];
 	//[[localISFScene context] setView:self];
@@ -140,11 +140,11 @@
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
 	glDisable(GL_BLEND);
 	
-	OSSpinLockLock(&bufferLock);
+	VVLockLock(&bufferLock);
 	VVBuffer		*bufferToDraw = buffer;
 	if (bufferToDraw!=nil)
 		[bufferArray addObject:bufferToDraw];
-	OSSpinLockUnlock(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	//NSLog(@"\t\tbufferToDraw is %@",bufferToDraw);
 	if (bufferToDraw!=nil)	{
@@ -173,12 +173,12 @@
 	if (deleted)
 		return;
 	
-	OSSpinLockLock(&bufferLock);
+	VVLockLock(&bufferLock);
 	if (bufferArray != nil)	{
 		//	clear out any buffers already in the array from the last render 
 		[bufferArray removeAllObjects];
 	}
-	OSSpinLockUnlock(&bufferLock);
+	VVLockUnlock(&bufferLock);
 	
 	[super finishedDrawing];
 }
@@ -187,7 +187,7 @@
 	[super setOpenGLContext:c];
 	
 	//	now i have to reload the ISF scene to use the passed context (which means reloading the file as well)
-	OSSpinLockLock(&localISFSceneLock);
+	VVLockLock(&localISFSceneLock);
 	NSString		*currentISFPath = nil;
 	if (localISFScene!=nil)	{
 		currentISFPath = [[[localISFScene filePath] retain] autorelease];
@@ -196,7 +196,7 @@
 	localISFScene = [[ISFGLScene alloc] initWithContext:c sized:[self backingBounds].size];
 	if (currentISFPath!=nil)
 		[localISFScene useFile:currentISFPath];
-	OSSpinLockUnlock(&localISFSceneLock);
+	VVLockUnlock(&localISFSceneLock);
 }
 
 
