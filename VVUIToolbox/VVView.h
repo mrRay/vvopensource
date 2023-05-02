@@ -2,16 +2,12 @@
 #import <Foundation/Foundation.h>
 #import "VVSpriteManager.h"
 #include <libkern/OSAtomic.h>
-#if TARGET_OS_IPHONE
-#import <OpenGLES/EAGL.h>
-#import <GLKit/GLKit.h>
-#else
 #import <OpenGL/OpenGL.h>
-#endif
 #include <AvailabilityMacros.h>
-#if !TARGET_OS_IPHONE
 #import "VVTrackingArea.h"
-#endif
+
+@class VVView;
+
 
 
 
@@ -22,7 +18,7 @@
 
 
 
-#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
+//#if MACS_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_7
 typedef NS_ENUM(NSInteger, VVViewResizeMask)	{
 	VVViewResizeNone = 0,	//	can't be resized
 	VVViewResizeMinXMargin = 1,	//	min x margin can be resized
@@ -38,43 +34,50 @@ typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
 	VVViewBOTop,
 	VVViewBOLeft
 };
-#else
-typedef enum VVViewResizeMask	{
-	VVViewResizeNone = 0,	//	can't be resized
-	VVViewResizeMinXMargin = 1,	//	min x margin can be resized
-	VVViewResizeMaxXMargin = 2,	//	max x margin can be resized
-	VVViewResizeMinYMargin = 4,	//	...etc...
-	VVViewResizeMaxYMargin = 8,
-	VVViewResizeWidth = 16,
-	VVViewResizeHeight = 32
-} VVViewResizeMask;
-typedef enum VVViewBoundsOrientation	{
-	VVViewBOBottom = 0,
-	VVViewBORight,
-	VVViewBOTop,
-	VVViewBOLeft
-} VVViewBoundsOrientation;
-#endif
+//#else
+//typedef enum VVViewResizeMask	{
+//	VVViewResizeNone = 0,	//	can't be resized
+//	VVViewResizeMinXMargin = 1,	//	min x margin can be resized
+//	VVViewResizeMaxXMargin = 2,	//	max x margin can be resized
+//	VVViewResizeMinYMargin = 4,	//	...etc...
+//	VVViewResizeMaxYMargin = 8,
+//	VVViewResizeWidth = 16,
+//	VVViewResizeHeight = 32
+//} VVViewResizeMask;
+//typedef enum VVViewBoundsOrientation	{
+//	VVViewBOBottom = 0,
+//	VVViewBORight,
+//	VVViewBOTop,
+//	VVViewBOLeft
+//} VVViewBoundsOrientation;
+//#endif
 
 
 
 
-#if !TARGET_OS_IPHONE
-#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 1070)
+@protocol VVViewContainer
+- (void) addVVSubview:(VVView *)n;
+- (void) removeVVSubview:(VVView *)n;
+- (BOOL) containsSubview:(VVView *)n;
+- (VVView *) vvSubviewHitTest:(VVPOINT)p;
+- (void) reconcileVVSubviewDragTypes;
+- (double) localToBackingBoundsMultiplier;
+- (void) _setMouseIsDown:(BOOL)n;
+@end
+
+
+
+
+//#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 1070)
 @interface VVView : NSObject <NSDraggingDestination>	{
-#else	//	else __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
-@interface VVView : NSObject <NSDraggingSource>	{
-#endif
-#else	//	else TARGET_OS_IPHONE
-@interface VVView : NSObject	{
-#endif
+//#else	//	else __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
+//@interface VVView : NSObject <NSDraggingSource>	{
+//#endif
 	BOOL				deleted;
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
 	pthread_mutex_t		spritesUpdateLock;	//	used to lock around 'updateSprites' and access to 'spritesNeedUpdate'
-#if !TARGET_OS_IPHONE
 	CGLContextObj		spriteCtx;	//	NOT RETAINED! only NON-nil during draw callback, var exists so stuff with draw callbacks can get the GL context w/o having to pass it in methods (which would require discrete code paths)
-#endif
 	BOOL				needsDisplay;
 	
 	
@@ -86,31 +89,24 @@ typedef enum VVViewBoundsOrientation	{
 	VVViewBoundsOrientation	_boundsOrientation;
 	
 	
-#if TARGET_OS_IPHONE
-	VVLock			boundsProjectionEffectLock;	//	locks the GLKBaseEffect
-	GLKBaseEffect		*boundsProjectionEffect;	//	the projection matrix on this effect's transform property is equivalent to a glOrtho (for the container view) on the projection matrix, followed by a series of translate/rotate transforms such that, when applied to the modelview matrix transform, the drawing coordinates' "origin" (0., 0.) will be aligned with the origin of the bounds of the view currently being drawn (with appropriate rotation for the view's bounds origin).
-	BOOL				boundsProjectionEffectNeedsUpdate;	//	if YES, the effect needs update.
-#else
 	MutLockArray		*trackingAreas;
-#endif
+	id<MTLBuffer>		mvpBuffer;	//	the buffer that contains the model-view-projection matrix, which much be applied to vertex coords to ensure that a vertex positioned at (0,0) draws in the appropriate location in the parent window
 	
 	
 	VVLock			hierarchyLock;
-	__weak id			_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
-	__weak id			_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
+	__weak VVView		*_superview;	//	NOT RETAINED- the "VVView" that owns me, or nil. if nil, "containerView" will be non-nil, and will point to the NSView subclass that "owns" me!
+	NSView				*_containerView;	//	NOT RETAINED- points to the NSView-subclass that contains me (tracked because i need to tell it it needs display)
 	MutLockArray		*subviews;
 	BOOL				autoresizesSubviews;
 	VVViewResizeMask	autoresizingMask;	//	same as the NSView resizing masks!
 	
 	
 	VVLock			_propertyLock;	//	locks the items below it (mouse event, clear color stuff)
-#if !TARGET_OS_IPHONE
 	NSEvent				*lastMouseEvent;
-#endif
 	BOOL				isOpaque;
-	GLfloat				clearColor[4];
+	float				clearColor[4];
 	BOOL				drawBorder;
-	GLfloat				borderColor[4];
+	float				borderColor[4];
 	
 	
 	VVLock			mouseLock;
@@ -128,12 +124,6 @@ typedef enum VVViewBoundsOrientation	{
 - (void) initComplete;
 - (void) prepareToBeDeleted;
 
-#if TARGET_OS_IPHONE
-- (void) touchBegan:(UITouch *)touch withEvent:(UIEvent *)event;
-- (void) touchMoved:(UITouch *)touch withEvent:(UIEvent *)event;
-- (void) touchEnded:(UITouch *)touch withEvent:(UIEvent *)event;
-- (void) touchCancelled:(UITouch *)touch withEvent:(UIEvent *)event;
-#else
 - (void) mouseDown:(NSEvent *)e;
 - (void) rightMouseDown:(NSEvent *)e;
 - (void) mouseDragged:(NSEvent *)e;
@@ -147,7 +137,6 @@ typedef enum VVViewBoundsOrientation	{
 - (void) keyDown:(NSEvent *)e;
 - (void) keyUp:(NSEvent *)e;
 - (NSDraggingSession *) beginDraggingSessionWithItems:(NSArray *)items event:(NSEvent *)event source:(id<NSDraggingSource>)source;
-#endif
 
 //- (id) hitTest:(VVPOINT)n;	//	the point it's passed is in coords local to self!
 - (VVView *) vvSubviewHitTest:(VVPOINT)p;	//	the point it's passed is in coords local to self!
@@ -159,16 +148,21 @@ typedef enum VVViewBoundsOrientation	{
 - (VVPOINT) convertPointFromWinCoords:(VVPOINT)pointInWindow;
 - (VVPOINT) convertPointFromDisplayCoords:(VVPOINT)displayPoint;
 - (VVRECT) convertRectFromContainerViewCoords:(VVRECT)rectInContainer;
+- (VVRECT) convertRectFromSuperviewCoords:(VVRECT)rectInSuperview;
 
 - (VVPOINT) convertPointToContainerViewCoords:(VVPOINT)localCoords;
 - (VVPOINT) convertPointToWinCoords:(VVPOINT)localCoords;
 - (VVPOINT) convertPointToDisplayCoords:(VVPOINT)localCoords;
 - (VVRECT) convertRectToContainerViewCoords:(VVRECT)localRect;
+- (VVRECT) convertRectToSuperviewCoords:(VVRECT)localRect;
 
 //- (VVPOINT) containerViewCoordsOfLocalPoint:(VVPOINT)n;
 - (VVPOINT) winCoordsOfLocalPoint:(VVPOINT)n;
 - (VVPOINT) displayCoordsOfLocalPoint:(VVPOINT)n;
 - (NSMutableArray *) _locationTransformsToContainerView;
+
+- (NSMutableArray<NSAffineTransform*> *) localToSuperviewCoordinateSpaceDrawTransforms;
+- (NSMutableArray<NSAffineTransform*> *) localToContainerCoordinateSpaceDrawTransforms;
 
 - (VVRECT) frame;
 - (void) setFrame:(VVRECT)n;
@@ -180,14 +174,11 @@ typedef enum VVViewBoundsOrientation	{
 //- (void) setBounds:(VVRECT)n;
 - (void) setBoundsOrigin:(VVPOINT)n;
 - (VVPOINT) boundsOrigin;
-//- (void) setBoundsRotation:(GLfloat)n;
-//- (GLfloat) boundsRotation;
+//- (void) setBoundsRotation:(float)n;
+//- (float) boundsRotation;
 - (VVViewBoundsOrientation) boundsOrientation;
 - (void) setBoundsOrientation:(VVViewBoundsOrientation)n;
 
-#if TARGET_OS_IPHONE
-- (GLKBaseEffect *) safelyGetBoundsProjectionEffect;
-#else
 //- (NSTrackingRectTag) addTrackingRect:(VVRECT)aRect owner:(id)userObject userData:(void *)userData assumeInside:(BOOL)flag;
 //- (void) removeTrackingRect:(NSTrackingRectTag)aTag;
 - (void) updateTrackingAreas;
@@ -195,7 +186,6 @@ typedef enum VVViewBoundsOrientation	{
 - (void) removeTrackingArea:(VVTrackingArea *)n;
 - (void) _clearAppleTrackingAreas;
 - (void) _refreshAppleTrackingAreas;
-#endif
 
 - (void) _viewDidMoveToWindow;
 - (void) viewDidMoveToWindow;
@@ -222,18 +212,17 @@ typedef enum VVViewBoundsOrientation	{
 - (void) registerForDraggedTypes:(NSArray *)a;
 - (void) _collectDragTypesInArray:(NSMutableArray *)n;
 - (MutLockArray *) dragTypes;
-- (void) setContainerView:(id)n;
-- (id) containerView;
+- (void) setContainerView:(NSView *)n;
+- (NSView *) containerView;
 - (MutLockArray *) subviews;
 - (id) window;
 
-#if !TARGET_OS_IPHONE
+- (void) drawRect:(VVRECT)r;	//	put drawing code for subclasses in here
+- (void) _drawRect:(VVRECT)r;	//	container view calls this (also calls itself recursively on its subviews)
 - (void) _drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx;
 - (void) drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx;
-#else
-- (void) _drawRect:(VVRECT)r;
-- (void) drawRect:(VVRECT)r;
-#endif
+- (void) _drawRect:(VVRECT)r inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)cb;
+- (void) drawRect:(VVRECT)r inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)cb;
 - (BOOL) isOpaque;
 - (void) setIsOpaque:(BOOL)n;
 - (void) finishedDrawing;
@@ -250,23 +239,13 @@ typedef enum VVViewBoundsOrientation	{
 - (void) setNeedsDisplay;
 @property (assign,readwrite) BOOL needsRender;	//	does same thing as needsDisplay
 - (void) setNeedsRender;
-#if !TARGET_OS_IPHONE
 @property (readonly) NSEvent *lastMouseEvent;
-#endif
-#if TARGET_OS_IPHONE
-- (void) setClearColor:(UIColor *)n;
-#else
 - (void) setClearColor:(NSColor *)n;
-#endif
-- (void) setClearColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
-- (void) getClearColors:(GLfloat *)n;
+- (void) setClearColors:(float)r :(float)g :(float)b :(float)a;
+- (void) getClearColors:(float *)n;
 @property (assign,readwrite) BOOL drawBorder;
-#if TARGET_OS_IPHONE
-- (void) setBorderColor:(UIColor *)n;
-#else
 - (void) setBorderColor:(NSColor *)n;
-#endif
-- (void) setBorderColors:(GLfloat)r :(GLfloat)g :(GLfloat)b :(GLfloat)a;
+- (void) setBorderColors:(float)r :(float)g :(float)b :(float)a;
 @property (readonly) long mouseDownModifierFlags;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;

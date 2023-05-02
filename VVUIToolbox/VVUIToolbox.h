@@ -12,6 +12,7 @@
 #import "VVSpriteControl.h"
 #import "VVSpriteControlCell.h"
 #import "VVSpriteGLView.h"
+#import "VVSpriteMTLView.h"
 #endif
 
 #import "VVScrollView.h"

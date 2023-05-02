@@ -2,6 +2,7 @@
 #import <Cocoa/Cocoa.h>
 #import "VVSpriteManager.h"
 #include <libkern/OSAtomic.h>
+#import "VVView.h"
 
 
 
@@ -11,7 +12,7 @@ extern int				_spriteViewCount;
 
 
 
-@interface VVSpriteView : NSView {
+@interface VVSpriteView : NSView <VVViewContainer>	{
 	BOOL					deleted;
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
@@ -27,6 +28,8 @@ extern int				_spriteViewCount;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
 	__weak NSView			*clickedSubview;	//	NOT RETAINED
+	
+	MutLockArray			*vvSubviews;
 }
 
 - (void) generalInit;
@@ -49,5 +52,10 @@ extern int				_spriteViewCount;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;
 @property (readonly) BOOL mouseIsDown;
+
+- (void) addVVSubview:(VVView *)n;
+- (void) removeVVSubview:(VVView *)n;
+- (BOOL) containsSubview:(VVView *)n;
+- (VVView *) vvSubviewHitTest:(VVPOINT)p;
 
 @end

@@ -51,7 +51,7 @@ extern long			_spriteGLViewSysVers;
 
 
 
-@interface VVSpriteGLView : NSOpenGLView {
+@interface VVSpriteGLView : NSOpenGLView <VVViewContainer>	{
 	BOOL					deleted;
 	
 	BOOL					initialized;

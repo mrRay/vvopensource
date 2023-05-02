@@ -204,6 +204,18 @@
 	#pragma clang diagnostic pop
 	glDrawContext = NULL;
 }
+- (void) drawInEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB	{
+	if ((deleted)||(delegate==nil)||(drawCallback==nil)||(![delegate respondsToSelector:drawCallback]))
+		return;
+	drawEnc = inEnc;
+	cmdBuffer = inCB;
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+	[delegate performSelector:drawCallback withObject:self];
+	#pragma clang diagnostic pop
+	drawEnc = nil;
+	cmdBuffer = nil;
+}
 #endif
 - (void) bringToFront	{
 	//NSLog(@"%s",__func__);
@@ -289,6 +301,12 @@
 #if !TARGET_OS_IPHONE
 - (CGLContextObj) glDrawContext	{
 	return glDrawContext;
+}
+- (id<MTLRenderCommandEncoder>) drawEnc	{
+	return drawEnc;
+}
+- (id<MTLCommandBuffer>) cmdBuffer	{
+	return cmdBuffer;
 }
 #endif
 

@@ -6,6 +6,7 @@
 #endif
 #import "VVSprite.h"
 #import <VVBasics/VVBasics.h>
+#import <Metal/Metal.h>
 
 
 
@@ -77,6 +78,8 @@ extern MutLockArray		*_spriteManagerArray;
 #if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx;
 - (void) drawRect:(VVRECT)r inContext:(CGLContextObj)cgl_ctx;
+- (void) drawInEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB;
+- (void) drawRect:(VVRECT)inRect inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB;
 #endif
 
 #if !TARGET_OS_IPHONE

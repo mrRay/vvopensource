@@ -8,6 +8,7 @@
 
 #define LOCK VVLockLock
 #define UNLOCK VVLockUnlock
+#define VVBITMASKCHECK(mask,flagToCheck) ((mask & flagToCheck) == flagToCheck) ? ((BOOL)YES) : ((BOOL)NO)
 
 
 
@@ -61,9 +62,16 @@ int				_spriteViewCount;
 	modifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
+	vvSubviews = [[MutLockArray alloc] init];
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
+	NSMutableArray		*subCopy = [vvSubviews lockCreateArrayCopy];
+	if (subCopy != nil)	{
+		for (id subview in subCopy)
+			[self removeVVSubview:subview];
+		[subCopy removeAllObjects];
+	}
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
 	spritesNeedUpdate = NO;
@@ -80,6 +88,7 @@ int				_spriteViewCount;
 	VVRELEASE(clearColor);
 	VVRELEASE(borderColor);
 	UNLOCK(&propertyLock);
+	VVRELEASE(vvSubviews);
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
@@ -119,6 +128,112 @@ int				_spriteViewCount;
 }
 */
 
+
+/*===================================================================================*/
+#pragma mark --------------------- subview-related
+/*------------------------------------*/
+
+
+- (void) addVVSubview:(VVView *)n	{
+	//NSLog(@"%s",__func__);
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	
+	[vvSubviews wrlock];
+	if (![vvSubviews containsIdenticalPtr:n])	{
+		[vvSubviews insertObject:n atIndex:0];
+		[n setContainerView:self];
+		[n _setSuperview:nil];
+	}
+	[vvSubviews unlock];
+	
+	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
+	//NSMutableArray		*tmpArray = MUTARRAY;
+	//[n _collectDragTypesInArray:tmpArray];
+	//if ([tmpArray count]>0)
+	//	[self reconcileVVSubviewDragTypes];
+	
+	[self setNeedsDisplay:YES];
+}
+- (void) removeVVSubview:(VVView *)n	{
+	//NSLog(@"%s",__func__);
+	if (deleted || n==nil)
+		return;
+	if (![n isKindOfClass:[VVView class]])
+		return;
+	id			tmpSubview = n;
+	[vvSubviews lockRemoveIdenticalPtr:tmpSubview];
+	[tmpSubview setContainerView:nil];
+	
+	//	if there's a drag and drop subview (if i'm in the middle of a drag and drop action), i have to check if it's in the subview i'm removing!
+	//if (dragNDropSubview!=nil && [n containsSubview:dragNDropSubview])	{
+	//	[dragNDropSubview draggingExited:nil];
+	//	dragNDropSubview = nil;
+	//}
+	//	if the subviews i'm adding have any drag types, tell the container view to reconcile its drag types
+	//NSMutableArray		*tmpArray = MUTARRAY;
+	//[tmpSubview _collectDragTypesInArray:tmpArray];
+	//if ([tmpArray count]>0)
+	//	[self reconcileVVSubviewDragTypes];
+	
+	[self setNeedsDisplay:YES];
+}
+- (BOOL) containsSubview:(VVView *)n	{
+	if (deleted || n==nil || vvSubviews==nil)
+		return NO;
+	BOOL		returnMe = NO;
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		if (viewPtr==n || [viewPtr containsSubview:n])	{
+			returnMe = YES;
+			break;
+		}
+	}
+	[vvSubviews unlock];
+	return returnMe;
+}
+- (VVView *) vvSubviewHitTest:(VVPOINT)p	{
+	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
+	if (deleted || vvSubviews==nil)
+		return nil;
+	
+	id					returnMe = nil;
+	//	run from "top" view to bottom, checking to see if the point lies within any of the views
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		VVRECT			tmpFrame = [viewPtr frame];
+		//VVRectLog(@"\t\tview's frame is",tmpFrame);
+		if (VVPOINTINRECT(p,tmpFrame))	{
+			returnMe = [viewPtr vvSubviewHitTest:p];
+			if (returnMe != nil)
+				break;
+		}
+	}
+	[vvSubviews unlock];
+	
+	return returnMe;
+}
+- (void) reconcileVVSubviewDragTypes	{
+	//NSLog(@"%s",__func__);
+	if (deleted || vvSubviews==nil)
+		return;
+	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr _collectDragTypesInArray:tmpArray];
+	}
+	[vvSubviews unlock];
+	
+	[self unregisterDraggedTypes];
+	[self registerForDraggedTypes:tmpArray];
+}
+- (double) localToBackingBoundsMultiplier	{
+	return 1.0;
+}
+
+
 /*===================================================================================*/
 #pragma mark --------------------- frame-related
 /*------------------------------------*/
@@ -128,6 +243,51 @@ int				_spriteViewCount;
 	[super setFrame:f];
 	//[self updateSprites];
 	spritesNeedUpdate = YES;
+}
+- (void) setFrameSize:(VVSIZE)n	{
+	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
+	VVSIZE			oldSize = [self frame].size;
+	[super setFrameSize:n];
+	
+	if ([self autoresizesSubviews])	{
+		double		widthDelta = n.width - oldSize.width;
+		double		heightDelta = n.height - oldSize.height;
+		[vvSubviews rdlock];
+		for (VVView *viewPtr in [vvSubviews array])	{
+			VVViewResizeMask	viewResizeMask = [viewPtr autoresizingMask];
+			VVRECT				viewNewFrame = [viewPtr frame];
+			//VVRectLog(@"\t\torig viewNewFrame is",viewNewFrame);
+			int					hSubDivs = 0;
+			int					vSubDivs = 0;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxXMargin))
+				++hSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+				++hSubDivs;
+			
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMaxYMargin))
+				++vSubDivs;
+			if (VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+				++vSubDivs;
+			
+			if (hSubDivs>0 || vSubDivs>0)	{
+				if (hSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeWidth))
+					viewNewFrame.size.width += widthDelta/hSubDivs;
+				if (vSubDivs>0 && VVBITMASKCHECK(viewResizeMask,VVViewResizeHeight))
+					viewNewFrame.size.height += heightDelta/vSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinXMargin))
+					viewNewFrame.origin.x += widthDelta/hSubDivs;
+				if (VVBITMASKCHECK(viewResizeMask,VVViewResizeMinYMargin))
+					viewNewFrame.origin.y += heightDelta/vSubDivs;
+			}
+			//VVRectLog(@"\t\tmod viewNewFrame is",viewNewFrame);
+			[viewPtr setFrame:viewNewFrame];
+		}
+		[vvSubviews unlock];
+	}
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
@@ -298,6 +458,11 @@ int				_spriteViewCount;
 	}
 	UNLOCK(&propertyLock);
 	
+	NSArray<VVView*>	*localSubviews = [vvSubviews lockCreateArrayCopy];
+	for (VVView * subview in localSubviews)	{
+		[subview _drawRect:[subview bounds]];
+	}
+	
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 	
@@ -402,6 +567,9 @@ int				_spriteViewCount;
 @synthesize mouseDownEventType;
 @synthesize modifierFlags;
 @synthesize mouseIsDown;
+- (void) _setMouseIsDown:(BOOL)n	{
+	mouseIsDown = n;
+}
 
 
 @end

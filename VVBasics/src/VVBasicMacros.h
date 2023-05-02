@@ -243,6 +243,15 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 
 
 
+#if !TARGET_OS_IPHONE
+//	returns the same rect, but expressed with a positive width and height
+NSRect NSPositiveDimensionsRect(NSRect inRect);
+NSRect NSIntegralPositiveDimensionsRect(NSRect inRect);
+#endif
+
+
+
+
 //	this macro is from the GL red book
 #define BUFFER_OFFSET(bytes) ((GLubyte*)NULL + (bytes))
 //	this is a macro for drawing an NSRect in opengl

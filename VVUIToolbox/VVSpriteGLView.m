@@ -331,6 +331,8 @@ long			_spriteGLViewSysVers;
 	[tmpSubview _collectDragTypesInArray:tmpArray];
 	if ([tmpArray count]>0)
 		[self reconcileVVSubviewDragTypes];
+	
+	[self setNeedsDisplay:YES];
 }
 - (BOOL) containsSubview:(VVView *)n	{
 	if (deleted || n==nil || vvSubviews==nil)

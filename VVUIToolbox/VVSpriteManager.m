@@ -650,6 +650,36 @@ MutLockArray		*_spriteManagerArray;
 		}
 	[spriteArray unlock];
 }
+- (void) drawInEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB	{
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return;
+	NSMutableArray		*tmpSprites = [spriteArray lockCreateArrayCopy];
+	NSEnumerator		*it = [tmpSprites reverseObjectEnumerator];
+	VVSprite			*spritePtr;
+	while (spritePtr = [it nextObject])	{
+		[spritePtr drawInEncoder:inEnc commandBuffer:inCB];
+	}
+}
+- (void) drawRect:(VVRECT)inRect inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB	{
+	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+		return;
+	[spriteArray rdlock];
+		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
+		VVSprite	*spritePtr;
+		while (spritePtr = [it nextObject])	{
+			if ([spritePtr checkRect:inRect])
+				[spritePtr drawInEncoder:inEnc commandBuffer:inCB];
+			/*
+			//VVRECT		tmp = [spritePtr rect];
+			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
+			//if (![spritePtr hidden])	{
+				if (VVINTERSECTSRECT([spritePtr rect],r))
+					[spritePtr draw];
+			//}
+			*/
+		}
+	[spriteArray unlock];
+}
 #endif
 #if !TARGET_OS_IPHONE
 - (VVSprite *) spriteInUse	{

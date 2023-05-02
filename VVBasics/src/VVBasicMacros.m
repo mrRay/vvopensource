@@ -111,3 +111,41 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 }
 #endif
 
+
+
+
+#if !TARGET_OS_IPHONE
+NSRect NSPositiveDimensionsRect(NSRect inRect)	{
+	if (inRect.size.width >= 0. && inRect.size.height >= 0.)
+		return inRect;
+	
+	NSRect			returnMe = inRect;
+	if (returnMe.size.width < 0.)	{
+		returnMe.origin.x += returnMe.size.width;
+		returnMe.size.width = fabs(returnMe.size.width);
+	}
+	if (returnMe.size.height < 0.)	{
+		returnMe.origin.y += returnMe.size.height;
+		returnMe.size.height = fabs(returnMe.size.height);
+	}
+	
+	return returnMe;
+}
+NSRect NSIntegralPositiveDimensionsRect(NSRect inRect)	{
+	NSRect		returnMe = NSMakeRect(round(inRect.origin.x), round(inRect.origin.y), round(inRect.size.width), round(inRect.size.height));
+	if (returnMe.size.width >= 0. && returnMe.size.height >= 0.)
+		return returnMe;
+	
+	if (returnMe.size.width < 0.)	{
+		returnMe.origin.x = round(returnMe.origin.x + returnMe.size.width);
+		returnMe.size.width = round(fabs(returnMe.size.width));
+	}
+	if (returnMe.size.height < 0.)	{
+		returnMe.origin.y = round(returnMe.origin.y + returnMe.size.height);
+		returnMe.size.height = round(fabs(returnMe.size.height));
+	}
+	
+	return returnMe;
+}
+#endif
+

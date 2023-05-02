@@ -16,6 +16,7 @@
 #endif
 #import <VVBasics/VVBasics.h>
 #include <libkern/OSAtomic.h>
+#import <Metal/Metal.h>
 
 
 
@@ -57,6 +58,8 @@ typedef enum VVSpriteEventType	{
 	SEL				actionCallback;		//	delegate method; passed a ptr to this sprite!
 #if !TARGET_OS_IPHONE
 	CGLContextObj	glDrawContext;		//	NOT retained! if "drawInContext:" is called, this is set to the passed context- so my delegate can retrieve it and use it for GL drawing!
+	__weak id<MTLRenderCommandEncoder>		drawEnc;
+	__weak id<MTLCommandBuffer>			cmdBuffer;
 #endif
 	
 	VVRECT			rect;				//	the sprite i'm tracking
@@ -98,6 +101,7 @@ typedef enum VVSpriteEventType	{
 - (void) draw;
 #if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx;
+- (void) drawInEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)inCB;
 #endif
 
 - (void) bringToFront;
@@ -113,6 +117,8 @@ typedef enum VVSpriteEventType	{
 @property (assign, readwrite) SEL actionCallback;
 #if !TARGET_OS_IPHONE
 @property (readonly) CGLContextObj glDrawContext;
+@property (readonly) id<MTLRenderCommandEncoder> drawEnc;
+@property (readonly) id<MTLCommandBuffer> cmdBuffer;
 #endif
 
 @property (assign, readwrite) VVRECT rect;
