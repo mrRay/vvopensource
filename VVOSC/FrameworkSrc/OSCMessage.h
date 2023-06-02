@@ -4,7 +4,7 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import "OSCValue.h"
+#import <VVOSC/OSCValue.h>
 #import <pthread.h>
 
 

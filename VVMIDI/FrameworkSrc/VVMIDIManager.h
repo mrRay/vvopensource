@@ -3,7 +3,7 @@
 #import <CoreMIDI/CoreMIDI.h>
 #import <VVBasics/VVBasics.h>
 #import <pthread.h>
-#import "VVMIDINode.h"
+#import <VVMIDI/VVMIDINode.h>
 
 
 

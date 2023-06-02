@@ -114,6 +114,6 @@ typedef enum VVMIDIMsgType	{
 
 
 
-#import "VVMIDIMessage.h"
-#import "VVMIDINode.h"
-#import "VVMIDIManager.h"
+#import <VVMIDI/VVMIDIMessage.h>
+#import <VVMIDI/VVMIDINode.h>
+#import <VVMIDI/VVMIDIManager.h>

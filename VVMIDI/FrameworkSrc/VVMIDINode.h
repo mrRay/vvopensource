@@ -2,7 +2,7 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreMIDI/CoreMIDI.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "VVMIDIMessage.h"
+#import <VVMIDI/VVMIDIMessage.h>
 
 
 

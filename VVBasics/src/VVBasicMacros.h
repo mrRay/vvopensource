@@ -474,7 +474,7 @@ NSRect NSIntegralPositiveDimensionsRect(NSRect inRect);
 
 //	if the min deployment target is >= 10.12, we can use unfair lock
 #if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-	#import "os/lock.h"
+	#import <os/lock.h>
 	#define VVLock os_unfair_lock
 	#define VV_LOCK_INIT OS_UNFAIR_LOCK_INIT
 	#define VVLockLock(n) os_unfair_lock_lock(n)

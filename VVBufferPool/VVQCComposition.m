@@ -483,7 +483,10 @@
 	NSDictionary- i want to decode this dict and move some of its contents to the state dict		*/
 	NSData			*blob = [d objectForKey:@"userInfo"];
 	if (blob != nil)	{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		NSDictionary	*decoded = [NSUnarchiver unarchiveObjectWithData:blob];
+#pragma clang diagnostic pop
 		if (decoded != nil)	{
 			[d addEntriesFromDictionary:decoded];
 		}

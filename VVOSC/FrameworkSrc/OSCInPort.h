@@ -11,10 +11,10 @@
 #import <netinet/in.h>
 #import <unistd.h>
 #import <libkern/OSAtomic.h>
-#import "OSCPacket.h"
-#import "OSCBundle.h"
-#import "OSCMessage.h"
-#import "OSCOutPort.h"
+#import <VVOSC/OSCPacket.h>
+#import <VVOSC/OSCBundle.h>
+#import <VVOSC/OSCMessage.h>
+#import <VVOSC/OSCOutPort.h>
 
 
 

@@ -75,7 +75,7 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 		NSButton		*tmpButton = [macroLocalAlert suppressionButton];
 		if (tmpButton != nil)	{
 			[tmpButton setTitle:suppressString];
-			[tmpButton setIntValue:NSOffState];
+			[tmpButton setIntValue:NSControlStateValueOff];
 		}
 	}
 	else	{
@@ -104,7 +104,7 @@ NSInteger VVRunAlertPanelSuppressString(NSString *title, NSString *msg, NSString
 	clearWin = nil;
 	
 	if (showsSuppressionButton && returnSuppressValue!=NULL)	{
-		*returnSuppressValue = ([[macroLocalAlert suppressionButton] intValue]==NSOnState) ? YES : NO;
+		*returnSuppressValue = ([[macroLocalAlert suppressionButton] intValue]==NSControlStateValueOn) ? YES : NO;
 	}
 	
 	return returnMe;

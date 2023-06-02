@@ -513,7 +513,10 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 			//	if necessary, create an iosurface ref
 			if (newBufferDesc.localSurfaceID != 0)	{
 				newSurfaceRef = IOSurfaceCreate((CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 					NUMBOOL(YES),(NSString*)kIOSurfaceIsGlobal,
+#pragma clang diagnostic pop
 					NUMUINT(s.width),(NSString*)kIOSurfaceWidth,
 					NUMUINT(s.height),(NSString*)kIOSurfaceHeight,
 					NUMUINT(bytesPerRow/s.width),(NSString*)kIOSurfaceBytesPerElement,

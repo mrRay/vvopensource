@@ -5,7 +5,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#import "OSCMessage.h"
+#import <VVOSC/OSCMessage.h>
 
 
 

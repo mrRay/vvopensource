@@ -2360,17 +2360,17 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:0];
 					
-					sprintf(tmpCString,"_%s_imgRect",attribNameC);
+					snprintf(tmpCString,64,"_%s_imgRect",attribNameC);
 					samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:1];
 					
-					sprintf(tmpCString,"_%s_imgSize",attribNameC);
+					snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 					samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:2];
 					
-					sprintf(tmpCString,"_%s_flip",attribNameC);
+					snprintf(tmpCString,64,"_%s_flip",attribNameC);
 					samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:3];
@@ -2408,7 +2408,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:0];
 					
-					sprintf(tmpCString,"_%s_imgSize",attribNameC);
+					snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 					samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 					if (samplerLoc >= 0)
 						[attrib setUniformLocation:samplerLoc forIndex:2];
@@ -2447,17 +2447,17 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:0];
 				
-				sprintf(tmpCString,"_%s_imgRect",attribNameC);
+				snprintf(tmpCString,64,"_%s_imgRect",attribNameC);
 				samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:1];
 				
-				sprintf(tmpCString,"_%s_imgSize",attribNameC);
+				snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 				samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:2];
 				
-				sprintf(tmpCString,"_%s_flip",attribNameC);
+				snprintf(tmpCString,64,"_%s_flip",attribNameC);
 				samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:3];
@@ -2496,7 +2496,7 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:0];
 				
-				sprintf(tmpCString,"_%s_imgSize",attribNameC);
+				snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 				samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 				if (samplerLoc >= 0)
 					[attrib setUniformLocation:samplerLoc forIndex:2];
@@ -2532,17 +2532,17 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:0];
 			
-			sprintf(tmpCString,"_%s_imgRect",attribNameC);
+			snprintf(tmpCString,64,"_%s_imgRect",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:1];
 			
-			sprintf(tmpCString,"_%s_imgSize",attribNameC);
+			snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:2];
 			
-			sprintf(tmpCString,"_%s_flip",attribNameC);
+			snprintf(tmpCString,64,"_%s_flip",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:3];
@@ -2586,17 +2586,17 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:0];
 			
-			sprintf(tmpCString,"_%s_imgRect",attribNameC);
+			snprintf(tmpCString,64,"_%s_imgRect",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:1];
 			
-			sprintf(tmpCString,"_%s_imgSize",attribNameC);
+			snprintf(tmpCString,64,"_%s_imgSize",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:2];
 			
-			sprintf(tmpCString,"_%s_flip",attribNameC);
+			snprintf(tmpCString,64,"_%s_flip",attribNameC);
 			samplerLoc = (!programReady) ? -1 : glGetUniformLocation(program,tmpCString);
 			if (samplerLoc >= 0)
 				[targetBuffer setUniformLocation:samplerLoc forIndex:3];

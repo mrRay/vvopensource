@@ -1,22 +1,22 @@
 
 
-#import "OSCConstants.h"
+#import <VVOSC/OSCConstants.h>
 
-#import "OSCValue.h"
-#import "OSCMessage.h"
-#import "OSCBundle.h"
-#import "OSCPacket.h"
+#import <VVOSC/OSCValue.h>
+#import <VVOSC/OSCMessage.h>
+#import <VVOSC/OSCBundle.h>
+#import <VVOSC/OSCPacket.h>
 
-#import "OSCOutPort.h"
-#import "OSCInPort.h"
+#import <VVOSC/OSCOutPort.h>
+#import <VVOSC/OSCInPort.h>
 
-#import "OSCManager.h"
-#import "OSCZeroConfManager.h"
+#import <VVOSC/OSCManager.h>
+#import <VVOSC/OSCZeroConfManager.h>
 
-#import "OSCNode.h"
-#import "OSCAddressSpace.h"
+#import <VVOSC/OSCNode.h>
+#import <VVOSC/OSCAddressSpace.h>
 
-#import "OSCStringAdditions.h"
+#import <VVOSC/OSCStringAdditions.h>
 
 
 

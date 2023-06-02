@@ -4,7 +4,7 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import "OSCMessage.h"
+#import <VVOSC/OSCMessage.h>
 #import <VVBasics/MutNRLockArray.h>
 #import <VVBasics/VVBasicMacros.h>
 #import <libkern/OSAtomic.h>

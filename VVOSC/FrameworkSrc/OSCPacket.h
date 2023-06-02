@@ -6,8 +6,8 @@
 #endif
 
 #include <stdio.h>
-#import "OSCBundle.h"
-#import "OSCMessage.h"
+#import <VVOSC/OSCBundle.h>
+#import <VVOSC/OSCMessage.h>
 
 
 

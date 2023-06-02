@@ -192,6 +192,8 @@ long			_spriteGLViewSysVers;
 	[super removeFromSuperview];
 	pthread_mutex_unlock(&glLock);
 }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void) setWantsBestResolutionOpenGLSurface:(BOOL)n	{
 	//NSLog(@"%s ... %@, %d",__func__,self,n);
 	//	update my local display bounds multiplier
@@ -220,6 +222,7 @@ long			_spriteGLViewSysVers;
 	}
 	[vvSubviews unlock];
 }
+#pragma clang diagnostic pop
 - (void) setWantsLayer:(BOOL)n	{
 	[super setWantsLayer:NO];
 	
@@ -885,6 +888,8 @@ long			_spriteGLViewSysVers;
 /*------------------------------------*/
 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void) lockFocus	{
 	if (deleted)	{
 		[super lockFocus];
@@ -895,6 +900,7 @@ long			_spriteGLViewSysVers;
 	[super lockFocus];
 	pthread_mutex_unlock(&glLock);
 }
+#pragma clang diagnostic pop
 - (void) setNeedsDisplay	{
 	[self setNeedsDisplay:YES];
 }

@@ -347,8 +347,15 @@
 #if TARGET_OS_IPHONE
 		UIColor			*calibratedColor = n;
 #else
+		NSColorSpace	*origColorSpace = [(NSColor*)n colorSpace];
 		NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
-		NSColor			*calibratedColor = ((__bridge void *)[n colorSpace]==(__bridge void *)devRGBColorSpace) ? n :[n colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+		NSColor			*calibratedColor = nil;
+		if (origColorSpace == devRGBColorSpace || [origColorSpace isEqual:devRGBColorSpace])	{
+			calibratedColor = n;
+		}
+		else	{
+			calibratedColor = [n colorUsingColorSpace:devRGBColorSpace];
+		}
 #endif
 		value = (void*)CFBridgingRetain(calibratedColor);
 		type = OSCValColor;

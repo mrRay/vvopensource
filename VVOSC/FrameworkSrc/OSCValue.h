@@ -4,7 +4,7 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import "OSCConstants.h"
+#import <VVOSC/OSCConstants.h>
 
 
 

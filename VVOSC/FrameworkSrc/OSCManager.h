@@ -4,11 +4,11 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import "OSCAddressSpace.h"
-#import "OSCZeroConfManager.h"
-#import "OSCInPort.h"
-#import "OSCOutPort.h"
-#import "OSCConstants.h"
+#import <VVOSC/OSCAddressSpace.h>
+#import <VVOSC/OSCZeroConfManager.h>
+#import <VVOSC/OSCInPort.h>
+#import <VVOSC/OSCOutPort.h>
+#import <VVOSC/OSCConstants.h>
 
 
 

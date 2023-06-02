@@ -6,7 +6,7 @@
 #endif
 
 #import <VVBasics/VVBasics.h>
-#import "OSCZeroConfDomain.h"
+#import <VVOSC/OSCZeroConfDomain.h>
 #import <pthread.h>
 
 

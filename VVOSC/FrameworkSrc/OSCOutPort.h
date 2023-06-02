@@ -8,9 +8,9 @@
 
 #include <arpa/inet.h>
 
-#import "OSCPacket.h"
-#import "OSCBundle.h"
-#import "OSCMessage.h"
+#import <VVOSC/OSCPacket.h>
+#import <VVOSC/OSCBundle.h>
+#import <VVOSC/OSCMessage.h>
 
 
 
