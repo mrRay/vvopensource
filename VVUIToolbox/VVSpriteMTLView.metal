@@ -58,18 +58,18 @@ fragment float4 VVSpriteMTLViewFragShader(
 	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]]
 	)
 {
-	float4			color;
+	float4			returnMe;
 	
 	if (inRasterData.texIndex < 0)	{
-		color = inRasterData.color;
+		returnMe = inRasterData.color;
 	}
 	else	{
 		float2			samplerCoord = inRasterData.texCoord;
 		constexpr sampler		sampler(mag_filter::linear, min_filter::linear, address::clamp_to_edge, coord::pixel);
-		color = inRasterData.color * inTex.sample(sampler, samplerCoord);
+		returnMe = inRasterData.color * inTex.sample(sampler, samplerCoord);
 	}
 	
-	return color;
+	return returnMe;
 }
 
 

@@ -1,9 +1,9 @@
 
 #import <Cocoa/Cocoa.h>
-#import "VVSpriteManager.h"
+#import <VVUIToolbox/VVSpriteManager.h>
 #import <OpenGL/OpenGL.h>
 #import <libkern/OSAtomic.h>
-#import "VVView.h"
+#import <VVUIToolbox/VVView.h>
 
 
 

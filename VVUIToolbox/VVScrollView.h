@@ -5,7 +5,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 #import <VVBasics/VVBasics.h>
-#import "VVUIToolbox.h"
+#import <VVUIToolbox/VVUIToolbox.h>
 
 
 

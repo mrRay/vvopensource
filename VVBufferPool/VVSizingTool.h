@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger,VVSizingMode)	{
 /**
 \ingroup VVBufferPool
 */
-@interface VVSizingTool : NSObject {
+@interface COM_VIDVOX_VVOPENSOURCE_VVSizingTool : NSObject {
 
 }
 
@@ -57,3 +57,8 @@ typedef NS_ENUM(NSInteger,VVSizingMode)	{
 + (VVRECT) rectThatFitsRect:(VVRECT)a inRect:(VVRECT)b sizingMode:(VVSizingMode)m;
 
 @end
+
+
+
+
+@compatibility_alias VVSizingTool COM_VIDVOX_VVOPENSOURCE_VVSizingTool;

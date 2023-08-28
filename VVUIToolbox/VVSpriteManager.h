@@ -4,7 +4,7 @@
 #else
 #import <Cocoa/Cocoa.h>
 #endif
-#import "VVSprite.h"
+#import <VVUIToolbox/VVSprite.h>
 #import <VVBasics/VVBasics.h>
 #import <Metal/Metal.h>
 

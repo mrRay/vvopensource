@@ -1,6 +1,6 @@
 
 #import <Cocoa/Cocoa.h>
-#import "VVSpriteManager.h"
+#import <VVUIToolbox/VVSpriteManager.h>
 #include <libkern/OSAtomic.h>
 
 

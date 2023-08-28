@@ -1,10 +1,10 @@
 #import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
-#import "VVSpriteManager.h"
+#import <VVUIToolbox/VVSpriteManager.h>
 #include <libkern/OSAtomic.h>
 #import <OpenGL/OpenGL.h>
 #include <AvailabilityMacros.h>
-#import "VVTrackingArea.h"
+#import <VVUIToolbox/VVTrackingArea.h>
 
 @class VVView;
 

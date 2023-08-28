@@ -88,7 +88,12 @@ long		_spriteMTLViewSysVers;
 	self.pixelFormat = MTLPixelFormatBGRA8Unorm;
 	//self.pixelFormat = MTLPixelFormatRGB10A2Unorm;	//	used this for a long time
 	
-	CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_709);
+	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_709);
+	CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+	
+	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
+	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	self.colorspace = tmpSpace;
 	if (tmpSpace != NULL)
 		CGColorSpaceRelease(tmpSpace);
@@ -523,6 +528,8 @@ long		_spriteMTLViewSysVers;
 	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
 	VVSIZE			oldSize = [self frame].size;
 	double			oldBackingBounds = _localToBackingBoundsMultiplier;
+	
+	[super setFrameSize:n];
 	
 	[self reconfigureDrawable];
 	
@@ -1026,6 +1033,8 @@ long		_spriteMTLViewSysVers;
 	if (_spritesNeedUpdate)
 		[self updateSprites];
 	
+	[self prepForDrawing];
+	
 	//	clear the view
 	//glClearColor(clearColorVals[0],clearColorVals[1],clearColorVals[2],clearColorVals[3]);
 	//glClear(GL_COLOR_BUFFER_BIT);
@@ -1090,11 +1099,12 @@ long		_spriteMTLViewSysVers;
 }
 
 
-/*	this method exists so subclasses of me have an opportunity to do something after drawing 
+/*	these methods exist so subclasses of me have an opportunity to do something before/after drawing 
 	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
 	therefore resources have to stay available- until after glFlush() has been called.		*/
+- (void) prepForDrawing	{
+}
 - (void) finishedDrawing	{
-
 }
 
 
@@ -1181,7 +1191,7 @@ long		_spriteMTLViewSysVers;
 	//	subclasses should override this method, call the super, and then make the pso here
 	
 	NSError				*nsErr = nil;
-	NSBundle			*myBundle = [NSBundle bundleForClass:[self class]];
+	NSBundle			*myBundle = [NSBundle bundleForClass:[VVSpriteMTLView class]];
 	id<MTLLibrary>		defaultLibrary = [n newDefaultLibraryWithBundle:myBundle error:&nsErr];
 	id<MTLFunction>		vertFunc = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewVertShader"];
 	id<MTLFunction>		fragFunc = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewFragShader"];
@@ -1196,15 +1206,22 @@ long		_spriteMTLViewSysVers;
 	psDesc.alphaToCoverageEnabled = NO;
 	psDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
 	psDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
-	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
+	
+	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
+	//psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
 	psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
-	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorZero;
+	
+	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorZero;
+	//psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
 	psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	
 	psDesc.colorAttachments[0].blendingEnabled = YES;
 	
 	pso = [_device newRenderPipelineStateWithDescriptor:psDesc error:&nsErr];
+	
+	self.mvpBuffer = nil;
 	
 	self.contentNeedsRedraw = YES;
 }
