@@ -55,21 +55,53 @@ vertex VVSpriteMTLViewRasterizerData VVSpriteMTLViewVertShader(
 
 fragment float4 VVSpriteMTLViewFragShader(
 	VVSpriteMTLViewRasterizerData inRasterData [[ stage_in ]],
-	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]]
+	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]],
+	float4 baseCanvasColor [[ color(0) ]]
 	)
 {
-	float4			returnMe;
+	float4			newFragColor;
 	
 	if (inRasterData.texIndex < 0)	{
-		returnMe = inRasterData.color;
+		newFragColor = inRasterData.color;
 	}
 	else	{
 		float2			samplerCoord = inRasterData.texCoord;
 		constexpr sampler		sampler(mag_filter::linear, min_filter::linear, address::clamp_to_edge, coord::pixel);
-		returnMe = inRasterData.color * inTex.sample(sampler, samplerCoord);
+		newFragColor = inRasterData.color * inTex.sample(sampler, samplerCoord);
 	}
 	
-	return returnMe;
+	if (newFragColor.a >= 1.)
+		return newFragColor;
+	
+	return mix(baseCanvasColor, newFragColor, newFragColor.a);
+}
+
+
+
+
+
+fragment float4 VVSpriteMTLViewFragShaderIgnoreSampledAlpha(
+	VVSpriteMTLViewRasterizerData inRasterData [[ stage_in ]],
+	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]],
+	float4 baseCanvasColor [[ color(0) ]]
+	)
+{
+	float4			newFragColor;
+	
+	if (inRasterData.texIndex < 0)	{
+		newFragColor = inRasterData.color;
+	}
+	else	{
+		float2			samplerCoord = inRasterData.texCoord;
+		constexpr sampler		sampler(mag_filter::linear, min_filter::linear, address::clamp_to_edge, coord::pixel);
+		newFragColor = inRasterData.color * inTex.sample(sampler, samplerCoord);
+		newFragColor.a = 1.0;
+	}
+	
+	if (newFragColor.a >= 1.)
+		return newFragColor;
+	
+	return mix(baseCanvasColor, newFragColor, newFragColor.a);
 }
 
 

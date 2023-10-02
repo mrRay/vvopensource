@@ -88,8 +88,8 @@ long		_spriteMTLViewSysVers;
 	self.pixelFormat = MTLPixelFormatBGRA8Unorm;
 	//self.pixelFormat = MTLPixelFormatRGB10A2Unorm;	//	used this for a long time
 	
-	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_709);
-	CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+	CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_709);
+	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 	
 	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
 	//CGColorSpaceRef		tmpSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
@@ -131,7 +131,7 @@ long		_spriteMTLViewSysVers;
 	
 }
 - (void) awakeFromNib	{
-	//NSLog(@"%s",__func__);
+	NSLog(@"%s ... %@",__func__,self);
 	_spritesNeedUpdate = YES;
 }
 - (void) prepareToBeDeleted	{
@@ -484,13 +484,14 @@ long		_spriteMTLViewSysVers;
 
 
 - (void) setFrame:(VVRECT)f	{
-	//NSLog(@"%s ... %@, (%0.2f, %0.2f) %0.2f x %0.2f",__func__, self, f.origin.x, f.origin.y, f.size.width, f.size.height);
+	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromRect(f));
 	if (_deleted)
 		return;
 	//pthread_mutex_lock(&glLock);
 		[super setFrame:f];
-		[self updateSprites];
+		//[self updateSprites];
 		//_spritesNeedUpdate = YES;
+		self.spritesNeedUpdate = YES;
 		//needsReshape = YES;
 		//initialized = NO;
 	//pthread_mutex_unlock(&glLock);
@@ -525,12 +526,11 @@ long		_spriteMTLViewSysVers;
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) setFrameSize:(VVSIZE)n	{
-	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
+	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromSize(n));
 	VVSIZE			oldSize = [self frame].size;
 	double			oldBackingBounds = _localToBackingBoundsMultiplier;
 	
 	[super setFrameSize:n];
-	
 	[self reconfigureDrawable];
 	
 	BOOL			backingBoundsChanged = (oldBackingBounds != _localToBackingBoundsMultiplier);
@@ -599,6 +599,8 @@ long		_spriteMTLViewSysVers;
 		//pthread_mutex_unlock(&glLock);
 	}
 	
+	[self updateSprites];
+	//self.spritesNeedUpdate = YES;
 	[self setNeedsDisplay:YES];
 }
 - (void) updateSprites	{
@@ -969,16 +971,24 @@ long		_spriteMTLViewSysVers;
 	//NSLog(@"%s ... %@, %p, %p",__func__,NSStringFromRect(r),inEnc,cb);
 	//NSLog(@"%s ... %@",__func__,NSStringFromRect(r));
 	
+	cmdBuffer = cb;
+	encoder = inEnc;
 	//	ALWAYS include the following line in your subclass overrides of this method:
 	//self.contentNeedsRedraw = NO;
 	
 	
-	if (_deleted)
+	if (_deleted)	{
+		cmdBuffer = nil;
+		encoder = nil;
 		return;
+	}
 	
 	id			myWin = [self window];
-	if (myWin == nil)
+	if (myWin == nil)	{
+		cmdBuffer = nil;
+		encoder = nil;
 		return;
+	}
 	
 	//	apply the MVP buffer- all our sprites/subviews will draw using these coords, and are expected to perform geometry that has already been positioned accordingly
 	if (self.mvpBuffer == nil)	{
@@ -1095,6 +1105,9 @@ long		_spriteMTLViewSysVers;
 	
 	self.contentNeedsRedraw = NO;
 	
+	cmdBuffer = nil;
+	encoder = nil;
+	
 	//pthread_mutex_unlock(&glLock);
 }
 
@@ -1185,8 +1198,9 @@ long		_spriteMTLViewSysVers;
 	
 	metalLayer.pixelFormat = self.pixelFormat;
 	
-	if (self.colorspace != NULL)
+	//if (self.colorspace != NULL)	{
 		metalLayer.colorspace = self.colorspace;
+	//}
 	
 	//	subclasses should override this method, call the super, and then make the pso here
 	
@@ -1206,17 +1220,12 @@ long		_spriteMTLViewSysVers;
 	psDesc.alphaToCoverageEnabled = NO;
 	psDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
 	psDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
-	
-	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
-	//psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
-	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
 	psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
-	
-	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorZero;
-	//psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorZero;
 	psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	
 	psDesc.colorAttachments[0].blendingEnabled = YES;
 	
 	pso = [_device newRenderPipelineStateWithDescriptor:psDesc error:&nsErr];

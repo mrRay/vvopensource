@@ -14,6 +14,12 @@
 
 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+
+
+
 @protocol CIGLSceneCleanup
 - (void) cleanupCIGLScene:(id)scene;
 @end
@@ -87,3 +93,8 @@ extern EAGLContext				*_globalCIContextGLContext;
 @property (weak,readwrite) id <CIGLSceneCleanup> cleanupDelegate;
 
 @end
+
+
+
+
+#pragma clang diagnostic pop

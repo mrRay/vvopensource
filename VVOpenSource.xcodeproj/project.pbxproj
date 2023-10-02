@@ -43,7 +43,6 @@
 				9628FFC01981807E00FB6C56 /* PBXTargetDependency */,
 				9628FFBB19817EA400FB6C56 /* PBXTargetDependency */,
 				964FF28D1981B5B500CCC808 /* PBXTargetDependency */,
-				1A7128CF1B61069900528CDB /* PBXTargetDependency */,
 			);
 			name = "Build Mac Frameworks";
 			productName = "Build Mac Frameworks";
@@ -1149,13 +1148,6 @@
 			remoteInfo = MultiClassXPCTestService;
 		};
 		1A6E9AB01B610EC400F8C8A6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1A7128AE1B61065000528CDB;
-			remoteInfo = MultiClassXPC;
-		};
-		1A7128CE1B61069900528CDB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -7047,11 +7039,6 @@
 			target = 1A7128AE1B61065000528CDB /* MultiClassXPC */;
 			targetProxy = 1A6E9AB01B610EC400F8C8A6 /* PBXContainerItemProxy */;
 		};
-		1A7128CF1B61069900528CDB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1A7128AE1B61065000528CDB /* MultiClassXPC */;
-			targetProxy = 1A7128CE1B61069900528CDB /* PBXContainerItemProxy */;
-		};
 		1A76E3221E3F56AE00512B03 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 961EA8EC100E8565007E6C25 /* VVBasics-mac */;
@@ -11211,7 +11198,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -11226,7 +11212,10 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
+				INFOPLIST_KEY_MetalCaptureEnabled = YES;
 				INSTALL_PATH = "@rpath";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
@@ -11241,7 +11230,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -11253,7 +11241,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VVUIToolbox/VVUIToolbox-Prefix.pch";
 				INFOPLIST_FILE = "VVUIToolbox/VVUIToolbox-Info.plist";
+				INFOPLIST_KEY_MetalCaptureEnabled = YES;
 				INSTALL_PATH = "@rpath";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = VVUIToolbox;
@@ -11330,7 +11321,6 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -11371,7 +11361,6 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;

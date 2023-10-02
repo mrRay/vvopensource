@@ -27,11 +27,15 @@ NS_ASSUME_NONNULL_BEGIN
 	//vector_uint2			viewportSize;
 	CAMetalLayer			*metalLayer;
 	id<CAMetalDrawable>		currentDrawable;
+	__weak id<MTLCommandBuffer>				cmdBuffer;	//	NOT retained, only NON-nil while it's being packed
+	__weak id<MTLRenderCommandEncoder>		encoder;	//	NOT retained, only NON-nil while it's being packed (during synchronous sprite draw callbacks)
 	
 	//	the following vars are also used in VVSpriteGLView, etc.  really, 
 	//double					localToBackingBoundsMultiplier;
 	//MutLockArray			*vvSubviews;
 	__weak id				dragNDropSubview;	//	NOT RETAINED
+	
+	id<MTLDevice>			_device;
 	
 	//VVSpriteManager			*spriteManager;
 	//BOOL					spritesNeedUpdate;
