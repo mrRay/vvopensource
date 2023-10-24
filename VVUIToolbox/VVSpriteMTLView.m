@@ -983,12 +983,13 @@ long		_spriteMTLViewSysVers;
 		return;
 	}
 	
-	id			myWin = [self window];
-	if (myWin == nil)	{
-		cmdBuffer = nil;
-		encoder = nil;
-		return;
-	}
+	//	commented out, main thread checker throws an error
+	//id			myWin = [self window];
+	//if (myWin == nil)	{
+	//	cmdBuffer = nil;
+	//	encoder = nil;
+	//	return;
+	//}
 	
 	//	apply the MVP buffer- all our sprites/subviews will draw using these coords, and are expected to perform geometry that has already been positioned accordingly
 	if (self.mvpBuffer == nil)	{
@@ -1054,7 +1055,12 @@ long		_spriteMTLViewSysVers;
 		//if (_spriteGLViewSysVers >= 7)	{
 			//[_spriteManager drawRect:[(id)self convertRectToBacking:r]];
 			//[_spriteManager drawRect:[(id)self convertRectToBacking:r] inContext:cgl_ctx];
-			[_spriteManager drawRect:[(id)self convertRectToBacking:r] inEncoder:inEnc commandBuffer:cb];
+			
+			//[_spriteManager drawRect:[(id)self convertRectToBacking:r] inEncoder:inEnc commandBuffer:cb];
+			NSRect		tmpRect = r;
+			NSRect		tmpBounds = self.bounds;
+			tmpRect.origin = NSMakePoint( tmpRect.origin.x + tmpBounds.origin.x, tmpRect.origin.y + tmpBounds.origin.y );
+			[_spriteManager drawRect:tmpRect inEncoder:inEnc commandBuffer:cb];
 		//}
 		//else	{
 		//	//[_spriteManager drawRect:r];
@@ -1266,6 +1272,11 @@ long		_spriteMTLViewSysVers;
 //- (NSSize) viewportSize	{
 //	return NSMakeSize( viewportSize[0], viewportSize[1] );
 //}
+
+
+- (NSRect) viewportBounds	{
+	return NSMakeRect(0,0,_viewportSize.x,_viewportSize.y);
+}
 
 
 @synthesize layerBackgroundColor=_layerBackgroundColor;

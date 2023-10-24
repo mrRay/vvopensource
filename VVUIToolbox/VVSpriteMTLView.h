@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface VVSpriteMTLView : NSView <CALayerDelegate,VVViewContainer>	{
+	@public
 	//id<MTLDevice>			device;
 	MTLRenderPassDescriptor			*passDescriptor;
 	id<MTLRenderPipelineState>		pso;
@@ -80,6 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readwrite) MTLPixelFormat pixelFormat;
 @property (readwrite,nullable) CGColorSpaceRef colorspace;
 @property (readonly) vector_uint2 viewportSize;
+@property (readonly) NSRect viewportBounds;	//	calculated at runtime from 'viewportSize', which is updated every time the drawable is reconfigured.
 //	set it to nil and any pixels with an alpha < 1 in the layer will be composited as transparent in the window hierarchy
 @property (strong,nullable) NSColor * layerBackgroundColor;
 
