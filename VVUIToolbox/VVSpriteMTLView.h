@@ -102,6 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
 //	the main drawing method- by default it calls this methods on the receiver's vvSubviews, and then tells the receiver's spriteManager to draw
 - (void) performDrawing:(VVRECT)r inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)cb;
 - (void) prepForDrawing;
+- (void) spritesFinishedDrawing;
 - (void) finishedDrawing;
 - (void) updateSprites;
 - (VVRECT) backingBounds;	//	return a rect describing the # of pixels we're rendering

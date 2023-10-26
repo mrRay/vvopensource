@@ -1068,6 +1068,7 @@ long		_spriteMTLViewSysVers;
 		//}
 	}
 	
+	[self spritesFinishedDrawing];
 	
 	//	tell the subviews to draw
 	[_vvSubviews rdlock];
@@ -1122,6 +1123,8 @@ long		_spriteMTLViewSysVers;
 	has completed.  this is particularly handy with the GL view, as drawing does not complete- and 
 	therefore resources have to stay available- until after glFlush() has been called.		*/
 - (void) prepForDrawing	{
+}
+- (void) spritesFinishedDrawing	{
 }
 - (void) finishedDrawing	{
 }
