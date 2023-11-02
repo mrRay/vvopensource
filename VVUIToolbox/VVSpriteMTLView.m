@@ -1227,15 +1227,22 @@ long		_spriteMTLViewSysVers;
 	
 	//	commented out- this was an attempt to make MTLImgBufferView "transparent" (0 alpha would display view behind it)
 	psDesc.alphaToCoverageEnabled = NO;
+	psDesc.colorAttachments[0].blendingEnabled = YES;
+	
 	psDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
 	psDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+	
+	//	"GL over" is:
+	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
+	
+	//	"GL add" is:
 	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
-	psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
-	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorZero;
-	psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psDesc.colorAttachments[0].blendingEnabled = YES;
+	//psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorDestinationAlpha;
+	//psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
 	
 	pso = [_device newRenderPipelineStateWithDescriptor:psDesc error:&nsErr];
 	

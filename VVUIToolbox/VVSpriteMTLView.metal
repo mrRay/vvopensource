@@ -55,8 +55,8 @@ vertex VVSpriteMTLViewRasterizerData VVSpriteMTLViewVertShader(
 
 fragment float4 VVSpriteMTLViewFragShader(
 	VVSpriteMTLViewRasterizerData inRasterData [[ stage_in ]],
-	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]],
-	float4 baseCanvasColor [[ color(0) ]]
+	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]]
+	//float4 baseCanvasColor [[ color(0) ]]
 	)
 {
 	float4			newFragColor;
@@ -73,7 +73,8 @@ fragment float4 VVSpriteMTLViewFragShader(
 	if (newFragColor.a >= 1.)
 		return newFragColor;
 	
-	return mix(baseCanvasColor, newFragColor, newFragColor.a);
+	//return mix(baseCanvasColor, newFragColor, newFragColor.a);
+	return newFragColor;
 }
 
 
@@ -82,8 +83,8 @@ fragment float4 VVSpriteMTLViewFragShader(
 
 fragment float4 VVSpriteMTLViewFragShaderIgnoreSampledAlpha(
 	VVSpriteMTLViewRasterizerData inRasterData [[ stage_in ]],
-	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]],
-	float4 baseCanvasColor [[ color(0) ]]
+	texture2d<float,access::sample> inTex [[ texture(VVSpriteMTLView_FS_Idx_Tex) ]]
+	//float4 baseCanvasColor [[ color(0) ]]
 	)
 {
 	float4			newFragColor;
@@ -101,7 +102,8 @@ fragment float4 VVSpriteMTLViewFragShaderIgnoreSampledAlpha(
 	if (newFragColor.a >= 1.)
 		return newFragColor;
 	
-	return mix(baseCanvasColor, newFragColor, newFragColor.a);
+	//return mix(baseCanvasColor, newFragColor, newFragColor.a);
+	return newFragColor;
 }
 
 
