@@ -3131,6 +3131,7 @@
 		0867D691FE84028FC02AAC07 /* VVOpenSource */ = {
 			isa = PBXGroup;
 			children = (
+				034768DFFF38A50411DB9C8B /* Products */,
 				966D3E9718634FF000A7BE9E /* Mac Frameworks */,
 				1A0566DA1C43084F00A0C6D9 /* iOS Frameworks */,
 				966D3E9618634FE900A7BE9E /* Applications */,
@@ -3139,7 +3140,6 @@
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				96ACD7221706416300138AE6 /* Frameworks */,
 				1A6533491CEB7DB40003C9D1 /* Embedded Frameworks */,
-				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = VVOpenSource;
 			sourceTree = "<group>";
