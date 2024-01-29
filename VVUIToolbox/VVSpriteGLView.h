@@ -129,4 +129,15 @@ extern long			_spriteGLViewSysVers;
 - (void) _setMouseIsDown:(BOOL)n;	//	used to work around the fact that NSViews don't get a "mouseUp" when they open a contextual menu
 @property (assign, readwrite) VVFlushMode flushMode;
 
+//	local, thread-safe version of NSView's 'boundsRotation' property (and other properties)
+@property (atomic,readwrite) CGFloat localBoundsRotation;
+@property (atomic,readwrite) NSRect localBounds;
+@property (atomic,readwrite) NSRect localBackingBounds;
+@property (atomic,readwrite) NSRect localFrame;
+//@property (atomic,readwrite) NSSize localFrameSize;
+@property (atomic,readwrite,weak) NSWindow * localWindow;
+@property (atomic,readwrite) BOOL localHidden;
+@property (atomic,readwrite) NSRect localVisibleRect;	//	updated on setNeedsDisplay and on changes to bounds or frame
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n;
+
 @end

@@ -72,6 +72,14 @@ long			_spriteGLViewSysVers;
 	mouseIsDown = NO;
 	clickedSubview = nil;
 	
+	self.localBoundsRotation = self.boundsRotation;
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.bounds];
+	self.localFrame = self.frame;
+	self.localWindow = self.window;
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+	
 	pthread_mutexattr_t		attr;
 	
 	pthread_mutexattr_init(&attr);
@@ -187,6 +195,58 @@ long			_spriteGLViewSysVers;
 - (BOOL) needsPanelToBecomeKey	{
 	return YES;
 }
+
+
+- (void) setBoundsRotation:(CGFloat)n	{
+	[super setBoundsRotation:n];
+	self.localBoundsRotation = self.boundsRotation;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBounds:(NSRect)n	{
+	[super setBounds:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsOrigin:(NSPoint)n	{
+	[super setBoundsOrigin:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsSize:(NSSize)n	{
+	[super setBoundsSize:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) viewWillMoveToWindow:(NSWindow *)n	{
+	//NSLog(@"%s",__func__);
+	self.localWindow = n;
+	self.localVisibleRect = self.visibleRect;
+	[super viewWillMoveToWindow:n];
+}
+- (void) setHidden:(BOOL)n	{
+	[super setHidden:n];
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setNeedsDisplay:(BOOL)n	{
+	if (n)	{
+		self.localVisibleRect = self.visibleRect;
+	}
+	[super setNeedsDisplay:n];
+}
+- (void) setNeedsDisplayInRect:(NSRect)n	{
+	self.localVisibleRect = self.visibleRect;
+	[super setNeedsDisplayInRect:n];
+}
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n	{
+	return VVMAKERECT(n.origin.x*localToBackingBoundsMultiplier,n.origin.y*localToBackingBoundsMultiplier,n.size.width*localToBackingBoundsMultiplier,n.size.height*localToBackingBoundsMultiplier);
+}
+
+
 - (void) removeFromSuperview	{
 	pthread_mutex_lock(&glLock);
 	[super removeFromSuperview];
@@ -234,6 +294,10 @@ long			_spriteGLViewSysVers;
 	//NSLog(@"%s ... %@",__func__,self);
 	if (deleted || vvSubviews==nil || [vvSubviews count]<1)
 		return;
+	
+	self.localWindow = self.window;
+	self.localVisibleRect = self.visibleRect;
+	
 	[vvSubviews rdlock];
 	for (VVView *viewPtr in [vvSubviews array])	{
 		[viewPtr _viewDidMoveToWindow];
@@ -241,6 +305,50 @@ long			_spriteGLViewSysVers;
 	[vvSubviews unlock];
 	
 	[self updateTrackingAreas];
+}
+- (void) viewDidChangeBackingProperties	{
+	//NSLog(@"%s, %@",__func__,self);
+	[super viewDidChangeBackingProperties];
+	
+	//	update the bounds to real bounds multiplier
+	BOOL		backingBoundsChanged = NO;
+	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
+		VVRECT		bounds = [self bounds];
+		VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
+		double		tmpDouble;
+		tmpDouble = (backingBounds.size.width/bounds.size.width);
+		if (tmpDouble != localToBackingBoundsMultiplier)
+			backingBoundsChanged = YES;
+		localToBackingBoundsMultiplier = tmpDouble;
+	}
+	else	{
+		if (localToBackingBoundsMultiplier != 1.0)
+			backingBoundsChanged = YES;
+		localToBackingBoundsMultiplier = 1.0;
+	}
+	//NSLog(@"\t\tlocalToBackingBoundsMultiplier is %0.2f",localToBackingBoundsMultiplier);
+	
+	pthread_mutex_lock(&glLock);
+		self.localBounds = self.bounds;
+		self.localFrame = self.frame;
+		self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+		self.localVisibleRect = self.visibleRect;
+		//[self updateSprites];
+		//spritesNeedUpdate = YES;
+		//needsReshape = YES;
+		initialized = NO;
+	pthread_mutex_unlock(&glLock);
+	
+	//	if i have subviews, tell them to update their display bounds multipliers!
+	[vvSubviews rdlock];
+	for (VVView *viewPtr in [vvSubviews array])	{
+		[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+	}
+	[vvSubviews unlock];
+	
+	[self setSpritesNeedUpdate:YES];
+	
+	[self setNeedsDisplayInRect:self.backingBounds];
 }
 - (void) updateTrackingAreas	{
 	[super updateTrackingAreas];
@@ -520,17 +628,9 @@ long			_spriteGLViewSysVers;
 
 
 - (void) setFrame:(VVRECT)f	{
-	//NSLog(@"%s ... %@, (%0.2f, %0.2f) %0.2f x %0.2f",__func__, self, f.origin.x, f.origin.y, f.size.width, f.size.height);
+	//NSLog(@"%s, %@ ... %@",__func__,self,NSStringFromRect(f));
 	if (deleted)
 		return;
-	pthread_mutex_lock(&glLock);
-		[super setFrame:f];
-		[self updateSprites];
-		//spritesNeedUpdate = YES;
-		//needsReshape = YES;
-		initialized = NO;
-	pthread_mutex_unlock(&glLock);
-	
 	//	update the bounds to real bounds multiplier
 	BOOL		backingBoundsChanged = NO;
 	if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
@@ -547,6 +647,18 @@ long			_spriteGLViewSysVers;
 			backingBoundsChanged = YES;
 		localToBackingBoundsMultiplier = 1.0;
 	}
+	
+	pthread_mutex_lock(&glLock);
+		[super setFrame:f];
+		self.localBounds = self.bounds;
+		self.localFrame = self.frame;
+		self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+		self.localVisibleRect = self.visibleRect;
+		[self updateSprites];
+		//spritesNeedUpdate = YES;
+		//needsReshape = YES;
+		initialized = NO;
+	pthread_mutex_unlock(&glLock);
 	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
 	
 	[vvSubviews rdlock];
@@ -561,8 +673,9 @@ long			_spriteGLViewSysVers;
 	//NSLog(@"\t\t%s - FINISHED",__func__);
 }
 - (void) setFrameSize:(VVSIZE)n	{
-	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
+	//NSLog(@"%s, %@ ... %@",__func__,self,NSStringFromSize(n));
 	VVSIZE			oldSize = [self frame].size;
+	
 	[super setFrameSize:n];
 	
 	if ([self autoresizesSubviews])	{
@@ -628,6 +741,19 @@ long			_spriteGLViewSysVers;
 		initialized = NO;
 		pthread_mutex_unlock(&glLock);
 	}
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setFrameOrigin:(NSPoint)n	{
+	[super setFrameOrigin:n];
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	spritesNeedUpdate = YES;
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
@@ -677,10 +803,12 @@ long			_spriteGLViewSysVers;
 	pthread_mutex_unlock(&glLock);
 }
 - (VVRECT) backingBounds	{
-	if (_spriteGLViewSysVers >= 7)
-		return [(id)self convertRectToBacking:[self bounds]];
-	else
+	if (_spriteGLViewSysVers >= 7)	{
+		return [(id)self convertRectToLocalBackingBounds:[self bounds]];
+	}
+	else	{
 		return [self bounds];
+	}
 }
 - (double) localToBackingBoundsMultiplier	{
 	return localToBackingBoundsMultiplier;
@@ -926,7 +1054,7 @@ long			_spriteGLViewSysVers;
 	if (deleted)
 		return;
 	
-	id			myWin = [self window];
+	id			myWin = self.localWindow;
 	if (myWin == nil)
 		return;
 	
@@ -1036,7 +1164,9 @@ long			_spriteGLViewSysVers;
 		if (spriteManager != nil)	{
 			if (_spriteGLViewSysVers >= 7)	{
 				//[spriteManager drawRect:[(id)self convertRectToBacking:r]];
-				[spriteManager drawRect:[(id)self convertRectToBacking:r] inContext:cgl_ctx];
+				//[spriteManager drawRect:[(id)self convertRectToBacking:r] inContext:cgl_ctx];
+				//[spriteManager drawRect:NSIntersectionRect(r,self.localBackingBounds) inContext:cgl_ctx];	//	'r' is cropped to the bounds (and in any case likely doesn't account for localToBacingBoundsMultiplier)
+				[spriteManager drawRect:self.localBackingBounds inContext:cgl_ctx];
 			}
 			else	{
 				//[spriteManager drawRect:r];
@@ -1116,7 +1246,8 @@ long			_spriteGLViewSysVers;
 				}
 			}
 			//	now that i'm done drawing subviews, set scissor back to my full bounds and disable the test
-			VVRECT		bounds = [self backingBounds];
+			//VVRECT		bounds = [self backingBounds];
+			VVRECT		bounds = self.localBackingBounds;
 			glScissor(bounds.origin.x,bounds.origin.y,bounds.size.width,bounds.size.height);
 			glDisable(GL_SCISSOR_TEST);
 		}
@@ -1181,11 +1312,15 @@ long			_spriteGLViewSysVers;
 }
 - (void) initializeGL	{
 	//NSLog(@"%s ... %p",__func__,self);
-	if (deleted)
+	if (deleted)	{
+		NSLog(@"ERR: deleted, %s, %@",__func__,self);
 		return;
+	}
 	CGLContextObj		cgl_ctx = [[self openGLContext] CGLContextObj];
-	if (cgl_ctx == NULL)
+	if (cgl_ctx == NULL)	{
+		NSLog(@"ERR: NULL, %s, %@",__func__,self);
 		return;
+	}
 	//VVRECT				bounds = [self bounds];
 	//long				cpSwapInterval = 1;
 	//[[self openGLContext] setValues:(GLint *)&cpSwapInterval forParameter:NSOpenGLCPSwapInterval];
@@ -1256,8 +1391,9 @@ long			_spriteGLViewSysVers;
 - (void) setFlipped:(BOOL)n	{
 	BOOL		changing = (n==flipped) ? NO : YES;
 	flipped = n;
-	if (changing)
+	if (changing)	{
 		initialized = NO;
+	}
 }
 - (BOOL) flipped	{
 	return flipped;

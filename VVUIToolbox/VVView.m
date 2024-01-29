@@ -700,7 +700,13 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	
 	//	don't forget to account for any changes to the bounds in the container view itself!
 	if (_containerView != nil)	{
-		NSRect					tmpBounds = _containerView.bounds;
+		NSRect					tmpBounds;
+		if ([_containerView respondsToSelector:@selector(localBounds)])	{
+			tmpBounds = [(VVSpriteMTLView*)_containerView localBounds];
+		}
+		else	{
+			tmpBounds = _containerView.bounds;
+		}
 		NSAffineTransform		*boundsTrans = [NSAffineTransform transform];
 		[boundsTrans translateXBy:-tmpBounds.origin.x yBy:-tmpBounds.origin.y];
 		[tmpArray addObject:boundsTrans];
@@ -1014,13 +1020,23 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	//	if my superview's nil, i'm a top-level VVView
 	if (_superview==nil)	{
 		//	get the container view's visible rect (its visible bounds)
-		superviewVisRect = [_containerView visibleRect];
-		if (VVISZERORECT(superviewVisRect))
-			return VVZERORECT;
+		if (_containerView!=nil && [(VVSpriteMTLView*)_containerView respondsToSelector:@selector(localVisibleRect)])	{
+			superviewVisRect = [(VVSpriteMTLView*)_containerView localVisibleRect];
+			if (VVISZERORECT(superviewVisRect))
+				return VVZERORECT;
+			VVRECT		tmpBounds = [(VVSpriteMTLView*)_containerView localBounds];
+			superviewVisRect.origin.x += tmpBounds.origin.x;
+			superviewVisRect.origin.y += tmpBounds.origin.y;
+		}
+		else	{
+			superviewVisRect = [_containerView visibleRect];
+			if (VVISZERORECT(superviewVisRect))
+				return VVZERORECT;
+			VVRECT		tmpBounds = [_containerView bounds];
+			superviewVisRect.origin.x += tmpBounds.origin.x;
+			superviewVisRect.origin.y += tmpBounds.origin.y;
+		}
 		
-		VVRECT		tmpBounds = [_containerView bounds];
-		superviewVisRect.origin.x += tmpBounds.origin.x;
-		superviewVisRect.origin.y += tmpBounds.origin.y;
 	}
 	//	else get my superview's visible rect
 	else	{
@@ -1069,6 +1085,9 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	returnMe.size = VVMAKESIZE(fabs(returnMe.size.width),fabs(returnMe.size.height));
 	//VVRectLog(@"\t\treturning",returnMe);
 	return returnMe;
+}
+- (VVRECT) localVisibleRect	{
+	return [self visibleRect];
 }
 
 
@@ -1735,12 +1754,23 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	return localToBackingBoundsMultiplier;
 }
 - (void) setLocalToBackingBoundsMultiplier:(double)n	{
+	BOOL		changed = (localToBackingBoundsMultiplier != n);
 	localToBackingBoundsMultiplier = n;
 	[subviews rdlock];
 	for (VVView *viewPtr in [subviews array])	{
 		[viewPtr setLocalToBackingBoundsMultiplier:n];
 	}
 	[subviews unlock];
+	if (changed)	{
+		self.spritesNeedUpdate = YES;
+	}
+}
+
+- (VVRECT) convertRectToBacking:(VVRECT)n	{
+	return VVMAKERECT(n.origin.x*localToBackingBoundsMultiplier, n.origin.y*localToBackingBoundsMultiplier, n.size.width*localToBackingBoundsMultiplier, n.size.height*localToBackingBoundsMultiplier);
+}
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n	{
+	return [self convertRectToBacking:n];
 }
 
 
@@ -1869,8 +1899,20 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 		[(id<VVViewContainer>)_containerView _setMouseIsDown:n];
 }
 @synthesize dragTypes;
+- (BOOL) isVVView	{
+	return YES;
+}
 
 
+@end
+
+
+
+
+@implementation NSObject (VVView)
+- (BOOL) isVVView	{
+	return NO;
+}
 @end
 
 

@@ -353,7 +353,7 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 	[returnMe setAuxTransMatrix:auxTransMatrix];
 	[returnMe setAuxOpacity:auxOpacity];
 	[returnMe setContentTimestampFromPtr:&contentTimestamp];
-	[returnMe setUserInfo:userInfo];
+	//[returnMe setUserInfo:userInfo];	//	do not copy any of the supporting stuff- the original's handling all this
 	[returnMe setBackingID:backingID];
 	
 #if !TARGET_OS_IPHONE
@@ -442,11 +442,18 @@ unsigned long VVBufferDescriptorCalculateBytesPerRow(VVBufferDescriptor *b, VVSI
 	return SWatchTimeForAbsTimeUnit(contentTimestamp);
 }
 - (void) setUserInfo:(id)n	{
-	VVRELEASE(userInfo);
-	userInfo = n;
+	if (copySourceBuffer == nil)	{
+		VVRELEASE(userInfo);
+		userInfo = n;
+		return;
+	}
+	[copySourceBuffer setUserInfo:n];
 }
 - (id) userInfo	{
-	return userInfo;
+	if (copySourceBuffer == nil)	{
+		return userInfo;
+	}
+	return [copySourceBuffer userInfo];
 }
 - (void) setAuxTransMatrix:(GLfloat *)n	{
 	/*

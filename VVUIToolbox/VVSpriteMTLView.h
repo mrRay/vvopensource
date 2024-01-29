@@ -77,6 +77,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) _setMouseIsDown:(BOOL)n;	//	used to work around the fact that NSViews don't get a "mouseUp" when they open a contextual menu
 @property (weak,readwrite,nullable) VVView * clickedSubview;
 
+//	local, thread-safe version of NSView's 'boundsRotation' property (and other properties)
+@property (atomic,readwrite) CGFloat localBoundsRotation;
+@property (atomic,readwrite) NSRect localBounds;
+@property (atomic,readwrite) NSRect localBackingBounds;
+@property (atomic,readwrite) NSRect localFrame;
+//@property (atomic,readwrite) NSSize localFrameSize;
+@property (atomic,readwrite,weak) NSWindow * localWindow;
+@property (atomic,readwrite) BOOL localHidden;
+@property (atomic,readwrite) NSRect localVisibleRect;	//	updated on setNeedsDisplay and on changes to bounds or frame
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n;
+
 @property (strong,readwrite) id<MTLDevice> device;
 @property (readwrite) MTLPixelFormat pixelFormat;
 @property (readwrite,nullable) CGColorSpaceRef colorspace;
@@ -106,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) finishedDrawing;
 - (void) updateSprites;
 - (VVRECT) backingBounds;	//	return a rect describing the # of pixels we're rendering
-- (double) localToBackingBoundsMultiplier;
+//- (double) localToBackingBoundsMultiplier;
 
 - (void) addVVSubview:(VVView *)n;
 - (void) removeVVSubview:(VVView *)n;

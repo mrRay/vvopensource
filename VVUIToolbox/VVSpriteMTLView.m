@@ -83,6 +83,14 @@ long		_spriteMTLViewSysVers;
 	_mouseIsDown = NO;
 	_clickedSubview = nil;
 	
+	self.localBoundsRotation = self.boundsRotation;
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.bounds];
+	self.localWindow = self.window;
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+	
 	_device = nil;
 	//self.pixelFormat = MTLPixelFormatRGBA32Float;	//	doesn't work (throws exception, invalid pixel format)
 	self.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -131,7 +139,7 @@ long		_spriteMTLViewSysVers;
 	
 }
 - (void) awakeFromNib	{
-	NSLog(@"%s ... %@",__func__,self);
+	//NSLog(@"%s ... %@",__func__,self);
 	_spritesNeedUpdate = YES;
 }
 - (void) prepareToBeDeleted	{
@@ -152,6 +160,7 @@ long		_spriteMTLViewSysVers;
 	//NSLog(@"%s ... %@",__func__,self);
 	if (!_deleted)
 		[self prepareToBeDeleted];
+	
 	self.colorspace = NULL;
 }
 
@@ -166,7 +175,14 @@ long		_spriteMTLViewSysVers;
 - (void) viewDidChangeBackingProperties	{
 	//NSLog(@"%s ... %@",__func__,self);
 	[super viewDidChangeBackingProperties];
+	
 	[self reconfigureDrawable];
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	_spritesNeedUpdate = YES;
 	[self setNeedsDisplay:YES];
 }
 - (void)viewDidMoveToWindow	{
@@ -177,6 +193,9 @@ long		_spriteMTLViewSysVers;
 	[super viewDidMoveToWindow];
 	[self reconfigureDrawable];
 	[self setNeedsDisplay:YES];
+	
+	self.localWindow = self.window;
+	self.localVisibleRect = self.visibleRect;
 	
 	if (_vvSubviews==nil || [_vvSubviews count]<1)
 		return;
@@ -204,11 +223,11 @@ long		_spriteMTLViewSysVers;
 //	[self reconfigureDrawable];
 //	[self setNeedsDisplay:YES];
 //}
-- (void) setBoundsSize:(NSSize)n	{
-	[super setBoundsSize:n];
-	[self reconfigureDrawable];
-	[self setNeedsDisplay:YES];
-}
+//- (void) setBoundsSize:(NSSize)n	{
+//	[super setBoundsSize:n];
+//	[self reconfigureDrawable];
+//	[self setNeedsDisplay:YES];
+//}
 
 
 - (BOOL) acceptsFirstMouse:(NSEvent *)theEvent	{
@@ -233,6 +252,68 @@ long		_spriteMTLViewSysVers;
 }
 
 
+- (void) setBoundsRotation:(CGFloat)n	{
+	[super setBoundsRotation:n];
+	self.localBoundsRotation = self.boundsRotation;
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBounds:(NSRect)n	{
+	[super setBounds:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsOrigin:(NSPoint)n	{
+	[super setBoundsOrigin:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsSize:(NSSize)n	{
+	[super setBoundsSize:n];
+	[self reconfigureDrawable];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	[self setNeedsDisplay:YES];
+}
+- (void) setFrame:(NSRect)n	{
+	if (_deleted)
+		return;
+	[super setFrame:n];
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	self.spritesNeedUpdate = YES;
+}
+- (void) viewWillMoveToWindow:(NSWindow *)n	{
+	//NSLog(@"%s",__func__);
+	self.localWindow = n;
+	self.localVisibleRect = self.visibleRect;
+	[super viewWillMoveToWindow:n];
+}
+- (void) setHidden:(BOOL)n	{
+	[super setHidden:n];
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setNeedsDisplay:(BOOL)n	{
+	if (n)	{
+		self.contentNeedsRedraw = YES;
+		self.localVisibleRect = self.visibleRect;
+	}
+	[super setNeedsDisplay:n];
+}
+- (void) setNeedsDisplayInRect:(NSRect)n	{
+	self.localVisibleRect = self.visibleRect;
+	[super setNeedsDisplayInRect:n];
+}
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n	{
+	return VVMAKERECT(n.origin.x*_localToBackingBoundsMultiplier,n.origin.y*_localToBackingBoundsMultiplier,n.size.width*_localToBackingBoundsMultiplier,n.size.height*_localToBackingBoundsMultiplier);
+}
+
+
 - (CALayer *) makeBackingLayer	{
 	return [CAMetalLayer layer];
 }
@@ -242,14 +323,14 @@ long		_spriteMTLViewSysVers;
 	[self setNeedsDisplay:YES];
 }
 //@synthesize needsDisplay=myNeedsDisplay;
-- (void) setNeedsDisplay:(BOOL)n	{
-	//myNeedsDisplay = n;
-	if (n)
-		self.contentNeedsRedraw = YES;
-	[super setNeedsDisplay:n];
-	//if (n && self.delegate != nil)
-	//	[self.delegate redrawView:self];
-}
+//- (void) setNeedsDisplay:(BOOL)n	{
+//	//myNeedsDisplay = n;
+//	if (n)
+//		self.contentNeedsRedraw = YES;
+//	[super setNeedsDisplay:n];
+//	//if (n && self.delegate != nil)
+//	//	[self.delegate redrawView:self];
+//}
 
 
 /*===================================================================================*/
@@ -483,48 +564,48 @@ long		_spriteMTLViewSysVers;
 /*------------------------------------*/
 
 
-- (void) setFrame:(VVRECT)f	{
-	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromRect(f));
-	if (_deleted)
-		return;
-	//pthread_mutex_lock(&glLock);
-		[super setFrame:f];
-		//[self updateSprites];
-		//_spritesNeedUpdate = YES;
-		self.spritesNeedUpdate = YES;
-		//needsReshape = YES;
-		//initialized = NO;
-	//pthread_mutex_unlock(&glLock);
-	
-	//	update the bounds to real bounds multiplier
-	//BOOL		backingBoundsChanged = NO;
-	//if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
-	//	VVRECT		bounds = [self bounds];
-	//	VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
-	//	double		tmpDouble;
-	//	tmpDouble = (backingBounds.size.width/bounds.size.width);
-	//	if (tmpDouble != _localToBackingBoundsMultiplier)
-	//		backingBoundsChanged = YES;
-	//	_localToBackingBoundsMultiplier = tmpDouble;
-	//}
-	//else	{
-	//	if (localToBackingBoundsMultiplier != 1.0)
-	//		backingBoundsChanged = YES;
-	//	localToBackingBoundsMultiplier = 1.0;
-	//}
-	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
-	
-	//[_vvSubviews rdlock];
-	//if (backingBoundsChanged)	{
-	//	for (VVView *viewPtr in [_vvSubviews array])	{
-	//		[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
-	//	}
-	//}
-	//[_vvSubviews unlock];
-	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,localToBackingBoundsMultiplier,self);
-	
-	//NSLog(@"\t\t%s - FINISHED",__func__);
-}
+//- (void) setFrame:(VVRECT)f	{
+//	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromRect(f));
+//	if (_deleted)
+//		return;
+//	//pthread_mutex_lock(&glLock);
+//		[super setFrame:f];
+//		//[self updateSprites];
+//		//_spritesNeedUpdate = YES;
+//		self.spritesNeedUpdate = YES;
+//		//needsReshape = YES;
+//		//initialized = NO;
+//	//pthread_mutex_unlock(&glLock);
+//	
+//	//	update the bounds to real bounds multiplier
+//	//BOOL		backingBoundsChanged = NO;
+//	//if (_spriteGLViewSysVers>=7 && [(id)self wantsBestResolutionOpenGLSurface])	{
+//	//	VVRECT		bounds = [self bounds];
+//	//	VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
+//	//	double		tmpDouble;
+//	//	tmpDouble = (backingBounds.size.width/bounds.size.width);
+//	//	if (tmpDouble != _localToBackingBoundsMultiplier)
+//	//		backingBoundsChanged = YES;
+//	//	_localToBackingBoundsMultiplier = tmpDouble;
+//	//}
+//	//else	{
+//	//	if (localToBackingBoundsMultiplier != 1.0)
+//	//		backingBoundsChanged = YES;
+//	//	localToBackingBoundsMultiplier = 1.0;
+//	//}
+//	//NSLog(@"\t\t%s, local to backing multiplier is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+//	
+//	//[_vvSubviews rdlock];
+//	//if (backingBoundsChanged)	{
+//	//	for (VVView *viewPtr in [_vvSubviews array])	{
+//	//		[viewPtr setLocalToBackingBoundsMultiplier:localToBackingBoundsMultiplier];
+//	//	}
+//	//}
+//	//[_vvSubviews unlock];
+//	//NSLog(@"\t\t%s, BTRBM is %f for %@",__func__,localToBackingBoundsMultiplier,self);
+//	
+//	//NSLog(@"\t\t%s - FINISHED",__func__);
+//}
 - (void) setFrameSize:(VVSIZE)n	{
 	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromSize(n));
 	VVSIZE			oldSize = [self frame].size;
@@ -532,6 +613,10 @@ long		_spriteMTLViewSysVers;
 	
 	[super setFrameSize:n];
 	[self reconfigureDrawable];
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
 	
 	BOOL			backingBoundsChanged = (oldBackingBounds != _localToBackingBoundsMultiplier);
 	
@@ -602,6 +687,14 @@ long		_spriteMTLViewSysVers;
 	[self updateSprites];
 	//self.spritesNeedUpdate = YES;
 	[self setNeedsDisplay:YES];
+}
+- (void) setFrameOrigin:(NSPoint)n	{
+	[super setFrameOrigin:n];
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	_spritesNeedUpdate = YES;
 }
 - (void) updateSprites	{
 	_spritesNeedUpdate = NO;
@@ -1058,7 +1151,8 @@ long		_spriteMTLViewSysVers;
 			
 			//[_spriteManager drawRect:[(id)self convertRectToBacking:r] inEncoder:inEnc commandBuffer:cb];
 			NSRect		tmpRect = r;
-			NSRect		tmpBounds = self.bounds;
+			//NSRect		tmpBounds = self.bounds;
+			NSRect		tmpBounds = self.localBounds;
 			tmpRect.origin = NSMakePoint( tmpRect.origin.x + tmpBounds.origin.x, tmpRect.origin.y + tmpBounds.origin.y );
 			[_spriteManager drawRect:tmpRect inEncoder:inEnc commandBuffer:cb];
 		//}
@@ -1291,6 +1385,13 @@ long		_spriteMTLViewSysVers;
 
 @synthesize layerBackgroundColor=_layerBackgroundColor;
 - (void) setLayerBackgroundColor:(NSColor *)n	{
+	if (![NSThread isMainThread])	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setLayerBackgroundColor:n];
+		});
+		return;
+	}
+	
 	_layerBackgroundColor = [n colorUsingColorSpace:[NSColorSpace deviceRGBColorSpace]];
 	
 	if (_layerBackgroundColor == nil)	{

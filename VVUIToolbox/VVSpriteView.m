@@ -50,6 +50,7 @@ int				_spriteViewCount;
 - (void) generalInit	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
+	_localToBackingBoundsMultiplier = 1.0;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	propertyLock = VV_LOCK_INIT;
@@ -62,6 +63,15 @@ int				_spriteViewCount;
 	modifierFlags = 0;
 	mouseIsDown = NO;
 	clickedSubview = nil;
+	
+	self.localBoundsRotation = self.boundsRotation;
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.bounds];
+	self.localWindow = self.window;
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+	
 	vvSubviews = [[MutLockArray alloc] init];
 }
 - (void) prepareToBeDeleted	{
@@ -112,6 +122,96 @@ int				_spriteViewCount;
 }
 - (BOOL) needsPanelToBecomeKey	{
 	return YES;
+}
+
+
+- (void) setBoundsRotation:(CGFloat)n	{
+	[super setBoundsRotation:n];
+	self.localBoundsRotation = self.boundsRotation;
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBounds:(NSRect)n	{
+	[super setBounds:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsOrigin:(NSPoint)n	{
+	[super setBoundsOrigin:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setBoundsSize:(NSSize)n	{
+	[super setBoundsSize:n];
+	self.localBounds = self.bounds;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setFrame:(NSRect)n	{
+	if (deleted)
+		return;
+	
+	[super setFrame:n];
+	
+	VVRECT		bounds = [self bounds];
+	VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
+	double		tmpDouble;
+	tmpDouble = (backingBounds.size.width/bounds.size.width);
+	_localToBackingBoundsMultiplier = tmpDouble;
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	spritesNeedUpdate = YES;
+}
+- (void) viewDidChangeBackingProperties	{
+	//NSLog(@"%s ... %@",__func__,self);
+	[super viewDidChangeBackingProperties];
+	
+	VVRECT		bounds = [self bounds];
+	VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
+	double		tmpDouble;
+	tmpDouble = (backingBounds.size.width/bounds.size.width);
+	_localToBackingBoundsMultiplier = tmpDouble;
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	self.spritesNeedUpdate = YES;
+	[self setNeedsDisplay:YES];
+}
+- (void) viewWillMoveToWindow:(NSWindow *)n	{
+	//NSLog(@"%s",__func__);
+	self.localWindow = n;
+	self.localVisibleRect = self.visibleRect;
+	[super viewWillMoveToWindow:n];
+}
+- (void) viewDidMoveToWindow	{
+	//NSLog(@"%s",__func__);
+	self.localWindow = self.window;
+	self.localVisibleRect = self.visibleRect;
+	[super viewDidMoveToWindow];
+}
+- (void) setHidden:(BOOL)n	{
+	[super setHidden:n];
+	self.localHidden = self.hidden;
+	self.localVisibleRect = self.visibleRect;
+}
+- (void) setNeedsDisplay:(BOOL)n	{
+	if (n)	{
+		self.localVisibleRect = self.visibleRect;
+	}
+	[super setNeedsDisplay:n];
+}
+- (void) setNeedsDisplayInRect:(NSRect)n	{
+	self.localVisibleRect = self.visibleRect;
+	[super setNeedsDisplayInRect:n];
+}
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n	{
+	return n;
 }
 
 
@@ -229,9 +329,6 @@ int				_spriteViewCount;
 	[self unregisterDraggedTypes];
 	[self registerForDraggedTypes:tmpArray];
 }
-- (double) localToBackingBoundsMultiplier	{
-	return 1.0;
-}
 
 
 /*===================================================================================*/
@@ -239,15 +336,23 @@ int				_spriteViewCount;
 /*------------------------------------*/
 
 
-- (void) setFrame:(VVRECT)f	{
-	[super setFrame:f];
-	//[self updateSprites];
-	spritesNeedUpdate = YES;
-}
 - (void) setFrameSize:(VVSIZE)n	{
 	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
 	VVSIZE			oldSize = [self frame].size;
+	double			oldBackingBounds = _localToBackingBoundsMultiplier;
+	
 	[super setFrameSize:n];
+	
+	VVRECT		bounds = [self bounds];
+	VVRECT		backingBounds = [(id)self convertRectToBacking:bounds];
+	double		tmpDouble;
+	tmpDouble = (backingBounds.size.width/bounds.size.width);
+	_localToBackingBoundsMultiplier = tmpDouble;
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
 	
 	if ([self autoresizesSubviews])	{
 		double		widthDelta = n.width - oldSize.width;
@@ -288,6 +393,14 @@ int				_spriteViewCount;
 		}
 		[vvSubviews unlock];
 	}
+}
+- (void) setFrameOrigin:(NSPoint)n	{
+	[super setFrameOrigin:n];
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	spritesNeedUpdate = YES;
 }
 - (void) updateSprites	{
 	spritesNeedUpdate = NO;
@@ -454,7 +567,7 @@ int				_spriteViewCount;
 	LOCK(&propertyLock);
 	if (clearColor != nil)	{
 		[clearColor set];
-		NSRectFill(f);
+		NSRectFill(NSIntersectionRect(f,self.localBackingBounds));
 	}
 	UNLOCK(&propertyLock);
 	

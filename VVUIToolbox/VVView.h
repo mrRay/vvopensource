@@ -230,6 +230,8 @@ typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
 - (VVRECT) backingBounds;	//	GL views don't respect NSView's "bounds", even if the GL view is on a retina machine and its bounds are of a different dpi than the frame.  this returns the # of pixels this view is rendering.
 - (double) localToBackingBoundsMultiplier;
 - (void) setLocalToBackingBoundsMultiplier:(double)n;
+- (VVRECT) convertRectToBacking:(VVRECT)n;
+- (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n;
 
 @property (readonly) BOOL deleted;
 @property (readonly) VVSpriteManager *spriteManager;
@@ -254,4 +256,10 @@ typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
 @property (readonly) MutLockArray *dragTypes;
 
 
+@end
+
+
+
+@interface NSObject (VVView)
+@property (readonly) BOOL isVVView;
 @end
