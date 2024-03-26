@@ -1263,24 +1263,30 @@ long			_spriteGLViewSysVers;
 			GLSTROKERECT([self backingBounds]);
 		}
 		
-		//	flush!
-		switch (flushMode)	{
-			case VVFlushModeGL:
-				glFlush();
-				break;
-			case VVFlushModeCGL:
-				CGLFlushDrawable(cgl_ctx);
-				break;
-			case VVFlushModeNS:
-				[context flushBuffer];
-				break;
-			case VVFlushModeApple:
-				glFlushRenderAPPLE();
-				break;
-			case VVFlushModeFinish:
-				glFinish();
-				break;
+		@try	{
+			//	flush!
+			switch (flushMode)	{
+				case VVFlushModeGL:
+					glFlush();
+					break;
+				case VVFlushModeCGL:
+					CGLFlushDrawable(cgl_ctx);
+					break;
+				case VVFlushModeNS:
+					[context flushBuffer];
+					break;
+				case VVFlushModeApple:
+					glFlushRenderAPPLE();
+					break;
+				case VVFlushModeFinish:
+					glFinish();
+					break;
+			}
 		}
+		@catch (NSException *exc)	{
+			NSLog(@"ERR: caught exception (%@) in %s",exc,__func__);
+		}
+		
 		
 		//	lock around the fence, insert a fence in the command stream, and swap fences
 		LOCK(&fenceLock);

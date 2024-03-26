@@ -1029,26 +1029,32 @@ BOOL			_hasIntegratedAndDiscreteGPUsFlag = NO;
 	CGLContextObj		cgl_ctx = [context CGLContextObj];
 #endif
 	
-	//	flush the buffer before i unbind the framebuffer (thanks, lili!)
-	switch (flushMode)	{
-		case VVGLFlushModeGL:
-			glFlush();
-			break;
-#if !TARGET_OS_IPHONE
-		case VVGLFlushModeCGL:
-			CGLFlushDrawable(cgl_ctx);
-			break;
-		case VVGLFlushModeNS:
-			[context flushBuffer];
-			break;
-		case VVGLFlushModeApple:
-			glFlushRenderAPPLE();
-			break;
-#endif
-		case VVGLFlushModeFinish:
-			glFinish();
-			break;
+	@try	{
+		//	flush the buffer before i unbind the framebuffer (thanks, lili!)
+		switch (flushMode)	{
+			case VVGLFlushModeGL:
+				glFlush();
+				break;
+	#if !TARGET_OS_IPHONE
+			case VVGLFlushModeCGL:
+				CGLFlushDrawable(cgl_ctx);
+				break;
+			case VVGLFlushModeNS:
+				[context flushBuffer];
+				break;
+			case VVGLFlushModeApple:
+				glFlushRenderAPPLE();
+				break;
+	#endif
+			case VVGLFlushModeFinish:
+				glFinish();
+				break;
+		}
 	}
+	@catch (NSException *exc)	{
+		NSLog(@"ERR: caught exception (%@) in %s",exc,__func__);
+	}
+	
 	
 	//	if i'm doing multisampling, i have to blit from the msaa fbo to the normal fbo!
 	if (fboMSAA > 0)	{

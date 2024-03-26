@@ -386,11 +386,16 @@ pthread_mutex_t			_globalQCContextLock;
 				pthread_mutex_lock(&universalInitializeLock);
 				CGLLockContext([context CGLContextObj]);
 				//NSLog(@"\t\tlocked context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
-				renderer = [[QCRenderer alloc]
-					initWithCGLContext:[context CGLContextObj]
-					pixelFormat:[customPixelFormat CGLPixelFormatObj]
-					colorSpace:colorSpace
-					composition:composition];
+				@try	{
+					renderer = [[QCRenderer alloc]
+						initWithCGLContext:[context CGLContextObj]
+						pixelFormat:[customPixelFormat CGLPixelFormatObj]
+						colorSpace:colorSpace
+						composition:composition];
+				}
+				@catch (NSException *exc)	{
+					NSLog(@"ERR: exc (%@) in %s",exc,__func__);
+				}
 				//NSLog(@"\t\tunlocking context %p on thread %p in %s on %p",[context CGLContextObj],[NSThread currentThread],__func__,self);
 				CGLUnlockContext([context CGLContextObj]);
 				if (renderer == nil)
