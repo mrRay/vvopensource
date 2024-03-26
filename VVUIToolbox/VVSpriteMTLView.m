@@ -210,8 +210,17 @@ long		_spriteMTLViewSysVers;
 - (void) updateTrackingAreas	{
 	[super updateTrackingAreas];
 	
-	if (_deleted || _vvSubviews==nil || [_vvSubviews count]<1)
+	if (_deleted)
 		return;
+	
+	self.localBounds = self.bounds;
+	self.localFrame = self.frame;
+	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
+	self.localVisibleRect = self.visibleRect;
+	
+	if (_vvSubviews==nil || [_vvSubviews count]<1)
+		return;
+	
 	[_vvSubviews rdlock];
 	for (VVView *viewPtr in [_vvSubviews array])	{
 		[viewPtr updateTrackingAreas];
@@ -968,26 +977,32 @@ long		_spriteMTLViewSysVers;
 		
 		tmpScreen = ScreenForWindowFrame(tmpWin.frame);
 	}
-	CGFloat			scale = tmpScreen.backingScaleFactor;
-	self.localToBackingBoundsMultiplier = scale;
 	
-	//NSLog(@"\t\tscreen is %@, window is %@, scale is %0.2f", self.window.screen, self.window, scale);
+	if (tmpScreen != nil)	{
+		CGFloat			scale = tmpScreen.backingScaleFactor;
+		self.localToBackingBoundsMultiplier = scale;
+		
+		//NSLog(@"\t\tscreen is %@, window is %@, scale is %0.2f", self.window.screen, self.window, scale);
+		
+		//NSLog(@"\t\tbounds are %@",NSStringFromRect(self.bounds));
+		CGSize			newSize = self.bounds.size;
+		newSize.width *= scale;
+		newSize.height *= scale;
+		//NSLog(@"\t\tnewSize is %@",NSStringFromSize(newSize));
+		
+		BOOL			returnMe = (newSize.width!=_viewportSize.x || newSize.height!=_viewportSize.y) ? YES : NO;
+		
+		metalLayer.drawableSize = newSize;
+		_viewportSize.x = newSize.width;
+		_viewportSize.y = newSize.height;
+		self.mvpBuffer = nil;
+		
+		self.contentNeedsRedraw = YES;
+		
+		return returnMe;
+	}
 	
-	//NSLog(@"\t\tbounds are %@",NSStringFromRect(self.bounds));
-	CGSize			newSize = self.bounds.size;
-	newSize.width *= scale;
-	newSize.height *= scale;
-	
-	BOOL			returnMe = (newSize.width!=_viewportSize.x || newSize.height!=_viewportSize.y) ? YES : NO;
-	
-	metalLayer.drawableSize = newSize;
-	_viewportSize.x = newSize.width;
-	_viewportSize.y = newSize.height;
-	self.mvpBuffer = nil;
-	
-	self.contentNeedsRedraw = YES;
-	
-	return returnMe;
+	return YES;
 }
 
 
