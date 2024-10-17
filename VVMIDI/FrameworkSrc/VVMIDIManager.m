@@ -41,10 +41,12 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setupChangedNotification:) name:@"VVMIDISetupChangedNotification" object:nil];
 	
-	//	create a virtual destination other apps can send to
-	[self createVirtualNodes];
-	//	trigger the setup changed method
-	[self setupChanged];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+		//	create a virtual destination other apps can send to
+		[self createVirtualNodes];
+		//	trigger the setup changed method
+		[self setupChanged];
+	});
 }
 
 - (NSMutableDictionary *) createSnapshot	{

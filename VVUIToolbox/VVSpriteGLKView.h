@@ -9,8 +9,9 @@
 
 
 @interface VVSpriteGLKView : GLKView	{
+	@public
 	BOOL					deleted;
-	
+	@protected
 	BOOL					initialized;
 	//BOOL					needsReshape;
 	pthread_mutex_t			glLock;

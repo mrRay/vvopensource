@@ -1048,10 +1048,14 @@ long		_spriteMTLViewSysVers;
 	
 	
 	id<MTLCommandBuffer>		cmdBuffer = [q commandBuffer];
+	id<MTLTexture>		targetTex = currentDrawable.texture;
+	if (targetTex == nil)
+		return;
 	
-	passDescriptor.colorAttachments[0].texture = currentDrawable.texture;
+	MTLRenderPassDescriptor		*localPassDesc = [passDescriptor copy];
+	localPassDesc.colorAttachments[0].texture = targetTex;
 	
-	id<MTLRenderCommandEncoder>		encoder = [cmdBuffer renderCommandEncoderWithDescriptor:passDescriptor];
+	id<MTLRenderCommandEncoder>		encoder = [cmdBuffer renderCommandEncoderWithDescriptor:localPassDesc];
 	encoder.label = self.description;
 	[encoder setViewport:(MTLViewport){ 0.f, 0.f, _viewportSize.x, _viewportSize.y, -1.f, 1.f }];
 	[encoder setRenderPipelineState:pso];
@@ -1063,6 +1067,7 @@ long		_spriteMTLViewSysVers;
 	
 	[cmdBuffer commit];
 	
+	targetTex = nil;
 	currentDrawable = nil;
 	
 	
@@ -1100,6 +1105,7 @@ long		_spriteMTLViewSysVers;
 	//}
 	
 	//	apply the MVP buffer- all our sprites/subviews will draw using these coords, and are expected to perform geometry that has already been positioned accordingly
+	id<MTLBuffer>		localMVPBuffer = nil;
 	if (self.mvpBuffer == nil)	{
 		double			left = 0.0;
 		double			right = _viewportSize.x;
@@ -1143,8 +1149,13 @@ long		_spriteMTLViewSysVers;
 			length:sizeof(mvp)
 			options:MTLResourceStorageModeShared];
 	}
+	localMVPBuffer = self.mvpBuffer;
+	if (localMVPBuffer == nil)	{
+		NSLog(@"ERR: no MVP buffer, bailing %s",__func__);
+		return;
+	}
 	[inEnc
-		setVertexBuffer:self.mvpBuffer
+		setVertexBuffer:localMVPBuffer
 		offset:0
 		atIndex:VVSpriteMTLView_VS_Idx_MVPMatrix];
 	
@@ -1215,6 +1226,12 @@ long		_spriteMTLViewSysVers;
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
+	
+	[cb addCompletedHandler:^(id<MTLCommandBuffer> completed)	{
+		id<MTLBuffer>		tmpBuffer = localMVPBuffer;
+		tmpBuffer = nil;
+	}];
+	
 	
 	//else
 	//	NSLog(@"\t\terr: sprite GL view fence prevented output!");

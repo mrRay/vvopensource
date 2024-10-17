@@ -337,10 +337,16 @@
 	
 	while (!found)	{
 #if TARGET_OS_IPHONE
-		tmpString = [NSString stringWithFormat:@"%@ %@ %d",[[UIDevice currentDevice] name],[self inPortLabelBase],index];
+		if (index == 1)
+			tmpString = [NSString stringWithFormat:@"%@ %@",[[UIDevice currentDevice] name],[self inPortLabelBase]];
+		else
+			tmpString = [NSString stringWithFormat:@"%@ %@ %d",[[UIDevice currentDevice] name],[self inPortLabelBase],index];
 #else
 		CFStringRef computerName = SCDynamicStoreCopyComputerName(NULL, NULL);
-		tmpString = [NSString stringWithFormat:@"%@ %@ %d",computerName,[self inPortLabelBase],index];
+		if (index == 1)
+			tmpString = [NSString stringWithFormat:@"%@ %@",computerName,[self inPortLabelBase]];
+		else
+			tmpString = [NSString stringWithFormat:@"%@ %@ %d",computerName,[self inPortLabelBase],index];
 		if (computerName != NULL)
 			CFRelease(computerName);
 #endif

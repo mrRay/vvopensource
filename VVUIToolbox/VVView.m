@@ -1474,10 +1474,10 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	MTLScissorRect		tmpScissorRect;
 	
 	VVSpriteMTLViewVertex		verts[4];
-	verts[0].position = simd_make_float2( frameInContainerView.origin.x, frameInContainerView.origin.y + frameInContainerView.size.height );
-	verts[1].position = simd_make_float2( frameInContainerView.origin.x, frameInContainerView.origin.y );
-	verts[2].position = simd_make_float2( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y + frameInContainerView.size.height );
-	verts[3].position = simd_make_float2( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y );
+	verts[0].position = simd_make_float4( frameInContainerView.origin.x, frameInContainerView.origin.y + frameInContainerView.size.height, 0., 1. );
+	verts[1].position = simd_make_float4( frameInContainerView.origin.x, frameInContainerView.origin.y, 0., 1. );
+	verts[2].position = simd_make_float4( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y + frameInContainerView.size.height, 0., 1. );
+	verts[3].position = simd_make_float4( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y, 0., 1. );
 	
 	for (int i=0; i<4; ++i)	{
 		verts[i].color = simd_make_float4(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);

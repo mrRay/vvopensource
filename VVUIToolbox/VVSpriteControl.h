@@ -13,7 +13,9 @@ extern int					_spriteControlCount;
 
 
 @interface VVSpriteControl : NSControl {
+	@public
 	BOOL					deleted;
+	@protected
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	

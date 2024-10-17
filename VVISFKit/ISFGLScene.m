@@ -1361,6 +1361,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 	NSMutableArray		*imgThisNormPixelSamplerNames = nil;
 	//	i need variable declarations for both the vertex and fragment shaders
 	NSMutableString		*varDeclarations = [[[self _assembleShaderSource_VarDeclarations] copy] autorelease];
+	if (varDeclarations == nil)
+		varDeclarations = [[NSMutableString alloc] init];
 	
 	//	check the source string to see if it requires any of the macro functions, add them if necessary
 	//BOOL			requiresMacroFunctions = NO;
@@ -1646,7 +1648,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 			[newFragShaderSrc appendString:_ISFMacro2DRectBiasString];
 		
 		//	add the shader source that has been find-and-replaced
-		[newFragShaderSrc appendString:modSrcString];
+		if (modSrcString != nil)
+			[newFragShaderSrc appendString:modSrcString];
 	}
 	
 	
@@ -1659,7 +1662,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//	load any specific vars or function declarations for the vertex shader from an included file
 		[newVertShaderSrc appendString:_ISFVertVarDec];
 		//	append the variable declarations i assembled earlier with the frag shader
-		[newVertShaderSrc appendString:varDeclarations];
+		if (varDeclarations != nil)
+			[newVertShaderSrc appendString:varDeclarations];
 		
 		//	add the variables for values corresponding to buffers from IMG_THIS_PIXEL and IMG_THIS_NORM_PIXEL in the frag shader
 		if (imgThisPixelSamplerNames!=nil || imgThisNormPixelSamplerNames!=nil)	{
@@ -1686,7 +1690,8 @@ NSString			*_ISFMacro2DRectBiasString = nil;
 		//	now i have to find-and-replace the shader source for various things- make a copy of the raw source and work from that.
 		modSrcString = [NSMutableString stringWithCapacity:0];
 		VVLockLock(&srcLock);
-		[modSrcString appendString:vertShaderSource];
+		if (vertShaderSource != nil)
+			[modSrcString appendString:vertShaderSource];
 		VVLockUnlock(&srcLock);
 		
 		

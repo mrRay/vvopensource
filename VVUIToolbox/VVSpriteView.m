@@ -339,7 +339,7 @@ int				_spriteViewCount;
 - (void) setFrameSize:(VVSIZE)n	{
 	//NSLog(@"%s ... %@, %f x %f",__func__,self,n.width,n.height);
 	VVSIZE			oldSize = [self frame].size;
-	double			oldBackingBounds = _localToBackingBoundsMultiplier;
+	//double			oldBackingBounds = _localToBackingBoundsMultiplier;
 	
 	[super setFrameSize:n];
 	

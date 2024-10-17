@@ -50,6 +50,8 @@ typedef enum VVOSVersion	{
 	VVBigSur = 16,	//!<	macOS 11
 	VVMonterey = 17,	//!<	macOS 12
 	VVVentura = 18,	//!<	macOS 13
+	VVSonoma = 19,	//!<	macOS 14
+	VVSequoia = 20,	//!<	macOS 15
 } VVOSVersion;
 #endif
 

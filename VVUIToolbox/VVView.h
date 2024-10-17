@@ -73,7 +73,9 @@ typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
 //#else	//	else __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
 //@interface VVView : NSObject <NSDraggingSource>	{
 //#endif
+	@public
 	BOOL				deleted;
+	@protected
 	VVSpriteManager		*spriteManager;
 	BOOL				spritesNeedUpdate;
 	pthread_mutex_t		spritesUpdateLock;	//	used to lock around 'updateSprites' and access to 'spritesNeedUpdate'

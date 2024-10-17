@@ -52,8 +52,9 @@ extern long			_spriteGLViewSysVers;
 
 
 @interface VVSpriteGLView : NSOpenGLView <VVViewContainer>	{
+	@public
 	BOOL					deleted;
-	
+	@protected
 	BOOL					initialized;
 	BOOL					waitingForMainThread;
 	//BOOL					needsReshape;
