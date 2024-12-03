@@ -1017,7 +1017,8 @@ long		_spriteMTLViewSysVers;
 	if (q == nil)
 		return;
 	
-	currentDrawable = metalLayer.nextDrawable;
+	id<CAMetalDrawable>		drawable = metalLayer.nextDrawable;
+	currentDrawable = drawable;
 	if (currentDrawable == nil)
 		return;
 	
@@ -1048,7 +1049,7 @@ long		_spriteMTLViewSysVers;
 	
 	
 	id<MTLCommandBuffer>		cmdBuffer = [q commandBuffer];
-	id<MTLTexture>		targetTex = currentDrawable.texture;
+	id<MTLTexture>		targetTex = drawable.texture;
 	if (targetTex == nil)
 		return;
 	
@@ -1063,13 +1064,15 @@ long		_spriteMTLViewSysVers;
 	[self performDrawing:r inEncoder:encoder commandBuffer:cmdBuffer];
 	
 	[encoder endEncoding];
-	[cmdBuffer presentDrawable:currentDrawable];
+	if (drawable != nil)	{
+		[cmdBuffer presentDrawable:drawable];
+	}
 	
 	[cmdBuffer commit];
 	
 	targetTex = nil;
 	currentDrawable = nil;
-	
+	drawable = nil;
 	
 #if CAPTURE
 	if (cm != nil)	{
@@ -1345,32 +1348,32 @@ long		_spriteMTLViewSysVers;
 	id<MTLFunction>		vertFunc = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewVertShader"];
 	id<MTLFunction>		fragFunc = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewFragShader"];
 	
-	MTLRenderPipelineDescriptor		*psDesc = [[MTLRenderPipelineDescriptor alloc] init];
-	psDesc.label = @"Generic VVSpriteMTLView";
-	psDesc.vertexFunction = vertFunc;
-	psDesc.fragmentFunction = fragFunc;
-	psDesc.colorAttachments[0].pixelFormat = metalLayer.pixelFormat;
+	psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
+	psoDesc.label = @"Generic VVSpriteMTLView";
+	psoDesc.vertexFunction = vertFunc;
+	psoDesc.fragmentFunction = fragFunc;
+	psoDesc.colorAttachments[0].pixelFormat = metalLayer.pixelFormat;
 	
 	//	commented out- this was an attempt to make MTLImgBufferView "transparent" (0 alpha would display view behind it)
-	psDesc.alphaToCoverageEnabled = NO;
-	psDesc.colorAttachments[0].blendingEnabled = YES;
+	psoDesc.alphaToCoverageEnabled = NO;
+	psoDesc.colorAttachments[0].blendingEnabled = YES;
 	
-	psDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
-	psDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+	psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+	psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
 	
 	//	"GL over" is:
-	psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
-	psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
+	psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+	psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+	psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
 	
 	//	"GL add" is:
-	//psDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	//psDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
-	//psDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorDestinationAlpha;
-	//psDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
+	//psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+	//psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+	//psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorDestinationAlpha;
+	//psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
 	
-	pso = [_device newRenderPipelineStateWithDescriptor:psDesc error:&nsErr];
+	pso = [_device newRenderPipelineStateWithDescriptor:psoDesc error:&nsErr];
 	
 	self.mvpBuffer = nil;
 	

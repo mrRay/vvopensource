@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 	@public
 	//id<MTLDevice>			device;
 	MTLRenderPassDescriptor			*passDescriptor;
+	MTLRenderPipelineDescriptor		*psoDesc;
 	id<MTLRenderPipelineState>		pso;
 	//vector_uint2			viewportSize;
 	CAMetalLayer			*metalLayer;
