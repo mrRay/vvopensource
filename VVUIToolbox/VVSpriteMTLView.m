@@ -90,6 +90,7 @@ long		_spriteMTLViewSysVers;
 	self.localWindow = self.window;
 	self.localHidden = self.hidden;
 	self.localVisibleRect = self.visibleRect;
+	//self.clipsToBounds = YES;
 	
 	_device = nil;
 	//self.pixelFormat = MTLPixelFormatRGBA32Float;	//	doesn't work (throws exception, invalid pixel format)
@@ -1017,6 +1018,11 @@ long		_spriteMTLViewSysVers;
 	if (q == nil)
 		return;
 	
+	//	if my parent window is occluded, bail
+	if (!A_HAS_B(self.localWindow.occlusionState, NSWindowOcclusionStateVisible))	{
+		return;
+	}
+	
 	id<CAMetalDrawable>		drawable = metalLayer.nextDrawable;
 	currentDrawable = drawable;
 	if (currentDrawable == nil)
@@ -1053,7 +1059,10 @@ long		_spriteMTLViewSysVers;
 	if (targetTex == nil)
 		return;
 	
-	MTLRenderPassDescriptor		*localPassDesc = [passDescriptor copy];
+	MTLRenderPassDescriptor		*localPassDesc;
+	@synchronized (self)	{
+		localPassDesc = [passDescriptor copy];
+	}
 	localPassDesc.colorAttachments[0].texture = targetTex;
 	
 	id<MTLRenderCommandEncoder>		encoder = [cmdBuffer renderCommandEncoderWithDescriptor:localPassDesc];
@@ -1433,10 +1442,14 @@ long		_spriteMTLViewSysVers;
 		//	this makes the view "transparent" (areas with alpha of 0 will show the background of the enclosing view)
 		self.layer.opaque = NO;
 		self.layer.backgroundColor = [[NSColor clearColor] CGColor];
-		passDescriptor = [MTLRenderPassDescriptor new];
-		passDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-		passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
-		passDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+		
+		MTLRenderPassDescriptor		*tmpDesc = [MTLRenderPassDescriptor new];
+		tmpDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
+		tmpDesc.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+		tmpDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
+		@synchronized (self)	{
+			passDescriptor = tmpDesc;
+		}
 	}
 	else	{
 		self.layer.opaque = YES;
@@ -1444,10 +1457,14 @@ long		_spriteMTLViewSysVers;
 		[_layerBackgroundColor getComponents:components];
 		//NSLog(@"\t\tcolor was %@, comps are %0.2f, %0.2f, %0.2f",_layerBackgroundColor,components[0],components[1],components[2]);
 		self.layer.backgroundColor = [_layerBackgroundColor CGColor];
-		passDescriptor = [MTLRenderPassDescriptor new];
-		passDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-		passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake( components[0], components[1], components[2], components[3] );
-		passDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+		
+		MTLRenderPassDescriptor		*tmpDesc = [MTLRenderPassDescriptor new];
+		tmpDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
+		tmpDesc.colorAttachments[0].clearColor = MTLClearColorMake( components[0], components[1], components[2], components[3] );
+		tmpDesc.colorAttachments[0].storeAction = MTLStoreActionStore;
+		@synchronized (self)	{
+			passDescriptor = tmpDesc;
+		}
 	}
 }
 - (NSColor *) layerBackgroundColor	{

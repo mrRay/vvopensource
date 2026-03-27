@@ -225,12 +225,27 @@
 	MutLockArray		*managerSpriteArray = [manager spriteArray];
 	if ((managerSpriteArray==nil) || ([managerSpriteArray count]<2))
 		return;
+	long		existingIdx = -1;
 	//	get a write-lock on the array, i'll be changing its order
 	[managerSpriteArray wrlock];
-		//	remove me from my manager's sprite array
-		[managerSpriteArray removeIdenticalPtr:self];
-		//	add me to my manager's sprite array at the "top"
-		[managerSpriteArray insertObject:self atIndex:0];
+		if (self != nil)	{
+			existingIdx = [managerSpriteArray indexOfIdenticalPtr:self];
+			if (existingIdx != NSNotFound)	{
+				//	remove me from my manager's sprite array
+				[managerSpriteArray removeObjectAtIndex:existingIdx];
+			}
+			//	add me to my manager's sprite array at the "top"
+			[managerSpriteArray insertObject:self atIndex:0];
+			/*
+			existingIdx = [managerSpriteArray indexOfIdenticalPtr:self];
+			if (existingIdx != NSNotFound)	{
+				//	remove me from my manager's sprite array
+				[managerSpriteArray removeIdenticalPtr:self];
+				//	add me to my manager's sprite array at the "top"
+				[managerSpriteArray insertObject:self atIndex:0];
+			}
+			*/
+		}
 	//	unlock the array
 	[managerSpriteArray unlock];
 }
@@ -242,12 +257,27 @@
 	MutLockArray		*managerSpriteArray = [manager spriteArray];
 	if ((managerSpriteArray==nil) || ([managerSpriteArray count]<2))
 		return;
+	long		existingIdx = -1;
 	//	get a write-lock on the array, i'll be changing its order
 	[managerSpriteArray wrlock];
-		//	remove me from my manager's sprite array
-		[managerSpriteArray removeIdenticalPtr:self];
-		//	add me to my manager's sprite array at the "bottom"
-		[managerSpriteArray addObject:self];
+		if (self != nil)	{
+			existingIdx = [managerSpriteArray indexOfIdenticalPtr:self];
+			if (existingIdx != NSNotFound)	{
+				//	remove me from my manager's sprite array
+				[managerSpriteArray removeObjectAtIndex:existingIdx];
+			}
+			//	add me to my manager's sprite array at the "bottom"
+			[managerSpriteArray addObject:self];
+			/*
+			existingIdx = [managerSpriteArray indexOfIdenticalPtr:self];
+			if (existingIdx != NSNotFound)	{
+				//	remove me from my manager's sprite array
+				[managerSpriteArray removeIdenticalPtr:self];
+				//	add me to my manager's sprite array at the "bottom"
+				[managerSpriteArray addObject:self];
+			}
+			*/
+		}
 	//	unlock the array
 	[managerSpriteArray unlock];
 }

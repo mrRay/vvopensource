@@ -27,7 +27,7 @@ extern int				_spriteViewCount;
 	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
 	BOOL					mouseIsDown;
-	__weak NSView			*clickedSubview;	//	NOT RETAINED
+	__weak VVView			*clickedSubview;	//	NOT RETAINED
 	
 	MutLockArray			*vvSubviews;
 }

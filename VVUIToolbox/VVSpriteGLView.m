@@ -72,6 +72,7 @@ long			_spriteGLViewSysVers;
 	mouseIsDown = NO;
 	clickedSubview = nil;
 	
+	//self.clipsToBounds = YES;
 	self.localBoundsRotation = self.boundsRotation;
 	self.localBounds = self.bounds;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.bounds];

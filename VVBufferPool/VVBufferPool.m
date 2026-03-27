@@ -2010,7 +2010,7 @@ VVMStopwatch		*_bufferTimestampMaker = nil;
 			8,
 			((long)(imgSize.width))*4,
 			colorSpace,
-			kCGImageAlphaPremultipliedLast);
+			(CGBitmapInfo)kCGImageAlphaPremultipliedLast);	//	technically you shouldn't cast a CGBitmapInfo as a CGImageAlphaInfo, but this works and other more obvious fixes don't.  go figure.
 		if (ctx == NULL)	{
 			NSLog(@"\t\tERR: ctx null in %s",__func__);
 			free(imgData);

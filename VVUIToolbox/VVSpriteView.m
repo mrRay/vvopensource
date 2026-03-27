@@ -64,6 +64,7 @@ int				_spriteViewCount;
 	mouseIsDown = NO;
 	clickedSubview = nil;
 	
+	self.clipsToBounds = YES;
 	self.localBoundsRotation = self.boundsRotation;
 	self.localBounds = self.bounds;
 	self.localFrame = self.frame;
@@ -425,6 +426,8 @@ int				_spriteViewCount;
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
 	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	
+	
 	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
@@ -437,6 +440,21 @@ int				_spriteViewCount;
 	}
 	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager
 	*/
+	//	if i have subviews and i clicked on one of them, skip the sprite manager
+	if ([vvSubviews count]>0)	{
+		clickedSubview = [self vvSubviewHitTest:localPoint];
+		if (clickedSubview == (id)self)
+			clickedSubview = nil;
+		//NSLog(@"\t\tclickedSubview is %@",_clickedSubview);
+		//VVRectLog(@"\t\tclickedSubview frame is",[_clickedSubview frame]);
+		if (clickedSubview != nil)	{
+			[clickedSubview mouseDown:e];
+			return;
+		}
+	}
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager...
+	
+	
 	mouseDownModifierFlags = [e modifierFlags];
 	modifierFlags = mouseDownModifierFlags;
 	if ((mouseDownModifierFlags&NSEventModifierFlagControl)==NSEventModifierFlagControl)	{
@@ -467,6 +485,8 @@ int				_spriteViewCount;
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
 	VVPOINT		localPoint = [self convertPoint:locationInWindow fromView:nil];
+	
+	
 	/*
 	//	if i have subviews and i clicked on one of them, skip the sprite manager
 	if ([[self subviews] count]>0)	{
@@ -478,6 +498,21 @@ int				_spriteViewCount;
 		}
 	}
 	*/
+	//	if i have subviews and i clicked on one of them, skip the sprite manager
+	if ([vvSubviews count]>0)	{
+		clickedSubview = [self vvSubviewHitTest:localPoint];
+		if (clickedSubview == (id)self)
+			clickedSubview = nil;
+		//NSLog(@"\t\tclickedSubview is %@",_clickedSubview);
+		//VVRectLog(@"\t\tclickedSubview frame is",[_clickedSubview frame]);
+		if (clickedSubview != nil)	{
+			[clickedSubview mouseDown:e];
+			return;
+		}
+	}
+	//	else there aren't any subviews or i didn't click on any of them- do the sprite manager...
+	
+	
 	mouseDownModifierFlags = [e modifierFlags];
 	mouseDownEventType = VVSpriteEventRightDown;
 	modifierFlags = mouseDownModifierFlags;
