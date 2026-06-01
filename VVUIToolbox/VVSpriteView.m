@@ -85,12 +85,14 @@ int				_spriteViewCount;
 	}
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
+	LOCK(&propertyLock);
 	spritesNeedUpdate = NO;
 	deleted = YES;
+	UNLOCK(&propertyLock);
 }
 - (void) dealloc	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
-	if (!deleted)
+	if (!self.deleted)
 		[self prepareToBeDeleted];
 	VVRELEASE(spriteManager);
 	
@@ -103,7 +105,9 @@ int				_spriteViewCount;
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
+	LOCK(&propertyLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&propertyLock);
 }
 
 
@@ -150,9 +154,12 @@ int				_spriteViewCount;
 	self.localVisibleRect = self.visibleRect;
 }
 - (void) setFrame:(NSRect)n	{
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
-	
+
 	[super setFrame:n];
 	
 	VVRECT		bounds = [self bounds];
@@ -165,7 +172,9 @@ int				_spriteViewCount;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
 	self.localVisibleRect = self.visibleRect;
+	LOCK(&propertyLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&propertyLock);
 }
 - (void) viewDidChangeBackingProperties	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -237,9 +246,12 @@ int				_spriteViewCount;
 
 - (void) addVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
-	if (deleted || n==nil)
+	if (n == nil || ![n isKindOfClass:[VVView class]])
 		return;
-	if (![n isKindOfClass:[VVView class]])
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
 	
 	[vvSubviews wrlock];
@@ -260,10 +272,14 @@ int				_spriteViewCount;
 }
 - (void) removeVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
-	if (deleted || n==nil)
+	if (n == nil || ![n isKindOfClass:[VVView class]])
 		return;
-	if (![n isKindOfClass:[VVView class]])
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
+	
 	id			tmpSubview = n;
 	[vvSubviews lockRemoveIdenticalPtr:tmpSubview];
 	[tmpSubview setContainerView:nil];
@@ -282,7 +298,12 @@ int				_spriteViewCount;
 	[self setNeedsDisplay:YES];
 }
 - (BOOL) containsSubview:(VVView *)n	{
-	if (deleted || n==nil || vvSubviews==nil)
+	if (n==nil || vvSubviews==nil)
+		return NO;
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return NO;
 	BOOL		returnMe = NO;
 	[vvSubviews rdlock];
@@ -297,7 +318,12 @@ int				_spriteViewCount;
 }
 - (VVView *) vvSubviewHitTest:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (deleted || vvSubviews==nil)
+	if (vvSubviews==nil)
+		return nil;
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return nil;
 	
 	id					returnMe = nil;
@@ -318,8 +344,14 @@ int				_spriteViewCount;
 }
 - (void) reconcileVVSubviewDragTypes	{
 	//NSLog(@"%s",__func__);
-	if (deleted || vvSubviews==nil)
+	if (vvSubviews==nil)
 		return;
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
+	
 	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
 	[vvSubviews rdlock];
 	for (VVView *viewPtr in [vvSubviews array])	{
@@ -401,10 +433,14 @@ int				_spriteViewCount;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
 	self.localVisibleRect = self.visibleRect;
+	LOCK(&propertyLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&propertyLock);
 }
 - (void) updateSprites	{
+	LOCK(&propertyLock);
 	spritesNeedUpdate = NO;
+	UNLOCK(&propertyLock);
 }
 
 
@@ -414,14 +450,13 @@ int				_spriteViewCount;
 
 
 - (void) mouseDown:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = e;
+	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -473,14 +508,13 @@ int				_spriteViewCount;
 	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = e;
+	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -520,14 +554,13 @@ int				_spriteViewCount;
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
-		lastMouseEvent = e;
+	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -541,14 +574,17 @@ int				_spriteViewCount;
 	[self mouseDragged:e];
 }
 - (void) mouseUp:(NSEvent *)e	{
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
-	
+
 	if (mouseDownEventType == VVSpriteEventRightDown)	{
 		[self rightMouseUp:e];
 		return;
 	}
-	
+
 	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	if (e != nil)
@@ -565,14 +601,13 @@ int				_spriteViewCount;
 		[spriteManager localMouseUp:localPoint];
 }
 - (void) rightMouseUp:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
-	if (e != nil)
-		lastMouseEvent = e;
+	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -594,17 +629,22 @@ int				_spriteViewCount;
 
 - (void) drawRect:(VVRECT)f	{
 	//NSLog(@"%s",__func__);
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	BOOL		localSpritesNeedUpdate = spritesNeedUpdate;
+	NSColor		*localClearColor = clearColor;
+	NSColor		*localBorderColor = borderColor;
+	BOOL		localDrawBorder = drawBorder;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
-	if (spritesNeedUpdate)
+	if (localSpritesNeedUpdate)
 		[self updateSprites];
 	
-	LOCK(&propertyLock);
-	if (clearColor != nil)	{
-		[clearColor set];
+	if (localClearColor != nil)	{
+		[localClearColor set];
 		NSRectFill(NSIntersectionRect(f,self.localBackingBounds));
 	}
-	UNLOCK(&propertyLock);
 	
 	NSArray<VVView*>	*localSubviews = [vvSubviews lockCreateArrayCopy];
 	for (VVView * subview in localSubviews)	{
@@ -614,12 +654,10 @@ int				_spriteViewCount;
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 	
-	LOCK(&propertyLock);
-	if (drawBorder && borderColor!=nil)	{
-		[borderColor set];
+	if (localDrawBorder && localBorderColor!=nil)	{
+		[localBorderColor set];
 		NSFrameRect([self bounds]);
 	}
-	UNLOCK(&propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
@@ -632,20 +670,30 @@ int				_spriteViewCount;
 }
 
 
-@synthesize deleted;
+- (BOOL) deleted	{
+	LOCK(&propertyLock);
+	BOOL		returnMe = deleted;
+	UNLOCK(&propertyLock);
+	return returnMe;
+}
 @synthesize spriteManager;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
+	LOCK(&propertyLock);
 	spritesNeedUpdate = n;
+	UNLOCK(&propertyLock);
 }
 - (BOOL) spritesNeedUpdate	{
-	return spritesNeedUpdate;
+	LOCK(&propertyLock);
+	BOOL		localSpritesNeedUpdate = spritesNeedUpdate;
+	UNLOCK(&propertyLock);
+	return localSpritesNeedUpdate;
 }
 - (void) setSpritesNeedUpdate	{
+	LOCK(&propertyLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&propertyLock);
 }
 - (NSEvent *) lastMouseEvent	{
-	if (deleted)
-		return nil;
 	NSEvent		*returnMe = nil;
 	
 	LOCK(&propertyLock);
@@ -657,16 +705,12 @@ int				_spriteViewCount;
 
 
 - (void) setClearColor:(NSColor *)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
 	VVRELEASE(clearColor);
 	clearColor = n;
 	UNLOCK(&propertyLock);
 }
 - (NSColor *) clearColor	{
-	if (deleted)
-		return nil;
 	NSColor		*returnMe = nil;
 	
 	LOCK(&propertyLock);
@@ -676,15 +720,11 @@ int				_spriteViewCount;
 	return returnMe;
 }
 - (void) setDrawBorder:(BOOL)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
 	drawBorder = n;
 	UNLOCK(&propertyLock);
 }
 - (BOOL) drawBorder	{
-	if (deleted)
-		return NO;
 	BOOL		returnMe = NO;
 	LOCK(&propertyLock);
 	returnMe = drawBorder;
@@ -692,16 +732,12 @@ int				_spriteViewCount;
 	return returnMe;
 }
 - (void) setBorderColor:(NSColor *)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
 	VVRELEASE(borderColor);
 	borderColor = n;
 	UNLOCK(&propertyLock);
 }
 - (NSColor *) borderColor	{
-	if (deleted)
-		return nil;
 	NSColor		*returnMe = nil;
 	
 	LOCK(&propertyLock);

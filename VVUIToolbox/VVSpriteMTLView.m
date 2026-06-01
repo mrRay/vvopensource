@@ -20,6 +20,7 @@ long		_spriteMTLViewSysVers;
 
 @interface VVSpriteMTLView ()
 
+@property (readwrite,atomic) BOOL deleted;
 @property (readwrite) double localToBackingBoundsMultiplier;
 @property (strong,readwrite) MutLockArray *vvSubviews;
 @property (strong,readwrite) NSEvent *lastMouseEvent;
@@ -88,6 +89,7 @@ long		_spriteMTLViewSysVers;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.bounds];
 	self.localWindow = self.window;
+	self.localOcclusionState = NSWindowOcclusionStateVisible;
 	self.localHidden = self.hidden;
 	self.localVisibleRect = self.visibleRect;
 	//self.clipsToBounds = YES;
@@ -155,14 +157,16 @@ long		_spriteMTLViewSysVers;
 	if (_spriteManager != nil)
 		[_spriteManager prepareToBeDeleted];
 	_spritesNeedUpdate = NO;
-	_deleted = YES;
+	self.deleted = YES;
 }
 - (void) dealloc	{
 	//NSLog(@"%s ... %@",__func__,self);
-	if (!_deleted)
+	if (!self.deleted)
 		[self prepareToBeDeleted];
-	
 	self.colorspace = NULL;
+	
+	//	stop observing occlusion changes for any window
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:nil];
 }
 
 
@@ -188,7 +192,7 @@ long		_spriteMTLViewSysVers;
 }
 - (void)viewDidMoveToWindow	{
 	//NSLog(@"%s ... %@",__func__,self);
-	if (_deleted)
+	if (self.deleted)
 		return;
 	
 	[super viewDidMoveToWindow];
@@ -211,7 +215,7 @@ long		_spriteMTLViewSysVers;
 - (void) updateTrackingAreas	{
 	[super updateTrackingAreas];
 	
-	if (_deleted)
+	if (self.deleted)
 		return;
 	
 	self.localBounds = self.bounds;
@@ -288,7 +292,7 @@ long		_spriteMTLViewSysVers;
 	[self setNeedsDisplay:YES];
 }
 - (void) setFrame:(NSRect)n	{
-	if (_deleted)
+	if (self.deleted)
 		return;
 	[super setFrame:n];
 	self.localBounds = self.bounds;
@@ -299,9 +303,27 @@ long		_spriteMTLViewSysVers;
 }
 - (void) viewWillMoveToWindow:(NSWindow *)n	{
 	//NSLog(@"%s",__func__);
+	//	move the occlusion-state observer to the new window so 'localOcclusionState' tracks it.
+	//	-[NSWindow occlusionState] is main-thread-only; this hook (and the notification) run on the
+	//	main thread, so reading occlusionState here- and seeding from the new window- is legal.
+	NSWindow		*oldWindow = self.localWindow;
+	if (oldWindow != n)	{
+		if (oldWindow != nil)
+			[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:oldWindow];
+		if (n != nil)
+			[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_occlusionStateChangedNotification:) name:NSWindowDidChangeOcclusionStateNotification object:n];
+	}
+	self.localOcclusionState = (n==nil) ? NSWindowOcclusionStateVisible : n.occlusionState;
 	self.localWindow = n;
 	self.localVisibleRect = self.visibleRect;
 	[super viewWillMoveToWindow:n];
+}
+- (void) _occlusionStateChangedNotification:(NSNotification *)note	{
+	//	delivered on the main thread (window notifications post on main)- cache the value so off-main
+	//	render threads can read 'localOcclusionState' without touching AppKit.
+	NSWindow		*noteWindow = note.object;
+	if (noteWindow != nil)
+		self.localOcclusionState = noteWindow.occlusionState;
 }
 - (void) setHidden:(BOOL)n	{
 	[super setHidden:n];
@@ -350,7 +372,7 @@ long		_spriteMTLViewSysVers;
 
 - (void) addVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || n==nil)
+	if (self.deleted || n==nil)
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
@@ -373,7 +395,7 @@ long		_spriteMTLViewSysVers;
 }
 - (void) removeVVSubview:(VVView *)n	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || n==nil)
+	if (self.deleted || n==nil)
 		return;
 	if (![n isKindOfClass:[VVView class]])
 		return;
@@ -393,7 +415,7 @@ long		_spriteMTLViewSysVers;
 		[self reconcileVVSubviewDragTypes];
 }
 - (BOOL) containsSubview:(VVView *)n	{
-	if (_deleted || n==nil || _vvSubviews==nil)
+	if (self.deleted || n==nil || _vvSubviews==nil)
 		return NO;
 	BOOL		returnMe = NO;
 	[_vvSubviews rdlock];
@@ -408,7 +430,7 @@ long		_spriteMTLViewSysVers;
 }
 - (VVView *) vvSubviewHitTest:(VVPOINT)p	{
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
-	if (_deleted || _vvSubviews==nil)
+	if (self.deleted || _vvSubviews==nil)
 		return nil;
 	
 	id					returnMe = nil;
@@ -429,7 +451,7 @@ long		_spriteMTLViewSysVers;
 }
 - (void) reconcileVVSubviewDragTypes	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || _vvSubviews==nil)
+	if (self.deleted || _vvSubviews==nil)
 		return;
 	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
 	[_vvSubviews rdlock];
@@ -450,7 +472,7 @@ long		_spriteMTLViewSysVers;
 
 - (NSDragOperation) draggingEntered:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || _vvSubviews==nil || [_vvSubviews count]<1)
+	if (self.deleted || _vvSubviews==nil || [_vvSubviews count]<1)
 		return NSDragOperationNone;
 	//	get the dragging pasteboard
 	NSPasteboard		*pboard = [sender draggingPasteboard];
@@ -487,7 +509,7 @@ long		_spriteMTLViewSysVers;
 }
 - (NSDragOperation) draggingUpdated:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || _vvSubviews==nil || [_vvSubviews count]<1)
+	if (self.deleted || _vvSubviews==nil || [_vvSubviews count]<1)
 		return NSDragOperationNone;
 	//	get the dragging pasteboard
 	NSPasteboard		*pboard = [sender draggingPasteboard];
@@ -538,32 +560,32 @@ long		_spriteMTLViewSysVers;
 }
 - (void) draggingExited:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || dragNDropSubview==nil)
+	if (self.deleted || dragNDropSubview==nil)
 		return;
 	[dragNDropSubview draggingExited:sender];
 }
 - (void) draggingEnded:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || dragNDropSubview==nil)
+	if (self.deleted || dragNDropSubview==nil)
 		return;
 	[dragNDropSubview draggingEnded:sender];
 }
 
 - (BOOL) prepareForDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || dragNDropSubview==nil)
+	if (self.deleted || dragNDropSubview==nil)
 		return NO;
 	return [dragNDropSubview prepareForDragOperation:sender];
 }
 - (BOOL) performDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || dragNDropSubview==nil)
+	if (self.deleted || dragNDropSubview==nil)
 		return NO;
 	return [dragNDropSubview performDragOperation:sender];
 }
 - (void) concludeDragOperation:(id <NSDraggingInfo>)sender	{
 	//NSLog(@"%s",__func__);
-	if (_deleted || dragNDropSubview==nil)
+	if (self.deleted || dragNDropSubview==nil)
 		return;
 	[dragNDropSubview concludeDragOperation:sender];
 }
@@ -726,7 +748,7 @@ long		_spriteMTLViewSysVers;
 
 - (void) mouseDown:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
-	if (_deleted)
+	if (self.deleted)
 		return;
 	VVRELEASE(_lastMouseEvent);
 	if (e != nil)
@@ -770,7 +792,7 @@ long		_spriteMTLViewSysVers;
 	}
 }
 - (void) mouseUp:(NSEvent *)e	{
-	if (_deleted)
+	if (self.deleted)
 		return;
 	
 	if (_mouseDownEventType == VVSpriteEventRightDown)	{
@@ -797,7 +819,7 @@ long		_spriteMTLViewSysVers;
 }
 - (void) rightMouseDown:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
-	if (_deleted)
+	if (self.deleted)
 		return;
 	VVRELEASE(_lastMouseEvent);
 	if (e != nil)
@@ -829,7 +851,7 @@ long		_spriteMTLViewSysVers;
 	[_spriteManager localRightMouseDown:localPoint modifierFlag:_mouseDownModifierFlags];
 }
 - (void) rightMouseUp:(NSEvent *)e	{
-	if (_deleted)
+	if (self.deleted)
 		return;
 	VVRELEASE(_lastMouseEvent);
 	if (e != nil)
@@ -847,7 +869,7 @@ long		_spriteMTLViewSysVers;
 	}
 }
 - (void) mouseDragged:(NSEvent *)e	{
-	if (_deleted)
+	if (self.deleted)
 		return;
 	VVRELEASE(_lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
@@ -866,7 +888,7 @@ long		_spriteMTLViewSysVers;
 	}
 }
 - (void) rightMouseDragged:(NSEvent *)e	{
-	if (_deleted)
+	if (self.deleted)
 		return;
 	VVRELEASE(_lastMouseEvent);
 	if (e != nil)//	if i clicked on a subview earlier, pass mouse events to it instead of the sprite manager
@@ -886,7 +908,7 @@ long		_spriteMTLViewSysVers;
 }
 - (void) scrollWheel:(NSEvent *)e	{
 	//NSLog(@"%s",__func__);
-	if (_deleted)
+	if (self.deleted)
 		return;
 	
 	//	find the view under the event location, call "scrollWheel:" on it
@@ -1019,7 +1041,7 @@ long		_spriteMTLViewSysVers;
 		return;
 	
 	//	if my parent window is occluded, bail
-	if (!A_HAS_B(self.localWindow.occlusionState, NSWindowOcclusionStateVisible))	{
+	if (!A_HAS_B(self.localOcclusionState, NSWindowOcclusionStateVisible))	{
 		return;
 	}
 	
@@ -1102,7 +1124,7 @@ long		_spriteMTLViewSysVers;
 	//self.contentNeedsRedraw = NO;
 	
 	
-	if (_deleted)	{
+	if (self.deleted)	{
 		cmdBuffer = nil;
 		encoder = nil;
 		return;
@@ -1275,7 +1297,7 @@ long		_spriteMTLViewSysVers;
 	self.spritesNeedUpdate = YES;
 }
 - (void) setClearColor:(NSColor *)c	{
-	if ((_deleted)||(c==nil))
+	if ((self.deleted)||(c==nil))
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 	NSColor			*calibratedColor = ((__bridge void *)[c colorSpace]==(__bridge void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
@@ -1291,7 +1313,7 @@ long		_spriteMTLViewSysVers;
 }
 //@synthesize clearColor=_clearColor;
 - (NSColor *) clearColor	{
-	if (_deleted)
+	if (self.deleted)
 		return nil;
 	return [NSColor colorWithDeviceRed:clearColorVals[0] green:clearColorVals[1] blue:clearColorVals[2] alpha:clearColorVals[3]];
 }
@@ -1311,7 +1333,7 @@ long		_spriteMTLViewSysVers;
 }
 @synthesize drawBorder=_drawBorder;
 - (void) setBorderColor:(NSColor *)c	{
-	if ((_deleted)||(c==nil))
+	if ((self.deleted)||(c==nil))
 		return;
 	NSColorSpace	*devRGBColorSpace = [NSColorSpace deviceRGBColorSpace];
 	NSColor			*calibratedColor = ((__bridge void *)[c colorSpace]==(__bridge void *)devRGBColorSpace) ? c :[c colorUsingColorSpaceName:NSDeviceRGBColorSpace];
@@ -1327,7 +1349,7 @@ long		_spriteMTLViewSysVers;
 	//pthread_mutex_unlock(&glLock);
 }
 - (NSColor *) borderColor	{
-	if (_deleted)
+	if (self.deleted)
 		return nil;
 	return [NSColor colorWithDeviceRed:borderColorVals[0] green:borderColorVals[1] blue:borderColorVals[2] alpha:borderColorVals[3]];
 }

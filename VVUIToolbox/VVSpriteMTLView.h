@@ -85,6 +85,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic,readwrite) NSRect localFrame;
 //@property (atomic,readwrite) NSSize localFrameSize;
 @property (atomic,readwrite,weak) NSWindow * localWindow;
+//	thread-safe mirror of [localWindow occlusionState].  -[NSWindow occlusionState] is main-thread-only;
+//	this is updated on the main thread (via NSWindowDidChangeOcclusionStateNotification) so render
+//	threads can read it.  defaults to NSWindowOcclusionStateVisible until the view has a window.
+@property (atomic,readwrite) NSWindowOcclusionState localOcclusionState;
 @property (atomic,readwrite) BOOL localHidden;
 @property (atomic,readwrite) NSRect localVisibleRect;	//	updated on setNeedsDisplay and on changes to bounds or frame
 - (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n;

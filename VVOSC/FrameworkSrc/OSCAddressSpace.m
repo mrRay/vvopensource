@@ -246,7 +246,10 @@ id				_mainVVOSCAddressSpace;
 
 - (void) renameAddress:(NSString *)before to:(NSString *)after	{
 	//NSLog(@"%s ... %@ -> %@",__func__,before,after);
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if (before==nil)	{
 		NSLog(@"\terr: before was nil %s",__func__);
@@ -262,7 +265,10 @@ id				_mainVVOSCAddressSpace;
 
 - (void) renameAddressArray:(NSArray *)before toArray:(NSArray *)after	{
 	//NSLog(@"%s",__func__);
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if (before==nil)	{
 		NSLog(@"\terr: before was nil %s",__func__);
@@ -297,7 +303,10 @@ id				_mainVVOSCAddressSpace;
 	[self setNode:n forAddress:a createIfMissing:YES];
 }
 - (void) setNode:(OSCNode *)n forAddress:(NSString *)a createIfMissing:(BOOL)c	{
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if (a == nil)
 		[self setNode:n forAddressArray:nil createIfMissing:c];
@@ -309,7 +318,10 @@ id				_mainVVOSCAddressSpace;
 }
 - (void) setNode:(OSCNode *)n forAddressArray:(NSArray *)a createIfMissing:(BOOL)c	{
 	//NSLog(@"%s ... %@ - %@",__func__,n,a);
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if ((a==nil)||([a count]<1))	{
 		NSLog(@"\terr: a was %@ in %s",a,__func__);
@@ -411,7 +423,10 @@ id				_mainVVOSCAddressSpace;
 */
 - (void) nodeRenamed:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,[n fullName]);
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if (delegate != nil)	{
 		[delegate nodeRenamed:n];
@@ -429,7 +444,12 @@ id				_mainVVOSCAddressSpace;
 }
 - (void) dispatchMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
-	if ((deleted) || (m == nil))
+	if (m == nil)
+		return;
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	OSCNode			*foundNode = [self findNodeForAddress:[m address] createIfMissing:YES];
 	if (foundNode != nil)	{
@@ -443,7 +463,12 @@ id				_mainVVOSCAddressSpace;
 }
 - (void) addDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);
-	if ((d==nil)||(p==nil)||(deleted))
+	if ((d==nil)||(p==nil))
+		return;
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	if (![d respondsToSelector:@selector(node:receivedOSCMessage:)])	{
 		NSLog(@"\terr: tried to add a non-conforming delegate: %s",__func__);
@@ -456,7 +481,12 @@ id				_mainVVOSCAddressSpace;
 }
 - (void) removeDelegate:(id)d forPath:(NSString *)p	{
 	//NSLog(@"%s",__func__);
-	if ((d==nil)||(p==nil)||(deleted))
+	if ((d==nil)||(p==nil))
+		return;
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	
 	OSCNode			*foundNode = [self findNodeForAddress:p createIfMissing:NO];

@@ -572,7 +572,7 @@ MutLockArray		*_spriteManagerArray;
 */
 - (void) draw	{
 	//NSLog(@"%s",__func__);
-	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
+	if ((deleted)||(spriteArray==nil))
 		return;
 	[spriteArray rdlock];
 		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];

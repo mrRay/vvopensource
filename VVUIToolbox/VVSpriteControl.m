@@ -56,6 +56,7 @@ int					_spriteControlCount;
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
 	deleted = NO;
 	_localToBackingBoundsMultiplier = 1.0;
+	spriteLock = VV_LOCK_INIT;
 	spriteManager = [[VVSpriteManager alloc] init];
 	spritesNeedUpdate = YES;
 	propertyLock = VV_LOCK_INIT;
@@ -80,18 +81,25 @@ int					_spriteControlCount;
 }
 - (void) prepareToBeDeleted	{
 	//NSLog(@"%s",__func__);
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	deleted = YES;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
+	LOCK(&spriteLock);
+	spritesNeedUpdate = NO;
+	UNLOCK(&spriteLock);
 	if (spriteManager != nil)
 		[spriteManager prepareToBeDeleted];
-	spritesNeedUpdate = NO;
-	deleted = YES;
 }
 - (void) dealloc	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
-	if (!deleted)
+	if (!self.deleted)
 		[self prepareToBeDeleted];
+	LOCK(&spriteLock);
 	VVRELEASE(spriteManager);
+	UNLOCK(&spriteLock);
 	
 	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
@@ -101,7 +109,9 @@ int					_spriteControlCount;
 }
 - (void) awakeFromNib	{
 	//NSLog(@"%s",__func__);
+	LOCK(&spriteLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&spriteLock);
 }
 
 
@@ -161,7 +171,9 @@ int					_spriteControlCount;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
 	self.localVisibleRect = self.visibleRect;
+	LOCK(&spriteLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&spriteLock);
 }
 - (void) setFrameSize:(NSSize)n	{
 	[super setFrameSize:n];
@@ -176,7 +188,9 @@ int					_spriteControlCount;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
 	self.localVisibleRect = self.visibleRect;
+	LOCK(&spriteLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&spriteLock);
 }
 - (void) setFrameOrigin:(NSPoint)n	{
 	[super setFrameOrigin:n];
@@ -184,7 +198,9 @@ int					_spriteControlCount;
 	self.localFrame = self.frame;
 	self.localBackingBounds = [self convertRectToLocalBackingBounds:self.localBounds];
 	self.localVisibleRect = self.visibleRect;
+	LOCK(&spriteLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&spriteLock);
 }
 - (void) viewDidChangeBackingProperties	{
 	//NSLog(@"%s ... %@",__func__,self);
@@ -254,7 +270,9 @@ int					_spriteControlCount;
 
 
 - (void) updateSprites	{
+	LOCK(&spriteLock);
 	spritesNeedUpdate = NO;
+	UNLOCK(&spriteLock);
 }
 
 
@@ -264,13 +282,13 @@ int					_spriteControlCount;
 
 
 - (void) mouseDown:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -299,13 +317,13 @@ int					_spriteControlCount;
 	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -328,13 +346,13 @@ int					_spriteControlCount;
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -348,14 +366,17 @@ int					_spriteControlCount;
 	[self mouseDragged:e];
 }
 - (void) mouseUp:(NSEvent *)e	{
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
-	
+
 	if (mouseDownEventType == VVSpriteEventRightDown)	{
 		[self rightMouseUp:e];
 		return;
 	}
-	
+
 	LOCK(&propertyLock);
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
@@ -371,13 +392,13 @@ int					_spriteControlCount;
 		[spriteManager localMouseUp:localPoint];
 }
 - (void) rightMouseUp:(NSEvent *)e	{
-	if (deleted)
-		return;
-	
 	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
+	if (localDeleted)
+		return;
 	
 	mouseIsDown = NO;
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -398,28 +419,35 @@ int					_spriteControlCount;
 
 - (void) drawRect:(VVRECT)f	{
 	//NSLog(@"%s ... %@",__func__,self);
-	if (deleted)
+	LOCK(&propertyLock);
+	BOOL		localDeleted = deleted;
+	NSColor		*localClearColor = clearColor;
+	NSColor		*localBorderColor = borderColor;
+	BOOL		localDrawBorder = drawBorder;
+	UNLOCK(&propertyLock);
+	if (localDeleted)
 		return;
-	if (spritesNeedUpdate)
+
+	LOCK(&spriteLock);
+	BOOL		localSpritesNeedUpdate = spritesNeedUpdate;
+	UNLOCK(&spriteLock);
+	
+	if (localSpritesNeedUpdate)
 		[self updateSprites];
 	
-	LOCK(&propertyLock);
-	if (clearColor != nil)	{
-		[clearColor set];
+	if (localClearColor != nil)	{
+		[localClearColor set];
 		NSRect		tmpRect = NSIntersectionRect(f, self.localBackingBounds);
 		NSRectFill(tmpRect);
 	}
-	UNLOCK(&propertyLock);
 	
 	if (spriteManager != nil)
 		[spriteManager drawRect:f];
 	
-	LOCK(&propertyLock);
-	if (drawBorder && borderColor!=nil)	{
-		[borderColor set];
+	if (localDrawBorder && localBorderColor!=nil)	{
+		[localBorderColor set];
 		NSFrameRect([self bounds]);
 	}
-	UNLOCK(&propertyLock);
 	
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
@@ -432,82 +460,89 @@ int					_spriteControlCount;
 }
 
 
-@synthesize deleted;
+- (BOOL) deleted	{
+	LOCK(&propertyLock);
+	BOOL		returnMe = deleted;
+	UNLOCK(&propertyLock);
+	return returnMe;
+}
 @synthesize spriteManager;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
+	LOCK(&spriteLock);
 	spritesNeedUpdate = n;
+	UNLOCK(&spriteLock);
 }
 - (BOOL) spritesNeedUpdate	{
-	return spritesNeedUpdate;
+	LOCK(&spriteLock);
+	BOOL		returnMe = spritesNeedUpdate;
+	UNLOCK(&spriteLock);
+	return returnMe;
 }
 - (void) setSpritesNeedUpdate	{
+	LOCK(&spriteLock);
 	spritesNeedUpdate = YES;
+	UNLOCK(&spriteLock);
 }
 - (NSEvent *) lastMouseEvent	{
-	if (deleted)
-		return nil;
 	NSEvent		*returnMe = nil;
-	
+
 	LOCK(&propertyLock);
-	returnMe = (lastMouseEvent==nil) ? nil : [lastMouseEvent copy];
+	if (!deleted)
+		returnMe = (lastMouseEvent==nil) ? nil : [lastMouseEvent copy];
 	UNLOCK(&propertyLock);
-	
+
 	return returnMe;
 }
 
 
 - (void) setClearColor:(NSColor *)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
-	VVRELEASE(clearColor);
-	clearColor = n;
+	if (!deleted)	{
+		VVRELEASE(clearColor);
+		clearColor = n;
+	}
 	UNLOCK(&propertyLock);
 }
 - (NSColor *) clearColor	{
-	if (deleted)
-		return nil;
 	NSColor		*returnMe = nil;
-	
+
 	LOCK(&propertyLock);
-	returnMe = [clearColor copy];
+	if (!deleted)
+		returnMe = [clearColor copy];
 	UNLOCK(&propertyLock);
-	
+
 	return returnMe;
 }
 - (void) setDrawBorder:(BOOL)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
-	drawBorder = n;
+	if (!deleted)
+		drawBorder = n;
 	UNLOCK(&propertyLock);
 }
 - (BOOL) drawBorder	{
-	if (deleted)
-		return NO;
 	BOOL		returnMe = NO;
 	LOCK(&propertyLock);
-	returnMe = drawBorder;
+	if (!deleted)
+		returnMe = drawBorder;
 	UNLOCK(&propertyLock);
 	return returnMe;
 }
 - (void) setBorderColor:(NSColor *)n	{
-	if (deleted)
-		return;
 	LOCK(&propertyLock);
-	VVRELEASE(borderColor);
-	borderColor = n;
+	if (!deleted)	{
+		VVRELEASE(borderColor);
+		borderColor = n;
+	}
 	UNLOCK(&propertyLock);
 }
 - (NSColor *) borderColor	{
-	if (deleted)
-		return nil;
 	NSColor		*returnMe = nil;
-	
+
 	LOCK(&propertyLock);
-	returnMe = [borderColor copy];
+	if (!deleted)
+		returnMe = [borderColor copy];
 	UNLOCK(&propertyLock);
-	
+
 	return returnMe;
 }
 @synthesize mouseDownModifierFlags;

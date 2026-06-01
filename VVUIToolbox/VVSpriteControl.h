@@ -16,6 +16,7 @@ extern int					_spriteControlCount;
 	@public
 	BOOL					deleted;
 	@protected
+	VVLock					spriteLock;
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	

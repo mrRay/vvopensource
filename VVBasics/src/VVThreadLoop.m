@@ -6,6 +6,12 @@
 
 
 
+#define LOCK VVLockLock
+#define UNLOCK VVLockUnlock
+
+
+
+
 @implementation VVThreadLoop
 
 
@@ -54,13 +60,13 @@
 }
 - (void) start	{
 	//NSLog(@"%s",__func__);
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	if (running)	{
-		VVLockUnlock(&valLock);
+		UNLOCK(&valLock);
 		return;
 	}
 	paused = NO;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	
 	[NSThread
 		detachNewThreadSelector:@selector(threadCallback)
@@ -80,7 +86,7 @@
 
 	BOOL					tmpRunning = YES;
 	BOOL					tmpBail = NO;
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	running = YES;
 	bail = NO;
 	thread = [NSThread currentThread];
@@ -92,7 +98,7 @@
 		selector:@selector(timerCallback:)
 		userInfo:nil
 		repeats:NO];
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	
 		STARTLOOP:
 		@try	{
@@ -105,12 +111,16 @@
 					struct timeval		stopTime;
 					double				executionTime;
 					double				sleepDuration;	//	in microseconds!
+					double		localInterval;
+					double		localMaxInterval;
 			
 					gettimeofday(&startTime,NULL);
-					VVLockLock(&valLock);
+					LOCK(&valLock);
+					localInterval = interval;
+					localMaxInterval = maxInterval;
 					if (!paused)	{
 						executingCallback = YES;
-						VVLockUnlock(&valLock);
+						UNLOCK(&valLock);
 						//@try	{
 							//	if there's a target object, ping it (delegate-style)
 							if (targetObj != nil)	{
@@ -127,12 +137,12 @@
 						//	NSLog(@"%s caught exception, %@",__func__,err);
 						//}
 				
-						VVLockLock(&valLock);
+						LOCK(&valLock);
 						executingCallback = NO;
-						VVLockUnlock(&valLock);
+						UNLOCK(&valLock);
 					}
 					else
-						VVLockUnlock(&valLock);
+						UNLOCK(&valLock);
 			
 					//++runLoopCount;
 					//if (runLoopCount > 4)	{
@@ -150,26 +160,26 @@
 						stopTime.tv_usec = stopTime.tv_usec + 1000000;
 					}
 					executionTime = ((double)(stopTime.tv_usec-startTime.tv_usec))/1000000.0;
-					sleepDuration = fmin(maxInterval,fmax(0.0,interval - executionTime));
+					sleepDuration = fmin(localMaxInterval,fmax(0.0,localInterval - executionTime));
 			
 					//	only sleep if duration's > 0, sleep for a max of 1 sec
 					if (sleepDuration > 0.0)	{
-						if (sleepDuration > maxInterval)
-							sleepDuration = maxInterval;
+						if (sleepDuration > localMaxInterval)
+							sleepDuration = localMaxInterval;
 						CFRunLoopRunInMode(kCFRunLoopDefaultMode, sleepDuration, false);
 					}
 					else	{
 						//NSLog(@"\t\tsleepDuration was 0, about to CFRunLoopRun()...");
-						if (interval==0.0)
-							CFRunLoopRunInMode(kCFRunLoopDefaultMode, maxInterval, false);
+						if (localInterval==0.0)
+							CFRunLoopRunInMode(kCFRunLoopDefaultMode, localMaxInterval, false);
 						else
-							CFRunLoopRunInMode(kCFRunLoopDefaultMode, interval, false);
+							CFRunLoopRunInMode(kCFRunLoopDefaultMode, localInterval, false);
 					}
 			
-					VVLockLock(&valLock);
+					LOCK(&valLock);
 					tmpRunning = running;
 					tmpBail = bail;
-					VVLockUnlock(&valLock);
+					UNLOCK(&valLock);
 				
 				}	//	autoreleasepool
 				
@@ -200,7 +210,7 @@
 	}
 	
 	//[pool release];
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	if (rlTimer != nil)	{
 		[rlTimer invalidate];
 		rlTimer = nil;
@@ -208,7 +218,7 @@
 	thread = nil;
 	runLoop = nil;
 	running = NO;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	//NSLog(@"\t\t%s - FINSHED",__func__);
 }
 - (void) threadProc	{
@@ -218,73 +228,88 @@
 	
 }
 - (void) pause	{
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	paused = YES;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 }
 - (void) resume	{
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	paused = NO;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 }
 - (void) stop	{
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	if (!running)	{
-		VVLockUnlock(&valLock);
+		UNLOCK(&valLock);
 		return;
 	}
 	bail = YES;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 }
 - (void) stopAndWaitUntilDone	{
 	//NSLog(@"%s",__func__);
 	[self stop];
 	BOOL			tmpRunning = NO;
 	
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	tmpRunning = running;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	
 	while (tmpRunning)	{
 		//NSLog(@"\twaiting");
 		//pthread_yield_np();
 		usleep(100);
 		
-		VVLockLock(&valLock);
+		LOCK(&valLock);
 		tmpRunning = running;
-		VVLockUnlock(&valLock);
+		UNLOCK(&valLock);
 	}
 	
 }
 - (double) interval	{
-	return interval;
+	LOCK(&valLock);
+	double		returnMe = interval;
+	UNLOCK(&valLock);
+	return returnMe;
 }
 - (void) setInterval:(double)i	{
 	double		absVal = fabs(i);
+	LOCK(&valLock);
 	interval = (absVal > maxInterval) ? maxInterval : absVal;
+	UNLOCK(&valLock);
 }
 - (BOOL) running	{
 	BOOL		returnMe = NO;
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	returnMe = running;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	return returnMe;
 }
 - (NSThread *) thread	{
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	NSThread		*returnMe = thread;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	return returnMe;
 }
 - (NSRunLoop *) runLoop	{
-	VVLockLock(&valLock);
+	LOCK(&valLock);
 	NSRunLoop		*returnMe = runLoop;
-	VVLockUnlock(&valLock);
+	UNLOCK(&valLock);
 	return returnMe;
 }
 
 
-@synthesize maxInterval;
+- (void) setMaxInterval:(double)n	{
+	LOCK(&valLock);
+	maxInterval = n;
+	UNLOCK(&valLock);
+}
+- (double) maxInterval	{
+	LOCK(&valLock);
+	double		returnMe = maxInterval;
+	UNLOCK(&valLock);
+	return returnMe;
+}
 
 
 @end

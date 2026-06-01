@@ -38,6 +38,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 */
 @interface OSCNode : NSObject {
 	id					addressSpace;	//	the class OSCAddressSpace is a subclass of OSCNode, and is essentially the "root" node.  all OSCNodes have a pointer to the root node!
+	VVLock				deletedLock;
 	BOOL				deleted;
 	
 	VVLock			nameLock;
@@ -45,6 +46,8 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 	NSString			*fullName;	//	"full" name: name of the node at /a/b/c is "/a/b/c"
 	NSString			*lastFullName;	//	when changes are performed (to, for example, names) the "previous" full name is stored here so delegates can retrieve it
 	MutLockArray		*nodeContents;	//	Contains OSCNode instances- this OSCNode's sub-nodes.  type 'MutLockArray'- this should all be threadsafe...
+	
+	VVLock				nodeLock;
 	__weak OSCNode		*parentNode;	//	my "parent" node (or nil).  NOT retained!
 	OSCNodeType			nodeType;	//	What 'type' of node i am
 	BOOL				hiddenInMenu;	//	NO by default. if YES, this node (and all its sub-nodes) will be omitted from menus!
@@ -139,7 +142,7 @@ Generally speaking, it's a good idea for each instance of OSCNode to have a disc
 @property (readonly) OSCMessage *lastReceivedMessage;
 ///	Convenience method for returning the first value from the last received message
 @property (readonly) OSCValue *lastReceivedValue;
-@property (readonly) id delegateArray;
+@property (readonly) MutNRLockArray * delegateArray;
 
 @property (strong,setter=setOSCDescription:) NSString * oscDescription;
 @property (strong) NSString * typeTagString;

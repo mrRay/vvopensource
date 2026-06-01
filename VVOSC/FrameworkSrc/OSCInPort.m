@@ -312,8 +312,8 @@
 						[self handleScratchArray:tmpArray];
 					}
 					//	is it time to start advertising a bonjour/zeroconf service yet?
+					LOCK(&zeroConfLock);
 					if (zeroConfEnabled && zeroConfDest==nil)	{
-						LOCK(&zeroConfLock);
 						if (zeroConfDest==nil && portLabel!=nil && [zeroConfSwatch timeSinceStart]>1.0)	{
 							zeroConfDest = [[NSNetService alloc]
 								initWithDomain:@"local."
@@ -327,8 +327,8 @@
 								port:port];
 							[zeroConfDest publish];
 						}
-						UNLOCK(&zeroConfLock);
 					}
+					UNLOCK(&zeroConfLock);
 			
 			
 					//{

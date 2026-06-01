@@ -51,10 +51,10 @@
 	}
 	
 	VVSpriteMTLViewVertex		verts[4];
-	verts[0].position = simd_make_float2( tmpRect.origin.x, tmpRect.origin.y + tmpRect.size.height );
-	verts[1].position = simd_make_float2( tmpRect.origin.x, tmpRect.origin.y );
-	verts[2].position = simd_make_float2( tmpRect.origin.x + tmpRect.size.width, tmpRect.origin.y + tmpRect.size.height );
-	verts[3].position = simd_make_float2( tmpRect.origin.x + tmpRect.size.width, tmpRect.origin.y );
+	verts[0].position = simd_make_float4( tmpRect.origin.x, tmpRect.origin.y + tmpRect.size.height, 0., 1. );
+	verts[1].position = simd_make_float4( tmpRect.origin.x, tmpRect.origin.y, 0., 1. );
+	verts[2].position = simd_make_float4( tmpRect.origin.x + tmpRect.size.width, tmpRect.origin.y + tmpRect.size.height, 0., 1. );
+	verts[3].position = simd_make_float4( tmpRect.origin.x + tmpRect.size.width, tmpRect.origin.y, 0., 1. );
 	
 	for (int i=0; i<4; ++i)	{
 		verts[i].color = simd_make_float4(0., 0., 1., 1.);

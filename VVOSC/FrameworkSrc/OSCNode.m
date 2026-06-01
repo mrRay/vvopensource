@@ -33,6 +33,7 @@
 		goto BAIL;
 	if (self = [super init])	{
 		addressSpace = _mainVVOSCAddressSpace;
+		deletedLock = VV_LOCK_INIT;
 		deleted = NO;
 		
 		nameLock = VV_LOCK_INIT;
@@ -40,6 +41,8 @@
 		fullName = nil;
 		lastFullName = nil;
 		nodeContents = nil;
+		
+		nodeLock = VV_LOCK_INIT;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
 		hiddenInMenu = NO;
@@ -70,6 +73,7 @@
 	//NSLog(@"WARNING: %s",__func__);
 	if (self = [super init])	{
 		addressSpace = _mainVVOSCAddressSpace;
+		deletedLock = VV_LOCK_INIT;
 		deleted = NO;
 		
 		nameLock = VV_LOCK_INIT;
@@ -77,6 +81,8 @@
 		fullName = nil;
 		lastFullName = nil;
 		nodeContents = nil;
+		
+		nodeLock = VV_LOCK_INIT;
 		parentNode = nil;
 		nodeType = OSCNodeTypeUnknown;
 		hiddenInMenu = NO;
@@ -102,28 +108,39 @@
 	return self;
 }
 - (void) prepareToBeDeleted	{
-	if (delegateArray != nil)	{
-		NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+	VVLockLock(&lastReceivedMessageLock);
+	MutNRLockArray		*localDelegateArray = delegateArray;
+	VVLockUnlock(&lastReceivedMessageLock);
+	
+	if (localDelegateArray != nil)	{
+		NSMutableArray		*tmpArray = [localDelegateArray lockCreateArrayCopyFromObjects];
 		for (id anObj in tmpArray)	{
 			[anObj nodeDeleted:self];
 		}
 		
-		[delegateArray wrlock];
-			[delegateArray removeAllObjects];
-		[delegateArray unlock];
+		[localDelegateArray wrlock];
+			[localDelegateArray removeAllObjects];
+		[localDelegateArray unlock];
 		
+		VVLockLock(&lastReceivedMessageLock);
 		VVRELEASE(delegateArray);
+		VVLockUnlock(&lastReceivedMessageLock);
 	}
 	[nodeContents rdlock];
 	for (OSCNode *nodePtr in [nodeContents array])	{
 		[nodePtr prepareToBeDeleted];
 	}
 	[nodeContents unlock];
+	VVLockLock(&deletedLock);
 	deleted = YES;
+	VVLockUnlock(&deletedLock);
 }
 - (void) dealloc	{
 	//NSLog(@"%s ... %@",__func__,self);
-	if (!deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (!localDeleted)
 		[self prepareToBeDeleted];
 	
 	VVLockLock(&nameLock);
@@ -133,7 +150,10 @@
 	VVLockUnlock(&nameLock);
 	
 	VVRELEASE(nodeContents);
+	
+	VVLockLock(&nodeLock);
 	parentNode = nil;
+	VVLockUnlock(&nodeLock);
 	
 	VVLockLock(&lastReceivedMessageLock);
 	VVRELEASE(lastReceivedMessage);
@@ -178,7 +198,10 @@
 
 - (BOOL) isEqualTo:(id)o	{
 	//	if the comparator is nil or i've been deleted, it's not equal
-	if ((o == nil)||(deleted))
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if ((o == nil)||(localDeleted))
 		return NO;
 	//	if the ptr is an exact match (same instance), return YES
 	if (self == o)
@@ -203,7 +226,10 @@
 
 - (void) addLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
-	if ((n == nil)||(deleted))
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if ((n == nil)||(localDeleted))
 		return;
 	if (nodeContents == nil)
 		nodeContents = [[MutLockArray alloc] initWithCapacity:0];
@@ -215,7 +241,10 @@
 	[n setParentNode:self];
 }
 - (void) addLocalNodes:(NSArray *)n	{
-	if (n==nil || deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (n==nil || localDeleted)
 		return;
 	if (nodeContents == nil)
 		nodeContents = [[MutLockArray alloc] initWithCapacity:0];
@@ -229,7 +258,10 @@
 }
 - (void) removeLocalNode:(OSCNode *)n	{
 	//NSLog(@"%s ... %@",__func__,n);
-	if ((n == nil)||(deleted))
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if ((n == nil)||(localDeleted))
 		return;
 	long		indexOfIdenticalPtr = NSNotFound;
 	OSCNode		*tmpNode = n;
@@ -243,7 +275,10 @@
 		[tmpNode setParentNode:nil];
 }
 - (void) deleteLocalNode:(OSCNode *)n	{
-	if ((n == nil)||(deleted))
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if ((n == nil)||(localDeleted))
 		return;
 	long		indexOfIdenticalPtr = NSNotFound;
 	OSCNode		*tmpNode = n;
@@ -259,12 +294,18 @@
 	[tmpNode prepareToBeDeleted];
 }
 - (void) removeFromAddressSpace	{
-	if (deleted || _mainVVOSCAddressSpace==nil || fullName==nil)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted || _mainVVOSCAddressSpace==nil)
 		return;
 	VVLockLock(&nameLock);
 	VVRELEASE(lastFullName);
 	lastFullName = (fullName==nil) ? nil : fullName;
+	NSString		*localLastFullName = lastFullName;
 	VVLockUnlock(&nameLock);
+	if (localLastFullName == nil)
+		return;
 	[_mainVVOSCAddressSpace setNode:nil forAddress:fullName];
 }
 
@@ -435,6 +476,7 @@
 - (void) addDelegate:(id <OSCNodeDelegateProtocol>)d	{
 	if (d == nil)
 		return;
+	VVLockLock(&lastReceivedMessageLock);
 	//	if there's no delegate array, make one
 	if (delegateArray == nil)	{
 		delegateArray = [[MutNRLockArray alloc] initWithCapacity:0];
@@ -446,14 +488,19 @@
 	if (foundIndex == NSNotFound)
 		[delegateArray addObject:d];
 	[delegateArray unlock];
+	VVLockUnlock(&lastReceivedMessageLock);
 }
 - (void) removeDelegate:(id)d	{
-	if (delegateArray==nil || [delegateArray count]<1)
+	if (d == nil)
 		return;
-	[delegateArray wrlock];
+	VVLockLock(&lastReceivedMessageLock);
+	MutNRLockArray		*localDelegateArray = delegateArray;
+	VVLockUnlock(&lastReceivedMessageLock);
+	
+	[localDelegateArray wrlock];
 	NSMutableIndexSet		*ixsToRemove = nil;
 	int						tmpIndex = 0;
-	for (ObjectHolder *holder in [delegateArray array])	{
+	for (ObjectHolder *holder in [localDelegateArray array])	{
 		if (holder == d)	{
 			if (ixsToRemove==nil)
 				ixsToRemove = [[NSMutableIndexSet alloc] init];
@@ -471,27 +518,32 @@
 		++tmpIndex;
 	}
 	if (ixsToRemove != nil)
-		[delegateArray removeObjectsAtIndexes:ixsToRemove];
-	[delegateArray purgeEmptyHolders];
-	[delegateArray unlock];
+		[localDelegateArray removeObjectsAtIndexes:ixsToRemove];
+	[localDelegateArray purgeEmptyHolders];
+	[localDelegateArray unlock];
 }
 - (void) informDelegatesOfNameChange	{
 	//NSLog(@"%s ... %@",__func__,self);
 	//	first of all, recalculate my full name (this could have been called by a parent changing its name)
-	NSString		*parentFullName = (parentNode==nil)?nil:[parentNode fullName];
+	VVLockLock(&nodeLock);
+	OSCNode		*localParentNode = parentNode;
+	VVLockUnlock(&nodeLock);
+	NSString		*parentFullName = (localParentNode==nil)?nil:[localParentNode fullName];
 	VVLockLock(&nameLock);
 		VVRELEASE(lastFullName);
 		lastFullName = (fullName==nil) ? nil : fullName;
 		VVRELEASE(fullName);
-		//NSLog(@"\t\tparentNode is %p, addressSpace is %p",parentNode,addressSpace);
-		if (parentNode == addressSpace)
+		//NSLog(@"\t\tparentNode is %p, addressSpace is %p",localParentNode,addressSpace);
+		if (localParentNode == addressSpace)
 			fullName = [NSString stringWithFormat:@"/%@",nodeName];
-		else if (parentNode != nil)
+		else if (localParentNode != nil)
 			fullName = [NSString stringWithFormat:@"%@/%@",parentFullName,nodeName];
 	VVLockUnlock(&nameLock);
 	
 	//	inform delegates of name change
+	VVLockLock(&lastReceivedMessageLock);
 	NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+	VVLockUnlock(&lastReceivedMessageLock);
 	for (id anObj in tmpArray)	{
 		[anObj nodeNameChanged:self];
 	}
@@ -506,7 +558,9 @@
 	//	put together an array of the delegates i'll be adding
 	NSArray		*delegatesToAdd = [[n delegateArray] lockCreateArrayCopyFromObjects];
 	//	copy the delegates to my delegate array
+	VVLockLock(&lastReceivedMessageLock);
 	[delegateArray lockAddObjectsFromArray:delegatesToAdd];
+	VVLockUnlock(&lastReceivedMessageLock);
 	//	notify the delegates i copied that their names changed
 	for (id delegatePtr in delegatesToAdd)	{
 		if ([delegatePtr respondsToSelector:@selector(nodeNameChanged:)])
@@ -522,20 +576,27 @@
 
 - (void) dispatchMessage:(OSCMessage *)m	{
 	//NSLog(@"%s ... %@",__func__,m);
-	if ((m==nil)||(deleted))
+	if (m == nil)
+		return;
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	//	retain the message so it doesn't disappear during this callback
 	OSCMessage			*tmpMsg = m;
 	NSMutableArray		*tmpCopy = nil;
 	
 	VVLockLock(&lastReceivedMessageLock);
-		VVRELEASE(lastReceivedMessage);
-		lastReceivedMessage = tmpMsg;
+	VVRELEASE(lastReceivedMessage);
+	lastReceivedMessage = tmpMsg;
+	MutNRLockArray		*localDelegateArray = delegateArray;
 	VVLockUnlock(&lastReceivedMessageLock);
 	
-	[delegateArray wrlock];
-	tmpCopy = [delegateArray createArrayCopyFromObjects];
-	[delegateArray unlock];
+	[localDelegateArray wrlock];
+	tmpCopy = [localDelegateArray createArrayCopyFromObjects];
+	[localDelegateArray unlock];
+	
 	if (tmpCopy != nil)	{
 		for (id delegate in tmpCopy)	{
 			[delegate node:self receivedOSCMessage:tmpMsg];
@@ -581,7 +642,10 @@
 	VVLockUnlock(&nameLock);
 	
 	//	if there's a parent node (if it's actually in the address space), tell my delegates about the name change
-	if (parentNode != nil)	{
+	VVLockLock(&nodeLock);
+	OSCNode		*localParentNode = parentNode;
+	VVLockUnlock(&nodeLock);
+	if (localParentNode != nil)	{
 		//	informing delegates of name change also fixes my full name!
 		[self informDelegatesOfNameChange];
 	}
@@ -603,41 +667,62 @@
 }
 - (void) setParentNode:(OSCNode *)n	{
 	//NSLog(@"%s",__func__);
+	VVLockLock(&nodeLock);
 	//	if there's a parent node and it doesn't match the current parent node then the parent node changed
 	BOOL			parentNodeChanged = (parentNode!=n && n!=nil)?YES:NO;
 	//	if the new parent node is nil, i'm removing this node from the address space and i need to inform my delegates
 	BOOL			deletingThisNode = (parentNode!=nil && n==nil) ? YES : NO;
 	parentNode = n;
+	VVLockUnlock(&nodeLock);
 	
 	//	if the parent node changed, inform my delegates of the name change
 	if (parentNodeChanged)
 		[self informDelegatesOfNameChange];
 	//	if i'm deleting this node, inform my delegates of it
 	if (deletingThisNode)	{
-		NSMutableArray		*tmpArray = [delegateArray lockCreateArrayCopyFromObjects];
+		VVLockLock(&lastReceivedMessageLock);
+		MutNRLockArray		*localDelegateArray = delegateArray;
+		VVLockUnlock(&lastReceivedMessageLock);
+		NSMutableArray		*tmpArray = [localDelegateArray lockCreateArrayCopyFromObjects];
 		for (id anObj in tmpArray)	{
 			[anObj nodeDeleted:self];
 		}
-		[delegateArray lockRemoveAllObjects];
+		[localDelegateArray lockRemoveAllObjects];
 	}
 }
 - (OSCNode *) parentNode	{
-	return parentNode;
+	VVLockLock(&nodeLock);
+	OSCNode		*localParentNode = parentNode;
+	VVLockUnlock(&nodeLock);
+	return localParentNode;
 }
 - (void) setNodeType:(OSCNodeType)n	{
+	VVLockLock(&nodeLock);
 	nodeType = n;
+	VVLockUnlock(&nodeLock);
 }
 - (OSCNodeType) nodeType	{
-	return nodeType;
+	VVLockLock(&nodeLock);
+	OSCNodeType		localNodeType = nodeType;
+	VVLockUnlock(&nodeLock);
+	return localNodeType;
 }
 - (void) setHiddenInMenu:(BOOL)n	{
+	VVLockLock(&nodeLock);
 	hiddenInMenu = n;
+	VVLockUnlock(&nodeLock);
 }
 - (BOOL) hiddenInMenu	{
-	return hiddenInMenu;
+	VVLockLock(&nodeLock);
+	BOOL		localHiddenInMenu = hiddenInMenu;
+	VVLockUnlock(&nodeLock);
+	return localHiddenInMenu;
 }
 - (void) setLastReceivedMessage:(OSCMessage *)n	{
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return;
 	VVLockLock(&lastReceivedMessageLock);
 	VVRELEASE(lastReceivedMessage);
@@ -645,7 +730,10 @@
 	VVLockUnlock(&lastReceivedMessageLock);
 }
 - (OSCMessage *) lastReceivedMessage	{
-	if (deleted)
+	VVLockLock(&deletedLock);
+	BOOL		localDeleted = deleted;
+	VVLockUnlock(&deletedLock);
+	if (localDeleted)
 		return nil;
 	OSCMessage		*returnMe = nil;
 	
@@ -664,8 +752,11 @@
 	VVLockUnlock(&lastReceivedMessageLock);
 	return returnMe;
 }
-- (id) delegateArray	{
-	return delegateArray;
+- (MutNRLockArray *) delegateArray	{
+	VVLockLock(&lastReceivedMessageLock);
+	MutNRLockArray		*localDelegateArray = delegateArray;
+	VVLockUnlock(&lastReceivedMessageLock);
+	return localDelegateArray;
 }
 
 

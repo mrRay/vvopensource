@@ -230,11 +230,13 @@
 	return [array objectAtIndex:0];
 }
 - (id) lockFirstObject	{
-	if ((array==nil)||([array count]<1))
+	if (array==nil)
 		return nil;
 	id			returnMe = nil;
 	pthread_rwlock_rdlock(&arrayLock);
+	if ([array count]>0)	{
 		returnMe = [array objectAtIndex:0];
+	}
 	pthread_rwlock_unlock(&arrayLock);
 	return returnMe;
 }
@@ -244,11 +246,13 @@
 	[array removeObjectAtIndex:0];
 }
 - (void) lockRemoveFirstObject	{
-	if ((array==nil)||([array count]<1))
+	if (array==nil)
 		return;
 	
 	pthread_rwlock_wrlock(&arrayLock);
+	if ([array count]>0)	{
 		[array removeObjectAtIndex:0];
+	}
 	pthread_rwlock_unlock(&arrayLock);
 }
 
@@ -261,9 +265,11 @@
 - (id) lockLastObject	{
 	id	returnMe = nil;
 	
-	if ((array != nil) && ([array count]>0))	{
+	if (array != nil)	{
 		pthread_rwlock_rdlock(&arrayLock);
+		if ([array count]>0)	{
 			returnMe = [self lastObject];
+		}
 		pthread_rwlock_unlock(&arrayLock);
 	}
 	
@@ -508,7 +514,7 @@
 - (BOOL) lockContainsIdenticalPtr:(id)o	{
 	BOOL				returnMe = NO;
 	
-	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+	if ((array!=nil) && (o!=nil))	{
 		pthread_rwlock_rdlock(&arrayLock);
 			returnMe = [self containsIdenticalPtr:o];
 		pthread_rwlock_unlock(&arrayLock);
@@ -549,9 +555,11 @@
 - (long) lockIndexOfIdenticalPtr:(id)o	{
 	long		returnMe = NSNotFound;
 	
-	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+	if ((array!=nil) && (o!=nil))	{
 		pthread_rwlock_rdlock(&arrayLock);
+		if ([array count]>0)	{
 			returnMe = [self indexOfIdenticalPtr:o];
+		}
 		pthread_rwlock_unlock(&arrayLock);
 	}
 	
@@ -589,7 +597,7 @@
 	*/
 }
 - (void) lockRemoveIdenticalPtr:(id)o	{
-	if ((array!=nil) && (o!=nil) && ([array count]>0))	{
+	if ((array!=nil) && (o!=nil))	{
 		pthread_rwlock_wrlock(&arrayLock);
 			[self removeIdenticalPtr:o];
 		pthread_rwlock_unlock(&arrayLock);
@@ -607,9 +615,11 @@
 - (NSArray *) lockFilteredArrayUsingPredicate:(NSPredicate *)predicate	{
 	NSArray	*returnMe = nil;
 	
-	if ((array!=nil) && (predicate!=nil) && ([array count]>0))	{
+	if ((array!=nil) && (predicate!=nil))	{
 		pthread_rwlock_rdlock(&arrayLock);
-			returnMe = [self filteredArrayUsingPredicate:predicate];
+			if ([array count] > 0)	{
+				returnMe = [self filteredArrayUsingPredicate:predicate];
+			}
 		pthread_rwlock_unlock(&arrayLock);
 	}	
 	
