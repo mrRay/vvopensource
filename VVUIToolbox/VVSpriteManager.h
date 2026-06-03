@@ -18,7 +18,7 @@ extern MutLockArray		*_spriteManagerArray;
 
 
 @interface VVSpriteManager : NSObject {
-	BOOL					deleted;
+	_Atomic BOOL			deleted;
 	BOOL					allowMultiSpriteInteraction;	//	NO by default- if YES, clicking/dragging/etc works with multiple sprites!
 	BOOL					multiSpriteExecutesOnMultipleSprites;	//	only relevant if multi-sprite interaction is YES.  this is NO by default- if it's YES all sprites in "spritesInUse" will receive an action callback when any of them get an action method.  if this is NO then only the sprite that "caught" the interaction will receive an action callback!
 	MutLockArray			*spriteArray;	//	searched from beginning to end, so order is like z-index!
@@ -29,7 +29,7 @@ extern MutLockArray		*_spriteManagerArray;
 	VVSprite				*spriteInUse;	//	array of VVSprite objects currently tracking drag info
 	MutLockArray			*spritesInUse;	//	ONLY VALID IF MULTI SPRITE INTERACTION IS YES! array of VVSprite o
 #endif
-	long					spriteIndexCount;
+	_Atomic long			spriteIndexCount;
 }
 
 - (void) prepareToBeDeleted;

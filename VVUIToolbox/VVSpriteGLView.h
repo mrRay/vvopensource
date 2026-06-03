@@ -53,7 +53,7 @@ extern long			_spriteGLViewSysVers;
 
 @interface VVSpriteGLView : NSOpenGLView <VVViewContainer>	{
 	@public
-	BOOL					deleted;
+	_Atomic BOOL			deleted;
 	@protected
 	BOOL					initialized;
 	BOOL					waitingForMainThread;
@@ -108,7 +108,7 @@ extern long			_spriteGLViewSysVers;
 - (VVView *) vvSubviewHitTest:(VVPOINT)p;
 - (void) reconcileVVSubviewDragTypes;
 
-@property (readonly) BOOL deleted;
+@property (readonly) _Atomic BOOL deleted;
 @property (assign,readwrite) BOOL initialized;
 - (BOOL) flipped;
 - (void) setFlipped:(BOOL)n;

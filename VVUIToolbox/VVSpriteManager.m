@@ -1,6 +1,7 @@
 
 #import "VVSpriteManager.h"
 #import "VVBasicMacros.h"
+#include <stdatomic.h>
 #if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
 #endif
@@ -401,11 +402,8 @@ MutLockArray		*_spriteManagerArray;
 - (long) getUniqueSpriteIndex	{
 	if (deleted)
 		return -1;
-	long		returnMe = spriteIndexCount;
-	++spriteIndexCount;
-	if (spriteIndexCount >= 0x7FFFFFFF)
-		spriteIndexCount = 1;
-	return returnMe;
+	//	atomic unique-index allocation (was a non-atomic read-inc-wrap); monotonic long, never overflows in practice
+	return atomic_fetch_add(&spriteIndexCount, 1);
 }
 
 - (VVSprite *) spriteForIndex:(long)i	{

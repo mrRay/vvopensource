@@ -14,7 +14,7 @@ extern int					_spriteControlCount;
 
 @interface VVSpriteControl : NSControl {
 	@public
-	BOOL					deleted;
+	_Atomic BOOL			deleted;
 	@protected
 	VVLock					spriteLock;
 	VVSpriteManager			*spriteManager;
@@ -29,7 +29,7 @@ extern int					_spriteControlCount;
 	long					mouseDownModifierFlags;
 	VVSpriteEventType		mouseDownEventType;
 	long					modifierFlags;
-	BOOL					mouseIsDown;
+	_Atomic BOOL			mouseIsDown;
 	__weak NSView					*clickedSubview;	//	NOT RETAINED
 }
 
@@ -42,7 +42,7 @@ extern int					_spriteControlCount;
 - (void) updateSprites;
 
 @property (readonly) BOOL deleted;
-@property (readwrite) double localToBackingBoundsMultiplier;
+@property (readwrite) _Atomic double localToBackingBoundsMultiplier;
 @property (readonly) VVSpriteManager *spriteManager;
 @property (assign, readwrite) BOOL spritesNeedUpdate;
 - (void) setSpritesNeedUpdate;
@@ -53,7 +53,7 @@ extern int					_spriteControlCount;
 @property (readonly) long mouseDownModifierFlags;
 @property (assign,readwrite) VVSpriteEventType mouseDownEventType;
 @property (readonly) long modifierFlags;
-@property (readonly) BOOL mouseIsDown;
+@property (readonly) _Atomic BOOL mouseIsDown;
 - (void) _setMouseIsDown:(BOOL)n;	//	used to work around the fact that NSViews don't get a "mouseUp" when they open a contextual menu
 
 //	local, thread-safe version of NSView's 'boundsRotation' property (and other properties)

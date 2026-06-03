@@ -13,7 +13,7 @@ extern int				_spriteViewCount;
 
 
 @interface VVSpriteView : NSView <VVViewContainer>	{
-	BOOL					deleted;
+	_Atomic BOOL			deleted;
 	VVSpriteManager			*spriteManager;
 	BOOL					spritesNeedUpdate;
 	

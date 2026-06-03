@@ -87,8 +87,8 @@ int				_spriteViewCount;
 		[spriteManager prepareToBeDeleted];
 	LOCK(&propertyLock);
 	spritesNeedUpdate = NO;
-	deleted = YES;
 	UNLOCK(&propertyLock);
+	deleted = YES;
 }
 - (void) dealloc	{
 	//NSLog(@"%s ... %@, %p",__func__,[self class],self);
@@ -154,10 +154,7 @@ int				_spriteViewCount;
 	self.localVisibleRect = self.visibleRect;
 }
 - (void) setFrame:(NSRect)n	{
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return;
 
 	[super setFrame:n];
@@ -248,10 +245,7 @@ int				_spriteViewCount;
 	//NSLog(@"%s",__func__);
 	if (n == nil || ![n isKindOfClass:[VVView class]])
 		return;
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return;
 	
 	[vvSubviews wrlock];
@@ -274,10 +268,7 @@ int				_spriteViewCount;
 	//NSLog(@"%s",__func__);
 	if (n == nil || ![n isKindOfClass:[VVView class]])
 		return;
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return;
 	
 	id			tmpSubview = n;
@@ -300,10 +291,7 @@ int				_spriteViewCount;
 - (BOOL) containsSubview:(VVView *)n	{
 	if (n==nil || vvSubviews==nil)
 		return NO;
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return NO;
 	BOOL		returnMe = NO;
 	[vvSubviews rdlock];
@@ -320,10 +308,7 @@ int				_spriteViewCount;
 	//NSLog(@"%s ... (%f, %f)",__func__,p.x,p.y);
 	if (vvSubviews==nil)
 		return nil;
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return nil;
 	
 	id					returnMe = nil;
@@ -346,10 +331,7 @@ int				_spriteViewCount;
 	//NSLog(@"%s",__func__);
 	if (vvSubviews==nil)
 		return;
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return;
 	
 	NSMutableArray		*tmpArray = [NSMutableArray arrayWithCapacity:0];
@@ -450,13 +432,12 @@ int				_spriteViewCount;
 
 
 - (void) mouseDown:(NSEvent *)e	{
+	if (deleted)
+		return;
 	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
-	if (localDeleted)
-		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -508,13 +489,12 @@ int				_spriteViewCount;
 	}
 }
 - (void) rightMouseDown:(NSEvent *)e	{
+	if (deleted)
+		return;
 	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
-	if (localDeleted)
-		return;
 	
 	mouseIsDown = YES;
 	VVPOINT		locationInWindow = [e locationInWindow];
@@ -554,13 +534,12 @@ int				_spriteViewCount;
 	[spriteManager localRightMouseDown:localPoint modifierFlag:mouseDownModifierFlags];
 }
 - (void) mouseDragged:(NSEvent *)e	{
+	if (deleted)
+		return;
 	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
-	if (localDeleted)
-		return;
 	
 	modifierFlags = [e modifierFlags];
 	VVPOINT		localPoint = [self convertPoint:[e locationInWindow] fromView:nil];
@@ -574,10 +553,7 @@ int				_spriteViewCount;
 	[self mouseDragged:e];
 }
 - (void) mouseUp:(NSEvent *)e	{
-	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
-	UNLOCK(&propertyLock);
-	if (localDeleted)
+	if (deleted)
 		return;
 
 	if (mouseDownEventType == VVSpriteEventRightDown)	{
@@ -601,13 +577,12 @@ int				_spriteViewCount;
 		[spriteManager localMouseUp:localPoint];
 }
 - (void) rightMouseUp:(NSEvent *)e	{
+	if (deleted)
+		return;
 	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
 	VVRELEASE(lastMouseEvent);
 	lastMouseEvent = e;
 	UNLOCK(&propertyLock);
-	if (localDeleted)
-		return;
 	
 	modifierFlags = [e modifierFlags];
 	mouseIsDown = NO;
@@ -629,15 +604,14 @@ int				_spriteViewCount;
 
 - (void) drawRect:(VVRECT)f	{
 	//NSLog(@"%s",__func__);
+	if (deleted)
+		return;
 	LOCK(&propertyLock);
-	BOOL		localDeleted = deleted;
 	BOOL		localSpritesNeedUpdate = spritesNeedUpdate;
 	NSColor		*localClearColor = clearColor;
 	NSColor		*localBorderColor = borderColor;
 	BOOL		localDrawBorder = drawBorder;
 	UNLOCK(&propertyLock);
-	if (localDeleted)
-		return;
 	if (localSpritesNeedUpdate)
 		[self updateSprites];
 	
@@ -671,10 +645,7 @@ int				_spriteViewCount;
 
 
 - (BOOL) deleted	{
-	LOCK(&propertyLock);
-	BOOL		returnMe = deleted;
-	UNLOCK(&propertyLock);
-	return returnMe;
+	return deleted;
 }
 @synthesize spriteManager;
 - (void) setSpritesNeedUpdate:(BOOL)n	{
