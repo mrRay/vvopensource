@@ -1405,6 +1405,7 @@ long		_spriteMTLViewSysVers;
 	//psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
 	
 	pso = [_device newRenderPipelineStateWithDescriptor:psoDesc error:&nsErr];
+	textureArgumentEncoder = nil;
 	
 	self.mvpBuffer = nil;
 	
@@ -1493,5 +1494,18 @@ long		_spriteMTLViewSysVers;
 	return _layerBackgroundColor;
 }
 
+- (id<MTLArgumentEncoder>) textureArgumentEncoder	{
+	if (textureArgumentEncoder != nil)
+		return textureArgumentEncoder;
+	id<MTLFunction>		localFragFunc = psoDesc.fragmentFunction;
+	if (localFragFunc == nil)	{
+		NSLog(@"ERR: %s, frag func nil",__func__);
+		return nil;
+	}
+	textureArgumentEncoder = [localFragFunc newArgumentEncoderWithBufferIndex:VVSpriteMTLView_FS_Idx_Tex];
+	return textureArgumentEncoder;
+}
+
 
 @end
+

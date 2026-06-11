@@ -1,6 +1,9 @@
 #import "VVScrollView.h"
 #if !TARGET_OS_IPHONE
 #import <OpenGL/CGLMacro.h>
+#import <Metal/Metal.h>
+#import <simd/simd.h>
+#import "VVSpriteMTLViewShaderTypes.h"
 #endif
 
 
@@ -10,6 +13,58 @@
 
 //	this function evaluates the x,y coords of points along the circumference of a circle.  starts evaluating at 'startAngleRadians', stops evaluation at 'endAngleRadians'.  'centerPoint' is the center of the circle, 'radius' defines its circumference, 'vertCount' is the number of vertices to evaluate.  the results are written into 'destBuffer' as a series of three GLfloat values per vertex.  returns a ptr to the memory in 'wPtr' after these additions.
 GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians, VVPOINT centerPoint, double radius, int vertCount, GLfloat *destBuffer);
+
+
+#if !TARGET_OS_IPHONE
+//	draws a buffer of GL-style vertex triplets (three GLfloats per vertex) in the passed encoder as untextured verts of the passed color.  vert data is expected to be in the same coordinate space the GL path uses (the enclosing view's local backing coords- the view's MVP is already bound by the time sprite draw callbacks fire)
+static void VVScrollViewMTLDrawVertTriplets(id<MTLRenderCommandEncoder> enc, MTLPrimitiveType primType, const GLfloat *srcVerts, int srcVertCount, vector_float4 color)	{
+	if (enc==nil || srcVerts==NULL || srcVertCount<1)
+		return;
+	VVSpriteMTLViewVertex		verts[srcVertCount];
+	for (int i=0; i<srcVertCount; ++i)	{
+		const GLfloat		*src = srcVerts + (i*3);
+		verts[i].position = simd_make_float4(src[0], src[1], src[2], 1.);
+		verts[i].color = color;
+		verts[i].texCoord = simd_make_float2(0., 0.);
+		verts[i].texIndex = -1;
+	}
+	[enc
+		setVertexBytes:verts
+		length:sizeof(VVSpriteMTLViewVertex)*srcVertCount
+		atIndex:VVSpriteMTLView_VS_Idx_Verts];
+	[enc
+		drawPrimitives:primType
+		vertexStart:0
+		vertexCount:srcVertCount];
+}
+//	metal doesn't have triangle fans- this draws a buffer of GL-style fan vertex triplets (the first vertex is the center of the fan) by converting it to a triangle list
+static void VVScrollViewMTLDrawFanVertTriplets(id<MTLRenderCommandEncoder> enc, const GLfloat *fanVerts, int fanVertCount, vector_float4 color)	{
+	int			triCount = fanVertCount - 2;
+	if (enc==nil || fanVerts==NULL || triCount<1)
+		return;
+	VVSpriteMTLViewVertex		verts[triCount * 3];
+	VVSpriteMTLViewVertex		*wPtr = verts;
+	for (int i=0; i<triCount; ++i)	{
+		const GLfloat		*srcTriplets[3] = { fanVerts, fanVerts + ((i+1)*3), fanVerts + ((i+2)*3) };
+		for (int j=0; j<3; ++j)	{
+			const GLfloat		*src = srcTriplets[j];
+			wPtr->position = simd_make_float4(src[0], src[1], src[2], 1.);
+			wPtr->color = color;
+			wPtr->texCoord = simd_make_float2(0., 0.);
+			wPtr->texIndex = -1;
+			++wPtr;
+		}
+	}
+	[enc
+		setVertexBytes:verts
+		length:sizeof(VVSpriteMTLViewVertex)*triCount*3
+		atIndex:VVSpriteMTLView_VS_Idx_Verts];
+	[enc
+		drawPrimitives:MTLPrimitiveTypeTriangle
+		vertexStart:0
+		vertexCount:triCount*3];
+}
+#endif
 
 
 
@@ -420,6 +475,25 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 #else
 	if ([s hidden])
 		return;
+	//	if the sprite has a metal encoder, i'm being drawn in a metal view- otherwise fall through to the GL path
+	id<MTLRenderCommandEncoder>		drawEnc = [s drawEnc];
+	if (drawEnc != nil)	{
+		vector_float4		black = simd_make_float4(0., 0., 0., 1.);
+		if (s == hScrollTrack)	{
+			//	the track verts describe a closed line loop (metal line strips are 1px- vs the GL path's 1pt- but it's a hairline either way)
+			VVScrollViewMTLDrawVertTriplets(drawEnc, MTLPrimitiveTypeLineStrip, hScrollTrackVerts, scrollTrackVertCount, black);
+		}
+		else if (s == hScrollBar)	{
+			NSPoint			origin = [s rect].origin;
+			if (origin.x>=0 && origin.y>=0)	{
+				int				vertCount = (vertsAroundEndCap + 1);
+				VVScrollViewMTLDrawFanVertTriplets(drawEnc, hScrollBarVerts, vertCount, black);
+				VVScrollViewMTLDrawFanVertTriplets(drawEnc, (hScrollBarVerts + (vertCount*3)), vertCount, black);
+				VVScrollViewMTLDrawVertTriplets(drawEnc, MTLPrimitiveTypeTriangleStrip, (hScrollBarVerts + (2*vertCount*3)), 4, black);
+			}
+		}
+		return;
+	}
 	CGLContextObj		cgl_ctx = [s glDrawContext];
 	//VVRECT				tmpRect = [s rect];
 	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);
@@ -521,6 +595,25 @@ GLfloat* VVEvaluateCircleVerts(double startAngleRadians, double endAngleRadians,
 #else
 	if ([s hidden])
 		return;
+	//	if the sprite has a metal encoder, i'm being drawn in a metal view- otherwise fall through to the GL path
+	id<MTLRenderCommandEncoder>		drawEnc = [s drawEnc];
+	if (drawEnc != nil)	{
+		vector_float4		black = simd_make_float4(0., 0., 0., 1.);
+		if (s == vScrollTrack)	{
+			//	the track verts describe a closed line loop (metal line strips are 1px- vs the GL path's 1pt- but it's a hairline either way)
+			VVScrollViewMTLDrawVertTriplets(drawEnc, MTLPrimitiveTypeLineStrip, vScrollTrackVerts, scrollTrackVertCount, black);
+		}
+		else if (s == vScrollBar)	{
+			NSPoint			origin = [s rect].origin;
+			if (origin.x>=0 && origin.y>=0)	{
+				int				vertCount = (vertsAroundEndCap + 1);
+				VVScrollViewMTLDrawFanVertTriplets(drawEnc, vScrollBarVerts, vertCount, black);
+				VVScrollViewMTLDrawFanVertTriplets(drawEnc, (vScrollBarVerts + (vertCount*3)), vertCount, black);
+				VVScrollViewMTLDrawVertTriplets(drawEnc, MTLPrimitiveTypeTriangleStrip, (vScrollBarVerts + (2*vertCount*3)), 4, black);
+			}
+		}
+		return;
+	}
 	CGLContextObj		cgl_ctx = [s glDrawContext];
 	//VVRECT				tmpRect = [s rect];
 	//tmpRect = VVMAKERECT(tmpRect.origin.x*LTBBM, tmpRect.origin.y*LTBBM, tmpRect.size.width*LTBBM, tmpRect.size.height*LTBBM);

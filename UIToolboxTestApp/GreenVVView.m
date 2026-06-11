@@ -41,14 +41,7 @@
 	//NSLog(@"%s",__func__);
 	
 	//NSRect			tmpRect = NSMakeRect(0,0,10,10);
-	NSRect			tmpRect = NSMakeRect(-10,-10,20,20);
-	
-	//	these are the transforms we need to apply to the geometry so they draw correctly
-	NSMutableArray<NSAffineTransform*>		*transforms = [self localToContainerCoordinateSpaceDrawTransforms];
-	for (NSAffineTransform *transform in transforms)	{
-		tmpRect.origin = [transform transformPoint:tmpRect.origin];
-		tmpRect.size = [transform transformSize:tmpRect.size];
-	}
+	NSRect			tmpRect = NSMakeRect(-10,-10,20,20);	//	note: this rect will draw outside my view's bounds unless the VVView clips it!
 	
 	VVSpriteMTLViewVertex		verts[4];
 	verts[0].position = simd_make_float4( tmpRect.origin.x, tmpRect.origin.y + tmpRect.size.height, 0., 1. );
@@ -61,8 +54,6 @@
 		verts[i].texIndex = -1;
 	}
 	
-	//	apply the small scissor rect
-	//[encoder setScissorRect:MTLMakeScissorRect( scissorRect.origin.x, scissorRect.origin.y, scissorRect.size.width, scissorRect.size.height )];
 	//	draw the fill
 	[inEnc
 		setVertexBytes:verts

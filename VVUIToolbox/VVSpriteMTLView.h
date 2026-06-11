@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 	MTLRenderPassDescriptor			*passDescriptor;
 	MTLRenderPipelineDescriptor		*psoDesc;
 	id<MTLRenderPipelineState>		pso;
+	id<MTLArgumentEncoder>		textureArgumentEncoder;
+	
 	//vector_uint2			viewportSize;
 	CAMetalLayer			*metalLayer;
 	id<CAMetalDrawable>		currentDrawable;
@@ -100,6 +102,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSRect viewportBounds;	//	calculated at runtime from 'viewportSize', which is updated every time the drawable is reconfigured.
 //	set it to nil and any pixels with an alpha < 1 in the layer will be composited as transparent in the window hierarchy
 @property (strong,nullable) NSColor * layerBackgroundColor;
+
+@property (readonly) id<MTLArgumentEncoder> textureArgumentEncoder;
 
 //	buffer containing the model/view/projection matrices that control display
 @property (strong,nullable) id<MTLBuffer> mvpBuffer;

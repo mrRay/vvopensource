@@ -1456,67 +1456,125 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 - (void) _drawRect:(VVRECT)r inEncoder:(id<MTLRenderCommandEncoder>)inEnc commandBuffer:(id<MTLCommandBuffer>)cb	{
 	//NSLog(@"%s",__func__);
 	//NSLog(@"%s ... %@, %@",__func__,self,NSStringFromRect(r));
-	
-	VVRECT			drawRectInContainerView = r;
-	VVRECT			frameInContainerView = [self bounds];
-	//	these are the transforms we need to apply to the geometry so they draw correctly
-	NSMutableArray<NSAffineTransform*>		*transforms = [self localToContainerCoordinateSpaceDrawTransforms];
-	for (NSAffineTransform *transform in transforms)	{
-		frameInContainerView.origin = [transform transformPoint:frameInContainerView.origin];
-		frameInContainerView.size = [transform transformSize:frameInContainerView.size];
-		drawRectInContainerView.origin = [transform transformPoint:drawRectInContainerView.origin];
-		drawRectInContainerView.size = [transform transformSize:drawRectInContainerView.size];
+	if (deleted)
+		return;
+
+	//	geometry in this method (and in subclass overrides of 'drawRect:inEncoder:commandBuffer:', and in
+	//	sprite draw callbacks) is encoded in this view's LOCAL BACKING coordinates- the same coords the GL
+	//	path uses.  we accomplish this by concatenating my local-to-container transforms into the MVP we
+	//	bind here (the metal analogue of the GL path's glTranslatef/glRotatef calls)
+	VVSpriteMTLView		*container = (_containerView!=nil && [_containerView respondsToSelector:@selector(mvpBuffer)]) ? (VVSpriteMTLView *)_containerView : nil;
+	id<MTLBuffer>		containerMVPBuffer = [container mvpBuffer];
+	if (containerMVPBuffer == nil)	{
+		NSLog(@"ERR: no container MVP buffer, bailing %s",__func__);
+		return;
 	}
-	//VVRECT			scissorRect = NSPositiveDimensionsRect(drawRectInContainerView);
-	VVRECT			scissorRect = NSIntegralPositiveDimensionsRect(drawRectInContainerView);
-	//NSLog(@"\t\tscissor rect (in container view coords) is %@",NSStringFromRect(scissorRect));
-	//VVRECT			bigScissorRect = NSInsetRect(scissorRect, -1, -1);
+
+	pthread_mutex_lock(&spritesUpdateLock);
+	BOOL		lSpritesNeedUpdate = spritesNeedUpdate;
+	pthread_mutex_unlock(&spritesUpdateLock);
+	if (lSpritesNeedUpdate)
+		[self updateSprites];
+
+	//	configure the scissor rect so it's clipping to my visible rect (bail if i don't have a visible rect)
+	VVRECT			clipRect = [self visibleRect];
+	if (VVISZERORECT(clipRect))	{
+		//NSLog(@"\t\terr: bailing, clipRect zero %s",__func__);
+		return;
+	}
+	clipRect = [self convertRectToContainerViewCoords:clipRect];
+	//	make sure the clip rect has positive dimensions (adjust origin if dimensions are negative to compensate)
+	VVRECT			tmpClipRect;
+	tmpClipRect.origin.x = round(VVMINX(clipRect));
+	tmpClipRect.size.width = round(VVMAXX(clipRect)-tmpClipRect.origin.x);
+	tmpClipRect.origin.y = round(VVMINY(clipRect));
+	tmpClipRect.size.height = round(VVMAXY(clipRect)-tmpClipRect.origin.y);
+	//	the clip rect is bottom-left-origin & in points- MTLScissorRect is TOP-left-origin & in pixels, and
+	//	metal aborts outright on scissor rects that exceed the drawable, so flip the y and clamp to the viewport
+	vector_uint2	viewportSize = [container viewportSize];
+	double			scissorMinX = tmpClipRect.origin.x * localToBackingBoundsMultiplier;
+	double			scissorMaxX = scissorMinX + (tmpClipRect.size.width * localToBackingBoundsMultiplier);
+	double			scissorMinY = (double)viewportSize.y - ((tmpClipRect.origin.y + tmpClipRect.size.height) * localToBackingBoundsMultiplier);
+	double			scissorMaxY = scissorMinY + (tmpClipRect.size.height * localToBackingBoundsMultiplier);
+	scissorMinX = fmin(fmax(scissorMinX, 0.), (double)viewportSize.x);
+	scissorMaxX = fmin(fmax(scissorMaxX, 0.), (double)viewportSize.x);
+	scissorMinY = fmin(fmax(scissorMinY, 0.), (double)viewportSize.y);
+	scissorMaxY = fmin(fmax(scissorMaxY, 0.), (double)viewportSize.y);
+	if (scissorMaxX-scissorMinX < 1. || scissorMaxY-scissorMinY < 1.)	{
+		//	none of my visible rect is within the drawable- and a scissor rect can't express "nothing"- so bail
+		return;
+	}
 	MTLScissorRect		tmpScissorRect;
-	
-	VVSpriteMTLViewVertex		verts[4];
-	verts[0].position = simd_make_float4( frameInContainerView.origin.x, frameInContainerView.origin.y + frameInContainerView.size.height, 0., 1. );
-	verts[1].position = simd_make_float4( frameInContainerView.origin.x, frameInContainerView.origin.y, 0., 1. );
-	verts[2].position = simd_make_float4( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y + frameInContainerView.size.height, 0., 1. );
-	verts[3].position = simd_make_float4( frameInContainerView.origin.x + frameInContainerView.size.width, frameInContainerView.origin.y, 0., 1. );
-	
-	for (int i=0; i<4; ++i)	{
-		verts[i].color = simd_make_float4(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-		verts[i].texIndex = -1;
+	tmpScissorRect.x = (NSUInteger)scissorMinX;
+	tmpScissorRect.y = (NSUInteger)scissorMinY;
+	tmpScissorRect.width = (NSUInteger)(scissorMaxX - scissorMinX);
+	tmpScissorRect.height = (NSUInteger)(scissorMaxY - scissorMinY);
+	//	no scissor restore- every view (and the container, before subview recursion) sets its own at entry
+	[inEnc setScissorRect:tmpScissorRect];
+
+	//	concatenate the local-to-container transforms into a single affine transform (these are in points)
+	NSMutableArray<NSAffineTransform*>		*transforms = [self localToContainerCoordinateSpaceDrawTransforms];
+	NSAffineTransform		*compositeTrans = [NSAffineTransform transform];
+	for (NSAffineTransform *transform in transforms)	{
+		[compositeTrans appendTransform:transform];
 	}
-	
-	//	apply the small scissor rect
-	tmpScissorRect.x = fabs(scissorRect.origin.x);
-	tmpScissorRect.y = fabs(scissorRect.origin.y);
-	tmpScissorRect.width = fabs(scissorRect.size.width);
-	tmpScissorRect.height = fabs(scissorRect.size.height);
-	//	i do not understand why this isn't working at all, the math here looks fine?  like, counting the pixels onscreen of the above coords clearly describes the desirable scissor rect, but....it doesn't render out that way?
-	//[inEnc setScissorRect:tmpScissorRect];
-	
-	//	draw the fill
+	NSAffineTransformStruct		transStruct = [compositeTrans transformStruct];
+	//	the transforms are in points but vertex data is in backing coords- the linear part is scale-free
+	//	(rotations & translations only) so only the translation needs to be scaled by the backing multiplier
+	//	(mirrors the GL path, which scales every glTranslatef by the same multiplier)
+	matrix_float4x4		localToContainerBacking = simd_matrix_from_rows(
+		simd_make_float4( transStruct.m11, transStruct.m21, 0., transStruct.tX * localToBackingBoundsMultiplier ),
+		simd_make_float4( transStruct.m12, transStruct.m22, 0., transStruct.tY * localToBackingBoundsMultiplier ),
+		simd_make_float4( 0., 0., 1., 0. ),
+		simd_make_float4( 0., 0., 0., 1. )
+	);
+	matrix_float4x4		containerMVP = *((matrix_float4x4 *)[containerMVPBuffer contents]);
+	matrix_float4x4		mvp = simd_mul(containerMVP, localToContainerBacking);
+	//	bind the MVP for this view- the container (and any enclosing views) re-bind at entry, so there's
+	//	nothing to restore when i'm done drawing
 	[inEnc
-		setVertexBytes:verts
-		length:sizeof(verts)
-		atIndex:VVSpriteMTLView_VS_Idx_Verts];
-	[inEnc
-		drawPrimitives:MTLPrimitiveTypeTriangleStrip
-		vertexStart:0
-		vertexCount:4];
+		setVertexBytes:&mvp
+		length:sizeof(mvp)
+		atIndex:VVSpriteMTLView_VS_Idx_MVPMatrix];
+
+	//	if i'm opaque, fill my bounds with an alpha of 1- else fill with the clear color (skipping entirely if
+	//	it's fully transparent).  the fill is in my local backing coords (origin is the bottom-left corner of me)
+	VVRECT			localBackingBounds = [self backingBounds];
+	LOCK(&_propertyLock);
+	BOOL			lIsOpaque = isOpaque;
+	simd_float4		fillColor = simd_make_float4(clearColor[0], clearColor[1], clearColor[2], (isOpaque) ? 1. : clearColor[3]);
+	UNLOCK(&_propertyLock);
+	if (lIsOpaque || fillColor.w != 0.)	{
+		VVSpriteMTLViewVertex		verts[4];
+		verts[0].position = simd_make_float4( 0., localBackingBounds.size.height, 0., 1. );
+		verts[1].position = simd_make_float4( 0., 0., 0., 1. );
+		verts[2].position = simd_make_float4( localBackingBounds.size.width, localBackingBounds.size.height, 0., 1. );
+		verts[3].position = simd_make_float4( localBackingBounds.size.width, 0., 0., 1. );
+
+		for (int i=0; i<4; ++i)	{
+			verts[i].color = fillColor;
+			verts[i].texCoord = simd_make_float2(0., 0.);
+			verts[i].texIndex = -1;
+		}
+
+		[inEnc
+			setVertexBytes:verts
+			length:sizeof(verts)
+			atIndex:VVSpriteMTLView_VS_Idx_Verts];
+		[inEnc
+			drawPrimitives:MTLPrimitiveTypeTriangleStrip
+			vertexStart:0
+			vertexCount:4];
+	}
+
+	//	tell the sprite manager to draw
+	if (spriteManager != nil)	{
+		[spriteManager drawInEncoder:inEnc commandBuffer:cb];
+	}
 	
 	//	call the method subclasses may be overriding
 	[self drawRect:r inEncoder:inEnc commandBuffer:cb];
-	
-	//	apply the big scissor rect
-	//tmpScissorRect.x = bigScissorRect.origin.x;
-	//tmpScissorRect.y = bigScissorRect.origin.y;
-	//tmpScissorRect.width = bigScissorRect.size.width;
-	//tmpScissorRect.height = bigScissorRect.size.height;
-	//[inEnc setScissorRect:tmpScissorRect];
-	//	draw the stroke
-	//[inEnc
-	//	drawPrimitives:MTLPrimitiveTypeLineStrip
-	//	vertexStart:0
-	//	vertexCount:4];
-	
+
 	//	call 'finishedDrawing' so subclasses of me have a chance to perform post-draw cleanup
 	[self finishedDrawing];
 	
