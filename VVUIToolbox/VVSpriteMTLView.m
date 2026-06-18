@@ -1086,10 +1086,15 @@ long		_spriteMTLViewSysVers;
 		localPassDesc = [passDescriptor copy];
 	}
 	localPassDesc.colorAttachments[0].texture = targetTex;
-	
+
 	id<MTLRenderCommandEncoder>		encoder = [cmdBuffer renderCommandEncoderWithDescriptor:localPassDesc];
 	encoder.label = self.description;
-	[encoder setViewport:(MTLViewport){ 0.f, 0.f, _viewportSize.x, _viewportSize.y, -1.f, 1.f }];
+	//	drive the viewport from the drawable's actual texture dims, NOT _viewportSize: during a live resize the
+	//	main thread can update _viewportSize / metalLayer.drawableSize while we're mid-draw on this thread, so
+	//	the texture nextDrawable handed us may be a pixel or two smaller.  sizing to the texture keeps the
+	//	viewport- and the scissor rects subviews derive via -renderTargetSize (currentDrawable.texture)- inside
+	//	the attachment.  in steady state targetTex == _viewportSize, so this changes nothing.
+	[encoder setViewport:(MTLViewport){ 0.f, 0.f, (double)targetTex.width, (double)targetTex.height, -1.f, 1.f }];
 	[encoder setRenderPipelineState:pso];
 	
 	[self performDrawing:r inEncoder:encoder commandBuffer:cmdBuffer];
@@ -1104,7 +1109,7 @@ long		_spriteMTLViewSysVers;
 	targetTex = nil;
 	currentDrawable = nil;
 	drawable = nil;
-	
+
 #if CAPTURE
 	if (cm != nil)	{
 		NSLog(@"STOPPING CAPTURE, WAITING TO BE COMPLETE...");
@@ -1447,6 +1452,17 @@ long		_spriteMTLViewSysVers;
 
 - (NSRect) viewportBounds	{
 	return NSMakeRect(0,0,_viewportSize.x,_viewportSize.y);
+}
+- (vector_uint2) renderTargetSize	{
+	//	derive the real render-target size from the drawable we're currently drawing into- its texture IS the
+	//	encoder's colour attachment.  currentDrawable is set/cleared only on the render thread for the span of
+	//	-performDrawing:onCommandQueue:, so (unlike _viewportSize / metalLayer.drawableSize, which the main
+	//	thread can change mid-draw) it can't be stale.  nil outside a draw, or when a caller supplied its own
+	//	encoder- fall back to viewportSize then.
+	id<MTLTexture>		tex = currentDrawable.texture;
+	if (tex != nil)
+		return simd_make_uint2( (uint32_t)tex.width, (uint32_t)tex.height );
+	return _viewportSize;
 }
 
 

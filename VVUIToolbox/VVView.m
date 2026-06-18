@@ -1490,16 +1490,21 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	tmpClipRect.origin.y = round(VVMINY(clipRect));
 	tmpClipRect.size.height = round(VVMAXY(clipRect)-tmpClipRect.origin.y);
 	//	the clip rect is bottom-left-origin & in points- MTLScissorRect is TOP-left-origin & in pixels, and
-	//	metal aborts outright on scissor rects that exceed the drawable, so flip the y and clamp to the viewport
-	vector_uint2	viewportSize = [container viewportSize];
+	//	metal aborts outright on scissor rects that exceed the render target, so flip the y and clamp to the
+	//	target.  IMPORTANT: clamp against the container's renderTargetSize (the size of the drawable texture
+	//	actually being drawn into this pass), NOT viewportSize.  during a live resize the two can disagree by a
+	//	pixel or two- viewportSize is updated on the main thread (-reconfigureDrawable) while the drawable handed
+	//	to the render thread lags- and clamping to the larger of the two is exactly what trips the "scissor rect
+	//	+ height must be <= render pass height" assertion.
+	vector_uint2	targetSize = [container renderTargetSize];
 	double			scissorMinX = tmpClipRect.origin.x * localToBackingBoundsMultiplier;
 	double			scissorMaxX = scissorMinX + (tmpClipRect.size.width * localToBackingBoundsMultiplier);
-	double			scissorMinY = (double)viewportSize.y - ((tmpClipRect.origin.y + tmpClipRect.size.height) * localToBackingBoundsMultiplier);
+	double			scissorMinY = (double)targetSize.y - ((tmpClipRect.origin.y + tmpClipRect.size.height) * localToBackingBoundsMultiplier);
 	double			scissorMaxY = scissorMinY + (tmpClipRect.size.height * localToBackingBoundsMultiplier);
-	scissorMinX = fmin(fmax(scissorMinX, 0.), (double)viewportSize.x);
-	scissorMaxX = fmin(fmax(scissorMaxX, 0.), (double)viewportSize.x);
-	scissorMinY = fmin(fmax(scissorMinY, 0.), (double)viewportSize.y);
-	scissorMaxY = fmin(fmax(scissorMaxY, 0.), (double)viewportSize.y);
+	scissorMinX = fmin(fmax(scissorMinX, 0.), (double)targetSize.x);
+	scissorMaxX = fmin(fmax(scissorMaxX, 0.), (double)targetSize.x);
+	scissorMinY = fmin(fmax(scissorMinY, 0.), (double)targetSize.y);
+	scissorMaxY = fmin(fmax(scissorMaxY, 0.), (double)targetSize.y);
 	if (scissorMaxX-scissorMinX < 1. || scissorMaxY-scissorMinY < 1.)	{
 		//	none of my visible rect is within the drawable- and a scissor rect can't express "nothing"- so bail
 		return;
@@ -1509,6 +1514,18 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	tmpScissorRect.y = (NSUInteger)scissorMinY;
 	tmpScissorRect.width = (NSUInteger)(scissorMaxX - scissorMinX);
 	tmpScissorRect.height = (NSUInteger)(scissorMaxY - scissorMinY);
+	//	final hard guard- the float clamps above plus integer truncation should already keep us inside the
+	//	target, but a scissor rect that pokes even one pixel past the render target aborts the whole process in
+	//	-[MTLRenderCommandEncoder setScissorRect:], so make it provably impossible: pull the far edges back in,
+	//	and bail if that leaves nothing to draw.
+	if (tmpScissorRect.x >= targetSize.x || tmpScissorRect.y >= targetSize.y)
+		return;
+	if (tmpScissorRect.x + tmpScissorRect.width > targetSize.x)
+		tmpScissorRect.width = (NSUInteger)targetSize.x - tmpScissorRect.x;
+	if (tmpScissorRect.y + tmpScissorRect.height > targetSize.y)
+		tmpScissorRect.height = (NSUInteger)targetSize.y - tmpScissorRect.y;
+	if (tmpScissorRect.width < 1 || tmpScissorRect.height < 1)
+		return;
 	//	no scissor restore- every view (and the container, before subview recursion) sets its own at entry
 	[inEnc setScissorRect:tmpScissorRect];
 
