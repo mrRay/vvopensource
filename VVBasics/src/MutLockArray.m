@@ -443,22 +443,30 @@
 }
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes	{
 	NSArray		*returnMe = nil;
-	
+
 	if ((array != nil) && (indexes != nil))	{
-			returnMe = [array objectsAtIndexes:indexes];	
+		NSUInteger		count = [array count];
+		//	drop any indexes at or beyond the array's bounds so we never throw NSRangeException
+		//	(matches objectAtIndex: which already returns nil for an out-of-range index)
+		if (([indexes count] > 0) && ([indexes lastIndex] >= count))	{
+			NSMutableIndexSet	*safeIndexes = [indexes mutableCopy];
+			[safeIndexes removeIndexesInRange:NSMakeRange(count, NSUIntegerMax - count)];
+			returnMe = [array objectsAtIndexes:safeIndexes];
+		}
+		else	{
+			returnMe = [array objectsAtIndexes:indexes];
+		}
 	}
-	
+
 	return returnMe;
 }
 - (NSArray *) lockObjectsAtIndexes:(NSIndexSet *)indexes	{
 	NSArray		*returnMe = nil;
-	
-	if ((array != nil) && (indexes != nil))	{
-		pthread_rwlock_rdlock(&arrayLock);
-			returnMe = [array objectsAtIndexes:indexes];
-		pthread_rwlock_unlock(&arrayLock);
-	}
-	
+
+	pthread_rwlock_rdlock(&arrayLock);
+		returnMe = [self objectsAtIndexes:indexes];
+	pthread_rwlock_unlock(&arrayLock);
+
 	return returnMe;
 }
 - (NSInteger) indexOfObject:(id)o	{

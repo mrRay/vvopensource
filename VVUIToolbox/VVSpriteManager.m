@@ -572,35 +572,28 @@ MutLockArray		*_spriteManagerArray;
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil))
 		return;
-	[spriteArray rdlock];
-		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
-		VVSprite	*spritePtr;
-		while (spritePtr = [it nextObject])	{
-			//if (![spritePtr hidden])
-				[spritePtr draw];
-		}
-	[spriteArray unlock];
+	//	draw a copy instead of iterating under the rdlock- draw callbacks can acquire other locks,
+	//	which deadlocks against threads that hold those locks while removing sprites from this manager
+	NSMutableArray		*tmpSprites = [spriteArray lockCreateArrayCopy];
+	NSEnumerator		*it = [tmpSprites reverseObjectEnumerator];
+	VVSprite			*spritePtr;
+	while (spritePtr = [it nextObject])	{
+		//if (![spritePtr hidden])
+			[spritePtr draw];
+	}
 }
 - (void) drawRect:(VVRECT)r	{
 	//NSLog(@"%s",__func__);
 	if ((deleted)||(spriteArray==nil)||([spriteArray count]<1))
 		return;
-	[spriteArray rdlock];
-		NSEnumerator	*it = [[spriteArray array] reverseObjectEnumerator];
-		VVSprite	*spritePtr;
-		while (spritePtr = [it nextObject])	{
-			if ([spritePtr checkRect:r])
-				[spritePtr draw];
-			/*
-			//VVRECT		tmp = [spritePtr rect];
-			//NSLog(@"\t\tsprite %@ is (%f, %f) %f x %f",[spritePtr userInfo],tmp.origin.x,tmp.origin.y,tmp.size.width,tmp.size.height);
-			//if (![spritePtr hidden])	{
-				if (VVINTERSECTSRECT([spritePtr rect],r))
-					[spritePtr draw];
-			//}
-			*/
-		}
-	[spriteArray unlock];
+	//	draw a copy instead of iterating under the rdlock (see -draw)
+	NSMutableArray		*tmpSprites = [spriteArray lockCreateArrayCopy];
+	NSEnumerator		*it = [tmpSprites reverseObjectEnumerator];
+	VVSprite			*spritePtr;
+	while (spritePtr = [it nextObject])	{
+		if ([spritePtr checkRect:r])
+			[spritePtr draw];
+	}
 }
 #if !TARGET_OS_IPHONE
 - (void) drawInContext:(CGLContextObj)cgl_ctx	{

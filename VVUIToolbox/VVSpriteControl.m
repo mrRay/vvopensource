@@ -235,12 +235,26 @@ int					_spriteControlCount;
 	self.localVisibleRect = self.visibleRect;
 }
 - (void) setNeedsDisplay:(BOOL)n	{
+	//	drawRect:-rendered on the main thread; honor an off-main request by marshaling to main
+	//	rather than touching NSView's cached-visible-rect state off the main thread.
+	if (![NSThread isMainThread])	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsDisplay:n];
+		});
+		return;
+	}
 	if (n)	{
 		self.localVisibleRect = self.visibleRect;
 	}
 	[super setNeedsDisplay:n];
 }
 - (void) setNeedsDisplayInRect:(NSRect)n	{
+	if (![NSThread isMainThread])	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsDisplayInRect:n];
+		});
+		return;
+	}
 	self.localVisibleRect = self.visibleRect;
 	[super setNeedsDisplayInRect:n];
 }

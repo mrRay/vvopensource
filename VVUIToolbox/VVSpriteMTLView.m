@@ -313,7 +313,8 @@ long		_spriteMTLViewSysVers;
 		if (n != nil)
 			[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_occlusionStateChangedNotification:) name:NSWindowDidChangeOcclusionStateNotification object:n];
 	}
-	self.localOcclusionState = (n==nil) ? NSWindowOcclusionStateVisible : n.occlusionState;
+	//	keep the Visible default- n.occlusionState reads 0 before the window is on-screen, stranding it black at launch
+	self.localOcclusionState = NSWindowOcclusionStateVisible;
 	self.localWindow = n;
 	self.localVisibleRect = self.visibleRect;
 	[super viewWillMoveToWindow:n];
@@ -331,6 +332,12 @@ long		_spriteMTLViewSysVers;
 	self.localVisibleRect = self.visibleRect;
 }
 - (void) setNeedsDisplay:(BOOL)n	{
+	if (![NSThread isMainThread])	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsDisplay:n];
+		});
+		return;
+	}
 	if (n)	{
 		self.contentNeedsRedraw = YES;
 		self.localVisibleRect = self.visibleRect;
@@ -338,6 +345,12 @@ long		_spriteMTLViewSysVers;
 	[super setNeedsDisplay:n];
 }
 - (void) setNeedsDisplayInRect:(NSRect)n	{
+	if (![NSThread isMainThread])	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsDisplayInRect:n];
+		});
+		return;
+	}
 	self.localVisibleRect = self.visibleRect;
 	[super setNeedsDisplayInRect:n];
 }
