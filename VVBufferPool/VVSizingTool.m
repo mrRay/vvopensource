@@ -52,6 +52,9 @@
 	VVRECT		returnMe = VVMAKERECT(0,0,0,0);
 	double		bAspect = b.size.width/b.size.height;
 	double		aAspect = a.size.width/a.size.height;
+	//	a degenerate 'a' (zero or non-finite dimension) would make the fit/fill math below produce inf- treat it like the equal-aspect case (returns b's size, which is what a 0x0 'a' already did)
+	if (!isfinite(aAspect) || aAspect<=0.0)
+		aAspect = bAspect;
 	switch (m)	{
 		case VVSizingModeFit:
 			//	if the rect i'm trying to fit stuff *into* is wider than the rect i'm resizing

@@ -56,16 +56,23 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 	
 	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[sourceArray rdlock];
-	for (VVMIDINode *nodePtr in [sourceArray array])
-		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr fullName]];
+	for (VVMIDINode *nodePtr in [sourceArray array])	{
+		//	fullName is nil if CoreMIDI couldn't read the endpoint's name (e.g. device mid-disconnect)- nothing to persist under
+		NSString	*fullName = [nodePtr fullName];
+		if (fullName != nil)
+			[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:fullName];
+	}
 	[sourceArray unlock];
 	//	older versions of VVMIDI stored this under the "src" key!
 	[returnMe setObject:tmpDict forKey:@"fullSrc"];
 	
 	tmpDict = [NSMutableDictionary dictionaryWithCapacity:0];
 	[destArray rdlock];
-	for (VVMIDINode *nodePtr in [destArray array])
-		[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:[nodePtr fullName]];
+	for (VVMIDINode *nodePtr in [destArray array])	{
+		NSString	*fullName = [nodePtr fullName];
+		if (fullName != nil)
+			[tmpDict setObject:[NSNumber numberWithBool:[nodePtr enabled]] forKey:fullName];
+	}
 	[destArray unlock];
 	//	older versions of VVMIDI stored this under the "dst" key!
 	[returnMe setObject:tmpDict forKey:@"fullDst"];
