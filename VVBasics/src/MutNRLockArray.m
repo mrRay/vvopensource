@@ -137,15 +137,19 @@
 		return nil;
 	return [returnMe object];
 }
+//	empty holders are skipped, returned count may be different than the count of the passed indexes
 - (NSArray *) objectsAtIndexes:(NSIndexSet *)indexes	{
 	NSMutableArray		*returnMe = [NSMutableArray arrayWithCapacity:0];
 	NSArray				*tmpArray = nil;
 	
 	if ((array!=nil) && (indexes!=nil))	{
-		tmpArray = [array objectsAtIndexes:indexes];
+		//	super rejects out-of-bounds indexes
+		tmpArray = [super objectsAtIndexes:indexes];
 		if (tmpArray != nil)	{
 			for (ObjectHolder *objPtr in tmpArray)	{
-				[returnMe addObject:[objPtr object]];
+				id		addMe = [objPtr object];
+				if (addMe != nil)
+					[returnMe addObject:addMe];
 			}
 		}
 	}
