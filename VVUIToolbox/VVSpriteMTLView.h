@@ -96,6 +96,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (VVRECT) convertRectToLocalBackingBounds:(VVRECT)n;
 
 @property (strong,readwrite) id<MTLDevice> device;
+//	populates psoDesc's vertexFunction and fragmentFunction.  _loadPSO calls it whenever it needs a PSO and the descriptor is missing either function, so a load that failed is retried on the next draw- subclasses that draw with other shaders override this.
+- (void) _loadShaderFunctions;
+//	builds pso from psoDesc if there isn't one yet.  does nothing (and logs once) while the shader functions are missing- Metal aborts the process on a PSO build without them.
+- (void) _loadPSO;
 @property (readwrite) MTLPixelFormat pixelFormat;
 @property (readwrite,nullable) CGColorSpaceRef colorspace;
 @property (readonly) vector_uint2 viewportSize;
