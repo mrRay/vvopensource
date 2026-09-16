@@ -1019,8 +1019,7 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 	VVRECT		superviewVisRect = VVZERORECT;
 	//	if my superview's nil, i'm a top-level VVView
 	if (_superview==nil)	{
-		//	get the container view's visible rect (its visible bounds)
-		if (_containerView!=nil && [(VVSpriteMTLView*)_containerView respondsToSelector:@selector(localVisibleRect)])	{
+		if (_containerView != nil)	{
 			superviewVisRect = [(VVSpriteMTLView*)_containerView localVisibleRect];
 			if (VVISZERORECT(superviewVisRect))
 				return VVZERORECT;
@@ -1028,15 +1027,7 @@ NSMutableArray<NSAffineTransform*> * VVViewMinimizeTransformsInArray(NSMutableAr
 			superviewVisRect.origin.x += tmpBounds.origin.x;
 			superviewVisRect.origin.y += tmpBounds.origin.y;
 		}
-		else	{
-			superviewVisRect = [_containerView visibleRect];
-			if (VVISZERORECT(superviewVisRect))
-				return VVZERORECT;
-			VVRECT		tmpBounds = [_containerView bounds];
-			superviewVisRect.origin.x += tmpBounds.origin.x;
-			superviewVisRect.origin.y += tmpBounds.origin.y;
-		}
-		
+
 	}
 	//	else get my superview's visible rect
 	else	{

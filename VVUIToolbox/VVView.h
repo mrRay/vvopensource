@@ -56,6 +56,8 @@ typedef NS_ENUM(NSInteger, VVViewBoundsOrientation)	{
 
 
 @protocol VVViewContainer
+- (VVRECT) localVisibleRect;
+- (VVRECT) localBounds;
 - (void) addVVSubview:(VVView *)n;
 - (void) removeVVSubview:(VVView *)n;
 - (BOOL) containsSubview:(VVView *)n;
