@@ -1048,8 +1048,12 @@ long		_spriteMTLViewSysVers;
 //- (void) performDrawing:(VVRECT)r	{
 //}
 - (void) performDrawing:(VVRECT)r onCommandQueue:(id<MTLCommandQueue>)q	{
-	[self _loadPSO];
-	if (pso == nil || _device == nil)
+	id<MTLRenderPipelineState>		localPSO = nil;
+	@synchronized (self)	{
+		[self _loadPSO];
+		localPSO = pso;
+	}
+	if (localPSO == nil)
 		return;
 	if (q == nil)
 		return;
@@ -1109,7 +1113,7 @@ long		_spriteMTLViewSysVers;
 	//	viewport- and the scissor rects subviews derive via -renderTargetSize (currentDrawable.texture)- inside
 	//	the attachment.  in steady state targetTex == _viewportSize, so this changes nothing.
 	[encoder setViewport:(MTLViewport){ 0.f, 0.f, (double)targetTex.width, (double)targetTex.height, -1.f, 1.f }];
-	[encoder setRenderPipelineState:pso];
+	[encoder setRenderPipelineState:localPSO];
 	
 	[self performDrawing:r inEncoder:encoder commandBuffer:cmdBuffer];
 	
@@ -1380,43 +1384,45 @@ long		_spriteMTLViewSysVers;
 
 @synthesize device=_device;
 - (void) setDevice:(id<MTLDevice>)n	{
-	_device = n;
-	
-	metalLayer.device = _device;
-	
-	metalLayer.pixelFormat = self.pixelFormat;
-	
-	//if (self.colorspace != NULL)	{
-		metalLayer.colorspace = self.colorspace;
-	//}
-	
-	//	subclasses that draw with other shaders override _loadShaderFunctions- the PSO itself is built by _loadPSO, here and again on any draw that finds it missing
-	psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
-	psoDesc.label = @"Generic VVSpriteMTLView";
-	psoDesc.colorAttachments[0].pixelFormat = metalLayer.pixelFormat;
-	
-	//	commented out- this was an attempt to make MTLImgBufferView "transparent" (0 alpha would display view behind it)
-	psoDesc.alphaToCoverageEnabled = NO;
-	psoDesc.colorAttachments[0].blendingEnabled = YES;
-	
-	psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
-	psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
-	
-	//	"GL over" is:
-	psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
-	psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-	psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
-	
-	//	"GL add" is:
-	//psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-	//psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
-	//psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorDestinationAlpha;
-	//psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
-	
-	pso = nil;
-	textureArgumentEncoder = nil;
-	[self _loadPSO];
+	@synchronized (self)	{
+		_device = n;
+		
+		metalLayer.device = _device;
+		
+		metalLayer.pixelFormat = self.pixelFormat;
+		
+		//if (self.colorspace != NULL)	{
+			metalLayer.colorspace = self.colorspace;
+		//}
+		
+		//	subclasses that draw with other shaders override _loadShaderFunctions- the PSO itself is built by _loadPSO, here and again on any draw that finds it missing
+		psoDesc = [[MTLRenderPipelineDescriptor alloc] init];
+		psoDesc.label = @"Generic VVSpriteMTLView";
+		psoDesc.colorAttachments[0].pixelFormat = metalLayer.pixelFormat;
+		
+		//	commented out- this was an attempt to make MTLImgBufferView "transparent" (0 alpha would display view behind it)
+		psoDesc.alphaToCoverageEnabled = NO;
+		psoDesc.colorAttachments[0].blendingEnabled = YES;
+		
+		psoDesc.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+		psoDesc.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+		
+		//	"GL over" is:
+		psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+		psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+		psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+		psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
+		
+		//	"GL add" is:
+		//psoDesc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+		//psoDesc.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
+		//psoDesc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorDestinationAlpha;
+		//psoDesc.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOne;
+		
+		pso = nil;
+		textureArgumentEncoder = nil;
+		[self _loadPSO];
+	}
 	
 	self.mvpBuffer = nil;
 	
@@ -1431,21 +1437,24 @@ long		_spriteMTLViewSysVers;
 	psoDesc.vertexFunction = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewVertShader"];
 	psoDesc.fragmentFunction = [defaultLibrary newFunctionWithName:@"VVSpriteMTLViewFragShader"];
 }
+//	@synchronized (self) guards psoDesc, pso and textureArgumentEncoder- _loadPSO takes it itself, and a caller that then reads pso copies it to a local inside the same block
 - (void) _loadPSO	{
-	if (pso != nil || _device == nil || psoDesc == nil)
-		return;
-	if (psoDesc.vertexFunction == nil || psoDesc.fragmentFunction == nil)	{
-		//	retried on every draw until the funcs load- Metal aborts the process (assertion, not an NSError) on a PSO build without them, so draw nothing instead
-		[self _loadShaderFunctions];
-		if (psoDesc.vertexFunction == nil || psoDesc.fragmentFunction == nil)	{
-			NSLog(@"ERR: %@ has no shader functions, not building its PSO in %s",NSStringFromClass(self.class),__func__);
+	@synchronized (self)	{
+		if (pso != nil || _device == nil || psoDesc == nil)
 			return;
+		if (psoDesc.vertexFunction == nil || psoDesc.fragmentFunction == nil)	{
+			//	retried on every draw until the funcs load- Metal aborts the process (assertion, not an NSError) on a PSO build without them, so draw nothing instead
+			[self _loadShaderFunctions];
+			if (psoDesc.vertexFunction == nil || psoDesc.fragmentFunction == nil)	{
+				NSLog(@"ERR: %@ has no shader functions, not building its PSO in %s",NSStringFromClass(self.class),__func__);
+				return;
+			}
 		}
-	}
-	NSError		*nsErr = nil;
-	pso = [_device newRenderPipelineStateWithDescriptor:psoDesc error:&nsErr];
-	if (pso == nil || nsErr != nil)	{
-		NSLog(@"ERR: unable to make PSO in %s, %@",__func__,nsErr);
+		NSError		*nsErr = nil;
+		pso = [_device newRenderPipelineStateWithDescriptor:psoDesc error:&nsErr];
+		if (pso == nil || nsErr != nil)	{
+			NSLog(@"ERR: unable to make PSO in %s, %@",__func__,nsErr);
+		}
 	}
 }
 
@@ -1540,15 +1549,17 @@ long		_spriteMTLViewSysVers;
 }
 
 - (id<MTLArgumentEncoder>) textureArgumentEncoder	{
-	if (textureArgumentEncoder != nil)
+	@synchronized (self)	{
+		if (textureArgumentEncoder != nil)
+			return textureArgumentEncoder;
+		id<MTLFunction>		localFragFunc = psoDesc.fragmentFunction;
+		if (localFragFunc == nil)	{
+			NSLog(@"ERR: %s, frag func nil",__func__);
+			return nil;
+		}
+		textureArgumentEncoder = [localFragFunc newArgumentEncoderWithBufferIndex:VVSpriteMTLView_FS_Idx_Tex];
 		return textureArgumentEncoder;
-	id<MTLFunction>		localFragFunc = psoDesc.fragmentFunction;
-	if (localFragFunc == nil)	{
-		NSLog(@"ERR: %s, frag func nil",__func__);
-		return nil;
 	}
-	textureArgumentEncoder = [localFragFunc newArgumentEncoderWithBufferIndex:VVSpriteMTLView_FS_Idx_Tex];
-	return textureArgumentEncoder;
 }
 
 

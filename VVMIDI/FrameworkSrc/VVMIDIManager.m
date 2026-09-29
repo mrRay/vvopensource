@@ -141,9 +141,16 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 	
 	delegate = nil;
 	
+	@autoreleasepool	{
+		NSMutableArray		*oldSources = [sourceArray lockCreateArrayCopy];
+		[sourceArray lockRemoveAllObjects];
+		for (VVMIDINode *nodePtr in oldSources)
+			[nodePtr prepareToBeDeleted];
+	}
 	VVRELEASE(sourceArray);
 	VVRELEASE(destArray);
 	
+	[virtualSource prepareToBeDeleted];
 	VVRELEASE(virtualSource);
 	VVRELEASE(virtualDest);
 	
@@ -169,8 +176,15 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 	MIDIEndpointRef		endpointRef;
 	VVMIDINode			*newSource;
 	
-	if (sourceArray != nil)
-		[sourceArray lockRemoveAllObjects];
+	if (sourceArray != nil)	{
+		//	stop the old sources with no lock held before releasing them- myMIDIReadProc lowers procRunning after its pool drains, which is only safe because of this
+		@autoreleasepool	{
+			NSMutableArray		*oldSources = [sourceArray lockCreateArrayCopy];
+			[sourceArray lockRemoveAllObjects];
+			for (VVMIDINode *nodePtr in oldSources)
+				[nodePtr prepareToBeDeleted];
+		}
+	}
 	else
 		sourceArray = [[MutLockArray alloc] init];
 	
@@ -261,6 +275,7 @@ MIDIClientRef		_VVMIDIProcessClientRef = 0x0;
 		make the receiver- this node "owns" the receiver's destination: it is
 		responsible for handling data sent to the destination
 	*/
+	[virtualSource prepareToBeDeleted];
 	VVRELEASE(virtualSource);
 	virtualSource = [[[self receivingNodeClass] alloc] initReceiverWithName:[self receivingNodeName]];
 	if (virtualSource != nil)

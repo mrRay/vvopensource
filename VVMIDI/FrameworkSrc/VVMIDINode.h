@@ -49,6 +49,7 @@ extern double		_machTimeToNsFactor;
 - (instancetype) initSenderWithName:(NSString *)n;
 
 - (instancetype) commonInit;
+- (void) prepareToBeDeleted;	//	disables me and blocks until my read callback has returned.  must be called before the last reference to a receiving node is dropped- never call it from inside my own read callback!
 
 - (void) loadProperties;
 - (void) receivedMIDI:(NSArray *)a;

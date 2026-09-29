@@ -212,13 +212,16 @@ double			_machTimeToNsFactor;
 	return self;
 }
 
-- (void) dealloc	{
+- (void) prepareToBeDeleted	{
 	//	disable me, so my proc won't start executing again while the following is running
 	[self setEnabled:NO];
 	//	wait until my proc's done running (at which point it will be save to mess with the CoreMIDI stuff)
 	while ([self procRunning])	{
 		pthread_yield_np();
 	}
+}
+- (void) dealloc	{
+	[self prepareToBeDeleted];
 	
 	VVRELEASE(properties);
 	
@@ -793,10 +796,10 @@ double			_machTimeToNsFactor;
 
 
 void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
+	//	flag my proc as running- don't doing anything with the endpoint/port/clocks while the proc's running
+	[(__bridge VVMIDINode *)readProcRefCon setProcRunning:YES];
 	@autoreleasepool{
 	
-		//	flag my proc as running- don't doing anything with the endpoint/port/clocks while the proc's running
-		[(__bridge VVMIDINode *)readProcRefCon setProcRunning:YES];
 		//	only proceed if we're enabled...
 		if ([(__bridge VVMIDINode *)readProcRefCon enabled])	{
 			MIDIPacket				*packet = nil;
@@ -1137,9 +1140,9 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 				[(__bridge VVMIDINode *)readProcRefCon receivedMIDI:msgs];
 		}
 	
-		//	flag my proc as done running, so stuff that wants to access the CoreMIDI vars may do so
-		[(__bridge VVMIDINode *)readProcRefCon setProcRunning:NO];
 	}
+	//	flag my proc as done running only after the pool drains- safe only because VVMIDIManager calls prepareToBeDeleted on every receiving node before releasing it
+	[(__bridge VVMIDINode *)readProcRefCon setProcRunning:NO];
 	//NSLog(@"\t\tmyMIDIReadProc - FINISHED");
 }
 void senderReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *srcConnRefCon)	{
