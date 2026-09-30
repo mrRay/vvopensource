@@ -729,8 +729,8 @@ long		_spriteMTLViewSysVers;
 		//pthread_mutex_unlock(&glLock);
 	}
 	
-	[self updateSprites];
-	//self.spritesNeedUpdate = YES;
+	//	flag only- calling updateSprites here races the render thread's own updateSprites on this view
+	self.spritesNeedUpdate = YES;
 	[self setNeedsDisplay:YES];
 }
 - (void) setFrameOrigin:(NSPoint)n	{
