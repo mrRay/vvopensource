@@ -238,12 +238,14 @@ double			_machTimeToNsFactor;
 	
 	if (mtcClockRef != NULL)	{
 		CAClockRemoveListener(mtcClockRef, clockListenerProc, (__bridge void * _Nonnull)(self));
+		CAClockStop(mtcClockRef);
 		CAClockDisarm(mtcClockRef);
 		CAClockDispose(mtcClockRef);
 		mtcClockRef = NULL;
 	}
 	if (bpmClockRef != NULL)	{
 		CAClockRemoveListener(bpmClockRef, clockListenerProc, (__bridge void * _Nonnull)(self));
+		CAClockStop(bpmClockRef);
 		CAClockDisarm(bpmClockRef);
 		CAClockDispose(bpmClockRef);
 		bpmClockRef = NULL;
@@ -814,7 +816,8 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 			NSMutableArray			*msgs = [NSMutableArray arrayWithCapacity:0];
 			BOOL					hadMTCMsg = NO;
 			BOOL					hadClockMsg = NO;
-	
+			BOOL					hadStartOrContinue = NO;
+
 			//	first of all, if i'm processing sysex, bump the iteration count
 			if (processingSysex)
 				++processingSysexIterationCount;
@@ -970,6 +973,8 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 									case VVMIDIActiveSenseVal:
 									case VVMIDIResetVal:
 										hadClockMsg = YES;
+										if (currByte==VVMIDIStartVal || currByte==VVMIDIContinueVal)
+											hadStartOrContinue = YES;
 										newMsg = [VVMIDIMessage createWithType:currByte channel:0x00 timestamp:packet->timeStamp];
 										if (newMsg != nil)	{
 											[msgs addObject:newMsg];
@@ -1126,6 +1131,9 @@ void myMIDIReadProc(const MIDIPacketList *pktList, void *readProcRefCon, void *s
 			}
 			if (hadClockMsg)	{
 				CAClockRef		tmpClock = [(__bridge VVMIDINode *)readProcRefCon bpmClockRef];
+				//	Apple's MIDIBeatClockSource re-adds its watchdog timer on a Start/Continue that arrives mid-run, and disposing the clock then strands a freed timer- stopping first removes the watchdog, and the next tick restarts the clock
+				if (hadStartOrContinue)
+					CAClockStop(tmpClock);
 				long			err = CAClockParseMIDI(tmpClock, pktList);
 				if (err != noErr)
 					NSLog(@"\t\terr %ld at CAClockParseMIDI() for BPM in %s",err,__func__);
