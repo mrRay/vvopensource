@@ -90,7 +90,12 @@
 	if (setsockopt(sock,SOL_SOCKET,SO_SNDBUF,&bufSize,sizeof(long)) != 0)	{
 		NSLog(@"\t\terr %d at setsockopt() in %s",errno,__func__);
 	}
-	
+	//	OSC is a steady stream of small packets that must arrive on time: the "interactive voice" service type gets it the low-latency queues, Wi-Fi's included
+	int				serviceType = NET_SERVICE_TYPE_VO;
+	if (setsockopt(sock,SOL_SOCKET,SO_NET_SERVICE_TYPE,&serviceType,sizeof(serviceType)) != 0)	{
+		NSLog(@"\t\terr %d at setsockopt() B in %s",errno,__func__);
+	}
+
 	//	if any part of the address string contains "255", this is a broadcast output
 	NSRange			bcastRange = [addressString rangeOfString:@"255"];
 	if ((bcastRange.location!=NSNotFound)&&(bcastRange.length>0))	{

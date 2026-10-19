@@ -153,7 +153,12 @@
 	if (setsockopt(sock,SOL_SOCKET,SO_RCVBUF,&bufSize,sizeof(long)) != 0)	{
 		NSLog(@"\t\terr %d at setsockopt() in %s",errno,__func__);
 	}
-	
+	//	replies to OSC senders go out through this socket, so give them the same low-latency service type the out ports use
+	int				serviceType = NET_SERVICE_TYPE_VO;
+	if (setsockopt(sock,SOL_SOCKET,SO_NET_SERVICE_TYPE,&serviceType,sizeof(serviceType)) != 0)	{
+		NSLog(@"\t\terr %d at setsockopt() B in %s",errno,__func__);
+	}
+
 	UNLOCK(&socketLock);
 	return YES;
 }
